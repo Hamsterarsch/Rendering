@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Window\Windows\Window.cpp">
+      <Filter>Window\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="Types\Dimensions2D.cpp">
+      <Filter>Types</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Window\Windows\Window.hpp">
+      <Filter>Window\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="Types\Dimensions2D.hpp">
+      <Filter>Types</Filter>
+    </ClInclude>
+    <ClInclude Include="Exception\CreationFailedException.hpp">
+      <Filter>Exception</Filter>
+    </ClInclude>
+    <ClInclude Include="Exception\Exception.hpp">
+      <Filter>Exception</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Window">
+      <UniqueIdentifier>{3d570620-b632-44e5-8f26-cf4994ff4bd9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Window\Windows">
+      <UniqueIdentifier>{7584e22f-30e5-46b9-9e18-057f60c25612}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Types">
+      <UniqueIdentifier>{d5bb1d4c-f92b-406e-8600-5b4e37180d79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Exception">
+      <UniqueIdentifier>{7496daa0-6bb9-4376-8da1-30e4477f60e6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
