@@ -12,7 +12,7 @@ int main()
 
 		auto resc
 		{
-			RHA::DX12::Facade::MakeDeviceResources()
+			RHA::DX12::Facade::MakeDeviceResources(D3D_FEATURE_LEVEL_12_0, true)
 		};
 
 		

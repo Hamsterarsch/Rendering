@@ -6,64 +6,90 @@ namespace RHA
 {
 	namespace DX12
 	{
-		DeviceResourcesImpl::DeviceResourcesImpl()
+		DeviceResourcesImpl::DeviceResourcesImpl(const D3D_FEATURE_LEVEL minimumFeatureLevel, const bool shouldEnableDebugLayers) :
+			minimumFeatureLevel{ minimumFeatureLevel }
 		{
+			if(shouldEnableDebugLayers)
+			{
+				EnableDebugLayers();
+			}
+			
+			const auto result
+			{
+				CreateDXGIFactory1(IID_PPV_ARGS(&dxgiFactory))
+			};
+			CheckDxgiFactoryCreation(result);
+						
+			CreateDeviceForFeatureLevel();
+					   
+		}
+
+			void DeviceResourcesImpl::EnableDebugLayers()
 			{
 				DxPtr<ID3D12Debug> debugController;
-				auto result
+				const auto result
 				{
 					D3D12GetDebugInterface(IID_PPV_ARGS(&debugController))
 				};
 
-				if (FAILED(result))
-				{
-					throw Exception::CreationFailed{ "Could not create debug interface for dx12 device resources" };
-				}
+				CheckDebugControllerCreation(result);
 
 				debugController->EnableDebugLayer();
+			
 			}
 
-			
-
-			auto result
-			{
-				CreateDXGIFactory1(IID_PPV_ARGS(&dxgiFactory))
-			};
-
-			if (FAILED(result))
-			{
-				throw Exception::CreationFailed{ "Could not query dxgi factory" };
-			}
-
-			
-
-			DxPtr<IDXGIAdapter1> hardwareAdapter;
-			for (UINT adapterIndex{ 0 }; ; ++adapterIndex)
-			{
-				if (dxgiFactory->EnumAdapters1(adapterIndex, hardwareAdapter.GetAddressOf()) == DXGI_ERROR_NOT_FOUND)
+				void DeviceResourcesImpl::CheckDebugControllerCreation(HRESULT result) 
 				{
-					continue;
+					if (FAILED(result))
+					{
+						throw Exception::CreationFailed{ "Could not create debug interface for dx12 device resources" };
+					}
+				
 				}
 
-				auto result
-				{
-					D3D12CreateDevice(hardwareAdapter.Get(), D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(&device))
-				};
-
-				if (SUCCEEDED(result))
-				{
-					break;
-				}
-				hardwareAdapter->Release();
-
-			}
-
-			if (!device)
+			void DeviceResourcesImpl::CheckDxgiFactoryCreation(HRESULT result)
 			{
-				throw Exception::CreationFailed{ "Could not create dx12 device" };
+				if (FAILED(result))
+				{
+					throw Exception::CreationFailed{ "Could not query dxgi factory" };
+				}
+				
 			}
 
-		}
+			void DeviceResourcesImpl::CreateDeviceForFeatureLevel()
+			{
+				DxPtr<IDXGIAdapter1> hardwareAdapter;
+				for (UINT adapterIndex{ 0 }; ; ++adapterIndex)
+				{
+					if (dxgiFactory->EnumAdapters1(adapterIndex, hardwareAdapter.GetAddressOf()) == DXGI_ERROR_NOT_FOUND)//exit when there are no more adapters to iterate
+					{
+						continue;
+					}
+
+					const auto result
+					{
+						D3D12CreateDevice(hardwareAdapter.Get(), minimumFeatureLevel, IID_PPV_ARGS(&device))
+					};
+
+					if (SUCCEEDED(result))
+					{
+						break;
+					}
+					hardwareAdapter->Release();
+
+				}
+				CheckDeviceCreation();
+			
+			}
+
+				void DeviceResourcesImpl::CheckDeviceCreation() const
+				{
+					if (!device)
+					{
+						throw Exception::CreationFailed{ "Could not create dx12 device" };
+					}
+			
+				}
 
 
 	}

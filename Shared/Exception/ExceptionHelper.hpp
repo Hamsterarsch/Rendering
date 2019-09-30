@@ -1,8 +1,7 @@
 #pragma once
+#include "Exception.hpp"
 
 #define DEFAULT_EXCEPTION_TYPE_DEFINITION(Name)			\
-														\
-#include "Exception.hpp"								\
 														\
 namespace Exception										\
 {														\

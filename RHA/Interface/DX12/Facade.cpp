@@ -5,9 +5,9 @@ namespace RHA
 {
 	namespace DX12
 	{
-		UniquePtr<DeviceResources> Facade::MakeDeviceResources()
+		UniquePtr<DeviceResources> Facade::MakeDeviceResources(const D3D_FEATURE_LEVEL minimumFeatureLevel, const bool shouldEnableDebugLayers)
 		{
-			return std::make_unique<DeviceResourcesImpl>();
+			return std::make_unique<DeviceResourcesImpl>(minimumFeatureLevel, shouldEnableDebugLayers);
 			
 		}
 
