@@ -18,11 +18,18 @@ namespace RHA
 		
 			
 			//object creation is not thread safe: we assume that a weak resource ref must stay valid at all times during object construction
-			DescriptorHeapImpl(DeviceResources *resources, D3D12_DESCRIPTOR_HEAP_TYPE type, size_t capacity, bool isGpuVisible);
+			public: DescriptorHeapImpl(DeviceResources *resources, D3D12_DESCRIPTOR_HEAP_TYPE type, size_t capacity, bool isGpuVisible);
 
-			D3D12_CPU_DESCRIPTOR_HANDLE GetHandleCpu(size_t index);
+				private: static void CheckHeapCreation(HRESULT result);
 			
-			D3D12_GPU_DESCRIPTOR_HANDLE GetHandleGpu(size_t index);
+			public: D3D12_CPU_DESCRIPTOR_HANDLE GetHandleCpu(size_t index);
+
+				private: void HandleCorruptIndex(size_t index) const;
+			
+					private: bool IndexIsInvalid(size_t index) const;
+			
+			public: D3D12_GPU_DESCRIPTOR_HANDLE GetHandleGpu(size_t index);
+
 			
 		};
 
