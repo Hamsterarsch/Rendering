@@ -10,6 +10,12 @@
     <ClInclude Include="Exception\Exception.hpp">
       <Filter>Exception</Filter>
     </ClInclude>
+    <ClInclude Include="Exception\OutOfRangeException.hpp">
+      <Filter>Exception</Filter>
+    </ClInclude>
+    <ClInclude Include="Exception\ExceptionHelper.hpp">
+      <Filter>Exception</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Exception">

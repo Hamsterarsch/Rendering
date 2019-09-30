@@ -1,5 +1,3 @@
-#include <d3d12sdklayers.h>
-#include <dxgi.h>
 #include "DxPtrTypes.hpp"
 #include "DX12/DeviceResourcesImpl.hpp"
 #include "Shared/Exception/CreationFailedException.hpp"
@@ -25,9 +23,8 @@ namespace RHA
 				debugController->EnableDebugLayer();
 			}
 
+			
 
-
-			DxPtr<IDXGIFactory1> dxgiFactory;
 			auto result
 			{
 				CreateDXGIFactory1(IID_PPV_ARGS(&dxgiFactory))
@@ -38,7 +35,7 @@ namespace RHA
 				throw Exception::CreationFailed{ "Could not query dxgi factory" };
 			}
 
-			DxPtr<ID3D12Device> device;
+			
 
 			DxPtr<IDXGIAdapter1> hardwareAdapter;
 			for (UINT adapterIndex{ 0 }; ; ++adapterIndex)

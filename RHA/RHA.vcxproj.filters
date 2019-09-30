@@ -8,9 +8,11 @@
     <ClCompile Include="Interface\DX12\Facade.cpp">
       <Filter>Interface\DX12</Filter>
     </ClCompile>
+    <ClCompile Include="DX12\DescriptorHeapImpl.cpp">
+      <Filter>DX12</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DxPtrTypes.hpp" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="DX12\DeviceResourcesImpl.hpp">
       <Filter>DX12</Filter>
@@ -22,6 +24,12 @@
       <Filter>Interface\DX12</Filter>
     </ClInclude>
     <ClInclude Include="Interface\RenderingExportHelper.hpp">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DescriptorHeapImpl.hpp">
+      <Filter>DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\DxPtrTypes.hpp">
       <Filter>Interface</Filter>
     </ClInclude>
   </ItemGroup>

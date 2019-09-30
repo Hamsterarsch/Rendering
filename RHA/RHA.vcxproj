@@ -155,15 +155,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="DX12\DescriptorHeapImpl.hpp" />
     <ClInclude Include="DX12\DeviceResourcesImpl.hpp" />
-    <ClInclude Include="DxPtrTypes.hpp" />
     <ClInclude Include="Interface\DX12\DeviceResources.hpp" />
     <ClInclude Include="Interface\DX12\Facade.hpp" />
+    <ClInclude Include="Interface\DxPtrTypes.hpp" />
     <ClInclude Include="Interface\RenderingExportHelper.hpp" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="DX12\DescriptorHeapImpl.cpp" />
     <ClCompile Include="DX12\DeviceResourcesImpl.cpp" />
     <ClCompile Include="Interface\DX12\Facade.cpp" />
   </ItemGroup>
