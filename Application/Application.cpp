@@ -1,6 +1,7 @@
 #include "Window/Windows/Window.hpp"
 #include "Types/Dimensions2D.hpp"
 #include "DX12/Facade.hpp"
+#include "DX12/DeviceResources.hpp"
 
 
 int main()

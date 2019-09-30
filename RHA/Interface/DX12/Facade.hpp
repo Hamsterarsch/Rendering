@@ -7,7 +7,7 @@ namespace RHA
 {
 	namespace DX12
 	{
-		RHA_DLLSPEC class Facade
+		class RHA_DLLSPEC Facade
 		{
 		public:
 			static UniquePtr<class DeviceResources> MakeDeviceResources();
