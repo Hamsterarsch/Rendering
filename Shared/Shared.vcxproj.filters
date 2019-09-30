@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="InterfaceHelpers.hpp" />
+    <ClInclude Include="PtrTypes.hpp" />
+    <ClInclude Include="Exception\CreationFailedException.hpp">
+      <Filter>Exception</Filter>
+    </ClInclude>
+    <ClInclude Include="Exception\Exception.hpp">
+      <Filter>Exception</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Exception">
+      <UniqueIdentifier>{8653924c-9e79-4915-87c9-db3a17650db8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Exception\Exception.cpp">
+      <Filter>Exception</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

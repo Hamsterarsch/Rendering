@@ -1,6 +1,6 @@
 #include "Window.hpp"
 #include "Types/Dimensions2D.hpp"
-#include "Exception/CreationFailedException.hpp"
+#include "Shared/Exception/CreationFailedException.hpp"
 
 namespace Windows
 {

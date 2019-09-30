@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="DX12\DeviceResourcesImpl.cpp">
+      <Filter>DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="Interface\DX12\Facade.cpp">
+      <Filter>Interface\DX12</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DxPtrTypes.hpp" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="DX12\DeviceResourcesImpl.hpp">
+      <Filter>DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\DX12\DeviceResources.hpp">
+      <Filter>Interface\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\DX12\Facade.hpp">
+      <Filter>Interface\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\RenderingExportHelper.hpp">
+      <Filter>Interface</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="DX12">
+      <UniqueIdentifier>{62d9ff9d-97c0-4f12-885b-bd832e846f52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interface">
+      <UniqueIdentifier>{e89ee3d1-2bd1-4db8-b480-3e099b99b2cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interface\DX12">
+      <UniqueIdentifier>{bb2e5dd6-5776-4e1e-84b6-d16946a41154}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

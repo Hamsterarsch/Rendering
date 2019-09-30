@@ -2,10 +2,12 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="DX12\DeviceResources.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h" />
     <ClInclude Include="RenderingExportHelper.hpp" />
     <ClInclude Include="DX12\DeviceResources.hpp" />
+    <ClInclude Include="DxPtrTypes.hpp" />
   </ItemGroup>
 </Project>

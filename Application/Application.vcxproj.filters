@@ -16,12 +16,6 @@
     <ClInclude Include="Types\Dimensions2D.hpp">
       <Filter>Types</Filter>
     </ClInclude>
-    <ClInclude Include="Exception\CreationFailedException.hpp">
-      <Filter>Exception</Filter>
-    </ClInclude>
-    <ClInclude Include="Exception\Exception.hpp">
-      <Filter>Exception</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Window">
@@ -32,9 +26,6 @@
     </Filter>
     <Filter Include="Types">
       <UniqueIdentifier>{d5bb1d4c-f92b-406e-8600-5b4e37180d79}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Exception">
-      <UniqueIdentifier>{7496daa0-6bb9-4376-8da1-30e4477f60e6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

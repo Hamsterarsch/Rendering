@@ -6,9 +6,7 @@ namespace Exception
 {
 	class Exception : public std::exception
 	{
-		public: Exception(const char *description) :
-			std::exception(description)
-		{}
+		public: Exception(const char *description);
 
 		
 	};
