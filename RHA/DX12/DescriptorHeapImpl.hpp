@@ -1,6 +1,6 @@
 #pragma once
 #include "DX12/DeviceResources.hpp"
-#include <d3d12.h>
+#include "DX12/DescriptorHeap.hpp"
 #include "DxPtrTypes.hpp"
 
 
@@ -8,7 +8,7 @@ namespace RHA
 {
 	namespace DX12
 	{
-		class DescriptorHeapImpl
+		class DescriptorHeapImpl : public DescriptorHeap
 		{
 			private: DxPtr<ID3D12DescriptorHeap> heap;
 			private: size_t handleIncrementSize;
@@ -22,13 +22,13 @@ namespace RHA
 
 				private: static void CheckHeapCreation(HRESULT result);
 			
-			public: D3D12_CPU_DESCRIPTOR_HANDLE GetHandleCpu(size_t index);
+			public: virtual D3D12_CPU_DESCRIPTOR_HANDLE GetHandleCpu(size_t index) override;
 
 				private: void HandleCorruptIndex(size_t index) const;
 			
 					private: bool IndexIsInvalid(size_t index) const;
 			
-			public: D3D12_GPU_DESCRIPTOR_HANDLE GetHandleGpu(size_t index);
+			public: virtual D3D12_GPU_DESCRIPTOR_HANDLE GetHandleGpu(size_t index) override;
 
 			
 		};

@@ -157,6 +157,7 @@
   <ItemGroup>
     <ClInclude Include="DX12\DescriptorHeapImpl.hpp" />
     <ClInclude Include="DX12\DeviceResourcesImpl.hpp" />
+    <ClInclude Include="Interface\DX12\DescriptorHeap.hpp" />
     <ClInclude Include="Interface\DX12\DeviceResources.hpp" />
     <ClInclude Include="Interface\DX12\Facade.hpp" />
     <ClInclude Include="Interface\DxPtrTypes.hpp" />
