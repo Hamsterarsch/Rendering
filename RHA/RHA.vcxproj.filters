@@ -11,6 +11,18 @@
     <ClCompile Include="DX12\DescriptorHeapImpl.cpp">
       <Filter>DX12</Filter>
     </ClCompile>
+    <ClCompile Include="DX12\WindowSurfaceImpl.cpp">
+      <Filter>Interface\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12\QueueImpl.cpp">
+      <Filter>DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12\CmdAllocatorImpl.cpp">
+      <Filter>DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12\CmdListImpl.cpp">
+      <Filter>DX12</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h" />
@@ -35,6 +47,27 @@
     <ClInclude Include="Interface\DX12\DescriptorHeap.hpp">
       <Filter>Interface\DX12</Filter>
     </ClInclude>
+    <ClInclude Include="DX12\WindowSurfaceImpl.hpp">
+      <Filter>Interface\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\QueueImpl.hpp">
+      <Filter>DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\CmdAllocatorImpl.hpp">
+      <Filter>DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\CmdListImpl.hpp">
+      <Filter>DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\Exception\AllocatorOccupiedException.hpp">
+      <Filter>Interface\Exception</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\DX12\CmdList.hpp">
+      <Filter>Interface\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\DX12\CmdAllocator.hpp">
+      <Filter>Interface\DX12</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DX12">
@@ -45,6 +78,9 @@
     </Filter>
     <Filter Include="Interface\DX12">
       <UniqueIdentifier>{bb2e5dd6-5776-4e1e-84b6-d16946a41154}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interface\Exception">
+      <UniqueIdentifier>{70cad4f6-7e4f-4cc2-8c0f-296f436f5271}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

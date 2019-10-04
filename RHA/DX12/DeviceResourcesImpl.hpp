@@ -8,7 +8,7 @@ namespace RHA
 	{
 		class DeviceResourcesImpl : public DeviceResources
 		{
-			DxPtr<IDXGIFactory1> dxgiFactory;
+			DxPtr<IDXGIFactory4> dxgiFactory;
 			DxPtr<ID3D12Device> device;
 			const D3D_FEATURE_LEVEL minimumFeatureLevel;
 			
@@ -27,7 +27,7 @@ namespace RHA
 
 			public: virtual inline DxPtr<ID3D12Device> GetDevice() override { return device; }
 			
-			public: virtual inline DxPtr<IDXGIFactory> GetDxgiFactory() override { return dxgiFactory; }
+			public: virtual inline DxPtr<IDXGIFactory4> GetDxgiFactory() override { return dxgiFactory; }
 
 			
 		};

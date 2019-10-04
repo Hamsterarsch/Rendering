@@ -155,19 +155,30 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="DX12\CmdAllocatorImpl.hpp" />
+    <ClInclude Include="DX12\CmdListImpl.hpp" />
+    <ClInclude Include="DX12\QueueImpl.hpp" />
     <ClInclude Include="DX12\DescriptorHeapImpl.hpp" />
     <ClInclude Include="DX12\DeviceResourcesImpl.hpp" />
+    <ClInclude Include="DX12\WindowSurfaceImpl.hpp" />
+    <ClInclude Include="Interface\DX12\CmdAllocator.hpp" />
+    <ClInclude Include="Interface\DX12\CmdList.hpp" />
     <ClInclude Include="Interface\DX12\DescriptorHeap.hpp" />
     <ClInclude Include="Interface\DX12\DeviceResources.hpp" />
     <ClInclude Include="Interface\DX12\Facade.hpp" />
     <ClInclude Include="Interface\DxPtrTypes.hpp" />
+    <ClInclude Include="Interface\Exception\AllocatorOccupiedException.hpp" />
     <ClInclude Include="Interface\RenderingExportHelper.hpp" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="DX12\CmdAllocatorImpl.cpp" />
+    <ClCompile Include="DX12\CmdListImpl.cpp" />
     <ClCompile Include="DX12\DescriptorHeapImpl.cpp" />
     <ClCompile Include="DX12\DeviceResourcesImpl.cpp" />
+    <ClCompile Include="DX12\QueueImpl.cpp" />
+    <ClCompile Include="DX12\WindowSurfaceImpl.cpp" />
     <ClCompile Include="Interface\DX12\Facade.cpp" />
   </ItemGroup>
   <ItemGroup>
