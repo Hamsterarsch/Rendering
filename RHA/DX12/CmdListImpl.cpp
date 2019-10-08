@@ -29,7 +29,7 @@ namespace RHA
 			}
 		}
 
-		DxPtr<ID3D12GraphicsCommandList> CmdListImpl::GetList()
+		DxPtr<ID3D12GraphicsCommandList> CmdListImpl::AsGraphicsList()
 		{
 			DxPtr<ID3D12GraphicsCommandList> out;
 

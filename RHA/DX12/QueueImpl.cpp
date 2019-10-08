@@ -1,6 +1,7 @@
 #include "DX12/DeviceResources.hpp"
 #include "Shared/Exception/CreationFailedException.hpp"
 #include "DX12/QueueImpl.hpp"
+#include "DX12/CmdList.hpp"
 
 
 namespace RHA
@@ -27,6 +28,12 @@ namespace RHA
 			{
 				throw Exception::CreationFailed{ "Could not create dx12 command queue" };
 			}
+			
+		}
+
+		void QueueImpl::SubmitCommandList(CmdList &list)
+		{			
+			queue->ExecuteCommandLists(1, list.GetList().GetAddressOf());
 			
 		}
 

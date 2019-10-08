@@ -14,7 +14,9 @@ namespace RHA
 
 			public: CmdListImpl(DeviceResources &resources, class CmdAllocatorImpl &allocator);
 
-			public: virtual DxPtr<ID3D12GraphicsCommandList> GetList() override;
+			public: inline virtual DxPtr<ID3D12CommandList> GetList() override { return list; }
+
+			public: virtual DxPtr<ID3D12GraphicsCommandList> AsGraphicsList() override;
 								
 		};
 		
