@@ -71,6 +71,9 @@
     <ClInclude Include="Interface\DX12\Queue.hpp">
       <Filter>Interface\DX12</Filter>
     </ClInclude>
+    <ClInclude Include="Interface\DX12\WindowSurface.hpp">
+      <Filter>Interface\DX12</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DX12">

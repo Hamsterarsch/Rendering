@@ -2,6 +2,7 @@
 #include "DX12/DeviceResourcesImpl.hpp"
 #include "DX12/CmdAllocatorImpl.hpp"
 #include "DX12/QueueImpl.hpp"
+#include "DX12/WindowSurfaceImpl.hpp"
 
 
 namespace RHA
@@ -35,6 +36,12 @@ namespace RHA
 		)
 		{
 			return std::make_unique<QueueImpl>(resources, type);
+			
+		}
+
+		UniquePtr<WindowSurface> Facade::MakeWindowSurface(DeviceResources *resources, Queue *queue, HWND window)
+		{
+			return std::make_unique<WindowSurfaceImpl>(resources, queue, window);
 			
 		}
 

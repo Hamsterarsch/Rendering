@@ -167,6 +167,7 @@
     <ClInclude Include="Interface\DX12\DeviceResources.hpp" />
     <ClInclude Include="Interface\DX12\Facade.hpp" />
     <ClInclude Include="Interface\DX12\Queue.hpp" />
+    <ClInclude Include="Interface\DX12\WindowSurface.hpp" />
     <ClInclude Include="Interface\DxPtrTypes.hpp" />
     <ClInclude Include="Interface\Exception\AllocatorOccupiedException.hpp" />
     <ClInclude Include="Interface\RenderingExportHelper.hpp" />
