@@ -8,6 +8,7 @@
       <Filter>Types</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="App.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window\Windows\Window.hpp">
@@ -16,6 +17,7 @@
     <ClInclude Include="Types\Dimensions2D.hpp">
       <Filter>Types</Filter>
     </ClInclude>
+    <ClInclude Include="App.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Window">
