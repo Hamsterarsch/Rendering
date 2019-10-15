@@ -167,14 +167,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="App.hpp" />
     <ClInclude Include="Types\Dimensions2D.hpp" />
+    <ClInclude Include="Windows\App.hpp" />
     <ClInclude Include="Window\Windows\Window.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="App.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Types\Dimensions2D.cpp" />
+    <ClCompile Include="Windows\App.cpp" />
     <ClCompile Include="Window\Windows\Window.cpp" />
   </ItemGroup>
   <ItemGroup>

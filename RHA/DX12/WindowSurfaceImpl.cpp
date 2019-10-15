@@ -21,7 +21,7 @@ namespace RHA
 			{
 				DXGI_SWAP_CHAIN_FULLSCREEN_DESC fsDesc{};
 				fsDesc.Windowed = true;
-
+								
 				constexpr unsigned AUTO_OBTAIN{ 0 };
 				constexpr unsigned NO_MSAA{ 1 };
 

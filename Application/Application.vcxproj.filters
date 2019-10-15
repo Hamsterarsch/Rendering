@@ -8,7 +8,9 @@
       <Filter>Types</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="App.cpp" />
+    <ClCompile Include="Windows\App.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window\Windows\Window.hpp">
@@ -17,7 +19,9 @@
     <ClInclude Include="Types\Dimensions2D.hpp">
       <Filter>Types</Filter>
     </ClInclude>
-    <ClInclude Include="App.hpp" />
+    <ClInclude Include="Windows\App.hpp">
+      <Filter>Windows</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Window">
@@ -28,6 +32,9 @@
     </Filter>
     <Filter Include="Types">
       <UniqueIdentifier>{d5bb1d4c-f92b-406e-8600-5b4e37180d79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Windows">
+      <UniqueIdentifier>{fce20fdc-064e-4f2e-b5f3-c66a2c77d552}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
