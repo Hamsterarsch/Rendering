@@ -1,5 +1,5 @@
 #pragma once
-#include "Dx12/DeviceResources.hpp"
+#include "DX12/DeviceResources.hpp"
 #include "DX12/CmdAllocator.hpp"
 
 
@@ -13,10 +13,10 @@ namespace RHA
 			
 			private: D3D12_COMMAND_LIST_TYPE type;
 
-			private: SharedPtr<DeviceResources> resources;
+			private: DeviceResources *resources;
 
 
-			public: CmdAllocatorImpl(const SharedPtr<DeviceResources> &resources, D3D12_COMMAND_LIST_TYPE type);
+			public: CmdAllocatorImpl(DeviceResources *resources, D3D12_COMMAND_LIST_TYPE type);
 
 			public: virtual inline D3D12_COMMAND_LIST_TYPE GetType() const override { return type; }
 			

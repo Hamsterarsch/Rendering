@@ -8,7 +8,7 @@ namespace RHA
 {
 	namespace DX12
 	{
-		QueueImpl::QueueImpl(DeviceResources& resources, const D3D12_COMMAND_LIST_TYPE type)
+		QueueImpl::QueueImpl(class DeviceResources *resources, const D3D12_COMMAND_LIST_TYPE type)
 		{
 			D3D12_COMMAND_QUEUE_DESC desc{};
 
@@ -21,7 +21,7 @@ namespace RHA
 
 			const auto result
 			{
-				resources.GetDevice()->CreateCommandQueue(&desc, IID_PPV_ARGS(&queue))
+				resources->GetDevice()->CreateCommandQueue(&desc, IID_PPV_ARGS(&queue))
 			};
 
 			if(FAILED(result))
@@ -31,9 +31,9 @@ namespace RHA
 			
 		}
 
-		void QueueImpl::SubmitCommandList(CmdList &list)
+		void QueueImpl::SubmitCommandList(CmdList *list)
 		{			
-			queue->ExecuteCommandLists(1, list.GetList().GetAddressOf());
+			queue->ExecuteCommandLists(1, list->GetList().GetAddressOf());
 			
 		}
 

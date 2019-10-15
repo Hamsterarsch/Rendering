@@ -13,9 +13,11 @@ namespace RHA
 			private: DxPtr<ID3D12CommandQueue> queue;
 
 
-			public: QueueImpl(class DeviceResources &resources, D3D12_COMMAND_LIST_TYPE type);
+			public: QueueImpl(class DeviceResources *resources, D3D12_COMMAND_LIST_TYPE type);
 
-			public: void SubmitCommandList(class CmdList &list) override;
+			public: DxPtr<ID3D12CommandQueue> GetQueue() override { return queue; }
+			
+			public: void SubmitCommandList(CmdList *list) override;
 			
 		};
 		

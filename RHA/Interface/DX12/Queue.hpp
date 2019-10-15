@@ -1,5 +1,6 @@
 #pragma once
 #include "Shared/InterfaceHelpers.hpp"
+#include "DX12/CmdList.hpp"
 
 
 namespace RHA
@@ -10,7 +11,9 @@ namespace RHA
 		{
 			DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(Queue)
 
-			public: virtual void SubmitCommandList(class CmdList &list) = 0;
+			public: virtual DxPtr<ID3D12CommandQueue> GetQueue() = 0;
+			
+			public: virtual void SubmitCommandList(CmdList *list) = 0;
 						
 		};
 		

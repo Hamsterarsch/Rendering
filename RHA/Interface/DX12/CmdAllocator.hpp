@@ -3,6 +3,7 @@
 #include "Shared/InterfaceHelpers.hpp"
 #include "Shared/PtrTypes.hpp"
 #include "DxPtrTypes.hpp"
+#include "CmdList.hpp"
 
 
 namespace RHA
@@ -18,7 +19,7 @@ namespace RHA
 			
 			public: virtual DxPtr<ID3D12CommandAllocator> GetAllocator() = 0;
 			
-			public: virtual UniquePtr<class CmdList> AllocateList() = 0;
+			public: virtual UniquePtr<CmdList> AllocateList() = 0;
 						
 		};
 

@@ -16,6 +16,35 @@ int main()
 		};
 
 		
+		auto alloc
+		{
+			RHA::DX12::Facade::MakeCmdAllocator(resc.get(), D3D12_COMMAND_LIST_TYPE_DIRECT)
+		};
+
+		auto list
+		{
+			alloc->AllocateList()
+		};
+
+		auto graList
+		{
+			list->AsGraphicsList()
+		};
+
+		auto result
+		{
+			graList->Close()
+		};
+
+		
+		auto queue
+		{
+			RHA::DX12::Facade::MakeQueue(resc.get(), D3D12_COMMAND_LIST_TYPE_DIRECT)
+		};
+				
+		queue->SubmitCommandList(list.get());
+		
+		
 	}
 	catch(...)
 	{		

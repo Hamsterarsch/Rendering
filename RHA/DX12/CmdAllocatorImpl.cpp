@@ -6,7 +6,7 @@ namespace RHA
 {
 	namespace DX12
 	{
-		CmdAllocatorImpl::CmdAllocatorImpl(const SharedPtr<DeviceResources> &resources, D3D12_COMMAND_LIST_TYPE type) :
+		CmdAllocatorImpl::CmdAllocatorImpl(DeviceResources *resources, D3D12_COMMAND_LIST_TYPE type) :
 			type{ type },
 			resources{ resources }
 		{
@@ -24,7 +24,7 @@ namespace RHA
 		}
 
 		UniquePtr<CmdList> CmdAllocatorImpl::AllocateList()
-		{
+		{			
 			return std::make_unique<CmdListImpl>(*resources, *this);
 			
 		}
