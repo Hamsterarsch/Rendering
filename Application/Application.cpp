@@ -21,14 +21,14 @@ int main()
 			RHA::DX12::Facade::MakeCmdAllocator(resc.get(), D3D12_COMMAND_LIST_TYPE_DIRECT)
 		};
 
-		auto list
+		auto cmdList
 		{
 			alloc->AllocateList()
 		};
 
 		auto graList
 		{
-			list->AsGraphicsList()
+			cmdList->AsGraphicsList()
 		};
 
 		auto result
@@ -41,9 +41,14 @@ int main()
 		{
 			RHA::DX12::Facade::MakeQueue(resc.get(), D3D12_COMMAND_LIST_TYPE_DIRECT)
 		};
+
+		auto surface
+		{
+			RHA::DX12::Facade::MakeWindowSurface(resc.get(), queue.get(), window.GetHandle())
+		};
 				
-		queue->SubmitCommandList(list.get());
-		
+		queue->SubmitCommandList(cmdList.get());
+				
 		
 	}
 	catch(...)
