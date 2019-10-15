@@ -171,7 +171,7 @@
     <ClInclude Include="Window\Windows\Window.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Application.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="Types\Dimensions2D.cpp" />
     <ClCompile Include="Window\Windows\Window.cpp" />
   </ItemGroup>
