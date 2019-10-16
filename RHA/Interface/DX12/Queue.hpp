@@ -3,6 +3,8 @@
 #include "DX12/CmdList.hpp"
 
 
+struct ID3D12CommandQueue;
+
 namespace RHA
 {
 	namespace DX12

@@ -23,6 +23,9 @@
     <ClCompile Include="DX12\WindowSurfaceImpl.cpp">
       <Filter>DX12</Filter>
     </ClCompile>
+    <ClCompile Include="DX12\FenceImpl.cpp">
+      <Filter>DX12</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h" />
@@ -73,6 +76,12 @@
     </ClInclude>
     <ClInclude Include="Interface\RHAExportHelper.hpp">
       <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\DX12\Fence.hpp">
+      <Filter>Interface\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\FenceImpl.hpp">
+      <Filter>DX12</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

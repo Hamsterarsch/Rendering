@@ -3,6 +3,7 @@
 #include "DxPtrTypes.hpp"
 
 struct ID3D12GraphicsCommandList;
+struct ID3D12CommandList;
 
 namespace RHA
 {
