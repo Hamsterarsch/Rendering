@@ -1,5 +1,6 @@
 #pragma once
 #include "Window/Windows/Window.hpp"
+#include "Renderer.hpp"
 
 
 namespace Windows
@@ -8,6 +9,8 @@ namespace Windows
 	{
 		private: Windows::Window window;
 
+		private: Renderer::Renderer renderer;
+		
 
 		
 		public: App();

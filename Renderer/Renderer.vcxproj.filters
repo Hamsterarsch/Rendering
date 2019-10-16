@@ -5,9 +5,15 @@
     <ClInclude Include="Interface\RendererExportHelper.hpp">
       <Filter>Interface</Filter>
     </ClInclude>
+    <ClInclude Include="Interface\Renderer.hpp">
+      <Filter>Interface</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="Interface\Renderer.cpp">
+      <Filter>Interface</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">
