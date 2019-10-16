@@ -4,7 +4,7 @@
 #include "DX12/Queue.hpp"
 #include "DX12/WindowSurface.hpp"
 #include "Shared/PtrTypes.hpp"
-#include "RenderingExportHelper.hpp"
+#include "RHAExportHelper.hpp"
 
 
 namespace RHA

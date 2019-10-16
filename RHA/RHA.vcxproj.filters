@@ -35,9 +35,6 @@
     <ClInclude Include="Interface\DX12\Facade.hpp">
       <Filter>Interface\DX12</Filter>
     </ClInclude>
-    <ClInclude Include="Interface\RenderingExportHelper.hpp">
-      <Filter>Interface</Filter>
-    </ClInclude>
     <ClInclude Include="DX12\DescriptorHeapImpl.hpp">
       <Filter>DX12</Filter>
     </ClInclude>
@@ -73,6 +70,9 @@
     </ClInclude>
     <ClInclude Include="DX12\WindowSurfaceImpl.hpp">
       <Filter>DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\RHAExportHelper.hpp">
+      <Filter>Interface</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
