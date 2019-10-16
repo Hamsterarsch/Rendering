@@ -19,6 +19,7 @@ namespace RHA
 
 			private: DescriptorHeapImpl viewHeap;
 			
+
 			
 			public: WindowSurfaceImpl(class DeviceResources *resources, class Queue *queue, HWND window);
 
@@ -30,6 +31,13 @@ namespace RHA
 			
 					private: static void CheckBufferQuery(HRESULT result);
 
+			
+			public: inline D3D12_CPU_DESCRIPTOR_HANDLE GetBackbuffer() { return viewHeap.GetHandleCpu(0); }
+			
+			public: void Present();
+
+			
+			
 		};
 
 		

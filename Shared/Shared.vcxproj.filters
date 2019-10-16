@@ -16,10 +16,19 @@
     <ClInclude Include="Exception\ExceptionHelper.hpp">
       <Filter>Exception</Filter>
     </ClInclude>
+    <ClInclude Include="Types\Containers\QueueConcurrent.hpp">
+      <Filter>Types\Containers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Exception">
       <UniqueIdentifier>{8653924c-9e79-4915-87c9-db3a17650db8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Types">
+      <UniqueIdentifier>{bd47708e-440f-453e-ba76-7eedee389a51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Types\Containers">
+      <UniqueIdentifier>{d7c00e8f-598e-452c-8c4e-500e1a948377}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

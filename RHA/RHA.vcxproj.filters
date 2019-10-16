@@ -11,9 +11,6 @@
     <ClCompile Include="DX12\DescriptorHeapImpl.cpp">
       <Filter>DX12</Filter>
     </ClCompile>
-    <ClCompile Include="DX12\WindowSurfaceImpl.cpp">
-      <Filter>Interface\DX12</Filter>
-    </ClCompile>
     <ClCompile Include="DX12\QueueImpl.cpp">
       <Filter>DX12</Filter>
     </ClCompile>
@@ -21,6 +18,9 @@
       <Filter>DX12</Filter>
     </ClCompile>
     <ClCompile Include="DX12\CmdListImpl.cpp">
+      <Filter>DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12\WindowSurfaceImpl.cpp">
       <Filter>DX12</Filter>
     </ClCompile>
   </ItemGroup>
@@ -47,9 +47,6 @@
     <ClInclude Include="Interface\DX12\DescriptorHeap.hpp">
       <Filter>Interface\DX12</Filter>
     </ClInclude>
-    <ClInclude Include="DX12\WindowSurfaceImpl.hpp">
-      <Filter>Interface\DX12</Filter>
-    </ClInclude>
     <ClInclude Include="DX12\QueueImpl.hpp">
       <Filter>DX12</Filter>
     </ClInclude>
@@ -73,6 +70,9 @@
     </ClInclude>
     <ClInclude Include="Interface\DX12\WindowSurface.hpp">
       <Filter>Interface\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\WindowSurfaceImpl.hpp">
+      <Filter>DX12</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

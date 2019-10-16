@@ -62,7 +62,7 @@ namespace Windows
 			{
 				cmdList->AsGraphicsList()
 			};
-
+			
 			auto result
 			{
 				graList->Close()
@@ -87,4 +87,5 @@ namespace Windows
 		{
 		}
 
+	
 }

@@ -158,6 +158,7 @@
     <ClInclude Include="InterfaceHelpers.hpp" />
     <ClInclude Include="PtrTypes.hpp" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Types\Containers\QueueConcurrent.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Exception\Exception.cpp" />

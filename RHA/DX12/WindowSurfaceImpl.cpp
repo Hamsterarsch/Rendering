@@ -86,6 +86,12 @@ namespace RHA
 				
 				}
 
+		void WindowSurfaceImpl::Present()
+		{
+			swapChain->Present(0, 0);
+			
+		}
+
 		
 	}
 
