@@ -86,6 +86,28 @@ namespace RHA
 				
 				}
 
+		
+		void WindowSurfaceImpl::ClearBuffer(DxPtr<ID3D12GraphicsCommandList> list, const unsigned index)
+		{
+			D3D12_RESOURCE_BARRIER toOutputTarget{};
+			toOutputTarget.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+			toOutputTarget.Transition.StateBefore = D3D12_RESOURCE_STATE_COMMON;
+			toOutputTarget.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+			toOutputTarget.Transition.pResource = renderTargets.at(index).Get();
+			
+			list->ResourceBarrier(1, &toOutputTarget);
+			list->ClearRenderTargetView(viewHeap.GetHandleCpu(index), clearColor, 0, nullptr);
+
+			//todo: the present transition should go after the actual render work later
+			D3D12_RESOURCE_BARRIER toPresentable{};
+			toPresentable.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+			toPresentable.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+			toPresentable.Transition.StateAfter = D3D12_RESOURCE_STATE_COMMON;
+			toPresentable.Transition.pResource = renderTargets.at(index).Get();
+			list->ResourceBarrier(1, &toPresentable);
+			
+		}
+
 		void WindowSurfaceImpl::Present()
 		{
 			swapChain->Present(0, 0);

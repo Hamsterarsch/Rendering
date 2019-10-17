@@ -13,6 +13,8 @@ namespace RHA
 		{
 			private: static constexpr short bufferCount{ 2 };
 
+			private: static constexpr float clearColor[4]{ 0,0,0,1 };
+
 			private: DxPtr<IDXGISwapChain1> swapChain;
 
 			private: std::array<DxPtr<ID3D12Resource>, bufferCount> renderTargets;
@@ -31,12 +33,12 @@ namespace RHA
 			
 					private: static void CheckBufferQuery(HRESULT result);
 
-			
-			public: inline D3D12_CPU_DESCRIPTOR_HANDLE GetBackbuffer() { return viewHeap.GetHandleCpu(0); }
-			
-			public: void Present();
 
+			public: inline virtual unsigned GetBufferCount() const override { return bufferCount; }
 			
+			public: virtual void ClearBuffer(DxPtr<ID3D12GraphicsCommandList> list, unsigned index) override;
+			
+			public: virtual void Present() override;
 			
 		};
 
