@@ -16,9 +16,9 @@ namespace RHA
 
 			public: virtual unsigned GetBufferCount() const = 0;
 			
-			public: virtual void ClearBuffer(DxPtr<ID3D12GraphicsCommandList> list, unsigned index) = 0;
+			public: virtual void ScheduleBackbufferClear(Queue *queue) = 0;
 
-			public: virtual void Present() = 0;
+			public: virtual void SchedulePresentation(Queue *queue) = 0;
 							
 		};
 

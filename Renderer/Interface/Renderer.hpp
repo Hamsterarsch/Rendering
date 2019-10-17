@@ -26,13 +26,7 @@ namespace Renderer
 	
 	class RENDERER_DLLSPEC Renderer
 	{
-		private: size_t frameCounter;
-		
 		private: const unsigned inflightFramesAmount;
-
-		private:std::vector<UniquePtr<RHA::DX12::Fence>> inflightFences;
-
-		private: std::vector<UniquePtr<RHA::DX12::CmdList>> clearCommands;
 		
 		private: std::mutex updaterMutex;
 
@@ -52,7 +46,7 @@ namespace Renderer
 
 				 		
 		
-		public: Renderer(HWND outputWindow, unsigned inflightFramesAmount);
+		public: Renderer(HWND outputWindow);
 
 			private: int UpdateRendering();
 

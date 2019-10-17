@@ -7,7 +7,7 @@ namespace Windows
 {
 	App::App() :
 		window{ {1920, 1080}, L"Window", L"UniqueClassName" },
-		renderer{ window.GetHandle(), 3 }
+		renderer{ window.GetHandle() }
 	{
 		Initialize();
 
