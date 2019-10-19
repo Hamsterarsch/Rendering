@@ -65,9 +65,6 @@ namespace RHA
 					private: void AssignEventsToFencesForBuffer(unsigned bufferIndex);
 
 			
-			public: inline virtual unsigned GetBufferCount() const override { return bufferCount; }
-
-								
 			public: virtual void ScheduleBackbufferClear(Queue *queue) override;
 			
 				private: BufferData &GetBackbufferData();

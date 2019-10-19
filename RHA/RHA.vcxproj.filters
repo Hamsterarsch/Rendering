@@ -26,6 +26,9 @@
     <ClCompile Include="DX12\FenceImpl.cpp">
       <Filter>DX12</Filter>
     </ClCompile>
+    <ClCompile Include="DX12\ShaderFactoryImpl.cpp">
+      <Filter>DX12</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h" />
@@ -81,6 +84,9 @@
       <Filter>Interface\DX12</Filter>
     </ClInclude>
     <ClInclude Include="DX12\FenceImpl.hpp">
+      <Filter>DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\ShaderFactoryImpl.hpp">
       <Filter>DX12</Filter>
     </ClInclude>
   </ItemGroup>

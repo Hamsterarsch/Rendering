@@ -14,7 +14,6 @@ namespace RHA
 			DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(WindowSurface)
 
 
-			public: virtual unsigned GetBufferCount() const = 0;
 			
 			public: virtual void ScheduleBackbufferClear(Queue *queue) = 0;
 

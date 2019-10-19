@@ -58,7 +58,7 @@ namespace RHA
 					)
 				};
 				CheckSwapChainCreation(result);
-			
+				
 			}
 
 				void WindowSurfaceImpl::CheckSwapChainCreation(HRESULT result)
@@ -94,7 +94,7 @@ namespace RHA
 				
 				}
 
-			void WindowSurfaceImpl::PopulateBufferData(DeviceResources* resources)
+			void WindowSurfaceImpl::PopulateBufferData(DeviceResources *resources)
 			{
 				for (unsigned bufferIndex{ 0 }; bufferIndex < bufferCount; ++bufferIndex)
 				{
