@@ -64,10 +64,17 @@ namespace RHA
 						outError
 					)
 				};
-
+				
 				if (FAILED(result))
 				{
-					throw Exception::CreationFailed{ "Could not compile hlsl shader from file" };
+					std::string error{ "Could not compile hlsl shader from file" };
+					if(outError)
+					{
+						error += ". \nError: ";
+						error += reinterpret_cast<char *>((*outError)->GetBufferPointer());						
+					}
+					
+					throw Exception::CreationFailed{ error.data() };
 				}
 
 			}
@@ -77,7 +84,7 @@ namespace RHA
 					UINT Flags{ 0 };
 					Flags |= (insertDebugInfo ? D3DCOMPILE_DEBUG : 0);
 					Flags |= (skipOptimization ? D3DCOMPILE_SKIP_OPTIMIZATION : 0);
-					Flags |= (useHighOptimization ? D3DCOMPILE_OPTIMIZATION_LEVEL3);
+					Flags |= (useHighOptimization ? D3DCOMPILE_OPTIMIZATION_LEVEL3 : 0);
 
 					return Flags;
 

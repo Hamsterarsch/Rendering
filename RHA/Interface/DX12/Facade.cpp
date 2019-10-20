@@ -4,6 +4,7 @@
 #include "DX12/QueueImpl.hpp"
 #include "DX12/WindowSurfaceImpl.hpp"
 #include "DX12/FenceImpl.hpp"
+#include "DX12/ShaderFactoryImpl.hpp"
 
 
 namespace RHA
@@ -49,6 +50,16 @@ namespace RHA
 		UniquePtr<Fence> Facade::MakeFence(DeviceResources *resources)
 		{
 			return std::make_unique<FenceImpl>(resources);
+			
+		}
+
+		UniquePtr<ShaderFactory> Facade::MakeShaderFactory
+		(
+			unsigned char shaderModelMajor,
+			unsigned char shaderModelMinor
+		)
+		{
+			return std::make_unique<ShaderFactoryImpl>(shaderModelMajor, shaderModelMinor);
 			
 		}
 

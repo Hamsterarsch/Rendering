@@ -155,6 +155,7 @@
     <ClInclude Include="Exception\Exception.hpp" />
     <ClInclude Include="Exception\ExceptionHelper.hpp" />
     <ClInclude Include="Exception\OutOfRangeException.hpp" />
+    <ClInclude Include="Filesystem\Conversions.hpp" />
     <ClInclude Include="InterfaceHelpers.hpp" />
     <ClInclude Include="PtrTypes.hpp" />
     <ClInclude Include="targetver.h" />

@@ -1,6 +1,8 @@
 #include "Renderer.hpp"
 #include "DX12/Facade.hpp"
 
+#include "Shared/Filesystem/Conversions.hpp"
+
 
 namespace Renderer
 {
@@ -12,7 +14,34 @@ namespace Renderer
 		commonQueue = RHA::DX12::Facade::MakeQueue(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT);
 		outputSurface = RHA::DX12::Facade::MakeWindowSurface(resources.get(), commonQueue.get(), outputWindow);
 		commonAllocator = RHA::DX12::Facade::MakeCmdAllocator(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT);
-				
+
+		auto shFactory{ RHA::DX12::Facade::MakeShaderFactory(5,0) };
+
+		auto vertex
+		{
+			shFactory->MakeVertexShader
+			(
+				Filesystem::Conversions::MakeExeRelative(L"../Content/Shaders/Plain.vs").data(),
+				"main"
+			)
+		};
+
+		auto pixel
+		{
+			shFactory->MakePixelShader
+			(
+				Filesystem::Conversions::MakeExeRelative(L"../Content/Shaders/Plain.ps").data(),
+				"main"
+			)
+		};
+
+		D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc{};
+		
+		
+		resources->GetDevice()->CreateGraphicsPipelineState()
+
+		
+		
 		updaterHandle = std::async( std::launch::async, &Renderer::UpdateRendering, this);
 
 		{

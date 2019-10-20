@@ -89,6 +89,9 @@
     <ClInclude Include="DX12\ShaderFactoryImpl.hpp">
       <Filter>DX12</Filter>
     </ClInclude>
+    <ClInclude Include="Interface\DX12\ShaderFactory.hpp">
+      <Filter>Interface\DX12</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DX12">

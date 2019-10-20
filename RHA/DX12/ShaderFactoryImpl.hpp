@@ -1,14 +1,14 @@
 #pragma once
-#include <d3d12.h>
+#include "DX12/ShaderFactory.hpp"
 #include <string>
-#include "DxPtrTypes.hpp"
+
 
 
 namespace RHA
 {
 	namespace DX12
 	{
-		class ShaderFactoryImpl
+		class ShaderFactoryImpl : public ShaderFactory
 		{
 			std::string shaderModelSpec;
 			
@@ -21,21 +21,21 @@ namespace RHA
 
 			
 			public: ShaderFactoryImpl(unsigned char shaderModelMajor, unsigned char shaderModelMinor);
-					
-			public: void SkipOptimization(bool value);
+			
+			public: virtual void SkipOptimization(bool value) override;
 
-			public: void AddDebugInfo(bool value);
+			public: virtual void AddDebugInfo(bool value) override;
 
-			public: void AllowHighOptimizationTimes(bool value);
+			public: virtual void AllowHighOptimizationTimes(bool value) override;
 
 								
-			public: DxPtr<ID3DBlob> MakeVertexShader(const wchar_t *filepath, const char *entrypoint);
+			public: virtual DxPtr<ID3DBlob> MakeVertexShader(const wchar_t *filepath, const char *entrypoint) override;
 
 				private: void DoCompile(const wchar_t *filepath, const char *entrypoint, const char *shaderTypePrefix, ID3DBlob **outBytecode, ID3DBlob **outError);
 		
 					private: UINT MakeCompileFlags();
 
-			public: DxPtr<ID3DBlob> MakePixelShader(const wchar_t *filepath, const char *entrypoint);
+			public: virtual DxPtr<ID3DBlob> MakePixelShader(const wchar_t *filepath, const char *entrypoint) override;
 			
 		};
 

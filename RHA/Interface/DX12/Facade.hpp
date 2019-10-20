@@ -4,6 +4,7 @@
 #include "DX12/Queue.hpp"
 #include "DX12/WindowSurface.hpp"
 #include "DX12/Fence.hpp"
+#include "DX12/ShaderFactory.hpp"
 #include "Shared/PtrTypes.hpp"
 #include "RHAExportHelper.hpp"
 
@@ -24,6 +25,8 @@ namespace RHA
 			static UniquePtr<WindowSurface> MakeWindowSurface(DeviceResources *resources, Queue *queue, HWND window);
 
 			static UniquePtr<Fence> MakeFence(DeviceResources *resources);
+
+			static UniquePtr<ShaderFactory> MakeShaderFactory(unsigned char shaderModelMajor, unsigned char shaderModelMinor);
 			
 		};
 
