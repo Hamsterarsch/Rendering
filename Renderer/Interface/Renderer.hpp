@@ -6,6 +6,9 @@
 #include "Shared/PtrTypes.hpp"
 
 
+#include "DxPtrTypes.hpp"
+
+
 namespace RHA
 {
 	namespace DX12
@@ -19,6 +22,8 @@ namespace RHA
 	}
 }
 
+struct ID3D12RootSignature;
+struct ID3D12PipelineState;
 
 namespace Renderer
 {
@@ -44,6 +49,8 @@ namespace Renderer
 		
 		private: UniquePtr<RHA::DX12::WindowSurface> outputSurface;
 
+				 DxPtr<ID3D12RootSignature> signature;
+				 DxPtr<ID3D12PipelineState> pipeline;
 				 		
 		
 		public: Renderer(HWND outputWindow);
