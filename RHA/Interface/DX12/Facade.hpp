@@ -5,6 +5,7 @@
 #include "DX12/WindowSurface.hpp"
 #include "DX12/Fence.hpp"
 #include "DX12/ShaderFactory.hpp"
+#include "DX12/UploadHeap.hpp"
 #include "Shared/PtrTypes.hpp"
 #include "RHAExportHelper.hpp"
 
@@ -27,6 +28,8 @@ namespace RHA
 			static UniquePtr<Fence> MakeFence(DeviceResources *resources);
 
 			static UniquePtr<ShaderFactory> MakeShaderFactory(unsigned char shaderModelMajor, unsigned char shaderModelMinor);
+
+			static UniquePtr<UploadHeap> MakeUploadHeap(DeviceResources *resources, size_t sizeInBytes);
 			
 		};
 

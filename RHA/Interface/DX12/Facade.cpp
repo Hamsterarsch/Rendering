@@ -5,6 +5,7 @@
 #include "DX12/WindowSurfaceImpl.hpp"
 #include "DX12/FenceImpl.hpp"
 #include "DX12/ShaderFactoryImpl.hpp"
+#include "DX12/UploadHeapImpl.hpp"
 
 
 namespace RHA
@@ -60,6 +61,12 @@ namespace RHA
 		)
 		{
 			return std::make_unique<ShaderFactoryImpl>(shaderModelMajor, shaderModelMinor);
+			
+		}
+
+		UniquePtr<UploadHeap> Facade::MakeUploadHeap(DeviceResources *resources, size_t sizeInBytes)
+		{
+			return std::make_unique<UploadHeapImpl>(resources, sizeInBytes);
 			
 		}
 

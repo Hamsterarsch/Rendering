@@ -162,6 +162,7 @@
     <ClInclude Include="DX12\DescriptorHeapImpl.hpp" />
     <ClInclude Include="DX12\DeviceResourcesImpl.hpp" />
     <ClInclude Include="DX12\ShaderFactoryImpl.hpp" />
+    <ClInclude Include="DX12\UploadHeapImpl.hpp" />
     <ClInclude Include="DX12\WindowSurfaceImpl.hpp" />
     <ClInclude Include="Interface\DX12\CmdAllocator.hpp" />
     <ClInclude Include="Interface\DX12\CmdList.hpp" />
@@ -171,6 +172,7 @@
     <ClInclude Include="Interface\DX12\Fence.hpp" />
     <ClInclude Include="Interface\DX12\Queue.hpp" />
     <ClInclude Include="Interface\DX12\ShaderFactory.hpp" />
+    <ClInclude Include="Interface\DX12\UploadHeap.hpp" />
     <ClInclude Include="Interface\DX12\WindowSurface.hpp" />
     <ClInclude Include="Interface\DxPtrTypes.hpp" />
     <ClInclude Include="Interface\Exception\AllocatorOccupiedException.hpp" />
@@ -186,6 +188,7 @@
     <ClCompile Include="DX12\FenceImpl.cpp" />
     <ClCompile Include="DX12\QueueImpl.cpp" />
     <ClCompile Include="DX12\ShaderFactoryImpl.cpp" />
+    <ClCompile Include="DX12\UploadHeapImpl.cpp" />
     <ClCompile Include="DX12\WindowSurfaceImpl.cpp" />
     <ClCompile Include="Interface\DX12\Facade.cpp" />
   </ItemGroup>
