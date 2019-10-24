@@ -19,11 +19,13 @@ namespace RHA
 		class CmdList;
 		class WindowSurface;
 		class Fence;
+		class UploadHeap;
 	}
 }
 
 struct ID3D12RootSignature;
 struct ID3D12PipelineState;
+
 
 namespace Renderer
 {
@@ -49,8 +51,16 @@ namespace Renderer
 		
 		private: UniquePtr<RHA::DX12::WindowSurface> outputSurface;
 
+		private: UniquePtr<RHA::DX12::Fence> closeFence;
+
+		private: HANDLE closeEvent;
+
+		
+
 				 DxPtr<ID3D12RootSignature> signature;
 				 DxPtr<ID3D12PipelineState> pipeline;
+				 UniquePtr<RHA::DX12::CmdList> list;
+				 UniquePtr<RHA::DX12::UploadHeap> upHeap;
 				 		
 		
 		public: Renderer(HWND outputWindow);

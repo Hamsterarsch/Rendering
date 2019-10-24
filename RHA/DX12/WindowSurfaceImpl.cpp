@@ -117,9 +117,12 @@ namespace RHA
 					toOutputTarget.Transition.StateBefore = D3D12_RESOURCE_STATE_COMMON;
 					toOutputTarget.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 					toOutputTarget.Transition.pResource = bufferData.at(bufferIndex).resource.Get();
-
 					graphicsList->ResourceBarrier(1, &toOutputTarget);
-					graphicsList->ClearRenderTargetView(viewHeap.GetHandleCpu(bufferIndex), clearColor, 0, nullptr);
+
+					auto rtv{ viewHeap.GetHandleCpu(bufferIndex) };
+					graphicsList->ClearRenderTargetView(rtv, clearColor, 0, nullptr);					
+					graphicsList->OMSetRenderTargets(1, &rtv, false, nullptr);
+			
 					graphicsList->Close();
 
 				}
@@ -158,8 +161,8 @@ namespace RHA
 
 				void WindowSurfaceImpl::AssignEventsToFencesForBuffer(unsigned bufferIndex)
 				{
-					bufferData.at(bufferIndex).clearFence->GetFence()->SetEventOnCompletion(1, bufferData.at(bufferIndex).clearEvent);
-					bufferData.at(bufferIndex).presentFence->GetFence()->SetEventOnCompletion(1, bufferData.at(bufferIndex).presentEvent);
+					//bufferData.at(bufferIndex).clearFence->GetFence()->SetEventOnCompletion(1, bufferData.at(bufferIndex).clearEvent);
+					//bufferData.at(bufferIndex).presentFence->GetFence()->SetEventOnCompletion(1, bufferData.at(bufferIndex).presentEvent);
 
 				}
 		
@@ -169,6 +172,7 @@ namespace RHA
 			WaitForSingleObject(GetBackbufferData().clearEvent, INFINITE);
 			
 			queue->SubmitCommandList(GetBackbufferData().clearCmd.get());
+			GetBackbufferData().clearFence->GetFence()->SetEventOnCompletion(1, GetBackbufferData().clearEvent);
 			GetBackbufferData().clearFence->Signal(1, queue);
 			
 		}
@@ -181,9 +185,11 @@ namespace RHA
 		void WindowSurfaceImpl::SchedulePresentation(Queue *queue)
 		{
 			queue->SubmitCommandList(GetBackbufferData().presentCmd.get());
+			GetBackbufferData().presentFence->GetFence()->SetEventOnCompletion(1, GetBackbufferData().presentEvent);
 			GetBackbufferData().presentFence->Signal(1, queue);
 
 			WaitForSingleObject(GetBackbufferData().presentEvent, INFINITE);
+
 			
 			currentBackbufferIndex = (currentBackbufferIndex + 1) % bufferCount;
 			swapChain->Present(0, 0);

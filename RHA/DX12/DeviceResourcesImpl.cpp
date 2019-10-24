@@ -66,15 +66,23 @@ namespace RHA
 						continue;
 					}
 
+					DXGI_ADAPTER_DESC1 desc; hardwareAdapter->GetDesc1(&desc);
+
 					const auto result
 					{
 						D3D12CreateDevice(hardwareAdapter.Get(), minimumFeatureLevel, IID_PPV_ARGS(&device))
 					};
 
+
 					if (SUCCEEDED(result))
 					{
-						break;
-					}
+						D3D12_FEATURE_DATA_D3D12_OPTIONS options;
+						device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS, &options, sizeof(decltype(options)) );
+						if(options.TiledResourcesTier > D3D12_TILED_RESOURCES_TIER_NOT_SUPPORTED)
+						{
+							break;								
+						}						
+					}					
 					hardwareAdapter->Release();
 
 				}

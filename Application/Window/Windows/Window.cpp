@@ -10,7 +10,7 @@ namespace Windows
 	{
 		CreateWindowClass();
 
-		constexpr unsigned NO_X_DISP{ 0 }, NO_Y_DISP{ 0 }, NO_STYLE{ 0 };
+		constexpr unsigned NO_X_DISP{ 0 }, NO_Y_DISP{ 0 };
 		constexpr decltype(nullptr) NO_PARENT{}, NO_MENU{};
 		constexpr LPARAM NO_INIT_MSG{ 0 };
 
@@ -19,7 +19,7 @@ namespace Windows
 		(
 			className.data(),
 			this->windowName.data(),
-			NO_STYLE,
+			WS_OVERLAPPEDWINDOW,
 			NO_X_DISP,
 			NO_Y_DISP,
 			size.GetWidth(),
@@ -56,7 +56,7 @@ namespace Windows
 		{
 			switch(msg)
 			{
-			case WM_XBUTTONDOWN:
+			case WM_CLOSE:
 				PostQuitMessage(0);
 				break;
 			default:

@@ -14,8 +14,13 @@ namespace RHA
 
 			D3D12_RESOURCE_DESC bufferDesc{};
 			bufferDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-			bufferDesc.Format = DXGI_FORMAT_R8_TYPELESS;
+			bufferDesc.Format = DXGI_FORMAT_UNKNOWN;
 			bufferDesc.Width = sizeInBytes;
+			bufferDesc.Height = 1;
+			bufferDesc.DepthOrArraySize = 1;
+			bufferDesc.MipLevels = 1;
+			bufferDesc.SampleDesc.Count = 1;
+			bufferDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
 			const auto result
 			{
@@ -57,10 +62,10 @@ namespace RHA
 			}
 
 			memcpy(cpuSideAllocPos, data, dataByteCount);
+			const intptr_t offsetToAllocation = cpuSideAllocPos - cpuSideStart;
 			cpuSideAllocPos += dataByteCount;
 
-			const intptr_t uploadAddress = cpuSideAllocPos - cpuSideStart;
-			return uploadBuffer->GetGPUVirtualAddress() + uploadAddress;
+			return uploadBuffer->GetGPUVirtualAddress() + offsetToAllocation;
 
 		}
 
@@ -77,7 +82,7 @@ namespace RHA
 
 				bool UploadHeapImpl::AlignmentIsInvalid(const size_t alignment)
 				{
-					return alignment == 0 && (alignment & (alignment - 1));
+					return alignment == 0 || (alignment & (alignment - 1));
 
 				}
 		
