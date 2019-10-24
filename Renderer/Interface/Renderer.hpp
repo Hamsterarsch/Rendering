@@ -29,7 +29,7 @@ struct ID3D12PipelineState;
 
 namespace Renderer
 {
-
+	struct TriangleData;
 	
 	class RENDERER_DLLSPEC Renderer
 	{
@@ -56,7 +56,7 @@ namespace Renderer
 		private: HANDLE closeEvent;
 
 		
-
+				 UniquePtr<TriangleData> data;
 				 DxPtr<ID3D12RootSignature> signature;
 				 DxPtr<ID3D12PipelineState> pipeline;
 				 UniquePtr<RHA::DX12::CmdList> list;

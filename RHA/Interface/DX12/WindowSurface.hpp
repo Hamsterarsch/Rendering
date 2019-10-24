@@ -19,7 +19,8 @@ namespace RHA
 
 			public: virtual void SchedulePresentation(Queue *queue) = 0;
 
-			public: virtual void RecordRasterizerBindings(ID3D12GraphicsCommandList *list) = 0;
+			public: virtual void RecordPipelineBindings(ID3D12GraphicsCommandList *list) = 0;
+							
 							
 		};
 

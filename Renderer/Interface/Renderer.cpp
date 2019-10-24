@@ -10,6 +10,12 @@ struct vertex
 
 namespace Renderer
 {
+	struct TriangleData
+	{
+		D3D12_VERTEX_BUFFER_VIEW vertexView;
+		D3D12_INDEX_BUFFER_VIEW indexView;
+	};
+	
 	Renderer::Renderer(HWND outputWindow) :
 		inflightFramesAmount{ 1 },
 		shouldUpdateRendering{ false }
@@ -20,6 +26,7 @@ namespace Renderer
 		commonAllocator = RHA::DX12::Facade::MakeCmdAllocator(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT);
 		closeFence = RHA::DX12::Facade::MakeFence(resources.get());
 		closeEvent = CreateEvent(nullptr, false, false, nullptr);
+		data = std::make_unique<TriangleData>();
 		
 		auto shFactory{ RHA::DX12::Facade::MakeShaderFactory(5,0) };
 
@@ -67,11 +74,14 @@ namespace Renderer
 		psoDesc.DepthStencilState.DepthEnable = false;
 		psoDesc.DepthStencilState.StencilEnable = false;
 
+		psoDesc.BlendState.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;//this is important 
+		
 		
 		D3D12_RASTERIZER_DESC rasterDesc{};
 		rasterDesc.FillMode = D3D12_FILL_MODE_SOLID;
 		rasterDesc.CullMode = D3D12_CULL_MODE_NONE;
 		rasterDesc.FrontCounterClockwise = true;
+		rasterDesc.DepthClipEnable = true;
 		
 		psoDesc.RasterizerState = rasterDesc;
 
@@ -111,33 +121,24 @@ namespace Renderer
 		D3D12_HEAP_PROPERTIES bufferHeapProps{ D3D12_HEAP_TYPE_DEFAULT, D3D12_CPU_PAGE_PROPERTY_NOT_AVAILABLE, D3D12_MEMORY_POOL_L0, 0, 0 };
 
 
-		vertex vertices[3]{ {0.25, 0.75, 0 }, {0.75, 0.75, 0}, {0.5, 0.25, 0} };		
+		vertex vertices[3]{ {-0.75, -0.75, 0 }, {0.75, -0.75, 0}, {0, 0.75, 0} };		
 		unsigned indices[3]{ 0,1,2 };
 		
-		D3D12_VERTEX_BUFFER_VIEW vertexView{};
-		vertexView.BufferLocation = upHeap->CopyDataToUploadAddress(vertices, sizeof(vertices), sizeof(float));
-		vertexView.SizeInBytes = sizeof(vertices);
-		vertexView.StrideInBytes = sizeof(vertex);
 
-		D3D12_INDEX_BUFFER_VIEW indexView{};
-		indexView.BufferLocation = upHeap->CopyDataToUploadAddress(indices, sizeof(indices), sizeof(unsigned));
-		indexView.SizeInBytes = sizeof(indices);
-		indexView.Format = DXGI_FORMAT_R32_UINT;
+		data->vertexView.BufferLocation = upHeap->CopyDataToUploadAddress(vertices, sizeof(vertices), sizeof(float));
+		data->vertexView.SizeInBytes = sizeof(vertices);
+		data->vertexView.StrideInBytes = sizeof(vertex);
+
+
+		data->indexView.BufferLocation = upHeap->CopyDataToUploadAddress(indices, sizeof(indices), sizeof(unsigned));
+		data->indexView.SizeInBytes = sizeof(indices);
+		data->indexView.Format = DXGI_FORMAT_R32_UINT;
 			   		
 
 		
 		list = commonAllocator->AllocateList();
-		
-
 		auto gral{ list->AsGraphicsList() };
-		gral->SetPipelineState(pipeline.Get());
-		gral->SetGraphicsRootSignature(signature.Get());
-		outputSurface->RecordRasterizerBindings(gral.Get());
-		gral->IASetVertexBuffers(0, 1, &vertexView);
-		gral->IASetIndexBuffer(&indexView);
-		gral->IASetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		gral->DrawIndexedInstanced(3, 1, 0, 0, 0);
-		gral->Close();
+		gral->Close();		
 		
 		updaterHandle = std::async( std::launch::async, &Renderer::UpdateRendering, this);
 
@@ -161,8 +162,20 @@ namespace Renderer
 			{
 				outputSurface->ScheduleBackbufferClear(commonQueue.get());
 
+				
+				auto gral{ list->AsGraphicsList() };
+				gral->Reset(commonAllocator->GetAllocator().Get(), pipeline.Get());
+								
+				outputSurface->RecordPipelineBindings(gral.Get());
+				gral->SetGraphicsRootSignature(signature.Get());
+				gral->IASetVertexBuffers(0, 1, &data->vertexView);
+				gral->IASetIndexBuffer(&data->indexView);
+				gral->IASetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+				gral->DrawIndexedInstanced(3, 1, 0, 0, 0);
+				gral->Close();
+				
 				commonQueue->SubmitCommandList(list.get());
-				//other commands
+				
 				
 				outputSurface->SchedulePresentation(commonQueue.get());							
 			}

@@ -132,8 +132,7 @@ namespace RHA
 					graphicsList->ResourceBarrier(1, &toOutputTarget);
 
 					auto rtv{ viewHeap.GetHandleCpu(bufferIndex) };
-					graphicsList->ClearRenderTargetView(rtv, clearColor, 0, nullptr);					
-					graphicsList->OMSetRenderTargets(1, &rtv, false, nullptr);
+					graphicsList->ClearRenderTargetView(rtv, clearColor, 0, nullptr);										
 			
 					graphicsList->Close();
 
@@ -201,8 +200,11 @@ namespace RHA
 			
 		}
 
-		void WindowSurfaceImpl::RecordRasterizerBindings(ID3D12GraphicsCommandList *list)
-		{			
+		void WindowSurfaceImpl::RecordPipelineBindings(ID3D12GraphicsCommandList *list)
+		{
+			auto rtv{ viewHeap.GetHandleCpu(currentBackbufferIndex) };
+			list->OMSetRenderTargets(1, &rtv, false, nullptr);
+			
 			list->RSSetViewports(1, &defaultViewport);
 			list->RSSetScissorRects(1, &defaultRect);
 			
