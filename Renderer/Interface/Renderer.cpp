@@ -3,6 +3,14 @@
 #include "Shared/Filesystem/Conversions.hpp"
 
 
+#if _DEBUG
+	constexpr bool enableDebugLayers = true;
+#else
+	constexpr bool enableDebugLayers = false;
+#endif
+
+
+
 struct vertex
 {
 	float x, y, z;
@@ -20,7 +28,7 @@ namespace Renderer
 		inflightFramesAmount{ 1 },
 		shouldUpdateRendering{ false }
 	{
-		resources = RHA::DX12::Facade::MakeDeviceResources(D3D_FEATURE_LEVEL_11_0, true);
+		resources = RHA::DX12::Facade::MakeDeviceResources(D3D_FEATURE_LEVEL_11_0, enableDebugLayers);
 		commonQueue = RHA::DX12::Facade::MakeQueue(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT);
 		outputSurface = RHA::DX12::Facade::MakeWindowSurface(resources.get(), commonQueue.get(), outputWindow);
 		commonAllocator = RHA::DX12::Facade::MakeCmdAllocator(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT);
@@ -79,7 +87,7 @@ namespace Renderer
 		
 		D3D12_RASTERIZER_DESC rasterDesc{};
 		rasterDesc.FillMode = D3D12_FILL_MODE_SOLID;
-		rasterDesc.CullMode = D3D12_CULL_MODE_NONE;
+		rasterDesc.CullMode = D3D12_CULL_MODE_BACK;
 		rasterDesc.FrontCounterClockwise = true;
 		rasterDesc.DepthClipEnable = true;
 		
