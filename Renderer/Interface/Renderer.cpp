@@ -51,7 +51,7 @@ namespace Renderer
 			0,
 			DXGI_FORMAT_R32G32B32_FLOAT,
 			0,
-			D3D12_APPEND_ALIGNED_ELEMENT,
+			0,
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA ,
 			0
 		};
@@ -65,11 +65,12 @@ namespace Renderer
 		psoDesc.VS = D3D12_SHADER_BYTECODE{ vs->GetBufferPointer(), vs->GetBufferSize() };
 		psoDesc.PS = D3D12_SHADER_BYTECODE{ ps->GetBufferPointer(), ps->GetBufferSize() };
 		psoDesc.DepthStencilState.DepthEnable = false;
+		psoDesc.DepthStencilState.StencilEnable = false;
 
 		
 		D3D12_RASTERIZER_DESC rasterDesc{};
 		rasterDesc.FillMode = D3D12_FILL_MODE_SOLID;
-		rasterDesc.CullMode = D3D12_CULL_MODE_BACK;
+		rasterDesc.CullMode = D3D12_CULL_MODE_NONE;
 		rasterDesc.FrontCounterClockwise = true;
 		
 		psoDesc.RasterizerState = rasterDesc;
@@ -82,6 +83,7 @@ namespace Renderer
 		psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM; //?
 		psoDesc.SampleDesc.Count = 1;
 		psoDesc.SampleDesc.Quality = 0;
+		psoDesc.SampleMask = UINT_MAX;
 		
 
 		D3D12_VERSIONED_ROOT_SIGNATURE_DESC signatureDesc{};
@@ -109,18 +111,20 @@ namespace Renderer
 		D3D12_HEAP_PROPERTIES bufferHeapProps{ D3D12_HEAP_TYPE_DEFAULT, D3D12_CPU_PAGE_PROPERTY_NOT_AVAILABLE, D3D12_MEMORY_POOL_L0, 0, 0 };
 
 
-		vertex vertices[3]{ {0.25, 0.75, 1 }, {0.75, 0.75, 0}, {0.5, 0.25, 0} };
+		vertex vertices[3]{ {0.25, 0.75, 0 }, {0.75, 0.75, 0}, {0.5, 0.25, 0} };		
 		unsigned indices[3]{ 0,1,2 };
 		
 		D3D12_VERTEX_BUFFER_VIEW vertexView{};
 		vertexView.BufferLocation = upHeap->CopyDataToUploadAddress(vertices, sizeof(vertices), sizeof(float));
 		vertexView.SizeInBytes = sizeof(vertices);
-		vertexView.StrideInBytes = 3 * sizeof(vertex);
+		vertexView.StrideInBytes = sizeof(vertex);
 
 		D3D12_INDEX_BUFFER_VIEW indexView{};
-		indexView.Format = DXGI_FORMAT_R32_UINT;
 		indexView.BufferLocation = upHeap->CopyDataToUploadAddress(indices, sizeof(indices), sizeof(unsigned));
 		indexView.SizeInBytes = sizeof(indices);
+		indexView.Format = DXGI_FORMAT_R32_UINT;
+			   		
+
 		
 		list = commonAllocator->AllocateList();
 		
@@ -128,6 +132,7 @@ namespace Renderer
 		auto gral{ list->AsGraphicsList() };
 		gral->SetPipelineState(pipeline.Get());
 		gral->SetGraphicsRootSignature(signature.Get());
+		outputSurface->RecordRasterizerBindings(gral.Get());
 		gral->IASetVertexBuffers(0, 1, &vertexView);
 		gral->IASetIndexBuffer(&indexView);
 		gral->IASetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
