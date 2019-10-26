@@ -1,7 +1,9 @@
 #pragma once
-#include "AllocationRegistry.hpp"
-#include "FrameSuballocator.hpp"
+#include "Resources/AllocationRegistry.hpp"
+#include "Resources/ResourceAllocation.hpp"
 #include "Shared/PtrTypes.hpp"
+#include "FrameSuballocator.hpp"
+
 
 /*
  enum class ResourceTypes : char
@@ -53,15 +55,20 @@ class ResourceMngr
 
 
 namespace Renderer
-{
+{	
 	class ResourceFactory
 	{
 		private: AllocationRegistry allocRegistry;
 
 		private: SharedPtr<class ResourceRegistry> rescRegistry;//actual file io should be done in a seperate library and class
+				 
 
 
 		public: FrameSuballocator MakeAllocatorForNewFrame();
+
+		public: ResourceAllocation FindExistingAllocation(ResourceHandle handle);
+
+		public: void OnNewAllocationMade(ResourceHandle handle);
 		
 		
 	};
