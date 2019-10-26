@@ -172,6 +172,8 @@
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Interface\Renderer.cpp" />
+    <ClCompile Include="Interface\Resources\FrameSuballocator.cpp" />
+    <ClCompile Include="Interface\Resources\ResourceFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RHA\RHA.vcxproj">

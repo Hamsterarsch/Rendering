@@ -1,5 +1,6 @@
 #pragma once
 #include "Resources/AllocationRegistry.hpp"
+#include "Resources/ResourceRegistry.hpp"
 #include "Resources/ResourceAllocation.hpp"
 #include "Shared/PtrTypes.hpp"
 #include "FrameSuballocator.hpp"
@@ -53,6 +54,14 @@ class ResourceMngr
 };
  */
 
+namespace RHA
+{
+	namespace DX12
+	{
+		class DeviceResources;
+		class UploadHeap;
+	}
+}
 
 namespace Renderer
 {	
@@ -60,10 +69,13 @@ namespace Renderer
 	{
 		private: AllocationRegistry allocRegistry;
 
-		private: SharedPtr<class ResourceRegistry> rescRegistry;//actual file io should be done in a seperate library and class
-				 
+		private: ResourceRegistry rescRegistry;//actual file io should be done in a seperate library and class
 
+		private: UniquePtr<RHA::DX12::UploadHeap> uploadHeap;
 
+		
+		public: ResourceFactory(RHA::DX12::DeviceResources *resources);
+		
 		public: FrameSuballocator MakeAllocatorForNewFrame();
 
 		public: ResourceAllocation FindExistingAllocation(ResourceHandle handle);
