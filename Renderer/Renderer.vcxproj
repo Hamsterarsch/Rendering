@@ -161,19 +161,19 @@
   <ItemGroup>
     <ClInclude Include="Interface\Renderer.hpp" />
     <ClInclude Include="Interface\RendererExportHelper.hpp" />
-    <ClInclude Include="Interface\Resources\ResourceAllocation.hpp" />
     <ClInclude Include="Interface\Resources\ResourceHandle.hpp" />
-    <ClInclude Include="Interface\Resources\ResourceRegistry.hpp" />
+    <ClInclude Include="Resources\ResourceAllocation.hpp" />
     <ClInclude Include="Resources\ResourceFactory.hpp" />
     <ClInclude Include="Resources\AllocationRegistry.hpp" />
     <ClInclude Include="Resources\FrameSuballocator.hpp" />
+    <ClInclude Include="Resources\ResourceRegistry.hpp" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Interface\Renderer.cpp" />
-    <ClCompile Include="Interface\Resources\FrameSuballocator.cpp" />
-    <ClCompile Include="Interface\Resources\ResourceFactory.cpp" />
+    <ClCompile Include="Resources\FrameSuballocator.cpp" />
+    <ClCompile Include="Resources\ResourceFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RHA\RHA.vcxproj">

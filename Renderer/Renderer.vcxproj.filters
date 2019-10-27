@@ -17,13 +17,13 @@
     <ClInclude Include="Interface\Resources\ResourceHandle.hpp">
       <Filter>Interface\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Interface\Resources\ResourceRegistry.hpp">
-      <Filter>Resources</Filter>
-    </ClInclude>
     <ClInclude Include="Resources\ResourceFactory.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Interface\Resources\ResourceAllocation.hpp">
+    <ClInclude Include="Resources\ResourceAllocation.hpp">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\ResourceRegistry.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
   </ItemGroup>
@@ -32,10 +32,10 @@
     <ClCompile Include="Interface\Renderer.cpp">
       <Filter>Interface</Filter>
     </ClCompile>
-    <ClCompile Include="Interface\Resources\ResourceFactory.cpp">
+    <ClCompile Include="Resources\ResourceFactory.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Interface\Resources\FrameSuballocator.cpp">
+    <ClCompile Include="Resources\FrameSuballocator.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
   </ItemGroup>

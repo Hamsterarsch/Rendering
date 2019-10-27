@@ -6,6 +6,7 @@
 #include "FrameSuballocator.hpp"
 
 
+
 /*
  enum class ResourceTypes : char
 {
@@ -60,8 +61,10 @@ namespace RHA
 	{
 		class DeviceResources;
 		class UploadHeap;
+		class Queue;
 	}
 }
+
 
 namespace Renderer
 {	
@@ -73,8 +76,13 @@ namespace Renderer
 
 		private: UniquePtr<RHA::DX12::UploadHeap> uploadHeap;
 
+		private: RHA::DX12::Queue *queue;
+
+		private: size_t estimateBytesPerAllocator;
+
+
 		
-		public: ResourceFactory(RHA::DX12::DeviceResources *resources);
+		public: ResourceFactory(RHA::DX12::DeviceResources *resources, RHA::DX12::Queue *queue);
 		
 		public: FrameSuballocator MakeAllocatorForNewFrame();
 
