@@ -1,7 +1,15 @@
 #pragma once
 
 
-namespace RHA{ namespace DX12{ class DeviceResources; }}
+namespace RHA
+{
+	namespace DX12
+	{
+		class DeviceResources;
+		struct HeapAllocation;
+	}
+	
+}
 
 
 namespace Renderer
@@ -13,6 +21,9 @@ namespace Renderer
 		
 		
 		public: AllocationHeaps(RHA::DX12::DeviceResources *resources, size_t initialHeapEstimate);
+
+
+		public: RHA::DX12::HeapAllocation Allocate(size_t sizeInBytes, unsigned allocatorID);
 		
 	};
 	

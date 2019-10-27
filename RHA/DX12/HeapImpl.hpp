@@ -23,18 +23,23 @@ namespace RHA
 
 			public: HeapImpl(DeviceResources *resources, size_t sizeInBytes, size_t alignment);
 
+				private: size_t IncreaseValueToAlignment(size_t value);
+			
 				private: void CheckHeapCreation(HRESULT result) const;
 			
 				private: bool AlignmentIsInvalid() const;
 
 			
+			public: bool HasCapacityForAllocation(size_t allocationSizeInBytes) const;
+
+			
 			public: virtual struct HeapAllocation Allocate(size_t sizeInBytes) override;
 
-				private: void AdvanceOffsetToFreeRegionToAlignment();
+				private: void CheckAllocationSize(size_t allocationSizeInBytes) const;
+						
+				private: void OnAllocationMade(size_t sizeInBytes);
 			
-				private: void CheckHeapState() const;
 			
-					private: bool HeapIsOutOfMemory() const;
 						
 		};
 
