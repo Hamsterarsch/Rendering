@@ -1,5 +1,6 @@
 #include <d3d12.h>
 #include "Shared/Exception/CreationFailedException.hpp"
+#include "Shared/Exception/OutOfMemoryException.hpp"
 #include "DX12/UploadHeapImpl.hpp"
 
 
@@ -73,7 +74,7 @@ namespace RHA
 			{
 				if (AlignmentIsInvalid(alignment))
 				{
-					throw Exception::Exception{ "Upload heap alignment is invalid" };
+					throw Exception::OutOfMemory{ "Upload heap alignment is invalid" };
 				}
 
 				cpuSideAllocPos = reinterpret_cast<BYTE *>((reinterpret_cast<size_t>(cpuSideAllocPos) + alignment - 1) & ~(alignment - 1));
@@ -82,7 +83,7 @@ namespace RHA
 
 				bool UploadHeapImpl::AlignmentIsInvalid(const size_t alignment)
 				{
-					return alignment == 0 || (alignment & (alignment - 1));
+					return alignment == 0 || (alignment & (alignment-1));
 
 				}
 		

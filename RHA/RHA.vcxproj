@@ -158,6 +158,7 @@
     <ClInclude Include="DX12\CmdAllocatorImpl.hpp" />
     <ClInclude Include="DX12\CmdListImpl.hpp" />
     <ClInclude Include="DX12\FenceImpl.hpp" />
+    <ClInclude Include="DX12\HeapImpl.hpp" />
     <ClInclude Include="DX12\QueueImpl.hpp" />
     <ClInclude Include="DX12\DescriptorHeapImpl.hpp" />
     <ClInclude Include="DX12\DeviceResourcesImpl.hpp" />
@@ -170,6 +171,8 @@
     <ClInclude Include="Interface\DX12\DeviceResources.hpp" />
     <ClInclude Include="Interface\DX12\Facade.hpp" />
     <ClInclude Include="Interface\DX12\Fence.hpp" />
+    <ClInclude Include="Interface\DX12\Heap.hpp" />
+    <ClInclude Include="Interface\DX12\HeapAllocation.hpp" />
     <ClInclude Include="Interface\DX12\Queue.hpp" />
     <ClInclude Include="Interface\DX12\ShaderFactory.hpp" />
     <ClInclude Include="Interface\DX12\UploadHeap.hpp" />
@@ -186,6 +189,7 @@
     <ClCompile Include="DX12\DescriptorHeapImpl.cpp" />
     <ClCompile Include="DX12\DeviceResourcesImpl.cpp" />
     <ClCompile Include="DX12\FenceImpl.cpp" />
+    <ClCompile Include="DX12\HeapImpl.cpp" />
     <ClCompile Include="DX12\QueueImpl.cpp" />
     <ClCompile Include="DX12\ShaderFactoryImpl.cpp" />
     <ClCompile Include="DX12\UploadHeapImpl.cpp" />

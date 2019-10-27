@@ -6,6 +6,7 @@
 #include "DX12/FenceImpl.hpp"
 #include "DX12/ShaderFactoryImpl.hpp"
 #include "DX12/UploadHeapImpl.hpp"
+#include "Dx12/HeapImpl.hpp"
 
 
 namespace RHA
@@ -70,6 +71,12 @@ namespace RHA
 			
 		}
 
+		UniquePtr<Heap> Facade::MakeHeap(DeviceResources* resources, size_t sizeInBytes, size_t alignment)
+		{
+			return std::make_unique<HeapImpl>(resources, sizeInBytes, alignment);
+			
+		}
+		
 		
 	}
 

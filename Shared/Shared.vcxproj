@@ -154,6 +154,7 @@
     <ClInclude Include="Exception\CreationFailedException.hpp" />
     <ClInclude Include="Exception\Exception.hpp" />
     <ClInclude Include="Exception\ExceptionHelper.hpp" />
+    <ClInclude Include="Exception\OutOfMemoryException.hpp" />
     <ClInclude Include="Exception\OutOfRangeException.hpp" />
     <ClInclude Include="Filesystem\Conversions.hpp" />
     <ClInclude Include="InterfaceHelpers.hpp" />

@@ -21,7 +21,7 @@ namespace RHA
 			
 			public: UploadHeapImpl(DeviceResources *resources, size_t sizeInBytes);
 
-
+				
 			public: virtual D3D12_GPU_VIRTUAL_ADDRESS CopyDataToUploadAddress(const void *data, size_t dataByteCount, size_t alignment) override;
 				
 				private: void AdvanceAllocPosToAlignment(size_t alignment);

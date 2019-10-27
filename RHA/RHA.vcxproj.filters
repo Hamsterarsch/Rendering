@@ -32,6 +32,9 @@
     <ClCompile Include="DX12\UploadHeapImpl.cpp">
       <Filter>DX12</Filter>
     </ClCompile>
+    <ClCompile Include="DX12\HeapImpl.cpp">
+      <Filter>DX12</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h" />
@@ -99,6 +102,15 @@
       <Filter>DX12</Filter>
     </ClInclude>
     <ClInclude Include="Interface\DX12\UploadHeap.hpp">
+      <Filter>Interface\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\HeapImpl.hpp">
+      <Filter>DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\DX12\HeapAllocation.hpp">
+      <Filter>Interface\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\DX12\Heap.hpp">
       <Filter>Interface\DX12</Filter>
     </ClInclude>
   </ItemGroup>

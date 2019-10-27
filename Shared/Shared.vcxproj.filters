@@ -22,6 +22,9 @@
     <ClInclude Include="Filesystem\Conversions.hpp">
       <Filter>Filesystem</Filter>
     </ClInclude>
+    <ClInclude Include="Exception\OutOfMemoryException.hpp">
+      <Filter>Exception</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Exception">
