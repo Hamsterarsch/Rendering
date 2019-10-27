@@ -162,6 +162,7 @@
     <ClInclude Include="Interface\Renderer.hpp" />
     <ClInclude Include="Interface\RendererExportHelper.hpp" />
     <ClInclude Include="Interface\Resources\ResourceHandle.hpp" />
+    <ClInclude Include="Resources\AllocationHeaps.hpp" />
     <ClInclude Include="Resources\ResourceAllocation.hpp" />
     <ClInclude Include="Resources\ResourceFactory.hpp" />
     <ClInclude Include="Resources\AllocationRegistry.hpp" />
@@ -172,6 +173,7 @@
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Interface\Renderer.cpp" />
+    <ClCompile Include="Resources\AllocationHeaps.cpp" />
     <ClCompile Include="Resources\FrameSuballocator.cpp" />
     <ClCompile Include="Resources\ResourceFactory.cpp" />
   </ItemGroup>

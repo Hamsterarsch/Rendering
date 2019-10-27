@@ -78,8 +78,6 @@ namespace Renderer
 
 		private: RHA::DX12::Queue *queue;
 
-		private: size_t estimateBytesPerAllocator;
-
 
 		
 		public: ResourceFactory(RHA::DX12::DeviceResources *resources, RHA::DX12::Queue *queue);

@@ -26,6 +26,9 @@
     <ClInclude Include="Resources\ResourceRegistry.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
+    <ClInclude Include="Resources\AllocationHeaps.hpp">
+      <Filter>Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -36,6 +39,9 @@
       <Filter>Resources</Filter>
     </ClCompile>
     <ClCompile Include="Resources\FrameSuballocator.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\AllocationHeaps.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
   </ItemGroup>

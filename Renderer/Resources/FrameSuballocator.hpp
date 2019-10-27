@@ -11,10 +11,12 @@ namespace Renderer
 		private: ResourceAllocation allocationRange;
 
 		private: class ResourceFactory *parent;
+
+		private: const unsigned allocatorID;
 		
 		
 
-		public: FrameSuballocator(const ResourceAllocation &allocationRange, class ResourceFactory *parent);
+		public: FrameSuballocator(const ResourceAllocation &allocationRange, class ResourceFactory *parent, unsigned allocatorID);
 		
 		public: ID3D12Resource MakeBufferWithData(void *data, size_t sizeInBytes);
 
