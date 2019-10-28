@@ -11,8 +11,14 @@ namespace RHA
 		{
 			DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(Heap)
 
+			
+			public: virtual size_t GetSizeInBytes() const = 0;			
+			
+			public: virtual bool HasCapacityForAllocation(size_t allocationSizeInBytes) const = 0;
 
-			virtual HeapAllocation Allocate(size_t sizeInBytes) = 0;
+			public: virtual HeapAllocation Allocate(size_t sizeInBytes) = 0;
+
+			public: virtual void Reset() = 0;	
 			
 		};
 

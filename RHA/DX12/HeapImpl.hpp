@@ -29,18 +29,20 @@ namespace RHA
 			
 				private: bool AlignmentIsInvalid() const;
 
-			
-			public: bool HasCapacityForAllocation(size_t allocationSizeInBytes) const;
-
-			
+						
+			public: virtual inline size_t GetSizeInBytes() const override { return sizeInBytes; }
+											
+			public: virtual bool HasCapacityForAllocation(size_t allocationSizeInBytes) const override;
+									   			
 			public: virtual struct HeapAllocation Allocate(size_t sizeInBytes) override;
 
 				private: void CheckAllocationSize(size_t allocationSizeInBytes) const;
 						
 				private: void OnAllocationMade(size_t sizeInBytes);
+
 			
-			
-						
+			public: virtual void Reset() override;
+									
 		};
 
 		

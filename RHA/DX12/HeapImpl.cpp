@@ -36,6 +36,7 @@ namespace RHA
 				return alignment == 0 || (alignment & (alignment-1));
 			}
 
+
 			size_t HeapImpl::IncreaseValueToAlignment(const size_t value)
 			{
 				return (value + alignment-1) & ~(alignment-1);
@@ -87,7 +88,14 @@ namespace RHA
 				offsetToFreeRegion = IncreaseValueToAlignment(offsetToFreeRegion + sizeInBytes);
 			
 			}
-							   
+
+
+		void HeapImpl::Reset()
+		{
+			offsetToFreeRegion = 0;
+			
+		}
+
 		
 	}
 
