@@ -24,6 +24,8 @@ namespace Renderer
 		private: size_t estimateBytesPerHeap;
 
 		private: std::map<unsigned, std::vector<UniquePtr<RHA::DX12::Heap>>> heaps;
+
+		private: RHA::DX12::DeviceResources *resources;
 		
 		
 		
