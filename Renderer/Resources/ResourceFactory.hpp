@@ -7,55 +7,6 @@
 #include "FrameSuballocator.hpp"
 
 
-
-/*
- enum class ResourceTypes : char
-{
-	Mesh,
-	PSO,
-	Texture
-};
-
-struct ResourceHandle
-{
-	ResourceTypes type;
-	size_t serial;	
-};
-
-class ResourceMngr;
-
-class FrameSubmngr
-{
-	const size_t frameNumber;
-	ResourceMngr *parent;
-
-	public: struct Buffer LoadDataToBuffer(void *data, size_t sizeInBytes);
-
-	public: struct Buffer LoadMeshVerticesToBuffer(ResourceHandle handle)
-		
-		struct allocation RequestResourceDataFromParent(ResourceHandle handle);
-
-		void AllocateResource(ResourceHandle ResourceHandle);
-	
-};
-
-class ResourceMngr
-{
-	private: class ResourceRegistry *registry;//shared ptr
-
-	private: class loadedResources *loaded;
-	
-	
-	public: FrameSubmngr GetSuballocatorForFrame();
-
-	public: allocation FindResourceData(ResourceHandle handle);
-
-		private: void AddResourceToLoaded(ResourceHandle handle);
-	
-	
-};
- */
-
 namespace RHA
 {
 	namespace DX12
@@ -75,9 +26,9 @@ namespace Renderer
 
 		private: ResourceRegistry rescRegistry;//actual file io should be done in a seperate library and class
 
-		private: UniquePtr<RHA::DX12::UploadHeap> uploadHeap;
-
 		private: RHA::DX12::Queue *queue;
+
+		private: RHA::DX12::DeviceResources *resources;
 
 		private: AllocationHeaps rescMemory;
 		
@@ -87,6 +38,10 @@ namespace Renderer
 
 		public: ResourceAllocation FindExistingAllocation(ResourceHandle handle);
 
+		public: RHA::DX12::HeapAllocation MakeRawAllocation(size_t sizeInBytes, unsigned allocatorID);
+
+		
+		
 		public: void OnNewAllocationMade(ResourceHandle handle);
 		
 		

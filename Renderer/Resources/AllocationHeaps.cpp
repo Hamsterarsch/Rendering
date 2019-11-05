@@ -16,8 +16,7 @@ namespace Renderer
 		newestDeclaredAllocatorID{ 0 },
 		resources{ resources }
 	{
-		std::vector<UniquePtr<RHA::DX12::Heap>> c{};
-		//heaps.insert( { 0,  } );
+		heaps.insert( { 0, {} } );
 		
 	}
 
@@ -43,7 +42,7 @@ namespace Renderer
 		if(heaps.at(0).size() > 0)
 		{
 			heaps.insert({ newestDeclaredAllocatorID, {} });
-			heaps.at(newestDeclaredAllocatorID).push_back( std::move(heaps.at(0).back()) );
+			heaps.at(newestDeclaredAllocatorID).emplace_back( std::move(heaps.at(0).back()) );
 			
 			heaps.at(0).erase(heaps.at(0).end() -1);
 			return newestDeclaredAllocatorID;
@@ -52,7 +51,7 @@ namespace Renderer
 
 		//construct a new heap
 		heaps.insert({ newestDeclaredAllocatorID, {} });
-		heaps.at(newestDeclaredAllocatorID).push_back(RHA::DX12::Facade::MakeHeap(resources, estimateBytesPerHeap, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT));
+		heaps.at(newestDeclaredAllocatorID).emplace_back(RHA::DX12::Facade::MakeHeap(resources, estimateBytesPerHeap, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT));
 		return newestDeclaredAllocatorID;
 		
 	}
