@@ -16,7 +16,7 @@ namespace Renderer
 		newestDeclaredAllocatorID{ 0 },
 		resources{ resources }
 	{
-		heaps.insert( { 0, {} } );
+		heaps.insert( { 0, std::list<UniquePtr<RHA::DX12::Heap>>() } );
 		
 	}
 
