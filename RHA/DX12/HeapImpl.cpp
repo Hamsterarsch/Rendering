@@ -8,7 +8,7 @@ namespace RHA
 {
 	namespace DX12
 	{
-		HeapImpl::HeapImpl(DeviceResources *resources, const size_t sizeInBytes, const size_t alignment) :
+		HeapImpl::HeapImpl(DeviceResources *resources, const size_t sizeInBytes, const size_t alignment, const D3D12_HEAP_FLAGS flags) :
 			sizeInBytes{ sizeInBytes },
 			offsetToFreeRegion{ 0 },
 			alignment{ alignment }
@@ -22,6 +22,7 @@ namespace RHA
 			desc.Alignment = alignment;
 			desc.Properties.Type = D3D12_HEAP_TYPE_DEFAULT;
 			desc.SizeInBytes = IncreaseValueToAlignment(sizeInBytes);
+			desc.Flags = flags;
 			
 			const auto result
 			{

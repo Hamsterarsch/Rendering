@@ -21,7 +21,7 @@ namespace RHA
 
 			
 
-			public: HeapImpl(DeviceResources *resources, size_t sizeInBytes, size_t alignment);
+			public: HeapImpl(DeviceResources *resources, size_t sizeInBytes, size_t alignment, D3D12_HEAP_FLAGS flags);
 
 				private: size_t IncreaseValueToAlignment(size_t value);
 			

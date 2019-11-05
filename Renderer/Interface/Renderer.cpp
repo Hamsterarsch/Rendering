@@ -2,6 +2,7 @@
 #include "DX12/Facade.hpp"
 #include "Shared/Filesystem/Conversions.hpp"
 
+#include "Resources/ResourceFactory.hpp"
 
 #if _DEBUG
 	constexpr bool enableDebugLayers = true;
@@ -35,6 +36,17 @@ namespace Renderer
 		closeFence = RHA::DX12::Facade::MakeFence(resources.get());
 		closeEvent = CreateEvent(nullptr, false, false, nullptr);
 		data = std::make_unique<TriangleData>();
+
+		//resource model test section
+		{
+		ResourceFactory rescFactory{ resources.get(), commonQueue.get() };
+		auto rescAllocator{ rescFactory.MakeAllocatorForNewFrame() };
+
+		int rescData[]{ 1, 4, 2, 5, 3, 5 };
+		
+		auto buffer{ rescAllocator.MakeBufferWithData(rescData, sizeof(rescData)) };
+		}
+		//end 
 		
 		auto shFactory{ RHA::DX12::Facade::MakeShaderFactory(5,0) };
 

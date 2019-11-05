@@ -10,7 +10,7 @@
 
 namespace Renderer
 {	
-	AllocationHeaps::AllocationHeaps(RHA::DX12::DeviceResources *resources, const size_t initialHeapSizeInBytes) :
+	AllocationHeaps::AllocationHeaps(RHA::DX12::DeviceResources *resources, const size_t initialHeapSizeInBytes, D3D12_HEAP_FLAGS flags) :
 		estimateBytesPerHeap{ initialHeapSizeInBytes },
 		allowedEstimateDeviation{ 0.2 },
 		newestDeclaredAllocatorID{ 0 },
