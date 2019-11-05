@@ -1,6 +1,7 @@
 #pragma once
 #include "Resources/AllocationRegistry.hpp"
 #include "Resources/ResourceRegistry.hpp"
+#include "Resources/AllocationHeaps.hpp"
 #include "Resources/ResourceAllocation.hpp"
 #include "Shared/PtrTypes.hpp"
 #include "FrameSuballocator.hpp"
@@ -78,7 +79,7 @@ namespace Renderer
 
 		private: RHA::DX12::Queue *queue;
 
-
+		private: AllocationHeaps rescMemory;
 		
 		public: ResourceFactory(RHA::DX12::DeviceResources *resources, RHA::DX12::Queue *queue);
 		

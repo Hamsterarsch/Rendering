@@ -3,8 +3,7 @@
 
 namespace Renderer
 {
-	FrameSuballocator::FrameSuballocator(const ResourceAllocation &allocationRange, ResourceFactory *parent, const unsigned allocatorID) :
-		allocationRange{ allocationRange },
+	FrameSuballocator::FrameSuballocator(ResourceFactory *parent, const unsigned allocatorID) :
 		parent{ parent },
 		allocatorID{ allocatorID }
 	{		

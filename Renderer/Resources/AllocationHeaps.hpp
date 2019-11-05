@@ -23,6 +23,10 @@ namespace Renderer
 	{
 		private: size_t estimateBytesPerHeap;
 
+		private: const float allowedEstimateDeviation;
+
+		private: unsigned newestDeclaredAllocatorID;
+
 		private: std::map<unsigned, std::vector<UniquePtr<RHA::DX12::Heap>>> heaps;
 
 		private: RHA::DX12::DeviceResources *resources;
@@ -32,7 +36,7 @@ namespace Renderer
 		public: AllocationHeaps(RHA::DX12::DeviceResources *resources, size_t initialHeapSizeInBytes);
 
 
-		public: void DeclareNewAllocatorID(unsigned ID);
+		public: unsigned MakeNewAllocatorID();
 
 		public: void RetireAllocatorID(unsigned ID);
 		

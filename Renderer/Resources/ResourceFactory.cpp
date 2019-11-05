@@ -7,15 +7,16 @@
 namespace Renderer
 {
 	ResourceFactory::ResourceFactory(RHA::DX12::DeviceResources *resources, RHA::DX12::Queue *queue) :
-		queue{ queue }
+		queue{ queue },
+		rescMemory{ resources, 1'310'720 }
 	{
 		uploadHeap = RHA::DX12::Facade::MakeUploadHeap(resources, 1'000'000);
 		
 	}
 
 	FrameSuballocator ResourceFactory::MakeAllocatorForNewFrame()
-	{
-		return FrameSuballocator{ , this };
+	{		
+		return FrameSuballocator{ this, rescMemory.MakeNewAllocatorID() };
 		
 	}
 
