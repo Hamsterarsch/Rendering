@@ -1,4 +1,4 @@
-#include "Dx12/HeapImpl.hpp"
+#include "DX12/HeapImpl.hpp"
 #include "Shared/Exception/CreationFailedException.hpp"
 #include "Shared/Exception/OutOfMemoryException.hpp"
 #include "DX12/HeapAllocation.hpp"
