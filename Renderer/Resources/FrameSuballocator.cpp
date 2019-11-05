@@ -40,7 +40,7 @@ namespace Renderer
 			uploadHeap->CopyDataToUploadAddress(data, sizeInBytes, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT)
 		};
 
-		auto gpuAllocation{ parent->MakeRawAllocation(sizeInBytes, allocatorID) };
+		auto gpuAllocation{ parent->MakeRawAllocationForBuffer(sizeInBytes, allocatorID) };
 
 		D3D12_RESOURCE_DESC desc{};
 		desc.Alignment = D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT;
@@ -50,6 +50,8 @@ namespace Renderer
 		desc.Height = 1;
 		desc.MipLevels = 1;
 		desc.SampleDesc.Count = 1;
+		desc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+		
 				
 		DxPtr<ID3D12Resource> gpuResource;
 		const auto result

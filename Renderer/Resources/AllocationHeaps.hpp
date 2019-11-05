@@ -1,4 +1,5 @@
 #pragma once
+#include <d3d12.h>
 #include "Shared/PtrTypes.hpp"
 #include <map>
 #include <list>
@@ -30,6 +31,8 @@ namespace Renderer
 		private: std::map<unsigned, std::list<UniquePtr<RHA::DX12::Heap>>> heaps;
 
 		private: RHA::DX12::DeviceResources *resources;
+
+		private: D3D12_HEAP_FLAGS heapFlags;
 		
 		
 		

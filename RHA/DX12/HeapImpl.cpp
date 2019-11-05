@@ -70,21 +70,21 @@ namespace RHA
 			allocation.allocationSize = sizeInBytes;
 			allocation.offsetToAllocation = offsetToFreeRegion;
 
-			OnAllocationMade(sizeInBytes);			
+			UpdateAllocationOffsets(sizeInBytes);			
 			return allocation;
 						
 		}
 
 			void HeapImpl::CheckAllocationSize(const size_t allocationSizeInBytes) const
 			{
-				if(HasCapacityForAllocation(allocationSizeInBytes))
+				if( ! HasCapacityForAllocation(allocationSizeInBytes))
 				{
 					throw Exception::OutOfMemory{ "Dx12 heap is out of memory" };
 				}
 			
 			}
 		
-			void HeapImpl::OnAllocationMade(const size_t sizeInBytes)
+			void HeapImpl::UpdateAllocationOffsets(const size_t sizeInBytes)
 			{				
 				offsetToFreeRegion = IncreaseValueToAlignment(offsetToFreeRegion + sizeInBytes);
 			

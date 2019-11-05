@@ -30,15 +30,15 @@ namespace Renderer
 
 		private: RHA::DX12::DeviceResources *resources;
 
-		private: AllocationHeaps rescMemory;
-		
+		private: AllocationHeaps bufferRescMemory;
+				 		
 		public: ResourceFactory(RHA::DX12::DeviceResources *resources, RHA::DX12::Queue *queue);
 		
 		public: FrameSuballocator MakeAllocatorForNewFrame();
 
 		public: ResourceAllocation FindExistingAllocation(ResourceHandle handle);
 
-		public: RHA::DX12::HeapAllocation MakeRawAllocation(size_t sizeInBytes, unsigned allocatorID);
+		public: RHA::DX12::HeapAllocation MakeRawAllocationForBuffer(size_t sizeInBytes, unsigned allocatorID);
 
 		
 		

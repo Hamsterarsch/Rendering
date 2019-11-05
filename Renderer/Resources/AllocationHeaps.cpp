@@ -14,7 +14,8 @@ namespace Renderer
 		estimateBytesPerHeap{ initialHeapSizeInBytes },
 		allowedEstimateDeviation{ 0.2 },
 		newestDeclaredAllocatorID{ 0 },
-		resources{ resources }
+		resources{ resources },
+		heapFlags{ flags }
 	{
 		heaps.insert( { 0, std::list<UniquePtr<RHA::DX12::Heap>>() } );
 		
@@ -50,7 +51,7 @@ namespace Renderer
 
 		//construct a new heap
 		heaps.insert({ newestDeclaredAllocatorID, std::list<UniquePtr<RHA::DX12::Heap>>() });
-		heaps.at(newestDeclaredAllocatorID).emplace_back(RHA::DX12::Facade::MakeHeap(resources, estimateBytesPerHeap, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT));
+		heaps.at(newestDeclaredAllocatorID).emplace_back(RHA::DX12::Facade::MakeHeap(resources, estimateBytesPerHeap, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT, heapFlags));
 		return newestDeclaredAllocatorID;
 		
 	}
@@ -123,7 +124,8 @@ namespace Renderer
 				(
 					resources, 
 					std::max(estimateBytesPerHeap, sizeInBytes),
-					D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT
+					D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT,
+					heapFlags
 				)
 			);
 

@@ -38,7 +38,7 @@ namespace RHA
 
 				private: void CheckAllocationSize(size_t allocationSizeInBytes) const;
 						
-				private: void OnAllocationMade(size_t sizeInBytes);
+				private: void UpdateAllocationOffsets(size_t sizeInBytes);
 
 			
 			public: virtual void Reset() override;
