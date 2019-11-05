@@ -1,7 +1,7 @@
 #pragma once
 #include "Shared/PtrTypes.hpp"
 #include <map>
-#include <vector>
+#include <list>
 
 
 namespace RHA
@@ -27,7 +27,7 @@ namespace Renderer
 
 		private: unsigned newestDeclaredAllocatorID;
 
-		private: std::map<unsigned, std::vector<UniquePtr<RHA::DX12::Heap>>> heaps;
+		private: std::map<unsigned, std::list<UniquePtr<RHA::DX12::Heap>>> heaps;
 
 		private: RHA::DX12::DeviceResources *resources;
 		

@@ -41,16 +41,15 @@ namespace Renderer
 		//try to get an existing unused heap
 		if(heaps.at(0).size() > 0)
 		{
-			heaps.insert({ newestDeclaredAllocatorID, {} });
+			heaps.insert({ newestDeclaredAllocatorID, std::list<UniquePtr<RHA::DX12::Heap>>() });
 			heaps.at(newestDeclaredAllocatorID).emplace_back( std::move(heaps.at(0).back()) );
+			heaps.at(0).pop_back();
 			
-			heaps.at(0).erase(heaps.at(0).end() -1);
-			return newestDeclaredAllocatorID;
-			
+			return newestDeclaredAllocatorID;			
 		}
 
 		//construct a new heap
-		heaps.insert({ newestDeclaredAllocatorID, {} });
+		heaps.insert({ newestDeclaredAllocatorID, std::list<UniquePtr<RHA::DX12::Heap>>() });
 		heaps.at(newestDeclaredAllocatorID).emplace_back(RHA::DX12::Facade::MakeHeap(resources, estimateBytesPerHeap, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT));
 		return newestDeclaredAllocatorID;
 		
@@ -66,26 +65,23 @@ namespace Renderer
 		
 		auto foundPos{ heaps.find(ID) };
 
+		--foundPos->second.begin();
+		
 		//filter all heaps that are to small or too large
 		std::list<size_t> indicesToRemove{};		
-		for(size_t index{}; index < foundPos->second.size(); ++index)
+		for(auto itr{ foundPos->second.begin() }; itr != foundPos->second.end(); ++itr)
 		{
-			if
-			(std::abs(foundPos->second.at(index)->GetSizeInBytes() / static_cast<float>(estimateBytesPerHeap) -1) > allowedEstimateDeviation)
+			if(std::abs((*itr)->GetSizeInBytes() / static_cast<float>(estimateBytesPerHeap) -1) > allowedEstimateDeviation)
 			{
-				indicesToRemove.emplace_back(index);
+				const auto toRemove = itr;
+				--itr;
+
+				foundPos->second.erase(toRemove);				
 			}			
 		}
 
-		//remove all heaps that are to small
-		for(auto &&index : indicesToRemove)
-		{
-			foundPos->second.erase(foundPos->second.begin() + index);
-		}
-
-
 		//merge remaining heaps with unused heaps
-		heaps.at(0).insert(heaps.at(0).end(), foundPos->second.begin(), foundPos->second.end());
+		heaps.at(0).splice(heaps.at(0).end(), std::move(foundPos->second));
 
 		//remove allocator data
 		heaps.erase(foundPos);
