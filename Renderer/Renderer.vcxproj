@@ -163,11 +163,8 @@
     <ClInclude Include="Interface\RendererExportHelper.hpp" />
     <ClInclude Include="Interface\Resources\ResourceHandle.hpp" />
     <ClInclude Include="Resources\AllocationHeaps.hpp" />
-    <ClInclude Include="Resources\ResourceAllocation.hpp" />
     <ClInclude Include="Resources\ResourceFactory.hpp" />
-    <ClInclude Include="Resources\AllocationRegistry.hpp" />
     <ClInclude Include="Resources\FrameSuballocator.hpp" />
-    <ClInclude Include="Resources\ResourceRegistry.hpp" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>

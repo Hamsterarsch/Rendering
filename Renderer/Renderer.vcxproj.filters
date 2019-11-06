@@ -8,9 +8,6 @@
     <ClInclude Include="Interface\Renderer.hpp">
       <Filter>Interface</Filter>
     </ClInclude>
-    <ClInclude Include="Resources\AllocationRegistry.hpp">
-      <Filter>Resources</Filter>
-    </ClInclude>
     <ClInclude Include="Resources\FrameSuballocator.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
@@ -18,12 +15,6 @@
       <Filter>Interface\Resources</Filter>
     </ClInclude>
     <ClInclude Include="Resources\ResourceFactory.hpp">
-      <Filter>Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="Resources\ResourceAllocation.hpp">
-      <Filter>Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="Resources\ResourceRegistry.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
     <ClInclude Include="Resources\AllocationHeaps.hpp">

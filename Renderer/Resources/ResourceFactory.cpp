@@ -20,7 +20,7 @@ namespace Renderer
 		
 	}
 
-	RHA::DX12::HeapAllocation ResourceFactory::MakeRawAllocationForBuffer(const size_t sizeInBytes, const unsigned allocatorID)
+	RHA::DX12::HeapAllocation ResourceFactory::MakeAllocationForBuffer(const size_t sizeInBytes, const unsigned allocatorID)
 	{		
 		return bufferRescMemory.Allocate(sizeInBytes, allocatorID);
 		

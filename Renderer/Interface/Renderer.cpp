@@ -44,7 +44,7 @@ namespace Renderer
 
 		int rescData[]{ 1, 4, 2, 5, 3, 5 };
 		
-		auto buffer{ rescAllocator.MakeBufferWithData(rescData, sizeof(rescData)) };
+		auto buffer{ rescAllocator.MakeBuffer(rescData, sizeof(rescData)) };
 		}
 		//end 
 		
