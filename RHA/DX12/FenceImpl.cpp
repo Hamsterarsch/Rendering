@@ -26,6 +26,9 @@ namespace RHA
 			
 			}
 
+
+
+		
 		void FenceImpl::Signal(size_t value)
 		{
 			const auto result
@@ -40,6 +43,9 @@ namespace RHA
 			
 		}
 
+
+
+		
 		void FenceImpl::Signal(size_t value, Queue* queue)
 		{
 			const auto result
@@ -54,6 +60,23 @@ namespace RHA
 			
 		}
 
+
+
+		
+		void FenceImpl::SetEventOnValue(const size_t triggerValue, HANDLE eventHandle)
+		{
+			const auto result
+			{
+				fence->SetEventOnCompletion(triggerValue, eventHandle)
+			};
+
+			if(FAILED(result))
+			{
+				throw Exception::Exception{ "Could not set event on dx12 fence value" };
+			}
+			
+		}
+		
 		
 	}
 	
