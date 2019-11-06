@@ -87,6 +87,13 @@ namespace Renderer
 		
 	}
 
-	
+	DxPtr<ID3D12Resource> FrameSuballocator::MakeVertexBufferForMesh(ResourceHandle handle)
+	{
+		auto allocation{ parent->FindExistingAllocation(handle) };
+		
+		
+		
+	}
+
 	
 }

@@ -8,8 +8,9 @@ namespace Renderer
 {
 	ResourceFactory::ResourceFactory(RHA::DX12::DeviceResources *resources, RHA::DX12::Queue *queue) :
 		queue{ queue },
-		bufferRescMemory{ resources, 1'310'720, D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS },
-		resources{ resources }
+		resources{ resources },
+		bufferRescMemory{ resources, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT * 20, D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS },
+		textureRescMemory{ resources, 1'310'720, D3D12_HEAP_FLAG_ALLOW_ONLY_NON_RT_DS_TEXTURES }
 	{
 	}
 

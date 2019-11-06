@@ -31,6 +31,8 @@ namespace Renderer
 		private: RHA::DX12::DeviceResources *resources;
 
 		private: AllocationHeaps bufferRescMemory;
+
+		private: AllocationHeaps textureRescMemory;
 				 		
 		public: ResourceFactory(RHA::DX12::DeviceResources *resources, RHA::DX12::Queue *queue);
 		
