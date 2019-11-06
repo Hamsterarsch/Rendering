@@ -1,5 +1,4 @@
 #include "DX12/Facade.hpp"
-#include "Resources/ResourceMemory.hpp"
 #include "Resources/ResourceFactory.hpp"
 #include "Shared/Exception/CreationFailedException.hpp"
 
@@ -8,12 +7,11 @@ using namespace RHA::DX12;
 
 namespace Renderer
 {
-	ResourceFactory::ResourceFactory(RHA::DX12::DeviceResources *resources, RHA::DX12::Queue *queue, ResourceMemory *memory, const unsigned allocatorID) :
-		memory{ memory },
-		allocatorID{ allocatorID },
+	ResourceFactory::ResourceFactory(RHA::DX12::DeviceResources *resources, RHA::DX12::Queue *queue) :
 		queue{ queue },
 		resources{ resources },
-		uploadAddress{ 0 }
+		uploadAddress{ 0 },
+		bufferHeaps{ resources, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT * 15, D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS }
 	{
 		uploadBuffer = Facade::MakeUploadHeap(resources, 1'000'000);
 		fence = Facade::MakeFence(resources);
@@ -26,13 +24,13 @@ namespace Renderer
 		
 	}
 
-	DxPtr<ID3D12Resource> ResourceFactory::MakeBuffer(const void *data, size_t sizeInBytes)
+	DxPtr<ID3D12Resource> ResourceFactory::MakeBufferWithData(const void *data, size_t sizeInBytes)
 	{
 		WaitForSingleObject(event, INFINITE);
 				
 		CopyDataToUploadBuffer(data, sizeInBytes);
 		
-		auto gpuAllocation{ memory->MakeAllocationForBuffer(sizeInBytes, allocatorID) };
+		auto gpuAllocation{ bufferHeaps.Allocate(sizeInBytes) };
 			   				
 		DxPtr<ID3D12Resource> gpuResource;
 		const auto desc{ MakeBufferDesc(sizeInBytes) };

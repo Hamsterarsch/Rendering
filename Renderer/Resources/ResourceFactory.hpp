@@ -1,6 +1,7 @@
 #pragma once
 #include "DxPtrTypes.hpp"
 #include "Shared/PtrTypes.hpp"
+#include "DynamicHeapSet.hpp"
 
 struct ID3D12Resource;
 
@@ -22,9 +23,6 @@ namespace Renderer
 {	
 	class ResourceFactory
 	{		
-		private: class ResourceMemory *memory;
-
-		private: const unsigned allocatorID;
 
 		private: UniquePtr<RHA::DX12::UploadHeap> uploadBuffer;
 
@@ -42,11 +40,12 @@ namespace Renderer
 
 		private: D3D12_GPU_VIRTUAL_ADDRESS uploadAddress;
 		
+		private: DynamicHeapSet bufferHeaps;
 		
 
-		public: ResourceFactory(RHA::DX12::DeviceResources *resources, RHA::DX12::Queue *queue, class ResourceMemory *memory, unsigned allocatorID);
+		public: ResourceFactory(RHA::DX12::DeviceResources *resources, RHA::DX12::Queue *queue);
 		
-		public: DxPtr<ID3D12Resource> MakeBuffer(const void *data, size_t sizeInBytes);
+		public: DxPtr<ID3D12Resource> MakeBufferWithData(const void *data, size_t sizeInBytes);
 
 			private: void CopyDataToUploadBuffer(const void *data, size_t sizeInBytes);
 

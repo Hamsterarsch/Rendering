@@ -2,7 +2,8 @@
 #include "DX12/Facade.hpp"
 #include "Shared/Filesystem/Conversions.hpp"
 
-#include "Resources/ResourceMemory.hpp"
+
+#include "Resources/ResourceFactory.hpp"
 
 #if _DEBUG
 	constexpr bool enableDebugLayers = true;
@@ -39,12 +40,11 @@ namespace Renderer
 
 		//resource model test section
 		{
-		ResourceMemory rescFactory{ resources.get(), commonQueue.get() };
-		auto rescAllocator{ rescFactory.MakeAllocatorForNewFrame() };
-
-		int rescData[]{ 1, 4, 2, 5, 3, 5 };
-		
-		auto buffer{ rescAllocator.MakeBuffer(rescData, sizeof(rescData)) };
+			ResourceFactory rescFactory{ resources.get(), commonQueue.get() };
+			
+			int rescData[]{ 1, 4, 2, 5, 3, 5 };
+			
+			auto buffer{ rescFactory.MakeBufferWithData(rescData, sizeof(rescData)) };
 		}
 		//end 
 		
