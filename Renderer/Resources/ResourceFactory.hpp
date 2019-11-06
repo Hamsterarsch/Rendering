@@ -1,7 +1,8 @@
 #pragma once
-#include "Resources/AllocationHeaps.hpp"
-#include "FrameSuballocator.hpp"
+#include "DxPtrTypes.hpp"
+#include "Shared/PtrTypes.hpp"
 
+struct ID3D12Resource;
 
 namespace RHA
 {
@@ -10,6 +11,9 @@ namespace RHA
 		class DeviceResources;
 		class UploadHeap;
 		class Queue;
+		class Fence;
+		class CmdAllocator;
+		class CmdList;
 	}
 }
 
@@ -17,23 +21,45 @@ namespace RHA
 namespace Renderer
 {	
 	class ResourceFactory
-	{
+	{		
+		private: class ResourceMemory *memory;
+
+		private: const unsigned allocatorID;
+
+		private: UniquePtr<RHA::DX12::UploadHeap> uploadBuffer;
+
 		private: RHA::DX12::Queue *queue;
 
 		private: RHA::DX12::DeviceResources *resources;
 
-		private: AllocationHeaps bufferRescMemory;
+		private: UniquePtr<RHA::DX12::Fence> fence;
 
-		private: AllocationHeaps textureRescMemory;
+		private: HANDLE event;
 
+		private: UniquePtr<RHA::DX12::CmdAllocator> allocator;
 
+		private: UniquePtr<RHA::DX12::CmdList> list;
+
+		private: D3D12_GPU_VIRTUAL_ADDRESS uploadAddress;
 		
-		public: ResourceFactory(RHA::DX12::DeviceResources *resources, RHA::DX12::Queue *queue);
 		
-		public: FrameSuballocator MakeAllocatorForNewFrame();
 
-		public: RHA::DX12::HeapAllocation MakeAllocationForBuffer(size_t sizeInBytes, unsigned allocatorID);
-				
+		public: ResourceFactory(RHA::DX12::DeviceResources *resources, RHA::DX12::Queue *queue, class ResourceMemory *memory, unsigned allocatorID);
+		
+		public: DxPtr<ID3D12Resource> MakeBuffer(const void *data, size_t sizeInBytes);
+
+			private: void CopyDataToUploadBuffer(const void *data, size_t sizeInBytes);
+
+				private: bool UploadBufferCanNotFitAllocation(size_t allocationSizeInBytes) const;
+
+			private: static D3D12_RESOURCE_DESC MakeBufferDesc(size_t sizeInBytes);
+
+			private: static void CheckGpuResourceCreation(HRESULT result);
+
+			private: DxPtr<ID3D12GraphicsCommandList> GetFreshCmdList();
+
+			private: void SubmitListAndFenceSynchronization(RHA::DX12::CmdList *list);
+					
 	};
 
 	

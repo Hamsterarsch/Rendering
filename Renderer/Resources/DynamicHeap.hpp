@@ -20,7 +20,7 @@ namespace RHA
 
 namespace Renderer
 {
-	class AllocationHeaps
+	class DynamicHeap
 	{
 		private: size_t estimateBytesPerHeap;
 
@@ -36,7 +36,7 @@ namespace Renderer
 		
 		
 		
-		public: AllocationHeaps(RHA::DX12::DeviceResources *resources, size_t initialHeapSizeInBytes, D3D12_HEAP_FLAGS flags);
+		public: DynamicHeap(RHA::DX12::DeviceResources *resources, size_t initialHeapSizeInBytes, D3D12_HEAP_FLAGS flags);
 
 
 		public: unsigned MakeNewAllocatorID();

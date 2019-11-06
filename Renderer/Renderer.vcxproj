@@ -162,17 +162,17 @@
     <ClInclude Include="Interface\Renderer.hpp" />
     <ClInclude Include="Interface\RendererExportHelper.hpp" />
     <ClInclude Include="Interface\Resources\ResourceHandle.hpp" />
-    <ClInclude Include="Resources\AllocationHeaps.hpp" />
+    <ClInclude Include="Resources\DynamicHeap.hpp" />
+    <ClInclude Include="Resources\ResourceMemory.hpp" />
     <ClInclude Include="Resources\ResourceFactory.hpp" />
-    <ClInclude Include="Resources\FrameSuballocator.hpp" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Interface\Renderer.cpp" />
-    <ClCompile Include="Resources\AllocationHeaps.cpp" />
-    <ClCompile Include="Resources\FrameSuballocator.cpp" />
+    <ClCompile Include="Resources\DynamicHeap.cpp" />
     <ClCompile Include="Resources\ResourceFactory.cpp" />
+    <ClCompile Include="Resources\ResourceMemory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RHA\RHA.vcxproj">

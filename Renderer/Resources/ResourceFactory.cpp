@@ -1,30 +1,133 @@
-#include "Resources/ResourceFactory.hpp"
-#include "Resources/FrameSuballocator.hpp"
-#include "DX12/DeviceResources.hpp"
 #include "DX12/Facade.hpp"
+#include "Resources/ResourceMemory.hpp"
+#include "Resources/ResourceFactory.hpp"
+#include "Shared/Exception/CreationFailedException.hpp"
 
+
+using namespace RHA::DX12;
 
 namespace Renderer
 {
-	ResourceFactory::ResourceFactory(RHA::DX12::DeviceResources *resources, RHA::DX12::Queue *queue) :
+	ResourceFactory::ResourceFactory(RHA::DX12::DeviceResources *resources, RHA::DX12::Queue *queue, ResourceMemory *memory, const unsigned allocatorID) :
+		memory{ memory },
+		allocatorID{ allocatorID },
 		queue{ queue },
 		resources{ resources },
-		bufferRescMemory{ resources, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT * 20, D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS },
-		textureRescMemory{ resources, 1'310'720, D3D12_HEAP_FLAG_ALLOW_ONLY_NON_RT_DS_TEXTURES }
+		uploadAddress{ 0 }
 	{
-	}
+		uploadBuffer = Facade::MakeUploadHeap(resources, 1'000'000);
+		fence = Facade::MakeFence(resources);
+		allocator = Facade::MakeCmdAllocator(resources, D3D12_COMMAND_LIST_TYPE_DIRECT);
+		
+		list = allocator->AllocateList();
+		list->AsGraphicsList()->Close();
 
-	FrameSuballocator ResourceFactory::MakeAllocatorForNewFrame()
-	{		
-		return FrameSuballocator{ resources, queue, this, bufferRescMemory.MakeNewAllocatorID() };
+		event = CreateEvent(nullptr, false, true, nullptr);
 		
 	}
 
-	RHA::DX12::HeapAllocation ResourceFactory::MakeAllocationForBuffer(const size_t sizeInBytes, const unsigned allocatorID)
-	{		
-		return bufferRescMemory.Allocate(sizeInBytes, allocatorID);
+	DxPtr<ID3D12Resource> ResourceFactory::MakeBuffer(const void *data, size_t sizeInBytes)
+	{
+		WaitForSingleObject(event, INFINITE);
+				
+		CopyDataToUploadBuffer(data, sizeInBytes);
+		
+		auto gpuAllocation{ memory->MakeAllocationForBuffer(sizeInBytes, allocatorID) };
+			   				
+		DxPtr<ID3D12Resource> gpuResource;
+		const auto desc{ MakeBufferDesc(sizeInBytes) };
+		constexpr decltype(nullptr) BUFFER_CLEAR_VALUE{ nullptr };
+		const auto result
+		{		
+			resources->GetDevice()->CreatePlacedResource
+			(
+				gpuAllocation.heap, 
+				gpuAllocation.offsetToAllocation,
+				&desc,
+				D3D12_RESOURCE_STATE_COPY_DEST,
+				BUFFER_CLEAR_VALUE,
+				IID_PPV_ARGS(&gpuResource)
+			)
+		};
+		CheckGpuResourceCreation(result);
+		
+		auto glist{ GetFreshCmdList() };		
+		glist->CopyBufferRegion(gpuResource.Get(), 0, uploadBuffer->GetResource().Get(), 0, sizeInBytes);
+
+		D3D12_RESOURCE_BARRIER barrier{};
+		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		barrier.Transition.pResource = gpuResource.Get();
+		barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
+		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_COMMON;
+		glist->ResourceBarrier(1, &barrier);
+		
+		glist->Close();
+
+		SubmitListAndFenceSynchronization(list.get());		
+		return gpuResource;
 		
 	}
+
+		void ResourceFactory::CopyDataToUploadBuffer(const void *data, const size_t sizeInBytes)
+		{							
+			if(UploadBufferCanNotFitAllocation(sizeInBytes))
+			{
+				uploadBuffer = Facade::MakeUploadHeap(resources, sizeInBytes);
+			}
+
+			uploadBuffer->Reset();			
+			uploadAddress = uploadBuffer->CopyDataToUploadAddress(data, sizeInBytes, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT);
+		
+		}
+
+			bool ResourceFactory::UploadBufferCanNotFitAllocation(const size_t allocationSizeInBytes) const
+			{
+				return uploadBuffer->GetSizeInBytes() < allocationSizeInBytes;
+				
+			}
+	
+		D3D12_RESOURCE_DESC ResourceFactory::MakeBufferDesc(const size_t sizeInBytes)
+		{
+			D3D12_RESOURCE_DESC desc{};
+			desc.Alignment = D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT;
+			desc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+			desc.Width = sizeInBytes;
+			desc.DepthOrArraySize = 1;
+			desc.Height = 1;
+			desc.MipLevels = 1;
+			desc.SampleDesc.Count = 1;
+			desc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+
+			return desc;
+		
+		}
+
+		void ResourceFactory::CheckGpuResourceCreation(const HRESULT result)
+		{
+			if(FAILED(result))
+			{
+				throw Exception::CreationFailed{ "FrameSuballocator:: could not create a dx12 placed buffer on gpu heap to upload to" };
+			}
+		
+		}
+
+		DxPtr<ID3D12GraphicsCommandList> ResourceFactory::GetFreshCmdList()
+		{
+			auto glist{ list->AsGraphicsList() };
+			glist->Reset(allocator->GetAllocator().Get(), nullptr);
+
+			return glist;
+		
+		}
+
+		void ResourceFactory::SubmitListAndFenceSynchronization(CmdList *list)
+		{
+			queue->SubmitCommandList(list);
+			
+			fence->SetEventOnValue(1, event);				
+			queue->Signal(1, fence.get());
+			
+		}
 
 	
 }

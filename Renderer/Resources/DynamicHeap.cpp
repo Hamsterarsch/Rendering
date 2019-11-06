@@ -4,13 +4,13 @@
 #include "DX12/Heap.hpp"
 #include "DX12/Facade.hpp"
 #include "Shared/Exception/Exception.hpp"
-#include "Resources/AllocationHeaps.hpp"
+#include "Resources/DynamicHeap.hpp"
 
 #undef max
 
 namespace Renderer
 {	
-	AllocationHeaps::AllocationHeaps(RHA::DX12::DeviceResources *resources, const size_t initialHeapSizeInBytes, D3D12_HEAP_FLAGS flags) :
+	DynamicHeap::DynamicHeap(RHA::DX12::DeviceResources *resources, const size_t initialHeapSizeInBytes, D3D12_HEAP_FLAGS flags) :
 		estimateBytesPerHeap{ initialHeapSizeInBytes },
 		allowedEstimateDeviation{ 0.2 },
 		newestDeclaredAllocatorID{ 0 },
@@ -22,7 +22,7 @@ namespace Renderer
 	}
 
 	
-	unsigned AllocationHeaps::MakeNewAllocatorID()
+	unsigned DynamicHeap::MakeNewAllocatorID()
 	{
 		//handle overflow
 		if(newestDeclaredAllocatorID == std::numeric_limits<decltype(newestDeclaredAllocatorID)>::max())
@@ -57,7 +57,7 @@ namespace Renderer
 	}
 
 	
-	void AllocationHeaps::RetireAllocatorID(const unsigned ID)
+	void DynamicHeap::RetireAllocatorID(const unsigned ID)
 	{
 		if(ID == 0 || heaps.count(ID) == 0)
 		{
@@ -90,7 +90,7 @@ namespace Renderer
 	}
 
 	
-	RHA::DX12::HeapAllocation AllocationHeaps::Allocate(size_t sizeInBytes, unsigned allocatorID)
+	RHA::DX12::HeapAllocation DynamicHeap::Allocate(size_t sizeInBytes, unsigned allocatorID)
 	{
 		//get a target heap
 		if(heaps.count(allocatorID) == 0)

@@ -8,16 +8,16 @@
     <ClInclude Include="Interface\Renderer.hpp">
       <Filter>Interface</Filter>
     </ClInclude>
-    <ClInclude Include="Resources\FrameSuballocator.hpp">
-      <Filter>Resources</Filter>
-    </ClInclude>
     <ClInclude Include="Interface\Resources\ResourceHandle.hpp">
       <Filter>Interface\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Resources\ResourceFactory.hpp">
+    <ClInclude Include="Resources\DynamicHeap.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Resources\AllocationHeaps.hpp">
+    <ClInclude Include="Resources\ResourceMemory.hpp">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\ResourceFactory.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
   </ItemGroup>
@@ -26,13 +26,13 @@
     <ClCompile Include="Interface\Renderer.cpp">
       <Filter>Interface</Filter>
     </ClCompile>
+    <ClCompile Include="Resources\DynamicHeap.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\ResourceMemory.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
     <ClCompile Include="Resources\ResourceFactory.cpp">
-      <Filter>Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="Resources\FrameSuballocator.cpp">
-      <Filter>Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="Resources\AllocationHeaps.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
   </ItemGroup>
