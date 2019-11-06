@@ -59,9 +59,7 @@ namespace Renderer
 			private: DxPtr<ID3D12GraphicsCommandList> GetFreshCmdList();
 
 			private: void SubmitListAndFenceSynchronization(RHA::DX12::CmdList *list);
-		
-		public: DxPtr<ID3D12Resource> MakeTexture();
-			
+					
 	};
 
 	

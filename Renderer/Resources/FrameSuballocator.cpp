@@ -44,7 +44,7 @@ namespace Renderer
 				gpuAllocation.heap, 
 				gpuAllocation.offsetToAllocation,
 				&desc,
-				D3D12_RESOURCE_STATE_COMMON,
+				D3D12_RESOURCE_STATE_COPY_DEST,
 				BUFFER_CLEAR_VALUE,
 				IID_PPV_ARGS(&gpuResource)
 			)
@@ -53,6 +53,14 @@ namespace Renderer
 		
 		auto glist{ GetFreshCmdList() };		
 		glist->CopyBufferRegion(gpuResource.Get(), 0, uploadBuffer->GetResource().Get(), 0, sizeInBytes);
+
+		D3D12_RESOURCE_BARRIER barrier{};
+		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		barrier.Transition.pResource = gpuResource.Get();
+		barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
+		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_COMMON;
+		glist->ResourceBarrier(1, &barrier);
+		
 		glist->Close();
 
 		SubmitListAndFenceSynchronization(list.get());		
@@ -112,14 +120,14 @@ namespace Renderer
 		
 		}
 
-	void FrameSuballocator::SubmitListAndFenceSynchronization(CmdList *list)
-	{
-		queue->SubmitCommandList(list);
-		
-		fence->GetFence()->SetEventOnCompletion(1, event);
-		fence->Signal(1, queue);
-		
-	}
+		void FrameSuballocator::SubmitListAndFenceSynchronization(CmdList *list)
+		{
+			queue->SubmitCommandList(list);
+			
+			fence->SetEventOnValue(1, event);				
+			queue->Signal(1, fence.get());
+			
+		}
 
 	
 }

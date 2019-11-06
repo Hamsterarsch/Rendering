@@ -2,6 +2,7 @@
 #include "Shared/Exception/CreationFailedException.hpp"
 #include "DX12/QueueImpl.hpp"
 #include "DX12/CmdList.hpp"
+#include "DX12/Fence.hpp"
 
 
 namespace RHA
@@ -30,10 +31,20 @@ namespace RHA
 			}
 			
 		}
+		
 
+		
 		void QueueImpl::SubmitCommandList(CmdList *list)
 		{			
 			queue->ExecuteCommandLists(1, list->GetList().GetAddressOf());
+			
+		}
+
+
+				
+		void QueueImpl::Signal(const size_t value, Fence *fence)
+		{
+			fence->Signal(value, this);
 			
 		}
 
