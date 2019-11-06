@@ -5,57 +5,62 @@
 
 
 namespace Renderer
-{	
-	using namespace RHA::DX12;
-	
-	DynamicHeapSet::DynamicHeapSet(RHA::DX12::DeviceResources *resources, const size_t initialHeapSizeInBytes, D3D12_HEAP_FLAGS flags) :
-		estimateBytesPerHeap{ initialHeapSizeInBytes },
-		allowedEstimateDeviation{ 0.2 },
-		resources{ resources },
-		heapFlags{ flags }
+{
+	namespace DX12
 	{
-		heaps.emplace_back(Facade::MakeHeap(resources, estimateBytesPerHeap, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT, flags));
-	}
-	
-	
-	
-	HeapAllocation DynamicHeapSet::Allocate(size_t sizeInBytes)
-	{
-		//get a target heap
+		using namespace RHA::DX12;
 		
-		//try to find an existing one with enough space
-		t_item *targetHeap{ nullptr };
-		for(auto &heap : heaps)
+		DynamicHeapSet::DynamicHeapSet(DeviceResources *resources, const size_t initialHeapSizeInBytes, D3D12_HEAP_FLAGS flags) :
+			estimateBytesPerHeap{ initialHeapSizeInBytes },
+			allowedEstimateDeviation{ 0.2 },
+			resources{ resources },
+			heapFlags{ flags }
 		{
-			if(heap->HasCapacityForAllocation(sizeInBytes))
-			{
-				targetHeap = &heap;
-				break;
-			}
+			heaps.emplace_back(Facade::MakeHeap(resources, estimateBytesPerHeap, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT, flags));
 		}
-
-		//allocate a new heap bc there is none with the required size
-		if(targetHeap == nullptr) 
+		
+		
+		
+		HeapAllocation DynamicHeapSet::Allocate(size_t sizeInBytes)
 		{
-			//update the heap size estimate
-			estimateBytesPerHeap *= (1+allowedEstimateDeviation);				
+			//get a target heap
 			
-			heaps.emplace_back
-			(
-				Facade::MakeHeap
-				(
-					resources, 
-					max(estimateBytesPerHeap, sizeInBytes),
-					D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT,
-					heapFlags
-				)
-			);
+			//try to find an existing one with enough space
+			t_item *targetHeap{ nullptr };
+			for(auto &heap : heaps)
+			{
+				if(heap->HasCapacityForAllocation(sizeInBytes))
+				{
+					targetHeap = &heap;
+					break;
+				}
+			}
 
-			targetHeap = &heaps.back();			
+			//allocate a new heap bc there is none with the required size
+			if(targetHeap == nullptr) 
+			{
+				//update the heap size estimate
+				estimateBytesPerHeap *= (1+allowedEstimateDeviation);				
+				
+				heaps.emplace_back
+				(
+					Facade::MakeHeap
+					(
+						resources, 
+						max(estimateBytesPerHeap, sizeInBytes),
+						D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT,
+						heapFlags
+					)
+				);
+
+				targetHeap = &heaps.back();			
+			}
+			
+			//make allocation
+			return (*targetHeap)->Allocate(sizeInBytes);
+			
 		}
-		
-		//make allocation
-		return (*targetHeap)->Allocate(sizeInBytes);
+
 		
 	}
 

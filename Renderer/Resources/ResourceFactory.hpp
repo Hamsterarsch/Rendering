@@ -20,46 +20,52 @@ namespace RHA
 
 
 namespace Renderer
-{	
-	class ResourceFactory
-	{		
-
-		private: UniquePtr<RHA::DX12::UploadHeap> uploadBuffer;
-
-		private: RHA::DX12::Queue *queue;
-
-		private: RHA::DX12::DeviceResources *resources;
-
-		private: UniquePtr<RHA::DX12::Fence> fence;
-
-		private: HANDLE event;
-
-		private: UniquePtr<RHA::DX12::CmdAllocator> allocator;
-
-		private: UniquePtr<RHA::DX12::CmdList> list;
-
-		private: D3D12_GPU_VIRTUAL_ADDRESS uploadAddress;
+{
+	namespace DX12
+	{
+		using namespace RHA::DX12;
 		
-		private: DynamicHeapSet bufferHeaps;
+		class ResourceFactory
+		{		
+			private: UniquePtr<UploadHeap> uploadBuffer;
+
+			private: Queue *queue;
+
+			private: DeviceResources *resources;
+
+			private: UniquePtr<Fence> fence;
+
+			private: HANDLE event;
+
+			private: UniquePtr<CmdAllocator> allocator;
+
+			private: UniquePtr<CmdList> list;
+
+			private: D3D12_GPU_VIRTUAL_ADDRESS uploadAddress;
+			
+			private: DynamicHeapSet bufferHeaps;
+			
+
+			public: ResourceFactory(DeviceResources *resources, Queue *queue);
+			
+			public: DxPtr<ID3D12Resource> MakeBufferWithData(const void *data, size_t sizeInBytes);
+
+				private: void CopyDataToUploadBuffer(const void *data, size_t sizeInBytes);
+
+					private: bool UploadBufferCanNotFitAllocation(size_t allocationSizeInBytes) const;
+
+				private: static D3D12_RESOURCE_DESC MakeBufferDesc(size_t sizeInBytes);
+
+				private: static void CheckGpuResourceCreation(HRESULT result);
+
+				private: DxPtr<ID3D12GraphicsCommandList> GetFreshCmdList();
+
+				private: void SubmitListAndFenceSynchronization(CmdList *list);
+						
+		};
+
 		
-
-		public: ResourceFactory(RHA::DX12::DeviceResources *resources, RHA::DX12::Queue *queue);
-		
-		public: DxPtr<ID3D12Resource> MakeBufferWithData(const void *data, size_t sizeInBytes);
-
-			private: void CopyDataToUploadBuffer(const void *data, size_t sizeInBytes);
-
-				private: bool UploadBufferCanNotFitAllocation(size_t allocationSizeInBytes) const;
-
-			private: static D3D12_RESOURCE_DESC MakeBufferDesc(size_t sizeInBytes);
-
-			private: static void CheckGpuResourceCreation(HRESULT result);
-
-			private: DxPtr<ID3D12GraphicsCommandList> GetFreshCmdList();
-
-			private: void SubmitListAndFenceSynchronization(RHA::DX12::CmdList *list);
-					
-	};
+	}
 
 	
 }
