@@ -29,6 +29,12 @@
     <ClCompile Include="DX12\ShaderFactoryImpl.cpp">
       <Filter>DX12</Filter>
     </ClCompile>
+    <ClCompile Include="DX12\UploadHeapImpl.cpp">
+      <Filter>DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12\HeapImpl.cpp">
+      <Filter>DX12</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h" />
@@ -88,6 +94,24 @@
     </ClInclude>
     <ClInclude Include="DX12\ShaderFactoryImpl.hpp">
       <Filter>DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\DX12\ShaderFactory.hpp">
+      <Filter>Interface\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\UploadHeapImpl.hpp">
+      <Filter>DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\DX12\UploadHeap.hpp">
+      <Filter>Interface\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\HeapImpl.hpp">
+      <Filter>DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\DX12\HeapAllocation.hpp">
+      <Filter>Interface\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\DX12\Heap.hpp">
+      <Filter>Interface\DX12</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

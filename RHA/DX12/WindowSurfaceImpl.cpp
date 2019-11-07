@@ -58,6 +58,19 @@ namespace RHA
 					)
 				};
 				CheckSwapChainCreation(result);
+
+				DXGI_SWAP_CHAIN_DESC1 obtainedDesc{};
+				swapChain->GetDesc1(&obtainedDesc);
+
+				defaultViewport.Width = obtainedDesc.Width;
+				defaultViewport.Height = obtainedDesc.Height;
+				defaultViewport.MinDepth = 0;
+				defaultViewport.MaxDepth = 1;
+				defaultViewport.TopLeftX = defaultViewport.TopLeftX = 0;
+
+				defaultRect.left = defaultRect.top = 0;
+				defaultRect.bottom = obtainedDesc.Height;
+				defaultRect.right = obtainedDesc.Width;
 				
 			}
 
@@ -101,8 +114,7 @@ namespace RHA
 					CreateClearCommandForBuffer(bufferIndex);
 					CreatePresentCommandForBuffer(bufferIndex);
 					CreateEventsForBuffer(bufferIndex);
-					CreateFencesForBuffer(bufferIndex, resources);
-					AssignEventsToFencesForBuffer(bufferIndex);
+					CreateFencesForBuffer(bufferIndex, resources);			
 				}
 
 			}
@@ -117,9 +129,11 @@ namespace RHA
 					toOutputTarget.Transition.StateBefore = D3D12_RESOURCE_STATE_COMMON;
 					toOutputTarget.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 					toOutputTarget.Transition.pResource = bufferData.at(bufferIndex).resource.Get();
-
 					graphicsList->ResourceBarrier(1, &toOutputTarget);
-					graphicsList->ClearRenderTargetView(viewHeap.GetHandleCpu(bufferIndex), clearColor, 0, nullptr);
+
+					auto rtv{ viewHeap.GetHandleCpu(bufferIndex) };
+					graphicsList->ClearRenderTargetView(rtv, clearColor, 0, nullptr);										
+			
 					graphicsList->Close();
 
 				}
@@ -155,13 +169,6 @@ namespace RHA
 					bufferData.at(bufferIndex).presentFence = RHA::DX12::Facade::MakeFence(resources);
 
 				}
-
-				void WindowSurfaceImpl::AssignEventsToFencesForBuffer(unsigned bufferIndex)
-				{
-					bufferData.at(bufferIndex).clearFence->GetFence()->SetEventOnCompletion(1, bufferData.at(bufferIndex).clearEvent);
-					bufferData.at(bufferIndex).presentFence->GetFence()->SetEventOnCompletion(1, bufferData.at(bufferIndex).presentEvent);
-
-				}
 		
 		
 		void WindowSurfaceImpl::ScheduleBackbufferClear(Queue *queue)
@@ -169,6 +176,7 @@ namespace RHA
 			WaitForSingleObject(GetBackbufferData().clearEvent, INFINITE);
 			
 			queue->SubmitCommandList(GetBackbufferData().clearCmd.get());
+			GetBackbufferData().clearFence->GetFence()->SetEventOnCompletion(1, GetBackbufferData().clearEvent);
 			GetBackbufferData().clearFence->Signal(1, queue);
 			
 		}
@@ -181,12 +189,24 @@ namespace RHA
 		void WindowSurfaceImpl::SchedulePresentation(Queue *queue)
 		{
 			queue->SubmitCommandList(GetBackbufferData().presentCmd.get());
+			GetBackbufferData().presentFence->GetFence()->SetEventOnCompletion(1, GetBackbufferData().presentEvent);
 			GetBackbufferData().presentFence->Signal(1, queue);
 
 			WaitForSingleObject(GetBackbufferData().presentEvent, INFINITE);
+
 			
 			currentBackbufferIndex = (currentBackbufferIndex + 1) % bufferCount;
 			swapChain->Present(0, 0);
+			
+		}
+
+		void WindowSurfaceImpl::RecordPipelineBindings(ID3D12GraphicsCommandList *list)
+		{
+			auto rtv{ viewHeap.GetHandleCpu(currentBackbufferIndex) };
+			list->OMSetRenderTargets(1, &rtv, false, nullptr);
+			
+			list->RSSetViewports(1, &defaultViewport);
+			list->RSSetScissorRects(1, &defaultRect);
 			
 		}
 		

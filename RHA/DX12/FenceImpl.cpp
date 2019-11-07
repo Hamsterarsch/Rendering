@@ -26,18 +26,57 @@ namespace RHA
 			
 			}
 
+
+
+		
 		void FenceImpl::Signal(size_t value)
 		{
-			fence->Signal(value);
+			const auto result
+			{
+				fence->Signal(value)
+			};
+
+			if(FAILED(result))
+			{
+				throw Exception::Exception{ "Could not signal dx12 fence" };
+			}
 			
 		}
 
+
+
+		
 		void FenceImpl::Signal(size_t value, Queue* queue)
 		{
-			queue->GetQueue()->Signal(fence.Get(), value);
+			const auto result
+			{
+				queue->GetQueue()->Signal(fence.Get(), value)
+			};
+
+			if(FAILED(result))
+			{
+				throw Exception::Exception{ "Could not schedule dx12 fence signal to queue" };
+			}
 			
 		}
 
+
+
+		
+		void FenceImpl::SetEventOnValue(const size_t triggerValue, HANDLE eventHandle)
+		{
+			const auto result
+			{
+				fence->SetEventOnCompletion(triggerValue, eventHandle)
+			};
+
+			if(FAILED(result))
+			{
+				throw Exception::Exception{ "Could not set event on dx12 fence value" };
+			}
+			
+		}
+		
 		
 	}
 	

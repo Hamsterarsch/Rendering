@@ -19,6 +19,12 @@
     <ClInclude Include="Types\Containers\QueueConcurrent.hpp">
       <Filter>Types\Containers</Filter>
     </ClInclude>
+    <ClInclude Include="Filesystem\Conversions.hpp">
+      <Filter>Filesystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Exception\OutOfMemoryException.hpp">
+      <Filter>Exception</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Exception">
@@ -29,6 +35,9 @@
     </Filter>
     <Filter Include="Types\Containers">
       <UniqueIdentifier>{d7c00e8f-598e-452c-8c4e-500e1a948377}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Filesystem">
+      <UniqueIdentifier>{84527f3e-230a-43ef-a1d9-59c5b2bb3aa5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -1,4 +1,5 @@
 #include "Windows/App.hpp"
+#include "Shared/Exception/Exception.hpp"
 
 
 int main()
@@ -7,6 +8,10 @@ int main()
 	{
 		Windows::App app{};				
 		
+	}
+	catch(Exception::Exception &e)
+	{
+		return -1;		
 	}
 	catch(...)
 	{		

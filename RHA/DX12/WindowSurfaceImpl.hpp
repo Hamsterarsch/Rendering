@@ -40,6 +40,10 @@ namespace RHA
 
 			private: unsigned currentBackbufferIndex;
 
+			private: D3D12_VIEWPORT defaultViewport;
+
+			private: D3D12_RECT defaultRect;
+
 			
 					 			
 			public: WindowSurfaceImpl(class DeviceResources *resources, class Queue *queue, HWND window);
@@ -62,19 +66,17 @@ namespace RHA
 			
 					private: void CreateFencesForBuffer(unsigned bufferIndex, DeviceResources *resource);
 			
-					private: void AssignEventsToFencesForBuffer(unsigned bufferIndex);
 
-			
 			public: virtual void ScheduleBackbufferClear(Queue *queue) override;
 			
 				private: BufferData &GetBackbufferData();
 
 			
 			public: virtual void SchedulePresentation(Queue *queue) override;
+
+			public: virtual void RecordPipelineBindings(ID3D12GraphicsCommandList *list) override;
 								
 		};
-
-
 
 		
 	}

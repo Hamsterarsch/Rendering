@@ -27,6 +27,8 @@ namespace RHA
 
 			public: virtual void Signal(size_t value, class Queue *queue) override;
 
+			public: virtual void SetEventOnValue(size_t triggerValue, HANDLE eventHandle) override;
+
 								
 		};
 		

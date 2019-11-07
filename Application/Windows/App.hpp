@@ -9,7 +9,7 @@ namespace Windows
 	{
 		private: Windows::Window window;
 
-		private: Renderer::Renderer renderer;
+		private: Renderer::DX12::Renderer renderer;
 		
 
 		

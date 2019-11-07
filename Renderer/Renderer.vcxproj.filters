@@ -8,16 +8,37 @@
     <ClInclude Include="Interface\Renderer.hpp">
       <Filter>Interface</Filter>
     </ClInclude>
+    <ClInclude Include="Interface\Resources\ResourceHandle.hpp">
+      <Filter>Interface\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\ResourceFactory.hpp">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\DynamicHeapSet.hpp">
+      <Filter>Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Interface\Renderer.cpp">
       <Filter>Interface</Filter>
     </ClCompile>
+    <ClCompile Include="Resources\ResourceFactory.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\DynamicHeapSet.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">
       <UniqueIdentifier>{523ae172-5199-41df-8686-ec628f3e8f81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{a38f929e-8f89-475b-bc3e-806dcd164ce6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interface\Resources">
+      <UniqueIdentifier>{0422f1da-b27c-4a5f-9f1f-ded45e9e9bda}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
