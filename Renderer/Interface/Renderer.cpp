@@ -41,17 +41,7 @@ namespace Renderer
 			closeFence = Facade::MakeFence(resources.get());
 			closeEvent = CreateEvent(nullptr, false, false, nullptr);
 			data = std::make_unique<TriangleData>();
-
-			//resource model test section
-			{
-				ResourceFactory rescFactory{ resources.get(), commonQueue.get() };
-				
-				int rescData[]{ 1, 4, 2, 5, 3, 5 };
-				
-				auto buffer{ rescFactory.MakeBufferWithData(rescData, sizeof(rescData)) };
-			}
-			//end 
-			
+			rescFactory = std::make_unique<ResourceFactory>(resources.get(), commonQueue.get());			
 			auto shFactory{ Facade::MakeShaderFactory(5,0) };
 
 			auto vs
@@ -139,27 +129,23 @@ namespace Renderer
 			auto r3 =
 			resources->GetDevice()->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&pipeline));
 
-			//
-			upHeap = Facade::MakeUploadHeap(resources.get(), 256);
-				   		
-			D3D12_HEAP_PROPERTIES bufferHeapProps{ D3D12_HEAP_TYPE_DEFAULT, D3D12_CPU_PAGE_PROPERTY_NOT_AVAILABLE, D3D12_MEMORY_POOL_L0, 0, 0 };
-
-
+			//			
 			vertex vertices[3]{ {-0.75, -0.75, 0 }, {0.75, -0.75, 0}, {0, 0.75, 0} };		
 			unsigned indices[3]{ 0,1,2 };
 			
 
-			data->vertexView.BufferLocation = upHeap->CopyDataToUploadAddress(vertices, sizeof(vertices), sizeof(float));
+			vertexBuffer = rescFactory->MakeBufferWithData(vertices, sizeof(vertices), D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
+			indexBuffer = rescFactory->MakeBufferWithData(indices, sizeof(indices), D3D12_RESOURCE_STATE_INDEX_BUFFER);
+			
+			data->vertexView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
 			data->vertexView.SizeInBytes = sizeof(vertices);
 			data->vertexView.StrideInBytes = sizeof(vertex);
 
 
-			data->indexView.BufferLocation = upHeap->CopyDataToUploadAddress(indices, sizeof(indices), sizeof(unsigned));
+			data->indexView.BufferLocation = indexBuffer->GetGPUVirtualAddress();
 			data->indexView.SizeInBytes = sizeof(indices);
 			data->indexView.Format = DXGI_FORMAT_R32_UINT;
 				   		
-
-			
 			list = commonAllocator->AllocateList();
 			auto gral{ list->AsGraphicsList() };
 			gral->Close();		
@@ -188,20 +174,35 @@ namespace Renderer
 
 					
 					auto gral{ list->AsGraphicsList() };
-					gral->Reset(commonAllocator->GetAllocator().Get(), pipeline.Get());
-									
+					const auto d = gral->Reset(commonAllocator->GetAllocator().Get(), pipeline.Get());
+					if(FAILED(d))
+					{
+						throw 1;
+					}
+					
 					outputSurface->RecordPipelineBindings(gral.Get());
 					gral->SetGraphicsRootSignature(signature.Get());
 					gral->IASetVertexBuffers(0, 1, &data->vertexView);
 					gral->IASetIndexBuffer(&data->indexView);
-					gral->IASetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+					gral->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 					gral->DrawIndexedInstanced(3, 1, 0, 0, 0);
-					gral->Close();
-					
+					const auto r = gral->Close();
+					if(FAILED(r))
+					{
+						throw 1;
+					}
 					commonQueue->SubmitCommandList(list.get());
 					
 					
-					outputSurface->SchedulePresentation(commonQueue.get());							
+					outputSurface->SchedulePresentation(commonQueue.get());
+
+					//makeshift prevention of out of memory
+					closeFence->SetEventOnValue(1, closeEvent);
+					closeFence->Signal(1, commonQueue.get());
+					WaitForSingleObject(closeEvent, INFINITE);
+					closeFence->Signal(0);
+					
+					auto c = commonAllocator->GetAllocator()->Reset();
 				}
 
 				closeFence->GetFence()->SetEventOnCompletion(1, closeEvent);

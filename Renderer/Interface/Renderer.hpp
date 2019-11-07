@@ -9,6 +9,7 @@
 #include "DxPtrTypes.hpp"
 
 
+
 namespace RHA
 {
 	namespace DX12
@@ -25,7 +26,7 @@ namespace RHA
 
 struct ID3D12RootSignature;
 struct ID3D12PipelineState;
-
+struct ID3D12Resource;
 
 namespace Renderer
 {
@@ -57,12 +58,15 @@ namespace Renderer
 
 			private: HANDLE closeEvent;
 
+			private: UniquePtr<class ResourceFactory> rescFactory;
 			
 					 UniquePtr<TriangleData> data;
 					 DxPtr<ID3D12RootSignature> signature;
 					 DxPtr<ID3D12PipelineState> pipeline;
 					 UniquePtr<RHA::DX12::CmdList> list;
-					 UniquePtr<RHA::DX12::UploadHeap> upHeap;
+					 DxPtr<ID3D12Resource> vertexBuffer, indexBuffer;
+						
+			
 					 		
 			
 			public: Renderer(HWND outputWindow);

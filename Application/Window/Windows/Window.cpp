@@ -73,8 +73,7 @@ namespace Windows
 		{
 			UnregisterClass(className.data(), GetModuleHandle(nullptr));			
 		}
-		
-		
+				
 	}
 
 	Window::Window(Window &&Other) :

@@ -33,7 +33,7 @@ namespace Renderer
 			
 			private: size_t estimateBytesPerHeap;
 
-			private: const float allowedEstimateDeviation;
+			private: float allowedEstimateDeviation;
 
 			private: DeviceResources *resources;
 
@@ -45,8 +45,18 @@ namespace Renderer
 			
 			public: DynamicHeapSet(DeviceResources *resources, size_t initialHeapSizeInBytes, D3D12_HEAP_FLAGS flags);
 
+			public: DynamicHeapSet(DynamicHeapSet &&other) noexcept = default;
+
+			public: DynamicHeapSet(DynamicHeapSet &other) = delete;
+
+			public: DynamicHeapSet &operator=(DynamicHeapSet &&other) noexcept = default;
+
+			public: DynamicHeapSet &operator=(DynamicHeapSet &other) = delete;
+			
 			
 			public: HeapAllocation Allocate(size_t sizeInBytes);
+
+			public: void MakeResident() const;
 			
 		};
 

@@ -44,11 +44,24 @@ namespace Renderer
 			private: D3D12_GPU_VIRTUAL_ADDRESS uploadAddress;
 			
 			private: DynamicHeapSet bufferHeaps;
+
 			
 
 			public: ResourceFactory(DeviceResources *resources, Queue *queue);
+
+			public: ResourceFactory(ResourceFactory &&other) noexcept = default;
+
+			public: ResourceFactory(ResourceFactory &other) = delete;
+
+			public: ResourceFactory &operator=(ResourceFactory &&other) noexcept = default;
+
+			public: ResourceFactory &operator=(ResourceFactory &other) = delete;
+
+
+			public: void MakeResident() const;
 			
-			public: DxPtr<ID3D12Resource> MakeBufferWithData(const void *data, size_t sizeInBytes);
+			
+			public: DxPtr<ID3D12Resource> MakeBufferWithData(const void *data, size_t sizeInBytes, D3D12_RESOURCE_STATES desiredState);
 
 				private: void CopyDataToUploadBuffer(const void *data, size_t sizeInBytes);
 

@@ -2,6 +2,7 @@
 #include "DX12/Facade.hpp"
 #include "Shared/Exception/Exception.hpp"
 #include "Resources/DynamicHeapSet.hpp"
+#include <vector>
 
 
 namespace Renderer
@@ -58,6 +59,21 @@ namespace Renderer
 			
 			//make allocation
 			return (*targetHeap)->Allocate(sizeInBytes);
+			
+		}
+
+
+		
+		void DynamicHeapSet::MakeResident() const
+		{
+			std::vector<ID3D12Pageable *> pageables{};
+			pageables.reserve(heaps.size());
+			for(auto &&heap : heaps)
+			{
+				pageables.emplace_back(heap->GetHeap().Get());
+			}
+						
+			resources->GetDevice()->MakeResident(pageables.size(), pageables.data());
 			
 		}
 

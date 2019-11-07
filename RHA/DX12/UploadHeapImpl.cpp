@@ -55,8 +55,6 @@ namespace RHA
 		
 		D3D12_GPU_VIRTUAL_ADDRESS UploadHeapImpl::CopyDataToUploadAddress(const void *data, size_t dataByteCount, size_t alignment)
 		{
-			AdvanceAllocPosToAlignment(alignment);
-
 			if (cpuSideAllocPos + dataByteCount > cpuSideEnd)
 			{
 				throw Exception::Exception{ "Upload heap out of memory" };
@@ -66,6 +64,7 @@ namespace RHA
 			const intptr_t offsetToAllocation = cpuSideAllocPos - cpuSideStart;
 			cpuSideAllocPos += dataByteCount;
 
+			AdvanceAllocPosToAlignment(alignment);
 			return uploadBuffer->GetGPUVirtualAddress() + offsetToAllocation;
 
 		}

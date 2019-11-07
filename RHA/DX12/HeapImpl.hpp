@@ -1,7 +1,7 @@
 #pragma once
 #include "DX12/Heap.hpp"
 #include "DX12/DeviceResources.hpp"
-#include "DxPtrTypes.hpp"
+
 
 
 
@@ -42,6 +42,9 @@ namespace RHA
 
 			
 			public: virtual void Reset() override;
+
+
+			public: inline virtual DxPtr<ID3D12Heap> GetHeap() override { return heap; }
 									
 		};
 

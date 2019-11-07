@@ -11,7 +11,7 @@ namespace Renderer
 	{
 		using namespace RHA::DX12;
 		
-		ResourceFactory::ResourceFactory(RHA::DX12::DeviceResources *resources, RHA::DX12::Queue *queue) :
+		ResourceFactory::ResourceFactory(DeviceResources *resources, Queue *queue) :
 			queue{ queue },
 			resources{ resources },
 			uploadAddress{ 0 },
@@ -28,10 +28,19 @@ namespace Renderer
 			
 		}
 
-		DxPtr<ID3D12Resource> ResourceFactory::MakeBufferWithData(const void *data, size_t sizeInBytes)
+		
+		void ResourceFactory::MakeResident() const
+		{			
+			bufferHeaps.MakeResident();			
+			
+		}
+
+		
+		DxPtr<ID3D12Resource> ResourceFactory::MakeBufferWithData(const void *data, const size_t sizeInBytes, const D3D12_RESOURCE_STATES desiredState)
 		{
 			WaitForSingleObject(event, INFINITE);
-					
+			fence->Signal(0);
+			
 			CopyDataToUploadBuffer(data, sizeInBytes);
 			
 			auto gpuAllocation{ bufferHeaps.Allocate(sizeInBytes) };
@@ -53,14 +62,21 @@ namespace Renderer
 			};
 			CheckGpuResourceCreation(result);
 			
-			auto glist{ GetFreshCmdList() };		
+			auto glist{ GetFreshCmdList() };
+			
+			D3D12_RESOURCE_BARRIER activationBarrier{};
+			activationBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_ALIASING;
+			activationBarrier.Aliasing.pResourceBefore = nullptr;
+			activationBarrier.Aliasing.pResourceAfter = gpuResource.Get();
+			glist->ResourceBarrier(1, &activationBarrier);
+			
 			glist->CopyBufferRegion(gpuResource.Get(), 0, uploadBuffer->GetResource().Get(), 0, sizeInBytes);
-
+						
 			D3D12_RESOURCE_BARRIER barrier{};
 			barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 			barrier.Transition.pResource = gpuResource.Get();
 			barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
-			barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_COMMON;
+			barrier.Transition.StateAfter = desiredState;
 			glist->ResourceBarrier(1, &barrier);
 			
 			glist->Close();
