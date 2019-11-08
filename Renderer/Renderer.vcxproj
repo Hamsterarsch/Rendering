@@ -169,6 +169,7 @@
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Interface\Renderer.cpp" />
+    <ClCompile Include="Interface\Resources\ResourceHandle.cpp" />
     <ClCompile Include="Resources\DynamicHeapSet.cpp" />
     <ClCompile Include="Resources\ResourceFactory.cpp" />
   </ItemGroup>

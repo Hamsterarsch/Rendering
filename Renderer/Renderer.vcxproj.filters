@@ -29,6 +29,9 @@
     <ClCompile Include="Resources\DynamicHeapSet.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
+    <ClCompile Include="Interface\Resources\ResourceHandle.cpp">
+      <Filter>Interface\Resources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">

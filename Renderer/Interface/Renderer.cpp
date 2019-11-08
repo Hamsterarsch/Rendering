@@ -5,6 +5,7 @@
 
 #include "Resources/ResourceFactory.hpp"
 
+
 #if _DEBUG
 	constexpr bool enableDebugLayers = true;
 #else
@@ -149,7 +150,8 @@ namespace Renderer
 			list = commonAllocator->AllocateList();
 			auto gral{ list->AsGraphicsList() };
 			gral->Close();		
-			
+
+
 			updaterHandle = std::async( std::launch::async, &Renderer::UpdateRendering, this);
 
 			{
