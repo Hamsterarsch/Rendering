@@ -15,24 +15,24 @@ namespace Renderer
 	
 	struct RENDERER_DLLSPEC ResourceHandle
 	{
-		const ResourceType type;
+		using t_hash = size_t;
+		
+		using t_serial = size_t;
+		
+		using t_resourceType = ResourceType;
 
-		const size_t serial;
-
-		const size_t hash;
+		
+		const t_hash hash;
 
 
 		
-		public: ResourceHandle(ResourceType type, size_t serial);
+		public: ResourceHandle(t_resourceType type, t_serial serial);
 
-			private: static size_t MakeHash(ResourceType type, size_t serial);
-
-		
-		public: explicit ResourceHandle(size_t hash);
-
-			private: static ResourceType ExtractTypeFromHash(size_t hash);
-
-			private: static size_t ExtractSerialFromHash(size_t hash);
+			private: static t_hash MakeHash(t_resourceType type, t_serial serial);
+					 
+		public: t_resourceType GetResourceType() const;
+			
+		public: t_serial GetSerial() const;
 					 					 		
 	};
 	

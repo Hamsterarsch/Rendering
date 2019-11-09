@@ -17,6 +17,9 @@
     <ClInclude Include="Resources\DynamicHeapSet.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
+    <ClInclude Include="Resources\ResourceMemory.hpp">
+      <Filter>Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -31,6 +34,9 @@
     </ClCompile>
     <ClCompile Include="Interface\Resources\ResourceHandle.cpp">
       <Filter>Interface\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\ResourceMemory.cpp">
+      <Filter>Resources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

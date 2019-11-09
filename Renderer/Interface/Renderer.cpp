@@ -130,6 +130,7 @@ namespace Renderer
 			auto r3 =
 			resources->GetDevice()->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&pipeline));
 
+			
 			//
 			struct
 			{
@@ -142,12 +143,12 @@ namespace Renderer
 			data->vertexView.BufferLocation = meshBuffer->GetGPUVirtualAddress();
 			data->vertexView.SizeInBytes = sizeof(meshdata.vertices);
 			data->vertexView.StrideInBytes = sizeof(vertex);
-
-
+			
 			data->indexView.BufferLocation = meshBuffer->GetGPUVirtualAddress() + sizeof(meshdata.vertices);
 			data->indexView.SizeInBytes = sizeof(meshdata.indices);
 			data->indexView.Format = DXGI_FORMAT_R32_UINT;
-				   		
+
+			
 			list = commonAllocator->AllocateList();
 			auto gral{ list->AsGraphicsList() };
 			gral->Close();		

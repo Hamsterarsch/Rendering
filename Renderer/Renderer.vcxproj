@@ -164,6 +164,7 @@
     <ClInclude Include="Interface\Resources\ResourceHandle.hpp" />
     <ClInclude Include="Resources\DynamicHeapSet.hpp" />
     <ClInclude Include="Resources\ResourceFactory.hpp" />
+    <ClInclude Include="Resources\ResourceMemory.hpp" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
@@ -172,6 +173,7 @@
     <ClCompile Include="Interface\Resources\ResourceHandle.cpp" />
     <ClCompile Include="Resources\DynamicHeapSet.cpp" />
     <ClCompile Include="Resources\ResourceFactory.cpp" />
+    <ClCompile Include="Resources\ResourceMemory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RHA\RHA.vcxproj">

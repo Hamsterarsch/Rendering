@@ -67,10 +67,10 @@ namespace RHA
 			
 			HeapAllocation allocation{};
 			allocation.heap = heap.Get();
-			allocation.allocationSize = sizeInBytes;
 			allocation.offsetToAllocation = offsetToFreeRegion;
 
 			UpdateAllocationOffsets(sizeInBytes);			
+			allocation.allocationSize = offsetToFreeRegion - allocation.offsetToAllocation;
 			return allocation;
 						
 		}
@@ -86,7 +86,7 @@ namespace RHA
 		
 			void HeapImpl::UpdateAllocationOffsets(const size_t sizeInBytes)
 			{				
-				offsetToFreeRegion = IncreaseValueToAlignment(offsetToFreeRegion + sizeInBytes);
+				offsetToFreeRegion = min(IncreaseValueToAlignment(offsetToFreeRegion + sizeInBytes), sizeInBytes);
 			
 			}
 

@@ -40,7 +40,7 @@ namespace RHA
 						
 				private: void UpdateAllocationOffsets(size_t sizeInBytes);
 
-			
+						
 			public: virtual void Reset() override;
 
 
