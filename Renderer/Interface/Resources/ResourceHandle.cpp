@@ -10,16 +10,16 @@ namespace Renderer
 	{						
 	}
 
-	size_t ResourceHandle::MakeHash(const ResourceType type, const size_t serial)
-	{
-		constexpr size_t typeErasure{ ~size_t(0) >> sizeof type * 8	};
-				
-		size_t typeMask{ static_cast<unsigned char>(type) };
-		typeMask = typeMask << (sizeof serial - sizeof type) * 8;
-	
-		return (serial & typeErasure) | typeMask;
+		size_t ResourceHandle::MakeHash(const ResourceType type, const size_t serial)
+		{
+			constexpr size_t typeErasure{ ~size_t(0) >> sizeof type * 8	};
+					
+			size_t typeMask{ static_cast<unsigned char>(type) };
+			typeMask = typeMask << (sizeof serial - sizeof type) * 8;
 		
-	}
+			return (serial & typeErasure) | typeMask;
+			
+		}
 
 	
 	

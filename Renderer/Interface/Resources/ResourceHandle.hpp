@@ -25,7 +25,7 @@ namespace Renderer
 		
 		public: ResourceHandle(ResourceType type, size_t serial);
 
-		public: static size_t MakeHash(ResourceType type, size_t serial);
+			private: static size_t MakeHash(ResourceType type, size_t serial);
 
 		
 		public: explicit ResourceHandle(size_t hash);

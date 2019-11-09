@@ -130,21 +130,22 @@ namespace Renderer
 			auto r3 =
 			resources->GetDevice()->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&pipeline));
 
-			//			
-			vertex vertices[3]{ {-0.75, -0.75, 0 }, {0.75, -0.75, 0}, {0, 0.75, 0} };		
-			unsigned indices[3]{ 0,1,2 };
-			
+			//
+			struct
+			{
+				vertex vertices[3]{ {-0.75, -0.75, 0 }, {0.75, -0.75, 0}, {0, 0.75, 0} };
+				unsigned indices[3]{ 0,1,2 };
+			} meshdata;
 
-			vertexBuffer = rescFactory->MakeBufferWithData(vertices, sizeof(vertices), D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
-			indexBuffer = rescFactory->MakeBufferWithData(indices, sizeof(indices), D3D12_RESOURCE_STATE_INDEX_BUFFER);
-			
-			data->vertexView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
-			data->vertexView.SizeInBytes = sizeof(vertices);
+			meshBuffer = rescFactory->MakeBufferWithData(&meshdata, sizeof(meshdata), D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER | D3D12_RESOURCE_STATE_INDEX_BUFFER);
+						
+			data->vertexView.BufferLocation = meshBuffer->GetGPUVirtualAddress();
+			data->vertexView.SizeInBytes = sizeof(meshdata.vertices);
 			data->vertexView.StrideInBytes = sizeof(vertex);
 
 
-			data->indexView.BufferLocation = indexBuffer->GetGPUVirtualAddress();
-			data->indexView.SizeInBytes = sizeof(indices);
+			data->indexView.BufferLocation = meshBuffer->GetGPUVirtualAddress() + sizeof(meshdata.vertices);
+			data->indexView.SizeInBytes = sizeof(meshdata.indices);
 			data->indexView.Format = DXGI_FORMAT_R32_UINT;
 				   		
 			list = commonAllocator->AllocateList();

@@ -64,7 +64,7 @@ namespace Renderer
 					 DxPtr<ID3D12RootSignature> signature;
 					 DxPtr<ID3D12PipelineState> pipeline;
 					 UniquePtr<RHA::DX12::CmdList> list;
-					 DxPtr<ID3D12Resource> vertexBuffer, indexBuffer;
+					 DxPtr<ID3D12Resource> meshBuffer, indexBuffer;
 						
 			
 					 		
