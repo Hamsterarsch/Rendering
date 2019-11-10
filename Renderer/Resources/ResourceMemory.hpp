@@ -21,11 +21,7 @@ namespace Renderer
 	namespace DX12
 	{
 		class ResourceMemory
-		{
-			using t_item = UniquePtr<RHA::DX12::Heap>;
-			
-			using t_container = std::vector<t_item>;
-			
+		{			
 			struct MemoryInfo
 			{				
 				size_t heapIndex;
@@ -33,18 +29,34 @@ namespace Renderer
 				size_t sizeInBytes;			
 			};
 
+			struct HeapInfo
+			{
+				UniquePtr<RHA::DX12::Heap>	heap;
+				std::unordered_map<size_t, MemoryInfo> occupiedBlocks;
+			};
+			
+			using t_container = std::vector<HeapInfo>;
+
+			
+			private: RHA::DX12::DeviceResources *resources;
+			
 			private: size_t initialHeapSize;
 
-			private: RHA::DX12::DeviceResources *resources;
+			private: size_t alignment;
 
 			private: D3D12_HEAP_FLAGS heapFlags;
 			
 			private: std::list<MemoryInfo> freeBlocks;
 				
-			private: std::unordered_map<D3D12_GPU_VIRTUAL_ADDRESS, MemoryInfo> occupiedBlocks;
-			
+			private: std::unordered_map<ID3D12Heap *, size_t> heapIndexMap;
+
 			private: t_container memory;
 
+
+
+			public: ResourceMemory(RHA::DX12::DeviceResources *resources, size_t initialHeapSizeInBytes, size_t alignment, D3D12_HEAP_FLAGS heapFlags);
+
+				private: decltype(freeBlocks)::iterator MakeNewFreeBlock(size_t sizeInBytes);
 
 			
 			public: RHA::DX12::HeapAllocation Allocate(size_t sizeInBytes);

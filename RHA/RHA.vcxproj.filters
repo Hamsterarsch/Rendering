@@ -113,6 +113,9 @@
     <ClInclude Include="Interface\DX12\Heap.hpp">
       <Filter>Interface\DX12</Filter>
     </ClInclude>
+    <ClInclude Include="Interface\Utility\Alignment.hpp">
+      <Filter>Interface</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DX12">

@@ -2,6 +2,7 @@
 #include "Shared/Exception/CreationFailedException.hpp"
 #include "Shared/Exception/OutOfMemoryException.hpp"
 #include "DX12/HeapAllocation.hpp"
+#include "Utility/Alignment.hpp"
 
 
 namespace RHA
@@ -21,7 +22,7 @@ namespace RHA
 			D3D12_HEAP_DESC desc{};
 			desc.Alignment = alignment;
 			desc.Properties.Type = D3D12_HEAP_TYPE_DEFAULT;
-			desc.SizeInBytes = IncreaseValueToAlignment(sizeInBytes);
+			desc.SizeInBytes = Utility::IncreaseValueToAlignment(sizeInBytes, alignment);
 			desc.Flags = flags;
 			
 			const auto result
@@ -37,13 +38,6 @@ namespace RHA
 				return alignment == 0 || (alignment & (alignment-1));
 			}
 
-
-			size_t HeapImpl::IncreaseValueToAlignment(const size_t value)
-			{
-				return (value + alignment-1) & ~(alignment-1);
-			
-			}
-
 			void HeapImpl::CheckHeapCreation(const HRESULT result) const
 			{			
 				if(FAILED(result))
@@ -53,6 +47,7 @@ namespace RHA
 							
 			}
 
+		
 
 		bool HeapImpl::HasCapacityForAllocation(const size_t allocationSizeInBytes) const
 		{
@@ -60,7 +55,8 @@ namespace RHA
 		
 		}
 		
-					
+
+		
 		HeapAllocation HeapImpl::Allocate(const size_t sizeInBytes)
 		{
 			CheckAllocationSize(sizeInBytes);
@@ -86,10 +82,11 @@ namespace RHA
 		
 			void HeapImpl::UpdateAllocationOffsets(const size_t sizeInBytes)
 			{				
-				offsetToFreeRegion = min(IncreaseValueToAlignment(offsetToFreeRegion + sizeInBytes), sizeInBytes);
+				offsetToFreeRegion = min(Utility::IncreaseValueToAlignment(offsetToFreeRegion + sizeInBytes, alignment), sizeInBytes);
 			
 			}
 
+		
 
 		void HeapImpl::Reset()
 		{

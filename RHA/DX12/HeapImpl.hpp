@@ -23,8 +23,6 @@ namespace RHA
 
 			public: HeapImpl(DeviceResources *resources, size_t sizeInBytes, size_t alignment, D3D12_HEAP_FLAGS flags);
 
-				private: size_t IncreaseValueToAlignment(size_t value);
-			
 				private: void CheckHeapCreation(HRESULT result) const;
 			
 				private: bool AlignmentIsInvalid() const;
