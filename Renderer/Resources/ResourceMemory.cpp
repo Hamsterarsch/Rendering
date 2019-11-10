@@ -82,7 +82,7 @@ namespace Renderer
 			targetBlock->offsetToAllocation += alloc.allocationSize;
 			targetBlock->sizeInBytes -= alloc.allocationSize;
 
-			if(targetBlock->sizeInBytes == 0)
+			if(targetBlock->sizeInBytes <= 0)
 			{
 				freeBlocks.erase(targetBlock);
 			}
