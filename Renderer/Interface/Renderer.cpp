@@ -4,6 +4,8 @@
 
 
 #include "Resources/ResourceFactory.hpp"
+#include "Resources/ResourceAllocation.hpp"
+
 
 
 #if _DEBUG
@@ -138,13 +140,16 @@ namespace Renderer
 				unsigned indices[3]{ 0,1,2 };
 			} meshdata;
 
-			meshBuffer = rescFactory->MakeBufferWithData(&meshdata, sizeof(meshdata), D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER | D3D12_RESOURCE_STATE_INDEX_BUFFER);
+			meshBufferAllocation = std::make_unique<ResourceAllocation>
+			(
+				rescFactory->MakeBufferWithData(&meshdata, sizeof(meshdata), D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER | D3D12_RESOURCE_STATE_INDEX_BUFFER)
+			);
 						
-			data->vertexView.BufferLocation = meshBuffer->GetGPUVirtualAddress();
+			data->vertexView.BufferLocation = meshBufferAllocation->resource->GetGPUVirtualAddress();
 			data->vertexView.SizeInBytes = sizeof(meshdata.vertices);
 			data->vertexView.StrideInBytes = sizeof(vertex);
 			
-			data->indexView.BufferLocation = meshBuffer->GetGPUVirtualAddress() + sizeof(meshdata.vertices);
+			data->indexView.BufferLocation = meshBufferAllocation->resource->GetGPUVirtualAddress() + sizeof(meshdata.vertices);
 			data->indexView.SizeInBytes = sizeof(meshdata.indices);
 			data->indexView.Format = DXGI_FORMAT_R32_UINT;
 

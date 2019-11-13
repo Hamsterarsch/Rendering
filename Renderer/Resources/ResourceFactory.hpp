@@ -1,7 +1,8 @@
 #pragma once
 #include "DxPtrTypes.hpp"
 #include "Shared/PtrTypes.hpp"
-#include "DynamicHeapSet.hpp"
+#include "Resources/ResourceAllocation.hpp"
+#include "Resources/ResourceMemory.hpp"
 
 struct ID3D12Resource;
 
@@ -43,7 +44,7 @@ namespace Renderer
 
 			private: D3D12_GPU_VIRTUAL_ADDRESS uploadAddress;
 			
-			private: DynamicHeapSet bufferHeaps;
+			private: ResourceMemory bufferHeaps;
 
 			
 
@@ -57,11 +58,8 @@ namespace Renderer
 
 			public: ResourceFactory &operator=(ResourceFactory &other) = delete;
 
-
-			public: void MakeResident() const;
-			
-			
-			public: DxPtr<ID3D12Resource> MakeBufferWithData(const void *data, size_t sizeInBytes, D3D12_RESOURCE_STATES desiredState);
+											
+			public: ResourceAllocation MakeBufferWithData(const void *data, size_t sizeInBytes, D3D12_RESOURCE_STATES desiredState);
 
 				private: void CopyDataToUploadBuffer(const void *data, size_t sizeInBytes);
 
@@ -74,6 +72,13 @@ namespace Renderer
 				private: DxPtr<ID3D12GraphicsCommandList> GetFreshCmdList();
 
 				private: void SubmitListAndFenceSynchronization(CmdList *list);
+
+
+			public: void Deallocate(ResourceAllocation &allocation, ResourceTypes type);
+			
+				private: void DeallocateBuffer(ResourceAllocation &allocation);
+
+					private: void CheckAndReleaseResourceRefs(DxPtr<ID3D12Resource> &resource);
 						
 		};
 

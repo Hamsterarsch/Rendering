@@ -1,0 +1,16 @@
+#pragma once
+#include "RendererExportHelper.hpp"
+
+
+namespace Renderer
+{
+	enum class RENDERER_DLLSPEC ResourceTypes : unsigned char
+	{
+		Mesh,
+		Texture,
+		PSO,
+		Buffer
+		
+	};
+
+}

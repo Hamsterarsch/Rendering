@@ -1,25 +1,17 @@
 #pragma once
+#include "ResourceTypes.hpp"
 #include "RendererExportHelper.hpp"
 
 
 namespace Renderer
-{
-	enum class RENDERER_DLLSPEC ResourceType : unsigned char
-	{
-		Mesh,
-		Texture,
-		PSO
-		
-	};
-
-	
+{	
 	struct RENDERER_DLLSPEC ResourceHandle
 	{
 		using t_hash = size_t;
 		
 		using t_serial = size_t;
 		
-		using t_resourceType = ResourceType;
+		using t_resourceType = ResourceTypes;
 
 		
 		const t_hash hash;

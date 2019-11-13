@@ -1,6 +1,7 @@
 #include "DX12/Facade.hpp"
-#include "Resources/ResourceFactory.hpp"
 #include "Shared/Exception/CreationFailedException.hpp"
+#include "Resources/ResourceTypes.hpp"
+#include "Resources/ResourceFactory.hpp"
 
 
 
@@ -15,7 +16,7 @@ namespace Renderer
 			queue{ queue },
 			resources{ resources },
 			uploadAddress{ 0 },
-			bufferHeaps{ resources, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT * 15, D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS }
+			bufferHeaps{ resources, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT * 15, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT, D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS }
 		{
 			uploadBuffer = Facade::MakeUploadHeap(resources, 1'000'000);
 			fence = Facade::MakeFence(resources);
@@ -28,36 +29,30 @@ namespace Renderer
 			
 		}
 
+	
 		
-		void ResourceFactory::MakeResident() const
-		{			
-			bufferHeaps.MakeResident();			
-			
-		}
-
-		
-		DxPtr<ID3D12Resource> ResourceFactory::MakeBufferWithData(const void *data, const size_t sizeInBytes, const D3D12_RESOURCE_STATES desiredState)
+		ResourceAllocation ResourceFactory::MakeBufferWithData(const void *data, const size_t sizeInBytes, const D3D12_RESOURCE_STATES desiredState)
 		{
 			WaitForSingleObject(event, INFINITE);
 			fence->Signal(0);
 			
 			CopyDataToUploadBuffer(data, sizeInBytes);
-			
-			auto gpuAllocation{ bufferHeaps.Allocate(sizeInBytes) };
-				   				
-			DxPtr<ID3D12Resource> gpuResource;
+
+			ResourceAllocation outAlloc{ this, ResourceTypes::Buffer };
+			outAlloc.allocation = bufferHeaps.Allocate(sizeInBytes);
+						
 			const auto desc{ MakeBufferDesc(sizeInBytes) };
 			constexpr decltype(nullptr) BUFFER_CLEAR_VALUE{ nullptr };
 			const auto result
 			{		
 				resources->GetDevice()->CreatePlacedResource
 				(
-					gpuAllocation.heap, 
-					gpuAllocation.offsetToAllocation,
+					outAlloc.allocation.heap, 
+					outAlloc.allocation.offsetToAllocation,
 					&desc,
 					D3D12_RESOURCE_STATE_COPY_DEST,
 					BUFFER_CLEAR_VALUE,
-					IID_PPV_ARGS(&gpuResource)
+					IID_PPV_ARGS(&outAlloc.resource)
 				)
 			};
 			CheckGpuResourceCreation(result);
@@ -67,14 +62,14 @@ namespace Renderer
 			D3D12_RESOURCE_BARRIER activationBarrier{};
 			activationBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_ALIASING;
 			activationBarrier.Aliasing.pResourceBefore = nullptr;
-			activationBarrier.Aliasing.pResourceAfter = gpuResource.Get();
+			activationBarrier.Aliasing.pResourceAfter = outAlloc.resource.Get();
 			glist->ResourceBarrier(1, &activationBarrier);
 			
-			glist->CopyBufferRegion(gpuResource.Get(), 0, uploadBuffer->GetResource().Get(), 0, sizeInBytes);
+			glist->CopyBufferRegion(outAlloc.resource.Get(), 0, uploadBuffer->GetResource().Get(), 0, sizeInBytes);
 						
 			D3D12_RESOURCE_BARRIER barrier{};
 			barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-			barrier.Transition.pResource = gpuResource.Get();
+			barrier.Transition.pResource = outAlloc.resource.Get();
 			barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
 			barrier.Transition.StateAfter = desiredState;
 			glist->ResourceBarrier(1, &barrier);
@@ -82,7 +77,7 @@ namespace Renderer
 			glist->Close();
 
 			SubmitListAndFenceSynchronization(list.get());		
-			return gpuResource;
+			return outAlloc;
 			
 		}
 
@@ -147,7 +142,37 @@ namespace Renderer
 				
 			}
 
+		void ResourceFactory::Deallocate(ResourceAllocation &allocation, ResourceTypes type)
+		{
+			switch(type)
+			{
+			case ResourceTypes::Buffer:
+				DeallocateBuffer(allocation);
+			default:
+				throw Exception::Exception{ "Resource type missing handling in dx12 resource factory deallocation" };				
+			}
 			
+		}
+
+			void ResourceFactory::DeallocateBuffer(ResourceAllocation &allocation)
+			{
+				bufferHeaps.Deallocate(allocation.allocation);				
+				CheckAndReleaseResourceRefs(allocation.resource);
+				
+			}
+
+				void ResourceFactory::CheckAndReleaseResourceRefs(DxPtr<ID3D12Resource> &resource)
+				{
+					const auto cutReferences{ resource.Reset() };
+					if(cutReferences > 0)
+					{
+						throw Exception::Exception{ "Deallocated a resource allocation whoose resource is still referenced" };//todo: this could be done in debuggin only
+					}
+			
+				}
+
+		
 	}
+
 	
 }
