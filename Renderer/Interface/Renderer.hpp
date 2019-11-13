@@ -32,9 +32,12 @@ namespace Renderer
 	namespace DX12
 	{
 		struct TriangleData;
+
 		
+						
 		class RENDERER_DLLSPEC Renderer
 		{
+			
 			private: const unsigned inflightFramesAmount;
 			
 			private: std::mutex updaterMutex;
@@ -65,6 +68,9 @@ namespace Renderer
 					 UniquePtr<RHA::DX12::CmdList> list;
 					 UniquePtr<class ResourceAllocation> meshBufferAllocation;
 						
+			private: struct PrivateMembers;
+
+			private: UniquePtr<PrivateMembers> privateMembers;
 			
 					 		
 			
@@ -74,7 +80,23 @@ namespace Renderer
 
 			public: ~Renderer();
 
-						
+
+			
+			public: size_t MakeBufferResourceAndHandle(const void *data, size_t sizeInBytes);
+
+				
+
+			public: bool ResourceHasToBeReloaded(size_t handle);
+			
+			public: void MakeBufferWithHandle(const void *data, size_t sizeInBytes, size_t handle);
+
+
+			public: void RenderMesh(size_t bufferHandle);
+
+			public: void DispatchFrame();
+			
+			
+			
 			public: void SubmitFrameInfo();
 
 			public: void WaitForCapacity();
