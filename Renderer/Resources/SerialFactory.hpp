@@ -9,7 +9,7 @@ namespace Renderer
 
 
 
-		SerialFactory();
+		public: SerialFactory();
 
 		
 		public: size_t GetNextSerial();

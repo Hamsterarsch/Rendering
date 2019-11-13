@@ -5,7 +5,9 @@
 
 #include "Resources/ResourceFactory.hpp"
 #include "Resources/ResourceAllocation.hpp"
-
+#include "Resources/SerialFactory.hpp"
+#include "Resources/ResourceHandle.hpp"
+#include "Resources/ResourceRegistry.hpp"
 
 
 #if _DEBUG
@@ -26,7 +28,14 @@ namespace Renderer
 	namespace DX12
 	{
 		using namespace RHA::DX12;
-	
+
+		struct Renderer::PrivateMembers
+		{
+			SerialFactory bufferSerialFactory;			
+			ResourceRegistry registry;
+			
+		};
+		
 		struct TriangleData
 		{
 			D3D12_VERTEX_BUFFER_VIEW vertexView;
@@ -35,7 +44,8 @@ namespace Renderer
 		
 		Renderer::Renderer(HWND outputWindow) :
 			inflightFramesAmount{ 1 },
-			shouldUpdateRendering{ false }
+			shouldUpdateRendering{ false },
+			privateMembers{ std::make_unique<PrivateMembers>() }
 		{
 			resources = Facade::MakeDeviceResources(D3D_FEATURE_LEVEL_11_0, enableDebugLayers);
 			commonQueue = Facade::MakeQueue(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT);
@@ -44,7 +54,7 @@ namespace Renderer
 			closeFence = Facade::MakeFence(resources.get());
 			closeEvent = CreateEvent(nullptr, false, false, nullptr);
 			data = std::make_unique<TriangleData>();
-			rescFactory = std::make_unique<ResourceFactory>(resources.get(), commonQueue.get());			
+			resourceFactory = std::make_unique<ResourceFactory>(resources.get(), commonQueue.get());			
 			auto shFactory{ Facade::MakeShaderFactory(5,0) };
 
 			auto vs
@@ -142,7 +152,7 @@ namespace Renderer
 
 			meshBufferAllocation = std::make_unique<ResourceAllocation>
 			(
-				rescFactory->MakeBufferWithData(&meshdata, sizeof(meshdata), D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER | D3D12_RESOURCE_STATE_INDEX_BUFFER)
+				resourceFactory->MakeBufferWithData(&meshdata, sizeof(meshdata), D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER | D3D12_RESOURCE_STATE_INDEX_BUFFER)
 			);
 						
 			data->vertexView.BufferLocation = meshBufferAllocation->resource->GetGPUVirtualAddress();
@@ -235,6 +245,27 @@ namespace Renderer
 			
 		}
 
+		size_t Renderer::MakeBufferResourceAndHandle(const void *data, const size_t sizeInBytes)
+		{
+			ResourceHandle handle{ ResourceTypes::Buffer, privateMembers->bufferSerialFactory.GetNextSerial() };
+
+			auto allocation
+			{
+				resourceFactory->MakeBufferWithData(data, sizeInBytes, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER | D3D12_RESOURCE_STATE_INDEX_BUFFER)
+			};
+
+			privateMembers->registry.RegisterResource(handle, std::move(allocation));
+
+			return handle.hash;
+			
+		}
+
+
+		void Renderer::RenderMesh(size_t bufferHandle, size_t sizeInBytes, size_t offsetToIndices)
+		{
+
+			
+		}
 
 		void Renderer::SubmitFrameInfo()
 		{

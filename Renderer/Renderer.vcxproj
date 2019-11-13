@@ -167,6 +167,7 @@
     <ClInclude Include="Resources\ResourceAllocation.hpp" />
     <ClInclude Include="Resources\ResourceFactory.hpp" />
     <ClInclude Include="Resources\ResourceMemory.hpp" />
+    <ClInclude Include="Resources\ResourceRegistry.hpp" />
     <ClInclude Include="Resources\SerialFactory.hpp" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -178,6 +179,7 @@
     <ClCompile Include="Resources\ResourceAllocation.cpp" />
     <ClCompile Include="Resources\ResourceFactory.cpp" />
     <ClCompile Include="Resources\ResourceMemory.cpp" />
+    <ClCompile Include="Resources\ResourceRegistry.cpp" />
     <ClCompile Include="Resources\SerialFactory.cpp" />
   </ItemGroup>
   <ItemGroup>

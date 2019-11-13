@@ -60,7 +60,7 @@ namespace Renderer
 
 			private: HANDLE closeEvent;
 
-			private: UniquePtr<class ResourceFactory> rescFactory;
+			private: UniquePtr<class ResourceFactory> resourceFactory;
 			
 					 UniquePtr<TriangleData> data;
 					 DxPtr<ID3D12RootSignature> signature;
@@ -91,7 +91,7 @@ namespace Renderer
 			public: void MakeBufferWithHandle(const void *data, size_t sizeInBytes, size_t handle);
 
 
-			public: void RenderMesh(size_t bufferHandle);
+			public: void RenderMesh(size_t bufferHandle, size_t sizeInBytes, size_t offsetToIndices);
 
 			public: void DispatchFrame();
 			
