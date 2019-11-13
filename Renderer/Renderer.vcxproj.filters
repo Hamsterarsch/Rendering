@@ -26,6 +26,9 @@
     <ClInclude Include="Interface\Resources\ResourceTypes.hpp">
       <Filter>Interface\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="Resources\SerialFactory.hpp">
+      <Filter>Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -45,6 +48,9 @@
       <Filter>Resources</Filter>
     </ClCompile>
     <ClCompile Include="Resources\ResourceAllocation.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\SerialFactory.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
   </ItemGroup>
