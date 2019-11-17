@@ -159,6 +159,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="FrameRenderer.hpp" />
     <ClInclude Include="Interface\Renderer.hpp" />
     <ClInclude Include="Interface\RendererExportHelper.hpp" />
     <ClInclude Include="Interface\Resources\ResourceHandle.hpp" />
@@ -173,6 +174,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="FrameRenderer.cpp" />
     <ClCompile Include="Interface\Renderer.cpp" />
     <ClCompile Include="Interface\Resources\ResourceHandle.cpp" />
     <ClCompile Include="Resources\DynamicHeapSet.cpp" />

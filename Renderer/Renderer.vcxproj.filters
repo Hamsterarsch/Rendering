@@ -32,6 +32,7 @@
     <ClInclude Include="Resources\ResourceRegistry.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
+    <ClInclude Include="FrameRenderer.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -59,6 +60,7 @@
     <ClCompile Include="Resources\ResourceRegistry.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
+    <ClCompile Include="FrameRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">
