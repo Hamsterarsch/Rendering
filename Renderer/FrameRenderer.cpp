@@ -1,4 +1,8 @@
 #include "FrameRenderer.hpp"
+#include <d3d12.h>
+#include "DX12/CmdAllocator.hpp"
+#include "DX12/Queue.hpp"
+#include "DX12/DeviceResources.hpp"
 
 
 namespace Renderer
@@ -16,7 +20,9 @@ namespace Renderer
 			
 		}
 
-		
+		FrameRenderer::~FrameRenderer() noexcept = default;
+			
+				
 	}
 	
 	

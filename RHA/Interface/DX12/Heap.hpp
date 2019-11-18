@@ -1,6 +1,7 @@
 #pragma once
 #include "Shared/InterfaceHelpers.hpp"
 #include "DX12/HeapAllocation.hpp"
+#include "DX12/AllocatableGpuMemory.hpp"
 #include "DxPtrTypes.hpp"
 
 
@@ -10,7 +11,7 @@ namespace RHA
 {
 	namespace DX12
 	{
-		class Heap
+		class Heap : public AllocatableGpuMemory
 		{
 			DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(Heap)
 
@@ -18,9 +19,7 @@ namespace RHA
 			public: virtual size_t GetSizeInBytes() const = 0;			
 			
 			public: virtual bool HasCapacityForAllocation(size_t allocationSizeInBytes) const = 0;
-
-			public: virtual HeapAllocation Allocate(size_t sizeInBytes) = 0;
-
+					
 			public: virtual void Reset() = 0;
 
 			public: virtual DxPtr<ID3D12Heap> GetHeap() = 0;

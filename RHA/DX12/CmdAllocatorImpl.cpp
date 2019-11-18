@@ -29,6 +29,12 @@ namespace RHA
 			
 		}
 
+		HRESULT CmdAllocatorImpl::Reset()
+		{
+			return allocator->Reset();
+			
+		}
+
 		
 	}
 

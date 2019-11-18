@@ -164,11 +164,10 @@
     <ClInclude Include="Interface\RendererExportHelper.hpp" />
     <ClInclude Include="Interface\Resources\ResourceHandle.hpp" />
     <ClInclude Include="Interface\Resources\ResourceTypes.hpp" />
-    <ClInclude Include="Resources\AllocatableGpuMemory.hpp" />
-    <ClInclude Include="Resources\DeallocatableGpuMemory.hpp" />
     <ClInclude Include="Resources\DynamicHeapSet.hpp" />
     <ClInclude Include="Resources\ResourceAllocation.hpp" />
     <ClInclude Include="Resources\ResourceFactory.hpp" />
+    <ClInclude Include="Resources\ResourceFactoryDeallocatable.hpp" />
     <ClInclude Include="Resources\ResourceMemory.hpp" />
     <ClInclude Include="Resources\ResourceRegistry.hpp" />
     <ClInclude Include="Resources\SerialFactory.hpp" />
@@ -182,6 +181,7 @@
     <ClCompile Include="Resources\DynamicHeapSet.cpp" />
     <ClCompile Include="Resources\ResourceAllocation.cpp" />
     <ClCompile Include="Resources\ResourceFactory.cpp" />
+    <ClCompile Include="Resources\ResourceFactoryDeallocatable.cpp" />
     <ClCompile Include="Resources\ResourceMemory.cpp" />
     <ClCompile Include="Resources\ResourceRegistry.cpp" />
     <ClCompile Include="Resources\SerialFactory.cpp" />

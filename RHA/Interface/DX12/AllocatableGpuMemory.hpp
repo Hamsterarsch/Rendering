@@ -3,7 +3,7 @@
 #include "DX12/HeapAllocation.hpp"
 
 
-namespace Renderer
+namespace RHA
 {
 	namespace DX12
 	{
@@ -12,7 +12,7 @@ namespace Renderer
 			DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(AllocatableGpuMemory)
 
 
-			virtual RHA::DX12::HeapAllocation Allocate(size_t sizeInBytes) = 0;
+			virtual HeapAllocation Allocate(size_t sizeInBytes) = 0;
 			
 		};
 

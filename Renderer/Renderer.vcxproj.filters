@@ -33,10 +33,7 @@
       <Filter>Resources</Filter>
     </ClInclude>
     <ClInclude Include="FrameRenderer.hpp" />
-    <ClInclude Include="Resources\AllocatableGpuMemory.hpp">
-      <Filter>Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="Resources\DeallocatableGpuMemory.hpp">
+    <ClInclude Include="Resources\ResourceFactoryDeallocatable.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
   </ItemGroup>
@@ -67,6 +64,9 @@
       <Filter>Resources</Filter>
     </ClCompile>
     <ClCompile Include="FrameRenderer.cpp" />
+    <ClCompile Include="Resources\ResourceFactoryDeallocatable.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">

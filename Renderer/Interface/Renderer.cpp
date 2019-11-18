@@ -54,7 +54,7 @@ namespace Renderer
 			closeFence = Facade::MakeFence(resources.get());
 			closeEvent = CreateEvent(nullptr, false, false, nullptr);
 			data = std::make_unique<TriangleData>();
-			resourceFactory = std::make_unique<ResourceFactory>(resources.get(), commonQueue.get());			
+			resourceFactory = std::make_unique<ResourceFactory>(resources.get(), commonQueue.get(), std::make_unique<ResourceMemory>(resources.get(), D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT * 15, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT, D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS));			
 			auto shFactory{ Facade::MakeShaderFactory(5,0) };
 
 			auto vs

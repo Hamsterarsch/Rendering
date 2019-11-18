@@ -4,7 +4,7 @@
 #include "Shared/PtrTypes.hpp"
 #include <d3d12.h>
 #include <unordered_map>
-#include "DeallocatableGpuMemory.hpp"
+#include "DX12/DeallocatableGpuMemory.hpp"
 #include "DX12/HeapAllocation.hpp"
 
 
@@ -21,7 +21,7 @@ namespace Renderer
 {
 	namespace DX12
 	{
-		class ResourceMemory : public DeallocatableGpuMemory
+		class ResourceMemory : public RHA::DX12::DeallocatableGpuMemory
 		{			
 			struct MemoryInfo
 			{				

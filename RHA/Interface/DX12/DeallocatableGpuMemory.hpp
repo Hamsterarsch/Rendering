@@ -1,8 +1,8 @@
 #pragma once
-#include "AllocatableGpuMemory.hpp"
+#include "DX12/AllocatableGpuMemory.hpp"
 
 
-namespace Renderer
+namespace RHA
 {
 	namespace DX12
 	{
@@ -11,7 +11,7 @@ namespace Renderer
 			DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(DeallocatableGpuMemory)
 
 
-			virtual void Deallocate(const RHA::DX12::HeapAllocation &allocation) = 0;
+			virtual void Deallocate(const HeapAllocation &allocation) = 0;
 			
 		};
 

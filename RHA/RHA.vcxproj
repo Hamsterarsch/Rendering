@@ -165,8 +165,10 @@
     <ClInclude Include="DX12\ShaderFactoryImpl.hpp" />
     <ClInclude Include="DX12\UploadHeapImpl.hpp" />
     <ClInclude Include="DX12\WindowSurfaceImpl.hpp" />
+    <ClInclude Include="Interface\DX12\AllocatableGpuMemory.hpp" />
     <ClInclude Include="Interface\DX12\CmdAllocator.hpp" />
     <ClInclude Include="Interface\DX12\CmdList.hpp" />
+    <ClInclude Include="Interface\DX12\DeallocatableGpuMemory.hpp" />
     <ClInclude Include="Interface\DX12\DescriptorHeap.hpp" />
     <ClInclude Include="Interface\DX12\DeviceResources.hpp" />
     <ClInclude Include="Interface\DX12\Facade.hpp" />

@@ -31,10 +31,20 @@ namespace Renderer
 
 			private: DxPtr<ID3D12Resource> renderTarget;
 
+			
 
-			FrameRenderer(RHA::DX12::DeviceResources *resources, RHA::DX12::Queue *queue, unsigned frameWidth, unsigned frameHeight);
+			public: FrameRenderer(RHA::DX12::DeviceResources *resources, RHA::DX12::Queue *queue, unsigned frameWidth, unsigned frameHeight);
+
+			public: FrameRenderer(const FrameRenderer &) = delete;
+
+			public: FrameRenderer &operator=(const FrameRenderer &) = delete;
+
+			public: FrameRenderer(FrameRenderer &&) noexcept = default;
+
+			public: FrameRenderer &operator=(FrameRenderer &&) noexcept = default;
 			
-			
+			public: ~FrameRenderer() noexcept;
+								
 		};
 		
 		
