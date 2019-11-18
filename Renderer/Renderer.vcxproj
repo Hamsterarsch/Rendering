@@ -164,6 +164,8 @@
     <ClInclude Include="Interface\RendererExportHelper.hpp" />
     <ClInclude Include="Interface\Resources\ResourceHandle.hpp" />
     <ClInclude Include="Interface\Resources\ResourceTypes.hpp" />
+    <ClInclude Include="Resources\AllocatableGpuMemory.hpp" />
+    <ClInclude Include="Resources\DeallocatableGpuMemory.hpp" />
     <ClInclude Include="Resources\DynamicHeapSet.hpp" />
     <ClInclude Include="Resources\ResourceAllocation.hpp" />
     <ClInclude Include="Resources\ResourceFactory.hpp" />

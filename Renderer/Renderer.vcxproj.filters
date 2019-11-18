@@ -33,6 +33,12 @@
       <Filter>Resources</Filter>
     </ClInclude>
     <ClInclude Include="FrameRenderer.hpp" />
+    <ClInclude Include="Resources\AllocatableGpuMemory.hpp">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\DeallocatableGpuMemory.hpp">
+      <Filter>Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />

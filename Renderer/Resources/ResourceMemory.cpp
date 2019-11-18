@@ -16,7 +16,7 @@ namespace Renderer
 			alignment{ alignment },
 			heapFlags{ heapFlags }		
 		{
-			MakeNewFreeBlock(initialHeapSizeInBytes);
+			MakeNewFreeBlock(initialHeapSize);
 			
 		}
 

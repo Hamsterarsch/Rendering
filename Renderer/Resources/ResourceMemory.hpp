@@ -4,6 +4,7 @@
 #include "Shared/PtrTypes.hpp"
 #include <d3d12.h>
 #include <unordered_map>
+#include "DeallocatableGpuMemory.hpp"
 #include "DX12/HeapAllocation.hpp"
 
 
@@ -20,7 +21,7 @@ namespace Renderer
 {
 	namespace DX12
 	{
-		class ResourceMemory
+		class ResourceMemory : public DeallocatableGpuMemory
 		{			
 			struct MemoryInfo
 			{				
@@ -59,9 +60,9 @@ namespace Renderer
 				private: decltype(freeBlocks)::iterator MakeNewFreeBlock(size_t sizeInBytes);
 
 			
-			public: RHA::DX12::HeapAllocation Allocate(size_t sizeInBytes);
+			public: virtual RHA::DX12::HeapAllocation Allocate(size_t sizeInBytes) override;
 
-			public: void Deallocate(const RHA::DX12::HeapAllocation &allocation);
+			public: virtual void Deallocate(const RHA::DX12::HeapAllocation &allocation) override;
 			
 		};
 
