@@ -65,6 +65,9 @@ namespace RHA
 					private: void CreateEventsForBuffer(unsigned bufferIndex);
 			
 					private: void CreateFencesForBuffer(unsigned bufferIndex, DeviceResources *resource);
+
+
+			public: virtual inline DxPtr<ID3D12Resource> GetResourceTemplate() override { return bufferData[0].resource; };
 			
 
 			public: virtual void ScheduleBackbufferClear(Queue *queue) override;
