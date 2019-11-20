@@ -164,6 +164,8 @@
     <ClInclude Include="Interface\RendererExportHelper.hpp" />
     <ClInclude Include="Interface\Resources\ResourceHandle.hpp" />
     <ClInclude Include="Interface\Resources\ResourceTypes.hpp" />
+    <ClInclude Include="RenderCommand.hpp" />
+    <ClInclude Include="RenderMeshCommand.hpp" />
     <ClInclude Include="Resources\DynamicHeapSet.hpp" />
     <ClInclude Include="Resources\ResourceAllocation.hpp" />
     <ClInclude Include="Resources\ResourceFactory.hpp" />
@@ -178,6 +180,7 @@
     <ClCompile Include="FrameRenderer.cpp" />
     <ClCompile Include="Interface\Renderer.cpp" />
     <ClCompile Include="Interface\Resources\ResourceHandle.cpp" />
+    <ClCompile Include="RenderMeshCommand.cpp" />
     <ClCompile Include="Resources\DynamicHeapSet.cpp" />
     <ClCompile Include="Resources\ResourceAllocation.cpp" />
     <ClCompile Include="Resources\ResourceFactory.cpp" />

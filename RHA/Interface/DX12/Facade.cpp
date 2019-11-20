@@ -76,7 +76,19 @@ namespace RHA
 			return std::make_unique<HeapImpl>(resources, sizeInBytes, alignment, flags);
 			
 		}
-		
+
+		UniquePtr<DescriptorHeap> Facade::MakeDescriptorHeap
+		(
+			DeviceResources *resources,
+			const D3D12_DESCRIPTOR_HEAP_TYPE type,
+			const size_t capacity,
+			const bool isGpuVisible
+		)
+		{
+			return std::make_unique<DescriptorHeapImpl>(resources, type, capacity, isGpuVisible);
+			
+		}
+
 		
 	}
 

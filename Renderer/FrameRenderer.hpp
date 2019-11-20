@@ -1,12 +1,14 @@
 #pragma once
 #include "Shared/PtrTypes.hpp"
 #include "DxPtrTypes.hpp"
+#include "RenderCommand.hpp"
 
 
 namespace RHA
 {
 	namespace DX12
 	{
+		class Fence;
 		class CmdAllocator;
 		class Queue;
 		class DeviceResources;
@@ -31,11 +33,22 @@ namespace Renderer
 
 			private: UniquePtr<CmdAllocator> allocator;
 
+			private: UniquePtr<Fence> fence;
+
+			private: HANDLE event;
+			
 			private: DxPtr<ID3D12Resource> renderTarget;
 
+			private: DxPtr<ID3D12Resource> depthTarget;
+
+			private: std::vector<UniquePtr<RenderCommand>> commands;
+
+			private: std::vector<UniquePtr<void>> persistentCommandData;
+			
+			private: ResourceRegistry &registry;
 			
 
-			public: FrameRenderer(DeviceResources *resources, Queue *queue, const DxPtr<ID3D12Resource> &renderTargetTemplate);
+			public: FrameRenderer(DeviceResources *resources, Queue *queue, ResourceRegistry &registry, const DxPtr<ID3D12Resource> &renderTargetTemplate);
 
 			public: FrameRenderer(const FrameRenderer &) = delete;
 
@@ -46,6 +59,13 @@ namespace Renderer
 			public: FrameRenderer &operator=(FrameRenderer &&) noexcept = default;
 			
 			public: ~FrameRenderer() noexcept;
+
+
+			public: void AddCommand(UniquePtr<RenderCommand> &&command);
+
+			public: void ExecuteCommands();
+			
+			public: void Reinitialize();
 								
 		};
 		

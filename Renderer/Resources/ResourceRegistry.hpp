@@ -4,6 +4,9 @@
 #include "Resources/ResourceAllocation.hpp"
 
 
+struct ID3D12PipelineState;
+struct ID3D12RootSignature;
+
 namespace Renderer
 {
 	struct ResourceHandle;
@@ -25,6 +28,14 @@ namespace Renderer
 			public: void RemoveReference(size_t handle);
 
 			public: bool ResourceIsNotRegistered(size_t handle);
+
+			public: DxPtr<ID3D12Resource> GetResource(size_t handle);
+
+			public: DxPtr<ID3D12PipelineState> GetPso(size_t handle);
+
+			public: DxPtr<ID3D12RootSignature> GetSignature(size_t handle);
+
+			
 			
 									
 		};

@@ -36,6 +36,8 @@
     <ClInclude Include="Resources\ResourceFactoryDeallocatable.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
+    <ClInclude Include="RenderCommand.hpp" />
+    <ClInclude Include="RenderMeshCommand.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -67,6 +69,7 @@
     <ClCompile Include="Resources\ResourceFactoryDeallocatable.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
+    <ClCompile Include="RenderMeshCommand.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">

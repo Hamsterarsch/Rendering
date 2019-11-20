@@ -10,6 +10,7 @@
 #include "Resources/ResourceRegistry.hpp"
 
 #include "FrameRenderer.hpp"
+#include "RenderMeshCommand.hpp"
 
 #if _DEBUG
 	constexpr bool enableDebugLayers = true;
@@ -264,9 +265,10 @@ namespace Renderer
 		}
 
 
-		void Renderer::RenderMesh(size_t bufferHandle, size_t sizeInBytes, size_t offsetToIndices)
+		void Renderer::RenderMesh(size_t meshHandle, size_t sizeInBytes, size_t byteOffsetToIndices)
 		{
-
+			RenderMeshCommand cmd{ meshHandle, byteOffsetToIndices, sizeInBytes - byteOffsetToIndices };
+			
 			
 		}
 
