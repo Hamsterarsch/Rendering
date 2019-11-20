@@ -20,10 +20,14 @@ namespace Renderer
 
 			public: RenderMeshCommand(size_t meshHandle, size_t byteOffsetToIndexData, size_t indicesSizeInBytes);
 			
-			public:	virtual void RegisterResourceReferences(ResourceRegistry& toRegistry) const override;
+			public: virtual size_t GetPsoHandle() const override;
+			
+			public: virtual size_t GetSignatureHandle() const override;
+			
+			public: virtual void ExecuteOperationOnResourceReferences(ResourceRegistry* registry, void( ResourceRegistry::* operation)(size_t)) override;
 
 			public: virtual void Record(RHA::DX12::CmdList* list, ResourceRegistry& registry, UniquePtr<void> &persistentData) const override;
-			
+					
 			
 		};
 		

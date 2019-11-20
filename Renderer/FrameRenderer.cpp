@@ -23,7 +23,7 @@ namespace Renderer
 		{
 			allocator = Facade::MakeCmdAllocator(resources, D3D12_COMMAND_LIST_TYPE_DIRECT);
 			fence = Facade::MakeFence(resources);
-			event = CreateEvent(nullptr, false, false, nullptr);
+			event = CreateEvent(nullptr, false, true, nullptr);
 
 			
 			auto rtDesc{ renderTargetTemplate->GetDesc() };			
@@ -74,10 +74,10 @@ namespace Renderer
 				IID_PPV_ARGS(&depthTarget)
 			);
 
-			auto dsvHeap = Facade::MakeDescriptorHeap(resources, D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);			
+			dsvHeap = Facade::MakeDescriptorHeap(resources, D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);			
 			resources->GetDevice()->CreateDepthStencilView(depthTarget.Get(), nullptr, dsvHeap->GetHandleCpu(0));
 
-			auto rtvHeap = Facade::MakeDescriptorHeap(resources, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 1, false);
+			rtvHeap = Facade::MakeDescriptorHeap(resources, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 1, false);
 			resources->GetDevice()->CreateRenderTargetView(renderTarget.Get(), nullptr, rtvHeap->GetHandleCpu(0));
 			
 			
@@ -89,8 +89,8 @@ namespace Renderer
 
 		
 		void FrameRenderer::AddCommand(UniquePtr<RenderCommand> &&command)
-		{
-			command->RegisterResourceReferences(registry);			
+		{			
+			command->ExecuteOperationOnResourceReferences(&registry, ResourceRegistry::AddReference);			
 			commands.emplace_back(std::move(commands));
 			
 		}
@@ -101,17 +101,14 @@ namespace Renderer
 		{
 			auto list{ allocator->AllocateList() };
 			auto glist{ list->AsGraphicsList() };
-			
+
+			size_t recordedCommands{ 0 };
 			for(auto &&cmd : commands)
 			{
-				const auto resetResult{ glist->Reset(allocator->GetAllocator().Get(), registry.GetPso(cmd->GetPsoHandle()).Get()) };
-				if(FAILED(resetResult))
-				{
-					//error indidcation
-					break;
-				}
+				const auto rtv{ rtvHeap->GetHandleCpu(0) };
+				const auto dsv{ dsvHeap->GetHandleCpu(0) };
 				
-				glist->OMSetRenderTargets()
+				glist->OMSetRenderTargets(1, &rtv, false, &dsv );
 				glist->SetGraphicsRootSignature(registry.GetSignature(cmd->GetSignatureHandle()).Get());
 				
 				UniquePtr<void> persistentData{ nullptr };
@@ -120,16 +117,56 @@ namespace Renderer
 				if(persistentData)
 				{
 					persistentCommandData.emplace_back(std::move(persistentData));
-				}				
+				}
+
+				if(recordedCommands >= recordsPerCommandList)
+				{
+					const auto closeResult{ glist->Close() };
+					if(FAILED(closeResult))
+					{
+						//error indication
+						return;
+					}
+
+					queue->SubmitCommandList(list.get());
+				}
+				++recordedCommands;
+
+				const auto resetResult{ glist->Reset(allocator->GetAllocator().Get(), registry.GetPso(cmd->GetPsoHandle()).Get()) };
+				if(FAILED(resetResult))
+				{
+					//error indidcation
+					return;
+				}
 			}
+
+			const auto closeResult{ glist->Close() };
+			if(SUCCEEDED(closeResult))
+			{
+				queue->SubmitCommandList(list.get());
+			}
+
+			fence->Signal(0);
+			fence->SetEventOnValue(1, event);
+			queue->Signal(1, fence.get());
 			
 		}
 
-		
+		void FrameRenderer::WaitForCompletion()
+		{
+			WaitForSingleObject(event, INFINITE);
+			
+		}
 
 		void FrameRenderer::Reinitialize()
 		{
-			WaitForSingleObject(event, INFINITE);			
+			for(auto &&cmd : commands)
+			{
+				cmd->ExecuteOperationOnResourceReferences(registry, ResourceRegistry::RemoveReference);
+			}
+
+			commands.clear();
+			persistentCommandData.clear();
 			
 			allocator->Reset();
 			

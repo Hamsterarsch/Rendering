@@ -8,6 +8,7 @@ namespace RHA
 {
 	namespace DX12
 	{
+		class DescriptorHeap;
 		class Fence;
 		class CmdAllocator;
 		class Queue;
@@ -41,11 +42,15 @@ namespace Renderer
 
 			private: DxPtr<ID3D12Resource> depthTarget;
 
+			private: UniquePtr<DescriptorHeap> rtvHeap, dsvHeap;
+
 			private: std::vector<UniquePtr<RenderCommand>> commands;
 
 			private: std::vector<UniquePtr<void>> persistentCommandData;
 			
 			private: ResourceRegistry &registry;
+
+			private: static constexpr size_t recordsPerCommandList{ 50 };
 			
 
 			public: FrameRenderer(DeviceResources *resources, Queue *queue, ResourceRegistry &registry, const DxPtr<ID3D12Resource> &renderTargetTemplate);
@@ -65,7 +70,10 @@ namespace Renderer
 
 			public: void ExecuteCommands();
 			
+			public: void WaitForCompletion();
+			
 			public: void Reinitialize();
+
 								
 		};
 		

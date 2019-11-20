@@ -20,9 +20,13 @@ namespace Renderer
 		{
 		}
 
-		void RenderMeshCommand::RegisterResourceReferences(ResourceRegistry& toRegistry) const
+		void RenderMeshCommand::ExecuteOperationOnResourceReferences
+		(
+			ResourceRegistry *registry,
+			void( ResourceRegistry:: *operation)(size_t)
+		)
 		{
-			toRegistry.AddReference(meshHandle);
+			(registry->*operation)(meshHandle);
 			
 		}
 
