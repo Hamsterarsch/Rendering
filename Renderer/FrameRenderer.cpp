@@ -102,13 +102,16 @@ namespace Renderer
 			auto list{ allocator->AllocateList() };
 			auto glist{ list->AsGraphicsList() };
 
+			const auto rtv{ rtvHeap->GetHandleCpu(0) };
+			const auto dsv{ dsvHeap->GetHandleCpu(0) };
+			
+			glist->OMSetRenderTargets(1, &rtv, false, &dsv );
+			glist->ClearRenderTargetView(rtv, clearColor, 0, nullptr);/
+			glist->ClearDepthStencilView(dsv, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1, 0, 0, nullptr);
+			
 			size_t recordedCommands{ 0 };
 			for(auto &&cmd : commands)
-			{
-				const auto rtv{ rtvHeap->GetHandleCpu(0) };
-				const auto dsv{ dsvHeap->GetHandleCpu(0) };
-				
-				glist->OMSetRenderTargets(1, &rtv, false, &dsv );
+			{				
 				glist->SetGraphicsRootSignature(registry.GetSignature(cmd->GetSignatureHandle()).Get());
 				
 				UniquePtr<void> persistentData{ nullptr };
@@ -119,6 +122,7 @@ namespace Renderer
 					persistentCommandData.emplace_back(std::move(persistentData));
 				}
 
+				HRESULT resetResult{ S_OK };
 				if(recordedCommands >= recordsPerCommandList)
 				{
 					const auto closeResult{ glist->Close() };
@@ -129,10 +133,19 @@ namespace Renderer
 					}
 
 					queue->SubmitCommandList(list.get());
+
+					resetResult = glist->Reset(allocator->GetAllocator().Get(), registry.GetPso(cmd->GetPsoHandle()).Get());
+					
+					glist->OMSetRenderTargets(1, &rtv, false, &dsv );
+					glist->ClearRenderTargetView(rtv, clearColor, 0, nullptr);//
+					glist->ClearDepthStencilView(dsv, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1, 0, 0, nullptr);
+				}
+				else
+				{
+					 resetResult = glist->Reset(allocator->GetAllocator().Get(), registry.GetPso(cmd->GetPsoHandle()).Get());					
 				}
 				++recordedCommands;
 
-				const auto resetResult{ glist->Reset(allocator->GetAllocator().Get(), registry.GetPso(cmd->GetPsoHandle()).Get()) };
 				if(FAILED(resetResult))
 				{
 					//error indidcation

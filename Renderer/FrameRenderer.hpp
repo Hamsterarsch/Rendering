@@ -51,6 +51,8 @@ namespace Renderer
 			private: ResourceRegistry &registry;
 
 			private: static constexpr size_t recordsPerCommandList{ 50 };
+
+			private: static constexpr float clearColor[]{0,0,0,1};
 			
 
 			public: FrameRenderer(DeviceResources *resources, Queue *queue, ResourceRegistry &registry, const DxPtr<ID3D12Resource> &renderTargetTemplate);
