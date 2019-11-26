@@ -30,6 +30,8 @@ namespace RHA
 			
 			public: virtual D3D12_GPU_DESCRIPTOR_HANDLE GetHandleGpu(size_t index) override;
 
+			public: inline  virtual size_t Size() const override { return capacity; }
+
 			
 		};
 

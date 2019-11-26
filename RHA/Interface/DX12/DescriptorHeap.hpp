@@ -16,6 +16,7 @@ namespace RHA
 			
 			public: virtual D3D12_GPU_DESCRIPTOR_HANDLE GetHandleGpu(size_t index) = 0;
 
+			public: virtual size_t Size() const = 0;
 			
 		};
 
