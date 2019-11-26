@@ -272,6 +272,20 @@ namespace Renderer
 			
 		}
 
+		void Renderer::DispatchFrame()
+		{
+			//throw if all frame renderers are occupied
+						
+			//batch commands where possible
+
+			//create descriptors for each command's resources
+			//on the frame renderers portion on the gpu descriptor heap
+			//(root signature tables are allowed to overlap unused parts)
+			
+			//get a frame renderer
+			
+		}
+
 		void Renderer::SubmitFrameInfo()
 		{
 			

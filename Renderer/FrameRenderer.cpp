@@ -79,9 +79,8 @@ namespace Renderer
 
 			rtvHeap = Facade::MakeDescriptorHeap(resources, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 1, false);
 			resources->GetDevice()->CreateRenderTargetView(renderTarget.Get(), nullptr, rtvHeap->GetHandleCpu(0));
-			
-			
 
+			
 		}
 
 		FrameRenderer::~FrameRenderer() noexcept = default;
@@ -106,7 +105,7 @@ namespace Renderer
 			const auto dsv{ dsvHeap->GetHandleCpu(0) };
 			
 			glist->OMSetRenderTargets(1, &rtv, false, &dsv );
-			glist->ClearRenderTargetView(rtv, clearColor, 0, nullptr);/
+			glist->ClearRenderTargetView(rtv, clearColor, 0, nullptr);
 			glist->ClearDepthStencilView(dsv, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1, 0, 0, nullptr);
 			
 			size_t recordedCommands{ 0 };
@@ -137,7 +136,7 @@ namespace Renderer
 					resetResult = glist->Reset(allocator->GetAllocator().Get(), registry.GetPso(cmd->GetPsoHandle()).Get());
 					
 					glist->OMSetRenderTargets(1, &rtv, false, &dsv );
-					glist->ClearRenderTargetView(rtv, clearColor, 0, nullptr);//
+					glist->ClearRenderTargetView(rtv, clearColor, 0, nullptr);
 					glist->ClearDepthStencilView(dsv, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1, 0, 0, nullptr);
 				}
 				else
