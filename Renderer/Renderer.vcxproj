@@ -167,6 +167,8 @@
     <ClInclude Include="RenderCommand.hpp" />
     <ClInclude Include="RenderMeshCommand.hpp" />
     <ClInclude Include="Resources\DescriptorAllocator.hpp" />
+    <ClInclude Include="Resources\DescriptorChunk.hpp" />
+    <ClInclude Include="Resources\DescriptorChunkRegistry.hpp" />
     <ClInclude Include="Resources\DescriptorMemory.hpp" />
     <ClInclude Include="Resources\DynamicHeapSet.hpp" />
     <ClInclude Include="Resources\ResourceAllocation.hpp" />
@@ -185,6 +187,7 @@
     <ClCompile Include="Interface\Resources\ResourceHandle.cpp" />
     <ClCompile Include="RenderMeshCommand.cpp" />
     <ClCompile Include="Resources\DescriptorAllocator.cpp" />
+    <ClCompile Include="Resources\DescriptorChunkRegistry.cpp" />
     <ClCompile Include="Resources\DescriptorMemory.cpp" />
     <ClCompile Include="Resources\DynamicHeapSet.cpp" />
     <ClCompile Include="Resources\ResourceAllocation.cpp" />

@@ -1,19 +1,26 @@
 #pragma once
 #include <d3d12.h>
+#include "Resources/DescriptorChunk.hpp"
 
 namespace Renderer
-{
+{	
 	namespace DX12
 	{
 		class DescriptorAllocator
 		{			
-			size_t offsetToFreeArea;
+			private: struct ChunkData
+			{
+				DescriptorChunk chunk;
+				
+				size_t offsetToFreeIndex;
+				
+			};
 
-			size_t capacity;
+			private: ChunkData view, sampler;
 
 
-
-			public: DescriptorAllocator(size_t viewCapacity, size_t viewStartIndex, size_t samplerCapacity, size_t samplerStartIndex);
+			
+			public: DescriptorAllocator(const DescriptorChunk &viewChunk, const DescriptorChunk &samplerChunk);
 			
 			
 			public: void OpenTable();

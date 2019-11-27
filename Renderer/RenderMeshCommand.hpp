@@ -12,7 +12,7 @@ namespace Renderer
 			private: size_t byteOffsetToIndexData;
 			private: size_t indicesSizeInBytes;
 
-			constexpr size_t vertexStride = sizeof(float) * 3;
+			static constexpr size_t vertexStride = sizeof(float) * 3;
 			
 			//private: std::vector<size_t> bufferHandles;
 			//private: std::vector<size_t> textureHandles;

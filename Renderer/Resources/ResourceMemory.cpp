@@ -65,18 +65,16 @@ namespace Renderer
 
 			ResourceMemory::t_freeBlocksItr ResourceMemory::FindFreeBlock(const size_t sizeInBytes)
 			{
-				auto foundBlock{ freeBlocks.end() };
-			
 				for(auto currentBlock{ freeBlocks.begin() }; currentBlock != freeBlocks.end(); ++currentBlock)
 				{
 					if(currentBlock->sizeInBytes >= sizeInBytes)
 					{
-						foundBlock = currentBlock;					
-						break;
+						return currentBlock;					
+						
 					}
 				}
 
-				return foundBlock;
+				return freeBlocks.end();
 			
 			}
 

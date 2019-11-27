@@ -174,7 +174,7 @@ namespace Renderer
 		{
 			for(auto &&cmd : commands)
 			{
-				cmd->ExecuteOperationOnResourceReferences(registry, ResourceRegistry::RemoveReference);
+				cmd->ExecuteOperationOnResourceReferences(&registry, &ResourceRegistry::RemoveReference);
 			}
 
 			commands.clear();
