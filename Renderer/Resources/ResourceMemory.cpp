@@ -63,7 +63,7 @@ namespace Renderer
 			
 		}
 
-			ResourceMemory::t_freeBlocksItr ResourceMemory::FindFreeBlock(size_t sizeInBytes)
+			ResourceMemory::t_freeBlocksItr ResourceMemory::FindFreeBlock(const size_t sizeInBytes)
 			{
 				auto foundBlock{ freeBlocks.end() };
 			
@@ -114,7 +114,7 @@ namespace Renderer
 			
 				}
 
-			void ResourceMemory::RegisterAllocationAsOccupiedBlock(size_t targetHeapIndex, const HeapAllocation &allocation)
+			void ResourceMemory::RegisterAllocationAsOccupiedBlock(const size_t targetHeapIndex, const HeapAllocation &allocation)
 			{
 				memory.at(targetHeapIndex).occupiedBlocks.insert
 				({
@@ -141,6 +141,7 @@ namespace Renderer
 			}
 
 
+		
 		void ResourceMemory::Deallocate(const HeapAllocation &allocation)
 		{
 			//find data
