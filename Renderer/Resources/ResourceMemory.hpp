@@ -36,12 +36,10 @@ namespace Renderer
 				std::unordered_map<size_t, MemoryInfo> occupiedBlocks;
 			};
 			
-			using t_container = std::vector<HeapInfo>;
-
 			
 			private: RHA::DX12::DeviceResources *resources;
 			
-			private: size_t initialHeapSize;
+			private: size_t initialHeapSizeInBytes;
 
 			private: size_t alignment;
 
@@ -51,17 +49,32 @@ namespace Renderer
 				
 			private: std::unordered_map<ID3D12Heap *, size_t> heapIndexMap;
 
-			private: t_container memory;
-
+			private: std::vector<HeapInfo> memory;
+					 
+			private: using t_freeBlocksItr = decltype(freeBlocks)::iterator;
+			
 
 
 			public: ResourceMemory(RHA::DX12::DeviceResources *resources, size_t initialHeapSizeInBytes, size_t alignment, D3D12_HEAP_FLAGS heapFlags);
 
 				private: decltype(freeBlocks)::iterator MakeNewFreeBlock(size_t sizeInBytes);
 
-			
+						 			
 			public: virtual RHA::DX12::HeapAllocation Allocate(size_t sizeInBytes) override;
 
+				private: t_freeBlocksItr FindFreeBlock(size_t sizeInBytes);
+
+				private: size_t GetBlockSizeForNewAllocation(size_t allocationSizeInBytes) const;
+
+				private: RHA::DX12::HeapAllocation AllocateFromBlock(const t_freeBlocksItr &block, size_t allocationSizeInBytes);
+
+					private: size_t GetAlignedAllocationSizeForBlock(const t_freeBlocksItr &block, size_t allocationSizeInBytes);
+
+				private: void RegisterAllocationAsOccupiedBlock(size_t targetHeapIndex, const RHA::DX12::HeapAllocation &allocation);
+
+				private: void AdjustFreeBlockDataAfterAllocation(t_freeBlocksItr &block, const RHA::DX12::HeapAllocation &allocation);
+
+			
 			public: virtual void Deallocate(const RHA::DX12::HeapAllocation &allocation) override;
 			
 		};
