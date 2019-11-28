@@ -2,6 +2,8 @@
 #include "DX12/DescriptorHeap.hpp"
 #include "Shared/PtrTypes.hpp"
 #include "DescriptorChunkRegistry.hpp"
+#include "Resources/DescriptorAllocator.hpp"
+#include <mutex>
 
 namespace RHA
 {
@@ -36,6 +38,10 @@ namespace Renderer
 			private: MemoryData view;			
 			
 			private: MemoryData sampler;
+
+			private: DeviceResources *resources;
+
+			private: std::mutex layoutMutex;
 					 
 			
 			
@@ -43,15 +49,22 @@ namespace Renderer
 
 			
 			public: class DescriptorAllocator GetDescriptorAllocator(size_t viewCapacity, size_t samplerCapacity);
-					
-			
 
-						
+			public: void RetireViewDescriptorChunk(const DescriptorChunk &chunk);
+
+			public: void RetireSamplerDescriptorChunk(const DescriptorChunk &chunk);
+
 			
+			public: D3D12_CPU_DESCRIPTOR_HANDLE GetViewHandleCpu(size_t index) const;
+			
+			public: D3D12_GPU_DESCRIPTOR_HANDLE GetViewHandleGpu(size_t index) const;
+			
+			public: D3D12_CPU_DESCRIPTOR_HANDLE GetSamplerHandleCpu(size_t index) const;
+
+			public: D3D12_GPU_DESCRIPTOR_HANDLE GetSamplerHandleGpu(size_t index) const;
+								
 		};
-
-
-
+			   
 		
 	}
 	

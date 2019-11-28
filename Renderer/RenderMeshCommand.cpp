@@ -7,11 +7,7 @@ namespace Renderer
 {
 	namespace DX12
 	{
-		struct Views
-		{
-			D3D12_VERTEX_BUFFER_VIEW vertexView;
-			D3D12_INDEX_BUFFER_VIEW indexView;
-		};
+
 
 		RenderMeshCommand::RenderMeshCommand(const size_t meshHandle, const size_t byteOffsetToIndexData, const size_t indicesSizeInBytes) :
 			meshHandle{ meshHandle },
@@ -23,7 +19,7 @@ namespace Renderer
 		void RenderMeshCommand::ExecuteOperationOnResourceReferences
 		(
 			ResourceRegistry *registry,
-			void( ResourceRegistry:: *operation)(size_t)
+			void(ResourceRegistry:: *operation)(size_t)
 		)
 		{
 			(registry->*operation)(meshHandle);
@@ -33,28 +29,24 @@ namespace Renderer
 		void RenderMeshCommand::Record
 		(
 			RHA::DX12::CmdList* list, 
-			ResourceRegistry& registry,
-			UniquePtr<void>& persistentData
-		) const
+			ResourceRegistry& registry
+		)
 		{
 			auto mesh{ registry.GetResource(meshHandle) };
 						
-			persistentData = std::make_unique<Views>();
-			auto data{ reinterpret_cast<Views *>(persistentData.get()) };
-			
-			data->vertexView.BufferLocation = mesh->GetGPUVirtualAddress();
-			data->vertexView.SizeInBytes = byteOffsetToIndexData;
-			data->vertexView.StrideInBytes = vertexStride;
+			views.vertexView.BufferLocation = mesh->GetGPUVirtualAddress();
+			views.vertexView.SizeInBytes = byteOffsetToIndexData;
+			views.vertexView.StrideInBytes = vertexStride;
 
-			data->indexView.BufferLocation = data->vertexView.BufferLocation + byteOffsetToIndexData;
-			data->indexView.Format = DXGI_FORMAT_R32_UINT;
-			data->indexView.SizeInBytes = indicesSizeInBytes;
+			views.indexView.BufferLocation = views.vertexView.BufferLocation + byteOffsetToIndexData;
+			views.indexView.Format = DXGI_FORMAT_R32_UINT;
+			views.indexView.SizeInBytes = indicesSizeInBytes;
 
 
 			auto g{ list->AsGraphicsList() };
 
-			g->IASetVertexBuffers(0, 1, &data->vertexView);
-			g->IASetIndexBuffer(&data->indexView);
+			g->IASetVertexBuffers(0, 1, &views.vertexView);
+			g->IASetIndexBuffer(&views.indexView);
 			g->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 			g->DrawIndexedInstanced(indicesSizeInBytes / sizeof(unsigned), 1, 0, 0, 0);

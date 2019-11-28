@@ -5,9 +5,7 @@
 
 
 namespace Renderer
-{	
-
-	
+{		
 	class DescriptorChunkRegistry
 	{
 		private: std::list<DescriptorChunk> freeChunks;

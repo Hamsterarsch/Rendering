@@ -46,8 +46,6 @@ namespace Renderer
 
 			private: std::vector<UniquePtr<RenderCommand>> commands;
 
-			private: std::vector<UniquePtr<void>> persistentCommandData;
-			
 			private: ResourceRegistry &registry;
 
 			private: static constexpr size_t recordsPerCommandList{ 50 };

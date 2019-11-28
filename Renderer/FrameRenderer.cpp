@@ -89,8 +89,8 @@ namespace Renderer
 		
 		void FrameRenderer::AddCommand(UniquePtr<RenderCommand> &&command)
 		{			
-			command->ExecuteOperationOnResourceReferences(&registry, ResourceRegistry::AddReference);			
-			commands.emplace_back(std::move(commands));
+			command->ExecuteOperationOnResourceReferences(&registry, &ResourceRegistry::AddReference);			
+			commands.emplace_back(std::move(command));
 			
 		}
 
@@ -112,14 +112,8 @@ namespace Renderer
 			for(auto &&cmd : commands)
 			{				
 				glist->SetGraphicsRootSignature(registry.GetSignature(cmd->GetSignatureHandle()).Get());
-				
-				UniquePtr<void> persistentData{ nullptr };
-				cmd->Record(list.get(), registry, persistentData);
 
-				if(persistentData)
-				{
-					persistentCommandData.emplace_back(std::move(persistentData));
-				}
+				cmd->Record(list.get(), registry);
 
 				HRESULT resetResult{ S_OK };
 				if(recordedCommands >= recordsPerCommandList)
@@ -176,9 +170,7 @@ namespace Renderer
 			{
 				cmd->ExecuteOperationOnResourceReferences(&registry, &ResourceRegistry::RemoveReference);
 			}
-
 			commands.clear();
-			persistentCommandData.clear();
 			
 			allocator->Reset();
 			

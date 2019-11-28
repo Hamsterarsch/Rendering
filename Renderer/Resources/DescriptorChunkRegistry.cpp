@@ -19,7 +19,7 @@ namespace Renderer
 			
 		}
 
-		DescriptorChunk allocation;
+		DescriptorChunk allocation{};
 		allocation.startIndex = freeChunk->startIndex;
 		allocation.capacity = descriptorCapacity;
 
@@ -64,7 +64,7 @@ namespace Renderer
 		
 		auto allocation{ occupiedChunks.find(chunk.startIndex) };
 
-		freeChunks.emplace_back(std::move(*allocation));
+		freeChunks.emplace_back(std::move(allocation->second));
 
 		occupiedChunks.erase(allocation);
 				

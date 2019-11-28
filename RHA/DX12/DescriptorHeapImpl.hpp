@@ -22,13 +22,13 @@ namespace RHA
 
 				private: static void CheckHeapCreation(HRESULT result);
 			
-			public: virtual D3D12_CPU_DESCRIPTOR_HANDLE GetHandleCpu(size_t index) override;
+			public: virtual D3D12_CPU_DESCRIPTOR_HANDLE GetHandleCpu(size_t index) const override;
 
 				private: void HandleCorruptIndex(size_t index) const;
 			
 					private: bool IndexIsInvalid(size_t index) const;
 			
-			public: virtual D3D12_GPU_DESCRIPTOR_HANDLE GetHandleGpu(size_t index) override;
+			public: virtual D3D12_GPU_DESCRIPTOR_HANDLE GetHandleGpu(size_t index) const override;
 
 			public: inline  virtual size_t Size() const override { return capacity; }
 
