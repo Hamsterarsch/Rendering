@@ -10,11 +10,13 @@ namespace RHA
 	}
 }
 
+
 namespace Renderer
 {	
 	namespace DX12
 	{
 		class DescriptorMemory;
+		
 		class DescriptorAllocator
 		{			
 			private: struct ChunkData

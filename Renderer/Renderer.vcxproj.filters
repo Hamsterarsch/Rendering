@@ -53,6 +53,15 @@
     <ClInclude Include="Resources\Descriptor\DescriptorMemory.hpp">
       <Filter>Resources\Descriptor</Filter>
     </ClInclude>
+    <ClInclude Include="Resources\Pso\PsoFactory.hpp">
+      <Filter>Resources\Pso</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\Resources\Pso\PipelineTypes.hpp">
+      <Filter>Interface\Resources\Pso</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\RootSignature\RootSignatureFactory.hpp">
+      <Filter>Resources\RootSignature</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -97,6 +106,9 @@
     <ClCompile Include="Resources\Descriptor\DescriptorMemory.cpp">
       <Filter>Resources\Descriptor</Filter>
     </ClCompile>
+    <ClCompile Include="Resources\RootSignature\RootSignatureFactory.cpp">
+      <Filter>Resources\RootSignature</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">
@@ -113,6 +125,12 @@
     </Filter>
     <Filter Include="Resources\Descriptor">
       <UniqueIdentifier>{a2b40c86-97dd-471e-81f7-3055626c278f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Pso">
+      <UniqueIdentifier>{f5586f5d-6685-4135-8175-704e2429a6a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interface\Resources\Pso">
+      <UniqueIdentifier>{81db0852-4be5-4c7b-a2bd-a94f81cda368}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
