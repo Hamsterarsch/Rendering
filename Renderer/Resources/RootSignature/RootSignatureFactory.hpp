@@ -27,11 +27,15 @@ namespace Renderer
 		{
 			private: RHA::DX12::DeviceResources *resources;
 
+			private: DxPtr<ID3DBlob> rootBlob;
 
 
-			public: explicit RootSignatureFactory(RHA::DX12::DeviceResources *resources);
+
+			public: explicit RootSignatureFactory(RHA::DX12::DeviceResources *resources);			
+
+			public: inline const ID3DBlob *GetLastRootSignatureBlob() const { return rootBlob.Get(); }
 			
-
+			
 			public: RootSignatureData MakeRootSignature(unsigned cbvAmount, unsigned srvAmount, unsigned uavAmount);
 			
 				private: RootSignatureData MakeRootSignatureImpl(unsigned cbvAmount, unsigned srvAmount, unsigned uavAmount, unsigned samplerAmount);

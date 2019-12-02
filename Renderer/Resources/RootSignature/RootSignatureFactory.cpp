@@ -8,7 +8,8 @@ namespace Renderer
 	namespace DX12
 	{
 		RootSignatureFactory::RootSignatureFactory(RHA::DX12::DeviceResources *resources) :
-			resources{ resources }
+			resources{ resources },
+			rootBlob{ nullptr }
 		{
 		}
 
@@ -52,7 +53,7 @@ namespace Renderer
 				rootDesc.Desc_1_1.NumParameters = 1;
 				rootDesc.Desc_1_1.pParameters = &paramDesc;
 
-				DxPtr<ID3DBlob> rootBlob, errorBlob;
+				DxPtr<ID3DBlob> errorBlob;
 				{
 					const auto result{ D3D12SerializeVersionedRootSignature(&rootDesc, &rootBlob, &errorBlob) };
 					CheckSerialization(result);

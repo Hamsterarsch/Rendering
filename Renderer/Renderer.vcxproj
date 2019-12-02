@@ -193,6 +193,7 @@
     <ClCompile Include="Resources\Descriptor\DescriptorChunkRegistry.cpp" />
     <ClCompile Include="Resources\Descriptor\DescriptorMemory.cpp" />
     <ClCompile Include="Resources\DynamicHeapSet.cpp" />
+    <ClCompile Include="Resources\Pso\PsoFactory.cpp" />
     <ClCompile Include="Resources\ResourceAllocation.cpp" />
     <ClCompile Include="Resources\ResourceFactory.cpp" />
     <ClCompile Include="Resources\ResourceFactoryDeallocatable.cpp" />

@@ -109,6 +109,9 @@
     <ClCompile Include="Resources\RootSignature\RootSignatureFactory.cpp">
       <Filter>Resources\RootSignature</Filter>
     </ClCompile>
+    <ClCompile Include="Resources\Pso\PsoFactory.cpp">
+      <Filter>Resources\Pso</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">
