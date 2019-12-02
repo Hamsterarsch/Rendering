@@ -1,6 +1,6 @@
 #pragma once
 #include <d3d12.h>
-#include "Resources/DescriptorChunk.hpp"
+#include "Resources/Descriptor/DescriptorChunk.hpp"
 
 namespace RHA
 {

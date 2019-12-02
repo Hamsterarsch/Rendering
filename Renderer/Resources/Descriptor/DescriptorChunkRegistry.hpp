@@ -1,7 +1,7 @@
 #pragma once
 #include <list>
 #include <unordered_map>
-#include "Resources/DescriptorChunk.hpp"
+#include "Resources/Descriptor/DescriptorChunk.hpp"
 
 
 namespace Renderer

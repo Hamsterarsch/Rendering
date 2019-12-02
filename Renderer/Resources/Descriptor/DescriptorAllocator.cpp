@@ -1,6 +1,6 @@
-#include "Resources/DescriptorAllocator.hpp"
+#include "Resources/Descriptor/DescriptorAllocator.hpp"
 #include "DX12/DeviceResources.hpp"
-#include "Resources/DescriptorMemory.hpp"
+#include "Resources/Descriptor/DescriptorMemory.hpp"
 #include "Shared/Exception/Exception.hpp"
 
 namespace Renderer

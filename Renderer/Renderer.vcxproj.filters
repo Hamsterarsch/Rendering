@@ -41,17 +41,17 @@
     <ClInclude Include="Resources\RootSignature\TableLayout.hpp">
       <Filter>Resources\RootSignature</Filter>
     </ClInclude>
-    <ClInclude Include="Resources\DescriptorMemory.hpp">
-      <Filter>Resources</Filter>
+    <ClInclude Include="Resources\Descriptor\DescriptorAllocator.hpp">
+      <Filter>Resources\Descriptor</Filter>
     </ClInclude>
-    <ClInclude Include="Resources\DescriptorAllocator.hpp">
-      <Filter>Resources</Filter>
+    <ClInclude Include="Resources\Descriptor\DescriptorChunk.hpp">
+      <Filter>Resources\Descriptor</Filter>
     </ClInclude>
-    <ClInclude Include="Resources\DescriptorChunkRegistry.hpp">
-      <Filter>Resources</Filter>
+    <ClInclude Include="Resources\Descriptor\DescriptorChunkRegistry.hpp">
+      <Filter>Resources\Descriptor</Filter>
     </ClInclude>
-    <ClInclude Include="Resources\DescriptorChunk.hpp">
-      <Filter>Resources</Filter>
+    <ClInclude Include="Resources\Descriptor\DescriptorMemory.hpp">
+      <Filter>Resources\Descriptor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -88,14 +88,14 @@
     <ClCompile Include="Resources\RootSignature\TableLayout.cpp">
       <Filter>Resources\RootSignature</Filter>
     </ClCompile>
-    <ClCompile Include="Resources\DescriptorMemory.cpp">
-      <Filter>Resources</Filter>
+    <ClCompile Include="Resources\Descriptor\DescriptorAllocator.cpp">
+      <Filter>Resources\Descriptor</Filter>
     </ClCompile>
-    <ClCompile Include="Resources\DescriptorAllocator.cpp">
-      <Filter>Resources</Filter>
+    <ClCompile Include="Resources\Descriptor\DescriptorChunkRegistry.cpp">
+      <Filter>Resources\Descriptor</Filter>
     </ClCompile>
-    <ClCompile Include="Resources\DescriptorChunkRegistry.cpp">
-      <Filter>Resources</Filter>
+    <ClCompile Include="Resources\Descriptor\DescriptorMemory.cpp">
+      <Filter>Resources\Descriptor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -110,6 +110,9 @@
     </Filter>
     <Filter Include="Resources\RootSignature">
       <UniqueIdentifier>{f86714ce-577f-4bc9-987a-8c04934cd6e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Descriptor">
+      <UniqueIdentifier>{a2b40c86-97dd-471e-81f7-3055626c278f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

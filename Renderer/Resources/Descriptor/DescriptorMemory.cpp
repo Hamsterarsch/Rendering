@@ -1,5 +1,5 @@
-#include "Resources/DescriptorMemory.hpp"
-#include "Resources/DescriptorAllocator.hpp"
+#include "Resources/Descriptor/DescriptorMemory.hpp"
+#include "Resources/Descriptor/DescriptorAllocator.hpp"
 #include "Shared/Exception/Exception.hpp"
 #include "DX12/Facade.hpp"
 

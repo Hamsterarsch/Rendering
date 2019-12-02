@@ -2,7 +2,7 @@
 #include "DX12/DescriptorHeap.hpp"
 #include "Shared/PtrTypes.hpp"
 #include "DescriptorChunkRegistry.hpp"
-#include "Resources/DescriptorAllocator.hpp"
+#include "Resources/Descriptor/DescriptorAllocator.hpp"
 #include <mutex>
 
 namespace RHA

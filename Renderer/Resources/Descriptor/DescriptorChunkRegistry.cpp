@@ -1,4 +1,4 @@
-#include "Resources/DescriptorChunkRegistry.hpp"
+#include "Resources/Descriptor/DescriptorChunkRegistry.hpp"
 
 
 namespace Renderer
