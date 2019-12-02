@@ -31,12 +31,24 @@ namespace Renderer
 
 			private: RHA::DX12::DeviceResources *resources;
 
-			private: const DescriptorMemory *parent;
+			private: DescriptorMemory *parent;
 
 
 			
-			public: DescriptorAllocator(RHA::DX12::DeviceResources *resources, const DescriptorMemory *parent, const DescriptorChunk &viewChunk, const DescriptorChunk &samplerChunk);
+			public: DescriptorAllocator(RHA::DX12::DeviceResources *resources, DescriptorMemory *parent, const DescriptorChunk &viewChunk, const DescriptorChunk &samplerChunk);
+
+			public: DescriptorAllocator(DescriptorAllocator &&Other) noexcept;
 			
+			public: ~DescriptorAllocator() noexcept;
+								
+			
+			public: DescriptorAllocator(const DescriptorAllocator &) = delete;
+			
+			public: DescriptorAllocator &operator=(const DescriptorAllocator &) = delete;
+
+			public: DescriptorAllocator &operator=(DescriptorAllocator &&) = delete;
+
+								
 			public: void OpenNewTable();
 			
 			public: D3D12_GPU_DESCRIPTOR_HANDLE GetCurrentTableStartForView() const;

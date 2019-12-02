@@ -15,6 +15,7 @@ namespace RHA
 
 struct ID3D12Resource;
 
+
 namespace Renderer
 {
 	namespace DX12
