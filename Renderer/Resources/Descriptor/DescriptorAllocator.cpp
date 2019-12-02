@@ -21,7 +21,7 @@ namespace Renderer
 		{
 		}
 		
-		DescriptorAllocator::DescriptorAllocator(DescriptorAllocator&& Other) noexcept :
+		DescriptorAllocator::DescriptorAllocator(DescriptorAllocator &&Other) noexcept :
 			view{ std::move(Other.view) },
 			sampler{ std::move(Other.sampler) },
 			resources{ std::move(Other.resources) },
