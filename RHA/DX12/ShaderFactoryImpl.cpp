@@ -34,21 +34,18 @@ namespace RHA
 			
 		}
 
-		DxPtr<ID3DBlob> ShaderFactoryImpl::MakeVertexShader(const wchar_t *filepath, const char *entrypoint)
-		{
-			DxPtr<ID3DBlob> bytecode;
-			DxPtr<ID3DBlob> error;
-
-			DoCompile(filepath, entrypoint, "vs", &bytecode, &error);
-
-			return bytecode;
-
+		DxPtr<ID3DBlob> ShaderFactoryImpl::MakeVertexShader(const wchar_t *filepath, const char *entrypoint) const
+		{			
+			return DoCompileFromFile(filepath, entrypoint, "vs");
+			
 		}
 
-			void ShaderFactoryImpl::DoCompile(const wchar_t *filepath, const char *entrypoint, const char *shaderTypePrefix, ID3DBlob **outBytecode, ID3DBlob **outError)
+			DxPtr<ID3DBlob> ShaderFactoryImpl::DoCompileFromFile(const wchar_t *filepath, const char *entrypoint, const char *shaderTypePrefix) const
 			{
-				constexpr decltype(nullptr) NONE{ nullptr };
+				constexpr auto NONE{ nullptr };
 
+				DxPtr<ID3DBlob> shaderBlob{ nullptr }, errorBlob{ nullptr };
+			
 				const auto result
 				{
 					D3DCompileFromFile
@@ -60,26 +57,17 @@ namespace RHA
 						(shaderTypePrefix + shaderModelSpec).data(),
 						MakeCompileFlags(),
 						0,
-						outBytecode,
-						outError
+						&shaderBlob,
+						&errorBlob
 					)
-				};
+				};				
+				CheckCompilationFromFile(result, errorBlob);
 				
-				if (FAILED(result))
-				{
-					std::string error{ "Could not compile hlsl shader from file" };
-					if(outError)
-					{
-						error += ". \nError: ";
-						error += reinterpret_cast<char *>((*outError)->GetBufferPointer());						
-					}
-					
-					throw Exception::CreationFailed{ error.data() };
-				}
-
+				return shaderBlob;
+			
 			}
 
-				UINT ShaderFactoryImpl::MakeCompileFlags()
+				UINT ShaderFactoryImpl::MakeCompileFlags() const
 				{
 					UINT Flags{ 0 };
 					Flags |= (insertDebugInfo ? D3DCOMPILE_DEBUG : 0);
@@ -90,14 +78,100 @@ namespace RHA
 
 				}
 
-		DxPtr<ID3DBlob> ShaderFactoryImpl::MakePixelShader(const wchar_t *filepath, const char *entrypoint)
+				void ShaderFactoryImpl::CheckCompilationFromFile(const HRESULT result, const DxPtr<ID3DBlob> &errorBlob)
+				{
+					if (FAILED(result))
+					{
+						std::string error{ "Could not compile hlsl shader from file" };
+						if(errorBlob)
+						{
+							error += ". \nError: ";
+							error += reinterpret_cast<char *>(errorBlob->GetBufferPointer());						
+						}
+						
+						throw Exception::CreationFailed{ error.data() };
+					}
+			
+				}
+
+
+		
+		DxPtr<ID3DBlob> ShaderFactoryImpl::MakeVertexShader(const char *shader, size_t shaderLength, const char *entrypoint) const
 		{
-			DxPtr<ID3DBlob> bytecode;
-			DxPtr<ID3DBlob> error;
+			return DoCompile(shader, shaderLength, entrypoint, "vs");
+			
+		}
 
-			DoCompile(filepath, entrypoint, "ps", &bytecode, &error);
+			DxPtr<ID3DBlob> ShaderFactoryImpl::DoCompile
+			(
+				const char *shader,
+				size_t shaderLength, 
+				const char *entrypoint,
+				const char *shaderTypePrefix
+			)
+			const
+			{
+				constexpr auto UNNAMED{ nullptr };
+				constexpr auto NO_DEFINES{ nullptr };
+				constexpr auto NO_INCLUDES{ nullptr };
 
-			return bytecode;
+				DxPtr<ID3DBlob> shaderBlob{ nullptr }, errorBlob{ nullptr };
+
+				const auto result
+				{
+					D3DCompile
+					(
+						shader,
+						shaderLength,
+						UNNAMED,
+						NO_DEFINES,
+						NO_INCLUDES,
+						entrypoint,
+						(shaderTypePrefix + shaderModelSpec).data(),
+						MakeCompileFlags(),
+						0,
+						&shaderBlob,
+						&errorBlob
+					)
+				};
+				CheckCompilation(result, errorBlob);
+
+				return shaderBlob;
+				
+			}
+
+				void ShaderFactoryImpl::CheckCompilation(const HRESULT result, const DxPtr<ID3DBlob> &errorBlob)
+				{
+					if (FAILED(result))
+					{
+						std::string error{ "Could not compile hlsl shader" };
+						if(errorBlob)
+						{
+							error += ". \nError: ";
+							error += reinterpret_cast<char *>(errorBlob->GetBufferPointer());						
+						}
+						
+						throw Exception::CreationFailed{ error.data() };
+					}
+			
+				}
+
+
+		DxPtr<ID3DBlob> ShaderFactoryImpl::MakePixelShader(const wchar_t *filepath, const char *entrypoint) const
+		{			
+			return DoCompileFromFile(filepath, entrypoint, "ps");
+						
+		}
+
+		DxPtr<ID3DBlob> ShaderFactoryImpl::MakePixelShader
+		(
+			const char *shader, 
+			size_t shaderLength,
+			const char *entrypoint
+		)
+		const
+		{
+			return DoCompile(shader, shaderLength, entrypoint, "ps");
 			
 		}
 
