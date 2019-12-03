@@ -7,7 +7,12 @@
 namespace Renderer
 {
 	namespace DX12
-	{		
+	{
+		PsoFactory::PsoFactory(RHA::DX12::DeviceResources *resources) :
+			resources{ resources }
+		{			
+		}
+		
 		DxPtr<ID3D12PipelineState> PsoFactory::MakePso
 		(
 			const ShaderInfo &shaders,
