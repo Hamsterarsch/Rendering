@@ -172,6 +172,7 @@
     <ClInclude Include="Resources\Descriptor\DescriptorChunkRegistry.hpp" />
     <ClInclude Include="Resources\Descriptor\DescriptorMemory.hpp" />
     <ClInclude Include="Resources\DynamicHeapSet.hpp" />
+    <ClInclude Include="Resources\HandleFactory.hpp" />
     <ClInclude Include="Resources\Pso\PsoFactory.hpp" />
     <ClInclude Include="Resources\ResourceAllocation.hpp" />
     <ClInclude Include="Resources\ResourceFactory.hpp" />
@@ -193,6 +194,7 @@
     <ClCompile Include="Resources\Descriptor\DescriptorChunkRegistry.cpp" />
     <ClCompile Include="Resources\Descriptor\DescriptorMemory.cpp" />
     <ClCompile Include="Resources\DynamicHeapSet.cpp" />
+    <ClCompile Include="Resources\HandleFactory.cpp" />
     <ClCompile Include="Resources\Pso\PsoFactory.cpp" />
     <ClCompile Include="Resources\ResourceAllocation.cpp" />
     <ClCompile Include="Resources\ResourceFactory.cpp" />

@@ -5,7 +5,7 @@
 
 #include "Resources/ResourceFactory.hpp"
 #include "Resources/ResourceAllocation.hpp"
-#include "Resources/SerialFactory.hpp"
+#include "Resources/HandleFactory.hpp"
 #include "Resources/ResourceHandle.hpp"
 #include "Resources/ResourceRegistry.hpp"
 
@@ -33,7 +33,7 @@ namespace Renderer
 
 		struct Renderer::PrivateMembers
 		{
-			SerialFactory bufferSerialFactory;			
+			HandleFactory handleFactory;			
 			ResourceRegistry registry;
 			
 		};
@@ -251,7 +251,7 @@ namespace Renderer
 
 		size_t Renderer::MakeBufferResourceAndHandle(const void *data, const size_t sizeInBytes)
 		{
-			ResourceHandle handle{ ResourceTypes::Buffer, privateMembers->bufferSerialFactory.GetNextSerial() };
+			auto handle{ privateMembers->handleFactory.MakeHandle(ResourceTypes::Buffer) };
 
 			auto allocation
 			{

@@ -62,6 +62,9 @@
     <ClInclude Include="Resources\RootSignature\RootSignatureFactory.hpp">
       <Filter>Resources\RootSignature</Filter>
     </ClInclude>
+    <ClInclude Include="Resources\HandleFactory.hpp">
+      <Filter>Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -111,6 +114,9 @@
     </ClCompile>
     <ClCompile Include="Resources\Pso\PsoFactory.cpp">
       <Filter>Resources\Pso</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\HandleFactory.cpp">
+      <Filter>Resources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
