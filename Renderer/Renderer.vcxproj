@@ -163,6 +163,7 @@
     <ClInclude Include="Interface\Renderer.hpp" />
     <ClInclude Include="Interface\RendererExportHelper.hpp" />
     <ClInclude Include="Interface\Resources\Pso\PipelineTypes.hpp" />
+    <ClInclude Include="Interface\Resources\Pso\VertexLayoutTypes.hpp" />
     <ClInclude Include="Interface\Resources\ResourceHandle.hpp" />
     <ClInclude Include="Interface\Resources\ResourceTypes.hpp" />
     <ClInclude Include="RenderCommand.hpp" />
@@ -174,6 +175,7 @@
     <ClInclude Include="Resources\DynamicHeapSet.hpp" />
     <ClInclude Include="Resources\HandleFactory.hpp" />
     <ClInclude Include="Resources\Pso\PsoFactory.hpp" />
+    <ClInclude Include="Resources\Pso\VertexLayoutProvider.hpp" />
     <ClInclude Include="Resources\ResourceAllocation.hpp" />
     <ClInclude Include="Resources\ResourceFactory.hpp" />
     <ClInclude Include="Resources\ResourceFactoryDeallocatable.hpp" />
@@ -196,6 +198,7 @@
     <ClCompile Include="Resources\DynamicHeapSet.cpp" />
     <ClCompile Include="Resources\HandleFactory.cpp" />
     <ClCompile Include="Resources\Pso\PsoFactory.cpp" />
+    <ClCompile Include="Resources\Pso\VertexLayoutProvider.cpp" />
     <ClCompile Include="Resources\ResourceAllocation.cpp" />
     <ClCompile Include="Resources\ResourceFactory.cpp" />
     <ClCompile Include="Resources\ResourceFactoryDeallocatable.cpp" />

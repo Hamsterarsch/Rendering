@@ -8,9 +8,11 @@
 #include "Resources/HandleFactory.hpp"
 #include "Resources/ResourceHandle.hpp"
 #include "Resources/ResourceRegistry.hpp"
+#include "Resources/Pso/PsoFactory.hpp"
 
 #include "FrameRenderer.hpp"
 #include "RenderMeshCommand.hpp"
+#include "Resources/Pso/VertexLayoutProvider.hpp"
 
 #if _DEBUG
 	constexpr bool enableDebugLayers = true;
@@ -35,6 +37,15 @@ namespace Renderer
 		{
 			HandleFactory handleFactory;			
 			ResourceRegistry registry;
+			VertexLayoutProvider vertexLayoutProvider;
+			PsoFactory psoFactory;
+			UniquePtr<ShaderFactory> shaderFactory;
+
+			PrivateMembers(DeviceResources *resources) :
+				psoFactory{ resources },
+				shaderFactory{ Facade::MakeShaderFactory(5, 0) }
+			{				
+			}				
 			
 		};
 		
@@ -47,7 +58,7 @@ namespace Renderer
 		Renderer::Renderer(HWND outputWindow) :
 			inflightFramesAmount{ 1 },
 			shouldUpdateRendering{ false },
-			privateMembers{ std::make_unique<PrivateMembers>() }
+			privateMembers{ nullptr }
 		{
 			resources = Facade::MakeDeviceResources(D3D_FEATURE_LEVEL_11_0, enableDebugLayers);
 			commonQueue = Facade::MakeQueue(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT);
@@ -57,13 +68,14 @@ namespace Renderer
 			closeEvent = CreateEvent(nullptr, false, false, nullptr);
 			data = std::make_unique<TriangleData>();
 			resourceFactory = std::make_unique<ResourceFactory>(resources.get(), commonQueue.get(), std::make_unique<ResourceMemory>(resources.get(), D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT * 15, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT, D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS));			
-			auto shFactory{ Facade::MakeShaderFactory(5,0) };
 
+			privateMembers = std::make_unique<PrivateMembers>(resources.get());
+			
 			auto d = FrameRenderer{resources.get(), commonQueue.get(), privateMembers->registry, outputSurface->GetResourceTemplate() };
 			
 			auto vs
 			{
-				shFactory->MakeVertexShader
+				privateMembers->shaderFactory->MakeVertexShader
 				(
 					Filesystem::Conversions::MakeExeRelative(L"../Content/Shaders/Plain.vs").data(),
 					"main"
@@ -72,7 +84,7 @@ namespace Renderer
 
 			auto ps
 			{
-				shFactory->MakePixelShader
+				privateMembers->shaderFactory->MakePixelShader
 				(
 					Filesystem::Conversions::MakeExeRelative(L"../Content/Shaders/Plain.ps").data(),
 					"main"
@@ -145,7 +157,7 @@ namespace Renderer
 
 			auto r3 =
 			resources->GetDevice()->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&pipeline));
-
+			
 			
 			//
 			struct
@@ -249,7 +261,7 @@ namespace Renderer
 			
 		}
 
-		size_t Renderer::MakeBufferResourceAndHandle(const void *data, const size_t sizeInBytes)
+		size_t Renderer::MakeAndUploadBufferResource(const void *data, const size_t sizeInBytes)
 		{
 			auto handle{ privateMembers->handleFactory.MakeHandle(ResourceTypes::Buffer) };
 
@@ -261,6 +273,20 @@ namespace Renderer
 			privateMembers->registry.RegisterResource(handle, std::move(allocation));
 
 			return handle.hash;
+			
+		}
+
+		void Renderer::CompileVertexShader(const char *shader, SerializationHook *serializer) const
+		{
+			if(serializer == nullptr)
+			{
+				return;
+			}
+			
+			auto shader{ privateMembers->shaderFactory->MakeVertexShader(path, "main") };
+				
+
+			
 			
 		}
 

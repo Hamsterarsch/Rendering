@@ -4,6 +4,7 @@
 #include <future>
 #include "RendererExportHelper.hpp"
 #include "Shared/PtrTypes.hpp"
+#include "Resources/Pso/PipelineTypes.hpp"
 
 
 #include "DxPtrTypes.hpp"
@@ -34,7 +35,12 @@ namespace Renderer
 	{
 		struct TriangleData;
 
-		
+		class SerializationHook
+		{
+			public: virtual void SerializeData(const void *data, size_t sizeInBytes) {};
+
+			//interface functions
+		};
 						
 		class RENDERER_DLLSPEC Renderer
 		{
@@ -83,9 +89,15 @@ namespace Renderer
 
 
 			
-			public: size_t MakeBufferResourceAndHandle(const void *data, size_t sizeInBytes);
+			public: size_t MakeAndUploadBufferResource(const void *data, size_t sizeInBytes);
 
-				
+			public: void CompileVertexShader(const char *shader, SerializationHook *serializer) const;
+
+
+			public: size_t MakePso(PipelineTypes type, )
+
+			
+			
 
 			public: bool ResourceHasToBeReloaded(size_t handle);
 			

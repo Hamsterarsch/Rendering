@@ -65,6 +65,12 @@
     <ClInclude Include="Resources\HandleFactory.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
+    <ClInclude Include="Interface\Resources\Pso\VertexLayoutTypes.hpp">
+      <Filter>Interface\Resources\Pso</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\Pso\VertexLayoutProvider.hpp">
+      <Filter>Resources\Pso</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -117,6 +123,9 @@
     </ClCompile>
     <ClCompile Include="Resources\HandleFactory.cpp">
       <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\Pso\VertexLayoutProvider.cpp">
+      <Filter>Resources\Pso</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
