@@ -18,19 +18,24 @@ namespace Renderer
 			return (serial & typeErasure) | typeMask;
 			
 		}
-			
 
-		ResourceHandle::t_resourceTypes ResourceHandle::GetResourceType() const
-		{
-			return static_cast<t_resourceTypes>(hash >> (sizeof t_serial - sizeof t_resourceTypes) * 8);
+	ResourceHandle::ResourceHandle(const t_hash hash) :
+		hash{ hash }
+	{
+	}
+
+
+	ResourceHandle::t_resourceTypes ResourceHandle::GetResourceType() const
+	{
+		return static_cast<t_resourceTypes>(hash >> (sizeof t_serial - sizeof t_resourceTypes) * 8);
 			
-		}
+	}
 	
-		size_t ResourceHandle::GetSerial() const
-		{
-			return (hash << sizeof t_resourceTypes * 8) >> sizeof t_resourceTypes * 8;
-			
-		}
+	size_t ResourceHandle::GetSerial() const
+	{
+		return (hash << sizeof t_resourceTypes * 8) >> sizeof t_resourceTypes * 8;
+		
+	}
 
 	
 }

@@ -9,7 +9,9 @@ namespace Renderer
 	{
 
 
-		RenderMeshCommand::RenderMeshCommand(const size_t meshHandle, const size_t byteOffsetToIndexData, const size_t indicesSizeInBytes) :
+		RenderMeshCommand::RenderMeshCommand(const size_t signatureHandle, const size_t psoHandle, const size_t meshHandle, const size_t byteOffsetToIndexData, const size_t indicesSizeInBytes) :
+			signatureHandle{ signatureHandle },
+			psoHandle{ psoHandle },
 			meshHandle{ meshHandle },
 			byteOffsetToIndexData{ byteOffsetToIndexData },
 			indicesSizeInBytes{ indicesSizeInBytes }			

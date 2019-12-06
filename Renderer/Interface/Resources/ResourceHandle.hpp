@@ -21,7 +21,10 @@ namespace Renderer
 		public: ResourceHandle(t_resourceTypes type, t_serial serial);
 
 			private: static t_hash MakeHash(t_resourceTypes type, t_serial serial);
-					 
+
+		public:	explicit ResourceHandle(t_hash hash);
+
+		
 		public: t_resourceTypes GetResourceType() const;
 			
 		public: t_serial GetSerial() const;

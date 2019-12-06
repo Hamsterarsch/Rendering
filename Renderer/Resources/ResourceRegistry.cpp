@@ -27,13 +27,34 @@ namespace Renderer
 
 			if(resourceReferences.count(handle) == 0)
 			{
-				resourceAllocations.erase(handle);				
+				ResourceHandle realHandle{ handle };
+				RemoveEntity(realHandle);
 			}
 			
 		}
 
-		
+			void ResourceRegistry::RemoveEntity(const ResourceHandle &handle)
+			{
+				switch(handle.GetResourceType())
+				{
+				case ResourceTypes::Mesh: 
+				case ResourceTypes::Texture: 
+				case ResourceTypes::Buffer:
+					resourceAllocations.erase(handle.hash);
+					break;
+				case ResourceTypes::Pso:
+					pipelineStates.erase(handle.hash);
+					break;
+				case ResourceTypes::Signature:
+					rootSignatures.erase(handle.hash);
+					break;
+				default: throw Exception::Exception{ "No removal handling for this resource type in dx12 resource registry" };
+				}
+				
+			}
 
+
+		
 		bool ResourceRegistry::ResourceIsNotRegistered(const ResourceHandle::t_hash handle)
 		{
 			return resourceAllocations.find(handle) == resourceAllocations.end();

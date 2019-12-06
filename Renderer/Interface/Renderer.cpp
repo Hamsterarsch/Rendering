@@ -333,10 +333,11 @@ namespace Renderer
 		}
 
 
-		void Renderer::RenderMesh(size_t meshHandle, size_t sizeInBytes, size_t byteOffsetToIndices)
+		void Renderer::RenderMesh(size_t signatureHandle, size_t psoHandle, size_t meshHandle, size_t sizeInBytes, size_t byteOffsetToIndices)
 		{
-			RenderMeshCommand cmd{ meshHandle, byteOffsetToIndices, sizeInBytes - byteOffsetToIndices };
-			
+			RenderMeshCommand cmd{ signatureHandle, psoHandle, meshHandle, byteOffsetToIndices, sizeInBytes - byteOffsetToIndices };
+
+			//<------------------------------
 			
 		}
 

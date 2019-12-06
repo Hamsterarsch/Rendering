@@ -11,6 +11,8 @@ namespace Renderer
 				LayoutData layout;
 				layout.elements.emplace_back
 				(
+					D3D12_INPUT_ELEMENT_DESC
+					{
 					"POSITION",
 					0,
 					DXGI_FORMAT_R32G32B32_FLOAT,
@@ -18,6 +20,7 @@ namespace Renderer
 					0,
 					D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
 					0
+					}
 				);
 				
 				AddLayout(VertexLayoutTypes::PositionOnly, std::move(layout));
@@ -27,6 +30,8 @@ namespace Renderer
 				LayoutData layout;
 				layout.elements.emplace_back
 				(
+					D3D12_INPUT_ELEMENT_DESC
+					{
 					"POSITION",
 					0,
 					DXGI_FORMAT_R32G32B32_FLOAT,
@@ -34,10 +39,13 @@ namespace Renderer
 					0,
 					D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
 					0
+					}
 				);
 
 				layout.elements.emplace_back
 				(
+					D3D12_INPUT_ELEMENT_DESC
+					{
 					"NORMAL",
 					0,
 					DXGI_FORMAT_R32G32B32_FLOAT,
@@ -45,10 +53,13 @@ namespace Renderer
 					0,
 					D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
 					0
+					}
 				);
 
 				layout.elements.emplace_back
 				(
+					D3D12_INPUT_ELEMENT_DESC
+					{
 					"TEXCOORD",
 					0,
 					DXGI_FORMAT_R32G32_FLOAT,
@@ -56,6 +67,7 @@ namespace Renderer
 					0,
 					D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
 					0
+					}
 				);
 									
 				AddLayout(VertexLayoutTypes::Standard, std::move(layout));

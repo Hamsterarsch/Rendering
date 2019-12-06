@@ -110,7 +110,7 @@ namespace Renderer
 			public: void MakeBufferWithHandle(const void *data, size_t sizeInBytes, size_t handle);
 
 
-			public: void RenderMesh(size_t meshHandle, size_t sizeInBytes, size_t byteOffsetToIndices);
+			public: void RenderMesh(size_t signatureHandle, size_t psoHandle, size_t meshHandle, size_t sizeInBytes, size_t byteOffsetToIndices);
 
 			public: void DispatchFrame();
 			

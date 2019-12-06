@@ -76,7 +76,7 @@ namespace Renderer
 					
 					desc.NumRenderTargets = 1;
 					desc.RTVFormats[0] = rtvFormat;
-					desc.DSVFormat[0] = dsvFormat;
+					desc.DSVFormat = dsvFormat;
 					
 					desc.SampleDesc.Count = 1;
 					desc.SampleDesc.Quality = 0;
