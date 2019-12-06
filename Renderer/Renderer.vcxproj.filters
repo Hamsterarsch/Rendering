@@ -71,6 +71,12 @@
     <ClInclude Include="Resources\Pso\VertexLayoutProvider.hpp">
       <Filter>Resources\Pso</Filter>
     </ClInclude>
+    <ClInclude Include="Interface\Resources\Pso\ShaderList.hpp">
+      <Filter>Interface\Resources\Pso</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\RootSignature\RootSignatureData.hpp">
+      <Filter>Resources\RootSignature</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />

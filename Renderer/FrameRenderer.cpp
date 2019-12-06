@@ -111,7 +111,7 @@ namespace Renderer
 			size_t recordedCommands{ 0 };
 			for(auto &&cmd : commands)
 			{				
-				glist->SetGraphicsRootSignature(registry.GetSignature(cmd->GetSignatureHandle()).Get());
+				glist->SetGraphicsRootSignature(registry.GetSignatureDataRef(cmd->GetSignatureHandle()).Get());
 
 				cmd->Record(list.get(), registry);
 

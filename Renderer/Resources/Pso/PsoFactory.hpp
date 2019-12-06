@@ -1,6 +1,7 @@
 #pragma once
 #include <d3d12.h>
 #include "DxPtrTypes.hpp"
+#include "Resources/Pso/ShaderList.hpp"
 
 namespace RHA
 {
@@ -17,11 +18,7 @@ namespace Renderer
 	
 	namespace DX12
 	{
-		struct ShaderInfo
-		{
-			ID3DBlob *vs, *hs, *gs, *ds, *ps;
-			
-		};
+
 		
 		class PsoFactory
 		{
@@ -38,7 +35,7 @@ namespace Renderer
 			public:	explicit PsoFactory(RHA::DX12::DeviceResources *resources);
 
 						
-			public: DxPtr<ID3D12PipelineState> MakePso(const ShaderInfo &shaders, ID3D12RootSignature *signature, PipelineTypes type, const D3D12_INPUT_LAYOUT_DESC &layout, D3D12_PRIMITIVE_TOPOLOGY_TYPE topology);
+			public: DxPtr<ID3D12PipelineState> MakePso(const ShaderList &shaders, ID3D12RootSignature *signature, PipelineTypes type, const D3D12_INPUT_LAYOUT_DESC &layout, D3D12_PRIMITIVE_TOPOLOGY_TYPE topology);
 
 				private: static D3D12_GRAPHICS_PIPELINE_STATE_DESC MakePipelineBase(PipelineTypes type);
 			
@@ -46,7 +43,7 @@ namespace Renderer
 
 					private: static constexpr D3D12_DEPTH_STENCILOP_DESC MakeDefaultStencilDesc();
 			
-				private: static D3D12_SHADER_BYTECODE ConvertBlobToBytecode(ID3DBlob *blob);
+				private: static D3D12_SHADER_BYTECODE ConvertBlobToBytecode(const Blob &blob);
 
 				private: static void CheckPipelineCreation(HRESULT result);
 						

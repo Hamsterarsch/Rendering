@@ -15,7 +15,7 @@ namespace Renderer
 		
 		DxPtr<ID3D12PipelineState> PsoFactory::MakePso
 		(
-			const ShaderInfo &shaders,
+			const ShaderList &shaders,
 			ID3D12RootSignature *signature,
 			const PipelineTypes type,
 			const D3D12_INPUT_LAYOUT_DESC &layout,
@@ -92,14 +92,14 @@ namespace Renderer
 						
 					}
 
-			D3D12_SHADER_BYTECODE PsoFactory::ConvertBlobToBytecode(ID3DBlob *const blob)
+			D3D12_SHADER_BYTECODE PsoFactory::ConvertBlobToBytecode(const Blob &blob)
 			{
-				if(blob == nullptr)
+				if(blob.data == nullptr)
 				{
 					return {};
 				}
 
-				return { blob->GetBufferPointer(), blob->GetBufferSize() };
+				return { blob.data, blob.sizeInBytes };
 				
 			}
 					   		

@@ -163,6 +163,7 @@
     <ClInclude Include="Interface\Renderer.hpp" />
     <ClInclude Include="Interface\RendererExportHelper.hpp" />
     <ClInclude Include="Interface\Resources\Pso\PipelineTypes.hpp" />
+    <ClInclude Include="Interface\Resources\Pso\ShaderList.hpp" />
     <ClInclude Include="Interface\Resources\Pso\VertexLayoutTypes.hpp" />
     <ClInclude Include="Interface\Resources\ResourceHandle.hpp" />
     <ClInclude Include="Interface\Resources\ResourceTypes.hpp" />
@@ -181,6 +182,7 @@
     <ClInclude Include="Resources\ResourceFactoryDeallocatable.hpp" />
     <ClInclude Include="Resources\ResourceMemory.hpp" />
     <ClInclude Include="Resources\ResourceRegistry.hpp" />
+    <ClInclude Include="Resources\RootSignature\RootSignatureData.hpp" />
     <ClInclude Include="Resources\RootSignature\RootSignatureFactory.hpp" />
     <ClInclude Include="Resources\RootSignature\TableLayout.hpp" />
     <ClInclude Include="Resources\SerialFactory.hpp" />

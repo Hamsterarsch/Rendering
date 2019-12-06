@@ -5,6 +5,8 @@
 #include "RendererExportHelper.hpp"
 #include "Shared/PtrTypes.hpp"
 #include "Resources/Pso/PipelineTypes.hpp"
+#include "Resources/Pso/ShaderList.hpp"
+#include "Resources/Pso/VertexLayoutTypes.hpp"
 
 
 #include "DxPtrTypes.hpp"
@@ -91,10 +93,14 @@ namespace Renderer
 			
 			public: size_t MakeAndUploadBufferResource(const void *data, size_t sizeInBytes);
 
-			public: void CompileVertexShader(const char *shader, SerializationHook *serializer) const;
+			public: void CompileVertexShader(const char *shader, size_t length, SerializationHook *serializer) const;
 
 
-			public: size_t MakePso(PipelineTypes type, )
+			public: void SerializeRootSignature(unsigned cbvAmount, unsigned srvAmount, unsigned uavAmount, unsigned samplerAmount, SerializationHook *serializer);
+
+			public: size_t MakeRootSignature(const void *serializedData, size_t dataLength);
+			
+			public: size_t MakePso(PipelineTypes pipelineType, VertexLayoutTypes vertexLayout, const ShaderList &shaders, size_t signatureHandle);
 
 			
 			

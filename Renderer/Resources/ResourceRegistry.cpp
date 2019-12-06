@@ -55,6 +55,44 @@ namespace Renderer
 			
 		}
 
+
+		
+		void ResourceRegistry::RegisterSignature(const ResourceHandle::t_hash handle, RootSignatureData &&signatureData)
+		{
+			rootSignatures.insert( {handle, std::move(signatureData)} );
+									
+		}
+
+		const RootSignatureData &ResourceRegistry::GetSignatureDataRef(const ResourceHandle::t_hash handle) const
+		{
+			return rootSignatures.at(handle);
+			
+		}
+
+		ID3D12RootSignature *ResourceRegistry::GetSignature(ResourceHandle::t_hash handle)
+		{
+			return rootSignatures.at(handle).signature.Get();
+			
+		}
+
+
+		
+		void ResourceRegistry::RegisterPso
+		(
+			const ResourceHandle::t_hash handle,
+			const DxPtr<ID3D12PipelineState> &pipelineState
+		)
+		{
+			pipelineStates.insert( {handle, pipelineState} );
+			
+		}
+
+		DxPtr<ID3D12PipelineState> ResourceRegistry::GetPso(const ResourceHandle::t_hash handle) const
+		{
+			return pipelineStates.at(handle);
+			
+		}
+
 		
 	}
 	

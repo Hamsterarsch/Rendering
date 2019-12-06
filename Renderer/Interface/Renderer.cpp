@@ -9,6 +9,7 @@
 #include "Resources/ResourceHandle.hpp"
 #include "Resources/ResourceRegistry.hpp"
 #include "Resources/Pso/PsoFactory.hpp"
+#include "Resources/RootSignature/RootSignatureFactory.hpp"
 
 #include "FrameRenderer.hpp"
 #include "RenderMeshCommand.hpp"
@@ -39,10 +40,12 @@ namespace Renderer
 			ResourceRegistry registry;
 			VertexLayoutProvider vertexLayoutProvider;
 			PsoFactory psoFactory;
+			RootSignatureFactory signatureFactory;
 			UniquePtr<ShaderFactory> shaderFactory;
 
 			PrivateMembers(DeviceResources *resources) :
 				psoFactory{ resources },
+				signatureFactory{ resources },
 				shaderFactory{ Facade::MakeShaderFactory(5, 0) }
 			{				
 			}				
@@ -276,17 +279,56 @@ namespace Renderer
 			
 		}
 
-		void Renderer::CompileVertexShader(const char *shader, SerializationHook *serializer) const
+		void Renderer::CompileVertexShader(const char *shader, size_t length, SerializationHook *serializer) const
 		{
-			if(serializer == nullptr)
-			{
-				return;
-			}
-			
-			auto shader{ privateMembers->shaderFactory->MakeVertexShader(path, "main") };
-				
+			auto shaderBlob{ privateMembers->shaderFactory->MakeVertexShader(shader, length, "main")};
 
+			serializer->SerializeData(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize());			
 			
+		}
+
+		void Renderer::SerializeRootSignature
+		(
+			unsigned cbvAmount,
+			unsigned srvAmount, 
+			unsigned uavAmount,
+			unsigned samplerAmount, 
+			SerializationHook *serializer
+		)
+		{
+			auto signatureBlob{ privateMembers->signatureFactory.SerializeRootSignature(cbvAmount, srvAmount, uavAmount, samplerAmount) };
+			const auto signatureSize{ signatureBlob->GetBufferSize() };
+			
+			serializer->SerializeData(&signatureSize, sizeof signatureSize);
+			serializer->SerializeData(signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize());
+			
+			serializer->SerializeData(&samplerAmount, sizeof samplerAmount);
+			
+		}
+
+		size_t Renderer::MakeRootSignature(const void *serializedData, size_t dataLength)
+		{
+			auto signatureSize{ reinterpret_cast<SIZE_T>(serializedData) };
+			auto signaturePtr{ reinterpret_cast<const unsigned char *>(serializedData) + sizeof signatureSize};
+
+			auto signatureData{ privateMembers->signatureFactory.MakeRootSignature(signaturePtr, signatureSize) };
+			signatureData.samplerAmount = reinterpret_cast<size_t>(signaturePtr + signatureSize);
+
+			const auto handle{ privateMembers->handleFactory.MakeHandle(ResourceTypes::Signature) };
+			privateMembers->registry.RegisterSignature(handle.hash, std::move(signatureData));
+
+			return handle.hash;
+			
+		}
+
+		size_t Renderer::MakePso(PipelineTypes pipelineType, VertexLayoutTypes vertexLayout, const ShaderList &shaders, size_t signatureHandle)
+		{
+			auto pipelineState{	privateMembers->psoFactory.MakePso(shaders, privateMembers->registry.GetSignature(signatureHandle), pipelineType, privateMembers->vertexLayoutProvider.GetLayoutDesc(vertexLayout), D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE) };
+			
+			auto handle{ privateMembers->handleFactory.MakeHandle(ResourceTypes::Pso) };
+			privateMembers->registry.RegisterPso(handle.hash, pipelineState);
+
+			return handle.hash;
 			
 		}
 
