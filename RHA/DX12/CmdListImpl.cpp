@@ -1,6 +1,7 @@
 #include "DX12/CmdAllocatorImpl.hpp"
 #include "Shared/Exception/CreationFailedException.hpp"
 #include "CmdListImpl.hpp"
+#include "Shared/Exception/OutOfMemoryException.hpp"
 
 
 namespace RHA
@@ -27,6 +28,9 @@ namespace RHA
 			{
 				throw Exception::CreationFailed{ "Could not create dx12 command list" };
 			}
+
+			glist = AsGraphicsList();
+			
 		}
 
 		DxPtr<ID3D12GraphicsCommandList> CmdListImpl::AsGraphicsList()
@@ -44,6 +48,34 @@ namespace RHA
 			}
 
 			return out;
+			
+		}
+
+		void CmdListImpl::RecordCopyResource(ID3D12Resource *destination, ID3D12Resource *source)
+		{
+			glist->CopyResource(destination, source);
+			
+		}
+
+		void CmdListImpl::StopRecording()
+		{
+			const auto result{ glist->Close() };
+			
+			if(FAILED(result))
+			{
+				if(result == E_OUTOFMEMORY)
+				{
+					throw Exception::OutOfMemory{ "Insufficient memory to close dx12 cmd list" };
+				}
+				
+				throw Exception::Exception{ "Could not close dx12 cmd list" };
+			}
+			
+		}
+
+		void CmdListImpl::StartRecording(CmdAllocator *allocator)
+		{
+			glist->Reset(allocator->GetAllocator().Get(), nullptr);
 			
 		}
 
