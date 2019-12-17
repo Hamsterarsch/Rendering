@@ -184,8 +184,22 @@ namespace RHA
 			BufferData &WindowSurfaceImpl::GetBackbufferData()
 			{
 				return bufferData.at(currentBackbufferIndex);
+			
 			}
 
+
+		
+		void WindowSurfaceImpl::ScheduleCopyToBackbuffer(Queue *queue, CmdList *targetList, ID3D12Resource *source)
+		{
+			targetList->RecordCopyResource(GetBackbufferData().resource.Get(), source);
+			targetList->StopRecording();
+			
+			queue->SubmitCommandList(targetList);
+			
+		}
+
+
+		
 		void WindowSurfaceImpl::SchedulePresentation(Queue *queue)
 		{
 			queue->SubmitCommandList(GetBackbufferData().presentCmd.get());

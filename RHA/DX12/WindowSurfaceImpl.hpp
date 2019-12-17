@@ -75,6 +75,8 @@ namespace RHA
 				private: BufferData &GetBackbufferData();
 
 			
+			public: virtual void ScheduleCopyToBackbuffer(Queue *queue, CmdList *targetList, ID3D12Resource *source) override;
+			
 			public: virtual void SchedulePresentation(Queue *queue) override;
 
 			public: virtual void RecordPipelineBindings(ID3D12GraphicsCommandList *list) override;
