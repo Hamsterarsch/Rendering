@@ -48,20 +48,27 @@ namespace Renderer
 
 			private: ResourceRegistry *registry;
 
+			private: D3D12_RECT scissorRect;
+
+			private: D3D12_VIEWPORT viewport;
+			
 			private: static constexpr size_t recordsPerCommandList{ 50 };
 
 			private: static constexpr float clearColor[]{0,0,0,1};
 			
 
+			public: FrameRenderer();
+			
 			public: FrameRenderer(DeviceResources *resources, Queue *queue, ResourceRegistry &registry, const DxPtr<ID3D12Resource> &renderTargetTemplate);
 
+			public: FrameRenderer(FrameRenderer &&other) noexcept;
+
+			public: FrameRenderer &operator=(FrameRenderer &&rhs) noexcept;
+			
 			public: FrameRenderer(const FrameRenderer &) = delete;
 
 			public: FrameRenderer &operator=(const FrameRenderer &) = delete;
 
-			public: FrameRenderer(FrameRenderer &&) noexcept = default;
-
-			public: FrameRenderer &operator=(FrameRenderer &&) noexcept = default;
 			
 			public: ~FrameRenderer() noexcept;
 

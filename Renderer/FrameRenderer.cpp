@@ -10,6 +10,13 @@ namespace Renderer
 {
 	namespace DX12
 	{
+		FrameRenderer::FrameRenderer() :
+			resources{ nullptr },
+			queue{ nullptr },
+			registry{ nullptr }
+		{
+		}
+
 		FrameRenderer::FrameRenderer
 		(
 			DeviceResources *resources, 
@@ -28,6 +35,18 @@ namespace Renderer
 			
 			auto rtDesc{ renderTargetTemplate->GetDesc() };			
 
+			viewport.Width = rtDesc.Width;
+			viewport.Height = rtDesc.Height;
+			viewport.TopLeftX = -(rtDesc.Width / 2.f);
+			viewport.TopLeftY = -(rtDesc.Height / 2.f);
+			viewport.MinDepth = 0;
+			viewport.MaxDepth = 1;
+
+			scissorRect.left = viewport.TopLeftX;
+			scissorRect.top = viewport.TopLeftY;
+			scissorRect.bottom = viewport.Height / 2.f;
+			scissorRect.right = viewport.Width / 2.f;
+			
 			D3D12_HEAP_PROPERTIES properties{};
 			properties.Type =  D3D12_HEAP_TYPE_DEFAULT;
 			properties.CPUPageProperty =  D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
@@ -83,7 +102,69 @@ namespace Renderer
 			
 		}
 
-		FrameRenderer::~FrameRenderer() noexcept = default;
+		FrameRenderer::FrameRenderer(FrameRenderer &&other) noexcept :
+			resources{ std::move(other.resources) },
+			queue{ std::move(other.queue) },
+			allocator{ std::move(other.allocator) },
+			fence{ std::move(other.fence) },
+			event{ std::move(other.event) },
+			renderTarget{ std::move(other.renderTarget) },
+			depthTarget{ std::move(other.depthTarget) },
+			rtvHeap{ std::move(other.rtvHeap) },
+			dsvHeap{ std::move(other.dsvHeap) },
+			commands{ std::move(other.commands) },
+			registry{ std::move(other.registry) },
+			scissorRect{ std::move(other.scissorRect) },
+			viewport{ std::move(other.viewport) }			
+		{
+			other.resources = nullptr;
+			other.queue = nullptr;
+			other.event = nullptr;		
+			other.registry = nullptr;
+
+		}
+
+		FrameRenderer &FrameRenderer::operator=(FrameRenderer &&rhs) noexcept
+		{
+			resources = std::move(rhs.resources);
+			rhs.resources = nullptr;
+			
+			queue = std::move(rhs.queue);
+			rhs.queue = nullptr;
+			
+			allocator = std::move(rhs.allocator);
+			fence = std::move(rhs.fence);
+			
+			event = std::move(rhs.event);
+			rhs.event = nullptr;
+			
+			renderTarget = std::move(rhs.renderTarget);
+			depthTarget = std::move(rhs.depthTarget);
+			rtvHeap = std::move(rhs.rtvHeap);
+			dsvHeap = std::move(rhs.dsvHeap);
+			commands = std::move(rhs.commands);
+			
+			registry = std::move(rhs.registry);
+			rhs.registry = nullptr;
+			
+			scissorRect = std::move(rhs.scissorRect);
+			viewport = std::move(rhs.viewport);	
+
+			return *this;
+			
+		}
+
+		FrameRenderer::~FrameRenderer() noexcept
+		{
+			if(registry != nullptr)
+			{
+				for(auto &&cmd : commands)
+				{
+					cmd->ExecuteOperationOnResourceReferences(registry, &ResourceRegistry::RemoveReference);
+				}				
+			}
+			
+		}
 
 
 		
@@ -103,7 +184,9 @@ namespace Renderer
 
 			const auto rtv{ rtvHeap->GetHandleCpu(0) };
 			const auto dsv{ dsvHeap->GetHandleCpu(0) };
-			
+
+			glist->RSSetScissorRects(1, &scissorRect);
+			glist->RSSetViewports(1, &viewport);			
 			glist->OMSetRenderTargets(1, &rtv, false, &dsv );
 			glist->ClearRenderTargetView(rtv, clearColor, 0, nullptr);
 			glist->ClearDepthStencilView(dsv, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1, 0, 0, nullptr);
@@ -128,7 +211,9 @@ namespace Renderer
 					queue->SubmitCommandList(list.get());
 
 					resetResult = glist->Reset(allocator->GetAllocator().Get(), registry->GetPso(cmd->GetPsoHandle()).Get());
-					
+
+					glist->RSSetScissorRects(1, &scissorRect);
+					glist->RSSetViewports(1, &viewport);					
 					glist->OMSetRenderTargets(1, &rtv, false, &dsv );
 					glist->ClearRenderTargetView(rtv, clearColor, 0, nullptr);
 					glist->ClearDepthStencilView(dsv, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1, 0, 0, nullptr);

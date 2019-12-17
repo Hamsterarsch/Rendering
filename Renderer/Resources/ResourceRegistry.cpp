@@ -15,17 +15,33 @@ namespace Renderer
 
 			void ResourceRegistry::AddReference(const ResourceHandle::t_hash handle)
 			{
-				resourceReferences.insert(handle);
+				++InsertOrFindReferenceData(handle)->second;
 				
 			}
 
+				decltype(ResourceRegistry::resourceReferences)::iterator ResourceRegistry::InsertOrFindReferenceData
+				(
+					const ResourceHandle::t_hash hash
+				)
+				{
+					auto referenceData{ resourceReferences.find(hash) };
+					if(referenceData == resourceReferences.end())
+					{
+						return resourceReferences.insert( {hash, 0} );
+						
+					}
 
-		
+					return referenceData;
+				
+				}
+
+
 		void ResourceRegistry::RemoveReference(const ResourceHandle::t_hash handle)
 		{
-			resourceReferences.erase(resourceReferences.find(handle));
-
-			if(resourceReferences.count(handle) == 0)
+			auto referenceData{ resourceReferences.find(handle) };
+			--referenceData->second;
+			
+			if(referenceData->second <= 0)
 			{
 				ResourceHandle realHandle{ handle };
 				RemoveEntity(realHandle);
