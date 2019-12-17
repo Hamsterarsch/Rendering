@@ -19,7 +19,7 @@ namespace Renderer
 		) :
 			resources{ resources },
 			queue{ queue },
-			registry{ registry }
+			registry{ &registry }
 		{
 			allocator = Facade::MakeCmdAllocator(resources, D3D12_COMMAND_LIST_TYPE_DIRECT);
 			fence = Facade::MakeFence(resources);
@@ -89,7 +89,7 @@ namespace Renderer
 		
 		void FrameRenderer::AddCommand(UniquePtr<RenderCommand> &&command)
 		{			
-			command->ExecuteOperationOnResourceReferences(&registry, &ResourceRegistry::AddReference);			
+			command->ExecuteOperationOnResourceReferences(registry, &ResourceRegistry::AddReference);			
 			commands.emplace_back(std::move(command));
 			
 		}
@@ -111,9 +111,9 @@ namespace Renderer
 			size_t recordedCommands{ 0 };
 			for(auto &&cmd : commands)
 			{				
-				glist->SetGraphicsRootSignature(registry.GetSignature(cmd->GetSignatureHandle()));
+				glist->SetGraphicsRootSignature(registry->GetSignature(cmd->GetSignatureHandle()));
 
-				cmd->Record(list.get(), registry);
+				cmd->Record(list.get(), *registry);
 
 				HRESULT resetResult{ S_OK };
 				if(recordedCommands >= recordsPerCommandList)
@@ -127,7 +127,7 @@ namespace Renderer
 
 					queue->SubmitCommandList(list.get());
 
-					resetResult = glist->Reset(allocator->GetAllocator().Get(), registry.GetPso(cmd->GetPsoHandle()).Get());
+					resetResult = glist->Reset(allocator->GetAllocator().Get(), registry->GetPso(cmd->GetPsoHandle()).Get());
 					
 					glist->OMSetRenderTargets(1, &rtv, false, &dsv );
 					glist->ClearRenderTargetView(rtv, clearColor, 0, nullptr);
@@ -135,7 +135,7 @@ namespace Renderer
 				}
 				else
 				{
-					 resetResult = glist->Reset(allocator->GetAllocator().Get(), registry.GetPso(cmd->GetPsoHandle()).Get());					
+					 resetResult = glist->Reset(allocator->GetAllocator().Get(), registry->GetPso(cmd->GetPsoHandle()).Get());					
 				}
 				++recordedCommands;
 
@@ -168,7 +168,7 @@ namespace Renderer
 		{
 			for(auto &&cmd : commands)
 			{
-				cmd->ExecuteOperationOnResourceReferences(&registry, &ResourceRegistry::RemoveReference);
+				cmd->ExecuteOperationOnResourceReferences(registry, &ResourceRegistry::RemoveReference);
 			}
 			commands.clear();
 			

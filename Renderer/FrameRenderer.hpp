@@ -46,7 +46,7 @@ namespace Renderer
 
 			private: std::vector<UniquePtr<RenderCommand>> commands;
 
-			private: ResourceRegistry &registry;
+			private: ResourceRegistry *registry;
 
 			private: static constexpr size_t recordsPerCommandList{ 50 };
 
@@ -66,6 +66,8 @@ namespace Renderer
 			public: ~FrameRenderer() noexcept;
 
 
+			public: inline ID3D12Resource *GetRenderTargetRef() { return renderTarget.Get(); }
+			
 			public: void AddCommand(UniquePtr<RenderCommand> &&command);
 
 			public: void ExecuteCommands();
@@ -73,6 +75,7 @@ namespace Renderer
 			public: void WaitForCompletion();
 			
 			public: void Reinitialize();
+
 
 								
 		};
