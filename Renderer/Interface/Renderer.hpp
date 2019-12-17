@@ -10,7 +10,7 @@
 
 
 #include "DxPtrTypes.hpp"
-
+#include "RenderCommand.hpp"
 
 
 namespace RHA
@@ -59,15 +59,15 @@ namespace Renderer
 
 			private: UniquePtr<RHA::DX12::DeviceResources> resources;
 
-			private: UniquePtr<RHA::DX12::Queue> commonQueue;
+			private: UniquePtr<RHA::DX12::Queue> commonQueue, copyQueue;
 
-			private: UniquePtr<RHA::DX12::CmdAllocator> commonAllocator;
+			private: UniquePtr<RHA::DX12::CmdAllocator> commonAllocator, copyAllocator;
 			
 			private: UniquePtr<RHA::DX12::WindowSurface> outputSurface;
 
-			private: UniquePtr<RHA::DX12::Fence> closeFence;
+			private: UniquePtr<RHA::DX12::Fence> closeFence, copyFence;
 
-			private: HANDLE closeEvent;
+			private: HANDLE closeEvent, copyEvent;
 
 			private: UniquePtr<class ResourceFactory> resourceFactory;
 			
@@ -80,7 +80,7 @@ namespace Renderer
 			private: struct PrivateMembers;
 
 			private: UniquePtr<PrivateMembers> privateMembers;
-			
+
 					 		
 			
 			public: Renderer(HWND outputWindow);

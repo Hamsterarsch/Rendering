@@ -15,6 +15,8 @@
 #include "RenderMeshCommand.hpp"
 #include "Resources/Pso/VertexLayoutProvider.hpp"
 
+#include <queue>
+
 #if _DEBUG
 	constexpr bool enableDebugLayers = true;
 #else
@@ -34,6 +36,12 @@ namespace Renderer
 	{
 		using namespace RHA::DX12;
 
+		struct InflightData
+		{
+			FrameRenderer renderer;
+			std::future<void> handle;
+		};
+		
 		struct Renderer::PrivateMembers
 		{
 			HandleFactory handleFactory;			
@@ -42,6 +50,9 @@ namespace Renderer
 			PsoFactory psoFactory;
 			RootSignatureFactory signatureFactory;
 			UniquePtr<ShaderFactory> shaderFactory;
+			std::vector<InflightData> inflightFrameRenderers;
+			std::queue<FrameRenderer> finishedRenderers, pendingRenderers;
+			FrameRenderer currentRenderer;
 
 			PrivateMembers(DeviceResources *resources) :
 				psoFactory{ resources },
@@ -64,15 +75,26 @@ namespace Renderer
 			privateMembers{ nullptr }
 		{
 			resources = Facade::MakeDeviceResources(D3D_FEATURE_LEVEL_11_0, enableDebugLayers);
-			commonQueue = Facade::MakeQueue(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT);
-			outputSurface = Facade::MakeWindowSurface(resources.get(), commonQueue.get(), outputWindow);
+			commonQueue = Facade::MakeQueue(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT);			
 			commonAllocator = Facade::MakeCmdAllocator(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT);
+
+			copyQueue = Facade::MakeQueue(resources.get(), D3D12_COMMAND_LIST_TYPE_COPY, true);
+			copyAllocator = Facade::MakeCmdAllocator(resources.get(), D3D12_COMMAND_LIST_TYPE_COPY);
+			
+			outputSurface = Facade::MakeWindowSurface(resources.get(), commonQueue.get(), outputWindow);
+			
 			closeFence = Facade::MakeFence(resources.get());
 			closeEvent = CreateEvent(nullptr, false, false, nullptr);
+
+			copyFence = Facade::MakeFence(resources.get());
+			copyEvent = CreateEvent(nullptr, false, false, nullptr);
+			
 			data = std::make_unique<TriangleData>();
 			resourceFactory = std::make_unique<ResourceFactory>(resources.get(), commonQueue.get(), std::make_unique<ResourceMemory>(resources.get(), D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT * 15, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT, D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS));			
 
 			privateMembers = std::make_unique<PrivateMembers>(resources.get());
+
+			privateMembers->inflightFrameRenderers.reserve(inflightFramesAmount);
 			
 			auto d = FrameRenderer{resources.get(), commonQueue.get(), privateMembers->registry, outputSurface->GetResourceTemplate() };
 			
@@ -208,6 +230,39 @@ namespace Renderer
 			
 				while(shouldUpdateRendering)
 				{
+					//wait for the oldest pending frame to finish
+					privateMembers->pendingRenderers.front().WaitForCompletion();
+					
+					//copy from frame to output
+					{
+						auto list{ copyAllocator->AllocateList() };					
+						outputSurface->ScheduleCopyToBackbuffer(copyQueue.get(), list.get(), privateMembers->pendingRenderers.front().GetRenderTargetRef());
+
+						copyFence->SetEventOnValue(1, copyEvent);
+						copyQueue->Signal(1, copyFence.get());
+
+						WaitForSingleObject(copyEvent, INFINITE);
+					}
+					privateMembers->pendingRenderers.pop();
+					copyAllocator->Reset();
+					
+					//swap output
+					outputSurface->SchedulePresentation(commonQueue.get());
+					
+					//while the current inflight amount is smaller than the maximum
+					//and there are pending frames
+					while(privateMembers->inflightFrameRenderers.size() < inflightFramesAmount && privateMembers->pendingRenderers.size() > 0)
+					{
+						//launch pending frames till max
+						InflightData inflightData{std::move(privateMembers->pendingRenderers.front()) };
+						privateMembers->pendingRenderers.pop();
+						
+						inflightData.handle = std::async(std::launch::async, &FrameRenderer::ExecuteCommands, inflightData.renderer);
+							
+						privateMembers->inflightFrameRenderers.push_back(std::move(inflightData));						
+					}
+
+					/*
 					outputSurface->ScheduleBackbufferClear(commonQueue.get());
 
 					
@@ -241,6 +296,7 @@ namespace Renderer
 					closeFence->Signal(0);
 					
 					auto c = commonAllocator->GetAllocator()->Reset();
+					*/
 				}
 
 				closeFence->GetFence()->SetEventOnCompletion(1, closeEvent);
@@ -335,14 +391,34 @@ namespace Renderer
 
 		void Renderer::RenderMesh(size_t signatureHandle, size_t psoHandle, size_t meshHandle, size_t sizeInBytes, size_t byteOffsetToIndices)
 		{
-			RenderMeshCommand cmd{ signatureHandle, psoHandle, meshHandle, byteOffsetToIndices, sizeInBytes - byteOffsetToIndices };
+			privateMembers->currentRenderer.AddCommand
+			(
+				std::make_unique<RenderMeshCommand>(signatureHandle, psoHandle, meshHandle, byteOffsetToIndices, sizeInBytes - byteOffsetToIndices)
+			);			
 
-			//<------------------------------
-			
 		}
 
 		void Renderer::DispatchFrame()
 		{
+			if(privateMembers->inflightFrameRenderers.size() < inflightFramesAmount)
+			{			
+				InflightData inflightData{std::move(privateMembers->currentRenderer) };
+				inflightData.handle = std::async(std::launch::async, &FrameRenderer::ExecuteCommands, privateMembers->inflightFrameRenderers.back().renderer);
+							
+				privateMembers->inflightFrameRenderers.push_back(std::move(inflightData));
+			}
+			else
+			{
+				privateMembers->pendingRenderers.push(std::move(privateMembers->currentRenderer));
+
+				while(privateMembers->pendingRenderers.size() > inflightFramesAmount)
+				{
+					privateMembers->pendingRenderers.pop();
+				}				
+			}
+
+
+			privateMembers->currentRenderer = FrameRenderer{resources.get(), commonQueue.get(), privateMembers->registry, outputSurface->GetResourceTemplate()};
 			//throw if all frame renderers are occupied
 						
 			//batch commands where possible
