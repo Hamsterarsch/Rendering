@@ -9,7 +9,7 @@ namespace RHA
 {
 	namespace DX12
 	{
-		QueueImpl::QueueImpl(class DeviceResources *resources, const D3D12_COMMAND_LIST_TYPE type)
+		QueueImpl::QueueImpl(class DeviceResources *resources, const D3D12_COMMAND_LIST_TYPE type, const bool isHighPriority)
 		{
 			D3D12_COMMAND_QUEUE_DESC desc{};
 
@@ -18,7 +18,7 @@ namespace RHA
 			desc.Type = type;
 			desc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 			desc.NodeMask = FIRST_ADAPTER;
-			desc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
+			desc.Priority = isHighPriority ? D3D12_COMMAND_QUEUE_PRIORITY_HIGH : D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
 
 			const auto result
 			{

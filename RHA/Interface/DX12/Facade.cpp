@@ -36,10 +36,11 @@ namespace RHA
 		UniquePtr<Queue> Facade::MakeQueue
 		(
 			DeviceResources *resources, 
-			D3D12_COMMAND_LIST_TYPE type
+			const D3D12_COMMAND_LIST_TYPE type,
+			const bool isHighPriority
 		)
 		{
-			return std::make_unique<QueueImpl>(resources, type);
+			return std::make_unique<QueueImpl>(resources, type, isHighPriority);
 			
 		}
 

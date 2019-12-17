@@ -23,7 +23,7 @@ namespace RHA
 
 			static UniquePtr<CmdAllocator> MakeCmdAllocator(DeviceResources *resources, D3D12_COMMAND_LIST_TYPE type);
 
-			static UniquePtr<Queue> MakeQueue(DeviceResources *resources, D3D12_COMMAND_LIST_TYPE type);
+			static UniquePtr<Queue> MakeQueue(DeviceResources *resources, D3D12_COMMAND_LIST_TYPE type, bool isHighPriority = false);
 
 			static UniquePtr<WindowSurface> MakeWindowSurface(DeviceResources *resources, Queue *queue, HWND window);
 
