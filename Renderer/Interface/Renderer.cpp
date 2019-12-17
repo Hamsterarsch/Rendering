@@ -50,7 +50,7 @@ namespace Renderer
 			PsoFactory psoFactory;
 			RootSignatureFactory signatureFactory;
 			UniquePtr<ShaderFactory> shaderFactory;
-			std::vector<InflightData> inflightFrameRenderers;
+			std::list<InflightData> inflightFrameRenderers;
 			std::queue<FrameRenderer> finishedRenderers, pendingRenderers;
 			FrameRenderer currentRenderer;
 
@@ -94,9 +94,7 @@ namespace Renderer
 
 			privateMembers = std::make_unique<PrivateMembers>(resources.get());
 
-			privateMembers->inflightFrameRenderers.reserve(inflightFramesAmount);
-			
-			auto d = FrameRenderer{resources.get(), commonQueue.get(), privateMembers->registry, outputSurface->GetResourceTemplate() };
+						
 			
 			auto vs
 			{
@@ -254,12 +252,9 @@ namespace Renderer
 					while(privateMembers->inflightFrameRenderers.size() < inflightFramesAmount && privateMembers->pendingRenderers.size() > 0)
 					{
 						//launch pending frames till max
-						InflightData inflightData{std::move(privateMembers->pendingRenderers.front()) };
+						LaunchFrameRenderer(std::move(privateMembers->pendingRenderers.front()));
 						privateMembers->pendingRenderers.pop();
-						
-						inflightData.handle = std::async(std::launch::async, &FrameRenderer::ExecuteCommands, inflightData.renderer);
-							
-						privateMembers->inflightFrameRenderers.push_back(std::move(inflightData));						
+												
 					}
 
 					/*
@@ -306,6 +301,15 @@ namespace Renderer
 				return 0;
 			
 			}
+
+				void Renderer::LaunchFrameRenderer(FrameRenderer &&renderer)
+				{
+					privateMembers->inflightFrameRenderers.emplace_back();
+					privateMembers->inflightFrameRenderers.back().renderer = std::move(renderer); 
+																
+					privateMembers->inflightFrameRenderers.back().handle = std::async(std::launch::async, &FrameRenderer::ExecuteCommands, &privateMembers->inflightFrameRenderers.back().renderer);
+			
+				}
 
 		Renderer::~Renderer()
 		{
@@ -401,11 +405,8 @@ namespace Renderer
 		void Renderer::DispatchFrame()
 		{
 			if(privateMembers->inflightFrameRenderers.size() < inflightFramesAmount)
-			{			
-				InflightData inflightData{std::move(privateMembers->currentRenderer) };
-				inflightData.handle = std::async(std::launch::async, &FrameRenderer::ExecuteCommands, privateMembers->inflightFrameRenderers.back().renderer);
-							
-				privateMembers->inflightFrameRenderers.push_back(std::move(inflightData));
+			{
+				LaunchFrameRenderer(std::move(privateMembers->currentRenderer));				
 			}
 			else
 			{

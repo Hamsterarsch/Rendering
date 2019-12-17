@@ -35,6 +35,7 @@ namespace Renderer
 {
 	namespace DX12
 	{
+		class FrameRenderer;
 		struct TriangleData;
 
 		class SerializationHook
@@ -86,6 +87,8 @@ namespace Renderer
 			public: Renderer(HWND outputWindow);
 
 				private: int UpdateRendering();
+
+					private: void LaunchFrameRenderer(FrameRenderer &&renderer);
 
 			public: ~Renderer();
 
