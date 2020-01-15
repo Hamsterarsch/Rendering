@@ -160,6 +160,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="FrameRenderer.hpp" />
+    <ClInclude Include="Interface\RenderCommand.hpp" />
     <ClInclude Include="Interface\Renderer.hpp" />
     <ClInclude Include="Interface\RendererExportHelper.hpp" />
     <ClInclude Include="Interface\Resources\Pso\PipelineTypes.hpp" />
@@ -167,7 +168,6 @@
     <ClInclude Include="Interface\Resources\Pso\VertexLayoutTypes.hpp" />
     <ClInclude Include="Interface\Resources\ResourceHandle.hpp" />
     <ClInclude Include="Interface\Resources\ResourceTypes.hpp" />
-    <ClInclude Include="RenderCommand.hpp" />
     <ClInclude Include="RenderMeshCommand.hpp" />
     <ClInclude Include="Resources\Descriptor\DescriptorAllocator.hpp" />
     <ClInclude Include="Resources\Descriptor\DescriptorChunk.hpp" />

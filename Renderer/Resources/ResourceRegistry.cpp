@@ -71,9 +71,21 @@ namespace Renderer
 
 
 		
-		bool ResourceRegistry::ResourceIsNotRegistered(const ResourceHandle::t_hash handle)
-		{
-			return resourceAllocations.find(handle) == resourceAllocations.end();
+		bool ResourceRegistry::HandleIsInvalid(const ResourceHandle::t_hash hash)
+		{			
+			auto found{ resourceReferences.find(hash) };
+			
+			if(found == resourceReferences.end())
+			{
+				return true;
+			}
+
+			if(found->second == 0)
+			{
+				throw;
+			}
+
+			return false;			
 			
 		}
 

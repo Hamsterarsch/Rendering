@@ -1,6 +1,7 @@
 #include <d3d12.h>
 #include "DX12/CmdList.hpp"
 #include "RenderMeshCommand.hpp"
+#include "Resources/ResourceRegistry.hpp"
 
 
 namespace Renderer

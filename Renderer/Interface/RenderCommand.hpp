@@ -1,13 +1,15 @@
 #pragma once
 #include "Shared/InterfaceHelpers.hpp"
 #include "DX12/CmdList.hpp"
-#include "Resources/ResourceRegistry.hpp"
 #include "Shared/PtrTypes.hpp"
+
 
 namespace Renderer
 {
 	namespace DX12
 	{
+		class ResourceRegistry;
+		
 		class RenderCommand
 		{
 			DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(RenderCommand)

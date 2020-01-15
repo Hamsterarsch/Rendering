@@ -38,7 +38,7 @@ namespace Renderer
 				private: void RemoveEntity(const ResourceHandle &handle);
 
 			
-			public: bool ResourceIsNotRegistered(ResourceHandle::t_hash handle);
+			public: bool HandleIsInvalid(ResourceHandle::t_hash handle);
 
 			public: DxPtr<ID3D12Resource> GetResource(ResourceHandle::t_hash handle);
 

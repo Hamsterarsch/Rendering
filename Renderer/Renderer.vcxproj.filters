@@ -36,7 +36,6 @@
     <ClInclude Include="Resources\ResourceFactoryDeallocatable.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
-    <ClInclude Include="RenderCommand.hpp" />
     <ClInclude Include="RenderMeshCommand.hpp" />
     <ClInclude Include="Resources\RootSignature\TableLayout.hpp">
       <Filter>Resources\RootSignature</Filter>
@@ -76,6 +75,9 @@
     </ClInclude>
     <ClInclude Include="Resources\RootSignature\RootSignatureData.hpp">
       <Filter>Resources\RootSignature</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\RenderCommand.hpp">
+      <Filter>Interface</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

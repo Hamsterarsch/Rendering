@@ -89,13 +89,13 @@ namespace Renderer
 			copyFence = Facade::MakeFence(resources.get());
 			copyEvent = CreateEvent(nullptr, false, false, nullptr);
 			
-			data = std::make_unique<TriangleData>();
+			//data = std::make_unique<TriangleData>();
 			resourceFactory = std::make_unique<ResourceFactory>(resources.get(), commonQueue.get(), std::make_unique<ResourceMemory>(resources.get(), D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT * 15, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT, D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS));			
 
 			privateMembers = std::make_unique<PrivateMembers>(resources.get());
 
-						
 			
+			/*
 			auto vs
 			{
 				privateMembers->shaderFactory->MakeVertexShader
@@ -206,7 +206,7 @@ namespace Renderer
 			list = commonAllocator->AllocateList();
 			auto gral{ list->AsGraphicsList() };
 			gral->Close();		
-
+			*/
 
 			updaterHandle = std::async( std::launch::async, &Renderer::UpdateRendering, this);
 
@@ -339,14 +339,30 @@ namespace Renderer
 			
 		}
 
+
+		
 		void Renderer::CompileVertexShader(const char *shader, size_t length, SerializationHook *serializer) const
 		{
 			auto shaderBlob{ privateMembers->shaderFactory->MakeVertexShader(shader, length, "main")};
 
-			serializer->SerializeData(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize());			
+			auto block{ serializer->BeginBlock(shaderBlob->GetBufferSize()) };
+			serializer->WriteToBlock(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize());			
 			
 		}
 
+
+		
+		void Renderer::CompilePixelShader(const char *shader, size_t length, SerializationHook* serializer) const
+		{
+			auto shaderBlob{ privateMembers->shaderFactory->MakePixelShader(shader, length, "main")};
+
+			auto block{ serializer->BeginBlock(shaderBlob->GetBufferSize()) };
+			serializer->WriteToBlock(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize());
+			
+		}
+
+
+		
 		void Renderer::SerializeRootSignature
 		(
 			unsigned cbvAmount,
@@ -358,11 +374,12 @@ namespace Renderer
 		{
 			auto signatureBlob{ privateMembers->signatureFactory.SerializeRootSignature(cbvAmount, srvAmount, uavAmount, samplerAmount) };
 			const auto signatureSize{ signatureBlob->GetBufferSize() };
+
+			auto block{ serializer->BeginBlock(sizeof signatureSize + signatureBlob->GetBufferSize() + sizeof samplerAmount) };
+			serializer->WriteToBlock(&signatureSize, sizeof signatureSize);
+			serializer->WriteToBlock(signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize());
 			
-			serializer->SerializeData(&signatureSize, sizeof signatureSize);
-			serializer->SerializeData(signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize());
-			
-			serializer->SerializeData(&samplerAmount, sizeof samplerAmount);
+			serializer->WriteToBlock(&samplerAmount, sizeof samplerAmount);
 			
 		}
 
@@ -389,6 +406,12 @@ namespace Renderer
 			privateMembers->registry.RegisterPso(handle.hash, pipelineState);
 
 			return handle.hash;
+			
+		}
+
+		bool Renderer::ResourceHasToBeReloaded(size_t handle)
+		{
+			return privateMembers->registry.HandleIsInvalid(handle);
 			
 		}
 

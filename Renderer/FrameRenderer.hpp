@@ -2,6 +2,8 @@
 #include "Shared/PtrTypes.hpp"
 #include "DxPtrTypes.hpp"
 #include "RenderCommand.hpp"
+#include <vector>
+#include <d3d12.h>
 
 
 namespace RHA

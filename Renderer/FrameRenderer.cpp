@@ -4,6 +4,7 @@
 #include "DX12/Queue.hpp"
 #include "DX12/DeviceResources.hpp"
 #include "DX12/Facade.hpp"
+#include "Resources/ResourceRegistry.hpp"
 
 
 namespace Renderer

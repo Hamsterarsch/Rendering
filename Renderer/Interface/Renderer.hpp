@@ -40,9 +40,43 @@ namespace Renderer
 
 		class SerializationHook
 		{
-			public: virtual void SerializeData(const void *data, size_t sizeInBytes) {};
+			DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(SerializationHook)
 
-			//interface functions
+			class Block
+			{
+				private: SerializationHook *parent;
+
+				
+				public: Block(SerializationHook *parent) : parent{parent} {}
+				
+				public: ~Block()
+				{
+					parent->EndBlock();
+				}
+				
+			};
+
+			size_t lastBlockSizeInBytes{ 0 };
+			
+			public: Block BeginBlock(size_t sizeInBytes)
+			{
+				lastBlockSizeInBytes = sizeInBytes;
+				OnBeginBlock();
+				
+				return Block{ this };
+				
+			}
+
+			protected: virtual void OnBeginBlock() = 0;
+			
+			protected: size_t GetBlockSize() const {  return lastBlockSizeInBytes; }
+
+			friend Block::~Block();
+			
+			private: virtual void EndBlock() {};
+			
+			public: virtual void WriteToBlock(const void *data, size_t sizeInBytes) {};
+
 		};
 						
 		class RENDERER_DLLSPEC Renderer
@@ -71,12 +105,12 @@ namespace Renderer
 			private: HANDLE closeEvent, copyEvent;
 
 			private: UniquePtr<class ResourceFactory> resourceFactory;
-			
+			/*
 					 UniquePtr<TriangleData> data;
 					 DxPtr<ID3D12RootSignature> signature;
 					 DxPtr<ID3D12PipelineState> pipeline;
 					 UniquePtr<RHA::DX12::CmdList> list;
-					 UniquePtr<class ResourceAllocation> meshBufferAllocation;
+					 UniquePtr<class ResourceAllocation> meshBufferAllocation;*/
 						
 			private: struct PrivateMembers;
 
@@ -98,6 +132,8 @@ namespace Renderer
 
 			public: void CompileVertexShader(const char *shader, size_t length, SerializationHook *serializer) const;
 
+			public: void CompilePixelShader(const char *shader, size_t length, SerializationHook *serializer) const;
+			
 
 			public: void SerializeRootSignature(unsigned cbvAmount, unsigned srvAmount, unsigned uavAmount, unsigned samplerAmount, SerializationHook *serializer);
 
@@ -110,7 +146,7 @@ namespace Renderer
 
 			public: bool ResourceHasToBeReloaded(size_t handle);
 			
-			public: void MakeBufferWithHandle(const void *data, size_t sizeInBytes, size_t handle);
+			public: void MakeBufferWithOldHandle(const void *data, size_t sizeInBytes, size_t handle);
 
 
 			public: void RenderMesh(size_t signatureHandle, size_t psoHandle, size_t meshHandle, size_t sizeInBytes, size_t byteOffsetToIndices);
