@@ -145,8 +145,8 @@ namespace Renderer
 					throw Exception::CreationFailed{ "Could not make dx12 root signature from serialized blob" };
 				}
 			}
-						
-			RootSignatureData out{ deserializer->GetUnconvertedRootSignatureDesc()->Desc_1_1.pParameters[0].DescriptorTable };
+			
+			RootSignatureData out{ deserializer->GetUnconvertedRootSignatureDesc()->Desc_1_1 };
 			
 			const auto result
 			{

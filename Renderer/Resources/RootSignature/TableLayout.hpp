@@ -13,7 +13,7 @@ namespace Renderer
 
 
 						
-			public: TableLayout(const D3D12_ROOT_DESCRIPTOR_TABLE1 &tableDesc);
+			public: TableLayout(const D3D12_ROOT_DESCRIPTOR_TABLE1 *tableDesc);
 
 				private: void AddAllOffsetsInRange(const D3D12_DESCRIPTOR_RANGE1 &range);
 

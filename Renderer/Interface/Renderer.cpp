@@ -394,7 +394,7 @@ namespace Renderer
 			auto *signaturePtr{ reinterpret_cast<const unsigned char *>(serializedData) + sizeof *signatureSize};
 
 			auto signatureData{ privateMembers->signatureFactory.MakeRootSignature(signaturePtr, *signatureSize) };
-			signatureData.samplerAmount = reinterpret_cast<size_t>(signaturePtr + *signatureSize);
+			signatureData.samplerAmount = *reinterpret_cast<const size_t *>(signaturePtr + *signatureSize);
 
 			const auto handle{ privateMembers->handleFactory.MakeHandle(ResourceTypes::Signature) };
 			privateMembers->registry.RegisterSignature(handle.hash, std::move(signatureData));

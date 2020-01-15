@@ -10,13 +10,18 @@ namespace Renderer
 		struct RootSignatureData
 		{
 			DxPtr<ID3D12RootSignature> signature;
-			TableLayout layout;
 			size_t samplerAmount;
+			TableLayout layout;
 
-			RootSignatureData(const D3D12_ROOT_DESCRIPTOR_TABLE1 &viewTableLayout) :
+			RootSignatureData(const D3D12_ROOT_SIGNATURE_DESC1 &signatureDesc) :
 				signature{ nullptr },
-				layout{ viewTableLayout },
-				samplerAmount{ 0 }
+				samplerAmount{ 0 },
+				layout
+				{
+					signatureDesc.NumParameters > 0 && signatureDesc.pParameters[0].ParameterType == D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE
+					? &signatureDesc.pParameters[0].DescriptorTable
+					: nullptr
+				}
 			{				
 			}
 

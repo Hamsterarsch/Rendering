@@ -6,11 +6,16 @@ namespace Renderer
 {
 	namespace DX12
 	{
-		TableLayout::TableLayout(const D3D12_ROOT_DESCRIPTOR_TABLE1 &tableDesc)
+		TableLayout::TableLayout(const D3D12_ROOT_DESCRIPTOR_TABLE1 *tableDesc)
 		{
-			for(size_t index{ 0 }; index < tableDesc.NumDescriptorRanges; ++index)
+			if(tableDesc == nullptr)
 			{
-				AddAllOffsetsInRange(tableDesc.pDescriptorRanges[index]);				
+				return;
+			}
+			
+			for(size_t index{ 0 }; index < tableDesc->NumDescriptorRanges; ++index)
+			{
+				AddAllOffsetsInRange(tableDesc->pDescriptorRanges[index]);				
 			}
 
 			srvOffsets.shrink_to_fit();
