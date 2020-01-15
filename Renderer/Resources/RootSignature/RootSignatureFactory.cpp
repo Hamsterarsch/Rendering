@@ -38,7 +38,11 @@ namespace Renderer
 			viewParamDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 			viewParamDesc.DescriptorTable.pDescriptorRanges = ranges.data();
 			viewParamDesc.DescriptorTable.NumDescriptorRanges = ranges.size();
-			parameters.emplace_back(viewParamDesc);
+
+			if(viewParamDesc.DescriptorTable.NumDescriptorRanges > 0)
+			{
+				parameters.emplace_back(viewParamDesc);				
+			}
 
 			D3D12_DESCRIPTOR_RANGE1 samplerRange{};
 			if(samplerAmount > 0)

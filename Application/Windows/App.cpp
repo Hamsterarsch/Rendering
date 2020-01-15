@@ -55,7 +55,7 @@ namespace Windows
 
 		public: size_t GetSize() const { return size; }
 		
-		UniquePtr<unsigned char> saved;
+		UniquePtr<unsigned char[]> saved;
 		size_t currentWriteOffset{ 0 };
 		size_t size{ 0 };
 		
@@ -71,7 +71,7 @@ namespace Windows
 		protected: void OnBeginBlock() override
 		{
 			size = GetBlockSize();
-			saved = std::make_unique<unsigned char>(size);
+			saved = std::make_unique<unsigned char[]>(size);
 			
 		}
 		
@@ -92,27 +92,30 @@ namespace Windows
 						
 
 			std::ifstream shaderFile{Filesystem::Conversions::MakeExeRelative(L"../Content/Shaders/Plain.vs"), std::ios_base::in | std::ios_base::ate};
+			SerializeContainer vs{};
+			{
 			const auto charCount{ shaderFile.tellg() };
 			shaderFile.seekg(0);
 
 			auto shader{ std::make_unique<char[]>(charCount) };
 			shaderFile.read( shader.get(), charCount);
 						
-			SerializeContainer vs{};
 			renderer.CompileVertexShader(shader.get(), charCount, &vs);
 
 
 			shaderFile.close();
-			shaderFile.open(Filesystem::Conversions::MakeExeRelative(L"../Content/Shaders/Plain.ps"), std::ios_base::in | std::ios_base::ate);
+			}
 			
+			shaderFile.open(Filesystem::Conversions::MakeExeRelative(L"../Content/Shaders/Plain.ps"), std::ios_base::in | std::ios_base::ate);
+				
 			const auto psCharCount{ shaderFile.tellg() };
 			shaderFile.seekg(0);
 
-			auto pshader{ std::make_unique<char[]>(charCount) };
-			shaderFile.read( pshader.get(), charCount);
+			auto pshader{ std::make_unique<char[]>(psCharCount) };
+			shaderFile.read( pshader.get(), psCharCount);
 						
 			SerializeContainer ps{};
-			renderer.CompilePixelShader(shader.get(), charCount, &ps);
+			renderer.CompilePixelShader(pshader.get(), psCharCount, &ps);
 
 			
 			SerializeContainer root{};

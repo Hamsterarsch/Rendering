@@ -228,6 +228,11 @@ namespace Renderer
 			
 				while(shouldUpdateRendering)
 				{
+					if(privateMembers->pendingRenderers.empty())
+					{
+						continue;
+					}
+					
 					//wait for the oldest pending frame to finish
 					privateMembers->pendingRenderers.front().WaitForCompletion();
 					
@@ -385,11 +390,11 @@ namespace Renderer
 
 		size_t Renderer::MakeRootSignature(const void *serializedData, size_t dataLength)
 		{
-			auto signatureSize{ reinterpret_cast<SIZE_T>(serializedData) };
-			auto signaturePtr{ reinterpret_cast<const unsigned char *>(serializedData) + sizeof signatureSize};
+			auto *signatureSize{ reinterpret_cast<const SIZE_T *>(serializedData) };
+			auto *signaturePtr{ reinterpret_cast<const unsigned char *>(serializedData) + sizeof *signatureSize};
 
-			auto signatureData{ privateMembers->signatureFactory.MakeRootSignature(signaturePtr, signatureSize) };
-			signatureData.samplerAmount = reinterpret_cast<size_t>(signaturePtr + signatureSize);
+			auto signatureData{ privateMembers->signatureFactory.MakeRootSignature(signaturePtr, *signatureSize) };
+			signatureData.samplerAmount = reinterpret_cast<size_t>(signaturePtr + *signatureSize);
 
 			const auto handle{ privateMembers->handleFactory.MakeHandle(ResourceTypes::Signature) };
 			privateMembers->registry.RegisterSignature(handle.hash, std::move(signatureData));
