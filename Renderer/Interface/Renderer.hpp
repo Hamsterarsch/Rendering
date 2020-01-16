@@ -84,7 +84,7 @@ namespace Renderer
 			
 			private: const unsigned inflightFramesAmount;
 			
-			private: std::mutex updaterMutex;
+			private: std::mutex updaterMutex, launchMutex;
 
 			private: std::condition_variable updaterCondition;
 

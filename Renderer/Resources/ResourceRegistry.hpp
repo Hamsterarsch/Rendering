@@ -52,7 +52,7 @@ namespace Renderer
 
 			public: void RegisterPso(ResourceHandle::t_hash handle, const DxPtr<ID3D12PipelineState> &pipelineState);
 			
-			public: DxPtr<ID3D12PipelineState> GetPso(ResourceHandle::t_hash handle) const;
+			public: ID3D12PipelineState *GetPso(ResourceHandle::t_hash handle) const;
 			
 
 			

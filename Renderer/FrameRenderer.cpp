@@ -77,7 +77,8 @@ namespace Renderer
 
 			D3D12_RESOURCE_DESC dsDesc{ rtDesc };
 			dsDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-
+			dsDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
+			
 			D3D12_CLEAR_VALUE clear{};
 			clear.Format = dsDesc.Format;
 			clear.DepthStencil.Depth = 1;
@@ -89,7 +90,7 @@ namespace Renderer
 				&properties,
 				D3D12_HEAP_FLAG_NONE,
 				&dsDesc,
-				D3D12_RESOURCE_STATE_RENDER_TARGET | D3D12_RESOURCE_STATE_DEPTH_WRITE | D3D12_RESOURCE_STATE_DEPTH_READ,
+				D3D12_RESOURCE_STATE_DEPTH_WRITE,
 				&clear,
 				IID_PPV_ARGS(&depthTarget)
 			);
@@ -195,11 +196,11 @@ namespace Renderer
 			size_t recordedCommands{ 0 };
 			for(auto &&cmd : commands)
 			{				
+				glist->SetPipelineState(registry->GetPso(cmd->GetPsoHandle()));
 				glist->SetGraphicsRootSignature(registry->GetSignature(cmd->GetSignatureHandle()));
-
+				
 				cmd->Record(list.get(), *registry);
-
-				HRESULT resetResult{ S_OK };
+								
 				if(recordedCommands >= recordsPerCommandList)
 				{
 					const auto closeResult{ glist->Close() };
@@ -210,26 +211,23 @@ namespace Renderer
 					}
 
 					queue->SubmitCommandList(list.get());
-
-					resetResult = glist->Reset(allocator->GetAllocator().Get(), registry->GetPso(cmd->GetPsoHandle()).Get());
-
+					recordedCommands = 0;
+					
+					auto resetResult = glist->Reset(allocator->GetAllocator().Get(), registry->GetPso(cmd->GetPsoHandle()));
+					if(FAILED(resetResult))
+					{
+					//error indidcation
+						return;
+					}
+					
+					glist->SetGraphicsRootSignature(registry->GetSignature(cmd->GetSignatureHandle()));					
 					glist->RSSetScissorRects(1, &scissorRect);
 					glist->RSSetViewports(1, &viewport);					
 					glist->OMSetRenderTargets(1, &rtv, false, &dsv );
 					glist->ClearRenderTargetView(rtv, clearColor, 0, nullptr);
 					glist->ClearDepthStencilView(dsv, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1, 0, 0, nullptr);
 				}
-				else
-				{
-					 resetResult = glist->Reset(allocator->GetAllocator().Get(), registry->GetPso(cmd->GetPsoHandle()).Get());					
-				}
-				++recordedCommands;
-
-				if(FAILED(resetResult))
-				{
-					//error indidcation
-					return;
-				}
+				++recordedCommands;				
 			}
 
 			const auto closeResult{ glist->Close() };

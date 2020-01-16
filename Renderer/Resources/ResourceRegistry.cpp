@@ -72,7 +72,7 @@ namespace Renderer
 
 		
 		bool ResourceRegistry::HandleIsInvalid(const ResourceHandle::t_hash hash)
-		{			
+		{	
 			auto found{ resourceReferences.find(hash) };
 			
 			if(found == resourceReferences.end())
@@ -84,7 +84,7 @@ namespace Renderer
 			{
 				throw;
 			}
-
+									
 			return false;			
 			
 		}
@@ -109,7 +109,8 @@ namespace Renderer
 		void ResourceRegistry::RegisterSignature(const ResourceHandle::t_hash handle, RootSignatureData &&signatureData)
 		{
 			rootSignatures.insert( {handle, std::move(signatureData)} );
-									
+			AddReference(handle);
+			
 		}
 
 		const RootSignatureData &ResourceRegistry::GetSignatureDataRef(const ResourceHandle::t_hash handle) const
@@ -121,7 +122,7 @@ namespace Renderer
 		ID3D12RootSignature *ResourceRegistry::GetSignature(ResourceHandle::t_hash handle)
 		{
 			return rootSignatures.at(handle).signature.Get();
-			
+						
 		}
 
 
@@ -133,12 +134,13 @@ namespace Renderer
 		)
 		{
 			pipelineStates.insert( {handle, pipelineState} );
+			AddReference(handle);
 			
 		}
 
-		DxPtr<ID3D12PipelineState> ResourceRegistry::GetPso(const ResourceHandle::t_hash handle) const
+		ID3D12PipelineState *ResourceRegistry::GetPso(const ResourceHandle::t_hash handle) const
 		{
-			return pipelineStates.at(handle);
+			return pipelineStates.at(handle).Get();
 			
 		}
 

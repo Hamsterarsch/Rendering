@@ -94,6 +94,7 @@ namespace Renderer
 
 			privateMembers = std::make_unique<PrivateMembers>(resources.get());
 
+			privateMembers->currentRenderer = FrameRenderer{ resources.get(), commonQueue.get(), privateMembers->registry, outputSurface->GetResourceTemplate() };
 			
 			/*
 			auto vs
@@ -228,25 +229,32 @@ namespace Renderer
 			
 				while(shouldUpdateRendering)
 				{
-					if(privateMembers->pendingRenderers.empty())
 					{
-						continue;
-					}
-					
-					//wait for the oldest pending frame to finish
-					privateMembers->pendingRenderers.front().WaitForCompletion();
+						std::lock_guard<std::mutex> lock{ launchMutex };
+						if(privateMembers->inflightFrameRenderers.empty())
+						{
+							continue;
+						}					
+					}					
+
+					//wait for the oldest active frame to finish
+					privateMembers->inflightFrameRenderers.front().handle.wait();
+					privateMembers->inflightFrameRenderers.front().renderer.WaitForCompletion();
 					
 					//copy from frame to output
 					{
 						auto list{ copyAllocator->AllocateList() };					
-						outputSurface->ScheduleCopyToBackbuffer(copyQueue.get(), list.get(), privateMembers->pendingRenderers.front().GetRenderTargetRef());
+						outputSurface->ScheduleCopyToBackbuffer(copyQueue.get(), list.get(), privateMembers->inflightFrameRenderers.front().renderer.GetRenderTargetRef());
 
 						copyFence->SetEventOnValue(1, copyEvent);
 						copyQueue->Signal(1, copyFence.get());
 
 						WaitForSingleObject(copyEvent, INFINITE);
 					}
-					privateMembers->pendingRenderers.pop();
+					privateMembers->finishedRenderers.push(std::move(privateMembers->inflightFrameRenderers.front().renderer));
+					privateMembers->inflightFrameRenderers.pop_front();
+					//todo: renderer retirement reference updates
+					
 					copyAllocator->Reset();
 					
 					//swap output
@@ -309,6 +317,8 @@ namespace Renderer
 
 				void Renderer::LaunchFrameRenderer(FrameRenderer &&renderer)
 				{
+					std::lock_guard<std::mutex> lock{ launchMutex };
+			
 					privateMembers->inflightFrameRenderers.emplace_back();
 					privateMembers->inflightFrameRenderers.back().renderer = std::move(renderer); 
 																
