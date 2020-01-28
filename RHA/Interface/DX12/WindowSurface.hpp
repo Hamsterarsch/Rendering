@@ -22,7 +22,7 @@ namespace RHA
 			
 			public: virtual void SchedulePresentation(Queue *queue) = 0;
 
-			public: virtual void RecordPipelineBindings(ID3D12GraphicsCommandList *list) = 0;
+			public: virtual void RecordPipelineBindings(ID3D12GraphicsCommandList *list, const D3D12_CPU_DESCRIPTOR_HANDLE *depthDescriptor) = 0;
 
 							
 							

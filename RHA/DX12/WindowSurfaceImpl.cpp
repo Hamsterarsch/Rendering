@@ -212,10 +212,10 @@ namespace RHA
 			
 		}
 
-		void WindowSurfaceImpl::RecordPipelineBindings(ID3D12GraphicsCommandList *list)
+		void WindowSurfaceImpl::RecordPipelineBindings(ID3D12GraphicsCommandList *list, const D3D12_CPU_DESCRIPTOR_HANDLE *depthDescriptor)
 		{
 			auto rtv{ viewHeap.GetHandleCpu(currentBackbufferIndex) };
-			list->OMSetRenderTargets(1, &rtv, false, nullptr);
+			list->OMSetRenderTargets(1, &rtv, false, depthDescriptor);
 			
 			list->RSSetViewports(1, &defaultViewport);
 			list->RSSetScissorRects(1, &defaultRect);

@@ -79,7 +79,7 @@ namespace RHA
 			
 			public: virtual void SchedulePresentation(Queue *queue) override;
 
-			public: virtual void RecordPipelineBindings(ID3D12GraphicsCommandList *list) override;
+			public: virtual void RecordPipelineBindings(ID3D12GraphicsCommandList *list, const D3D12_CPU_DESCRIPTOR_HANDLE *depthDescriptor) override;
 								
 		};
 
