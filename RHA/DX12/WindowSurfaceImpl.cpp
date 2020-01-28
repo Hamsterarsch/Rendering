@@ -221,7 +221,21 @@ namespace RHA
 			list->RSSetScissorRects(1, &defaultRect);
 			
 		}
-		
+
+		void WindowSurfaceImpl::RecordPreparationForRendering(ID3D12GraphicsCommandList *list)
+		{
+			D3D12_RESOURCE_BARRIER toOutputTarget{};
+			toOutputTarget.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+			toOutputTarget.Transition.StateBefore = D3D12_RESOURCE_STATE_COMMON;
+			toOutputTarget.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+			toOutputTarget.Transition.pResource = bufferData.at(currentBackbufferIndex).resource.Get();
+			list->ResourceBarrier(1, &toOutputTarget);
+
+			auto rtv{ viewHeap.GetHandleCpu(currentBackbufferIndex) };
+			list->ClearRenderTargetView(rtv, clearColor, 0, nullptr);
+			
+		}
+
 		
 	}
 

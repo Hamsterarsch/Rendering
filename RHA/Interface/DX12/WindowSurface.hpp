@@ -24,6 +24,7 @@ namespace RHA
 
 			public: virtual void RecordPipelineBindings(ID3D12GraphicsCommandList *list, const D3D12_CPU_DESCRIPTOR_HANDLE *depthDescriptor) = 0;
 
+			public: virtual void RecordPreparationForRendering(ID3D12GraphicsCommandList *list) = 0;
 							
 							
 		};
