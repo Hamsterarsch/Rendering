@@ -10,6 +10,8 @@ namespace RHA
 {
 	namespace DX12
 	{
+		class WindowSurface;
+		class DepthSurface;
 		class DescriptorHeap;
 		class Fence;
 		class CmdAllocator;
@@ -40,28 +42,22 @@ namespace Renderer
 
 			private: HANDLE event;
 			
-			private: DxPtr<ID3D12Resource> renderTarget;
-
-			private: DxPtr<ID3D12Resource> depthTarget;
-
-			private: UniquePtr<DescriptorHeap> rtvHeap, dsvHeap;
-
 			private: std::vector<UniquePtr<RenderCommand>> commands;
 
 			private: ResourceRegistry *registry;
 
-			private: D3D12_RECT scissorRect;
+			private: WindowSurface *windowSurface;
 
-			private: D3D12_VIEWPORT viewport;
+			private: DepthSurface *depthSurface;
 			
 			private: static constexpr size_t recordsPerCommandList{ 50 };
 
-			private: static constexpr float clearColor[]{0,0,0,1};
+
 			
 
 			public: FrameRenderer();
 			
-			public: FrameRenderer(DeviceResources *resources, Queue *queue, ResourceRegistry &registry, const DxPtr<ID3D12Resource> &renderTargetTemplate);
+			public: FrameRenderer(DeviceResources *resources, Queue *queue, ResourceRegistry &registry, WindowSurface &windowSurface, DepthSurface &depthSurface);
 
 			public: FrameRenderer(FrameRenderer &&other) noexcept;
 
@@ -75,8 +71,6 @@ namespace Renderer
 			public: ~FrameRenderer() noexcept;
 
 
-			public: inline ID3D12Resource *GetRenderTargetRef() { return renderTarget.Get(); }
-			
 			public: void AddCommand(UniquePtr<RenderCommand> &&command);
 
 			public: void ExecuteCommands();
@@ -84,6 +78,8 @@ namespace Renderer
 			public: void WaitForCompletion();
 			
 			public: void Reinitialize();
+
+			public: inline bool IsInvalid() { return resources == nullptr; }
 
 
 								
