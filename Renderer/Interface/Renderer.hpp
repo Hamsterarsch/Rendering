@@ -24,6 +24,7 @@ namespace RHA
 		class WindowSurface;
 		class Fence;
 		class UploadHeap;
+		class DepthSurface;
 	}
 }
 
@@ -82,9 +83,9 @@ namespace Renderer
 		class RENDERER_DLLSPEC Renderer
 		{
 			
-			private: const unsigned inflightFramesAmount;
+			private: const unsigned maxPendingFrames;
 			
-			private: std::mutex updaterMutex, launchMutex;
+			private: std::mutex updaterMutex, frameLaunchMutex, pendingFramesMutex;
 
 			private: std::condition_variable updaterCondition;
 
@@ -94,15 +95,17 @@ namespace Renderer
 
 			private: UniquePtr<RHA::DX12::DeviceResources> resources;
 
-			private: UniquePtr<RHA::DX12::Queue> commonQueue, copyQueue;
+			private: UniquePtr<RHA::DX12::Queue> commonQueue;
 
-			private: UniquePtr<RHA::DX12::CmdAllocator> commonAllocator, copyAllocator;
+			private: UniquePtr<RHA::DX12::CmdAllocator> commonAllocator;
 			
 			private: UniquePtr<RHA::DX12::WindowSurface> outputSurface;
 
-			private: UniquePtr<RHA::DX12::Fence> closeFence, copyFence;
+			private: UniquePtr<RHA::DX12::Fence> closeFence;
 
-			private: HANDLE closeEvent, copyEvent;
+			private: HANDLE closeEvent;
+
+			private: UniquePtr<RHA::DX12::DepthSurface> depthSurface;
 
 			private: UniquePtr<class ResourceFactory> resourceFactory;
 			/*
@@ -122,7 +125,11 @@ namespace Renderer
 
 				private: int UpdateRendering();
 
+					private: bool ActiveRendererIsInvalid();
+			
 					private: void LaunchFrameRenderer(FrameRenderer &&renderer);
+
+				
 
 			public: ~Renderer();
 
@@ -153,7 +160,14 @@ namespace Renderer
 
 			public: void DispatchFrame();
 			
+			public: FrameRenderer PopPendingRenderer();
+
+			public: void PushPendingRenderer(FrameRenderer &&renderer);
+
+				private: bool PendingRendererCountIsAtMax() const;
 			
+			public: bool ThereArePendingRenderers();
+								
 			
 			public: void SubmitFrameInfo();
 
