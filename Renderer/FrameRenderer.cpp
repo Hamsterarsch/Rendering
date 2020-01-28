@@ -53,6 +53,8 @@ namespace Renderer
 			other.queue = nullptr;
 			other.event = nullptr;		
 			other.registry = nullptr;
+			other.windowSurface = nullptr;
+			other.depthSurface = nullptr;
 
 		}
 
@@ -76,7 +78,10 @@ namespace Renderer
 			rhs.registry = nullptr;
 			
 			windowSurface = std::move(rhs.windowSurface);
-			depthSurface = std::move(rhs.depthSurface);	
+			rhs.windowSurface = nullptr;
+			
+			depthSurface = std::move(rhs.depthSurface);
+			rhs.depthSurface = nullptr;
 
 			return *this;
 			
