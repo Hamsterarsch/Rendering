@@ -7,6 +7,7 @@
 #include "DX12/ShaderFactoryImpl.hpp"
 #include "DX12/UploadHeapImpl.hpp"
 #include "Dx12/HeapImpl.hpp"
+#include "DX12/DepthSurfaceImpl.hpp"
 
 
 namespace RHA
@@ -87,6 +88,16 @@ namespace RHA
 		)
 		{
 			return std::make_unique<DescriptorHeapImpl>(resources, type, capacity, isGpuVisible);
+			
+		}
+
+		UniquePtr<DepthSurface> Facade::MakeDepthSurface
+		(
+			DeviceResources *resources,
+			const D3D12_RESOURCE_DESC &surfaceSpecsToMatch
+		)
+		{
+			return std::make_unique<DepthSurfaceImpl>(resources, surfaceSpecsToMatch);
 			
 		}
 
