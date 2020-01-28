@@ -23,9 +23,7 @@ namespace RHA
 			private: std::array<DxPtr<ID3D12Resource>, bufferCount> buffers;
 
 			private: DescriptorHeapImpl viewHeap;
-
-			private: CmdAllocatorImpl cmdAllocator;
-
+					 
 			private: unsigned currentBackbufferIndex;
 
 			private: D3D12_VIEWPORT defaultViewport;

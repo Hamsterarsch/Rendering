@@ -11,8 +11,7 @@ namespace RHA
 	namespace DX12
 	{
 		WindowSurfaceImpl::WindowSurfaceImpl(DeviceResources *resources, Queue *queue, HWND window) :
-			viewHeap{ resources, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, bufferCount, false },
-			cmdAllocator{ resources, D3D12_COMMAND_LIST_TYPE_DIRECT },
+			viewHeap{ resources, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, bufferCount, false },			
 			currentBackbufferIndex{ 0 }
 		{
 			CreateSwapChain(resources, queue, window);
