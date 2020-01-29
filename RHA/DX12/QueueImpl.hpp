@@ -20,6 +20,8 @@ namespace RHA
 			public: virtual void SubmitCommandList(CmdList *list) override;
 
 			public: virtual void Signal(size_t value, Fence *fence) override;
+
+			public: virtual void Wait(size_t minimumValue, Fence *fence) override;
 			
 		};
 		

@@ -48,6 +48,22 @@ namespace RHA
 			
 		}
 
+
+		
+		void QueueImpl::Wait(const size_t minimumValue, Fence *fence)
+		{
+			const auto result
+			{
+				queue->Wait(fence->GetFence().Get(), minimumValue)
+			};
+
+			if(FAILED(result))
+			{
+				throw Exception::Exception{ "Could not schedule a wait for a dx12 fence on the queue" };
+			}
+			
+		}
+
 		
 	}
 	
