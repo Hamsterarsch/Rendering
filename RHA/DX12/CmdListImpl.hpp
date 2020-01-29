@@ -25,7 +25,6 @@ namespace RHA
 			public: inline virtual DxPtr<ID3D12CommandList> GetList() override { return list; }
 
 			public: virtual DxPtr<ID3D12GraphicsCommandList> AsGraphicsList() override { return glist; }
-
 			
 			public: virtual void RecordClearDsv
 			(
@@ -44,8 +43,7 @@ namespace RHA
 					unsigned int numRects,
 					const D3D12_RECT *clearRects
 				) override;
-
-			
+									
 			public: virtual void RecordSetPipelineState(ID3D12PipelineState *pipelineState) override;
 
 			public: virtual void RecordSetGraphicsSignature(ID3D12RootSignature *signature) override;

@@ -8,6 +8,7 @@
 struct ID3D12PipelineState;
 struct ID3D12RootSignature;
 
+
 namespace Renderer
 {
 	struct ResourceHandle;

@@ -99,10 +99,7 @@ namespace Renderer
 				private: void SetupCompletionFence();
 			
 			public: void WaitForCompletion();
-						
-
-
-								
+													
 		};
 		
 		

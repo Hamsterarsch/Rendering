@@ -35,6 +35,7 @@ namespace Renderer
 				
 				}
 
+		
 
 		void ResourceRegistry::RemoveReference(const ResourceHandle::t_hash handle)
 		{
@@ -113,12 +114,16 @@ namespace Renderer
 			
 		}
 
+
+		
 		const RootSignatureData &ResourceRegistry::GetSignatureDataRef(const ResourceHandle::t_hash handle) const
 		{
 			return rootSignatures.at(handle);
 			
 		}
 
+
+		
 		ID3D12RootSignature *ResourceRegistry::GetSignature(ResourceHandle::t_hash handle) const
 		{
 			return rootSignatures.at(handle).signature.Get();
@@ -138,6 +143,8 @@ namespace Renderer
 			
 		}
 
+
+		
 		ID3D12PipelineState *ResourceRegistry::GetPso(const ResourceHandle::t_hash handle) const
 		{
 			return pipelineStates.at(handle).Get();
