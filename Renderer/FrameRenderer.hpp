@@ -28,18 +28,19 @@ namespace Renderer
 	{
 		using namespace RHA::DX12;
 		
+		//takes in commands and batches them for gpu submission. renders everything to non swap chain targets
 		class FrameRenderer
 		{
-			//takes in commands and batches them for gpu submission. renders everything to non swap chain targets
-
 			private: DeviceResources *resources;
 
 			private: Queue *queue;
 
 			private: UniquePtr<CmdAllocator> allocator;
 
-			private: UniquePtr<Fence> fence;
+			private: UniquePtr<CmdList> list;
 
+			private: UniquePtr<Fence> fence;
+					 					 			
 			private: HANDLE event;
 			
 			private: std::vector<UniquePtr<RenderCommand>> commands;
@@ -49,9 +50,14 @@ namespace Renderer
 			private: WindowSurface *windowSurface;
 
 			private: DepthSurface *depthSurface;
+
+			private: size_t commandsRecordedToList;
 			
 			private: static constexpr size_t recordsPerCommandList{ 50 };
-					 					 			
+
+			private: static constexpr size_t fenceCmdCompletionValue{ 1 }, fenceQueueReleaseValue{ 2 };
+					 
+			
 
 			public: FrameRenderer();
 			
@@ -64,20 +70,36 @@ namespace Renderer
 			public: FrameRenderer(const FrameRenderer &) = delete;
 
 			public: FrameRenderer &operator=(const FrameRenderer &) = delete;
-
 			
 			public: ~FrameRenderer() noexcept;
 
+				private: inline bool RegistryIsValid() const { return registry != nullptr; }
+
+				private: void UnregisterAllCommands();
+			
+			
+			public: inline bool IsInvalid() const { return resources == nullptr; }
 
 			public: void AddCommand(UniquePtr<RenderCommand> &&command);
 
 			public: void ExecuteCommands();
+
+				private: void RecordRenderTargetPreperations();
+			
+				private: void RecordCommands();
+
+					private: void RecordFixedCommandState(RenderCommand &cmd) const;
+			
+					private: bool ListCapacityIsReached() const;
+
+					private: void SubmitCurrentList();
+
+					private: void ResetCurrentList();
+
+				private: void SetupCompletionFence();
 			
 			public: void WaitForCompletion();
-			
-			public: void Reinitialize();
-
-			public: inline bool IsInvalid() { return resources == nullptr; }
+						
 
 
 								

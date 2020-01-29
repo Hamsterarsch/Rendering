@@ -14,7 +14,9 @@ namespace Renderer
 		FrameRenderer::FrameRenderer() :
 			resources{ nullptr },
 			queue{ nullptr },
-			registry{ nullptr }
+			registry{ nullptr },
+			windowSurface{ nullptr },
+			depthSurface{ nullptr }
 		{
 		}
 
@@ -30,7 +32,8 @@ namespace Renderer
 			queue{ queue },
 			registry{ &registry },
 			windowSurface{ &windowSurface },
-			depthSurface{ &depthSurface }
+			depthSurface{ &depthSurface },
+			commandsRecordedToList{ 0 }
 		{
 			allocator = Facade::MakeCmdAllocator(resources, D3D12_COMMAND_LIST_TYPE_DIRECT);
 			fence = Facade::MakeFence(resources);
@@ -38,16 +41,20 @@ namespace Renderer
 						
 		}
 
+
+		
 		FrameRenderer::FrameRenderer(FrameRenderer &&other) noexcept :
 			resources{ std::move(other.resources) },
 			queue{ std::move(other.queue) },
 			allocator{ std::move(other.allocator) },
+			list{ std::move(other.list) },
 			fence{ std::move(other.fence) },
 			event{ std::move(other.event) },
 			commands{ std::move(other.commands) },
 			registry{ std::move(other.registry) },
 			windowSurface{ std::move(other.windowSurface) },
-			depthSurface{ std::move(other.depthSurface) }			
+			depthSurface{ std::move(other.depthSurface) },
+			commandsRecordedToList{ std::move(other.commandsRecordedToList) }
 		{
 			other.resources = nullptr;
 			other.queue = nullptr;
@@ -58,6 +65,8 @@ namespace Renderer
 
 		}
 
+
+		
 		FrameRenderer &FrameRenderer::operator=(FrameRenderer &&rhs) noexcept
 		{
 			resources = std::move(rhs.resources);
@@ -67,6 +76,7 @@ namespace Renderer
 			rhs.queue = nullptr;
 			
 			allocator = std::move(rhs.allocator);
+			list = std::move(rhs.list);
 			fence = std::move(rhs.fence);
 			
 			event = std::move(rhs.event);
@@ -83,21 +93,31 @@ namespace Renderer
 			depthSurface = std::move(rhs.depthSurface);
 			rhs.depthSurface = nullptr;
 
+			commandsRecordedToList = std::move(rhs.commandsRecordedToList);
+
 			return *this;
 			
 		}
 
+
+		
 		FrameRenderer::~FrameRenderer() noexcept
 		{
-			if(registry != nullptr)
+			if(RegistryIsValid())
+			{
+				UnregisterAllCommands();
+			}
+			
+		}
+
+			void FrameRenderer::UnregisterAllCommands()
 			{
 				for(auto &&cmd : commands)
 				{
 					cmd->ExecuteOperationOnResourceReferences(registry, &ResourceRegistry::RemoveReference);
-				}				
-			}
+				}
 			
-		}
+			}
 
 
 		
@@ -112,74 +132,93 @@ namespace Renderer
 		
 		void FrameRenderer::ExecuteCommands()
 		{
-			auto list{ allocator->AllocateList() };
-			auto glist{ list->AsGraphicsList() };
+			list = allocator->AllocateList();
 			
-			const auto dsv{ depthSurface->GetHandleCpu() };
-			list->RecordClearDsv(dsv, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1, 0, 0, nullptr);
+			RecordRenderTargetPreperations();									
+			RecordCommands();
+
+			windowSurface->RecordPreparationForPresenting(list->AsGraphicsList().Get());
 			
-			windowSurface->RecordPreparationForRendering(glist.Get());
-			windowSurface->RecordPipelineBindings(glist.Get(), &dsv);
+			list->StopRecording();
+			queue->SubmitCommandList(list.get());
+			
+			SetupCompletionFence();
+
+			queue->Wait(fenceQueueReleaseValue, fence.get());
 						
-			size_t recordedCommands{ 0 };
-			for(auto &&cmd : commands)
-			{				
-				list->RecordSetPipelineState(registry->GetPso(cmd->GetPsoHandle()));
-				list->RecordSetGraphicsSignature(registry->GetSignature(cmd->GetSignatureHandle()));
-				
-				cmd->Record(list.get(), *registry);
-								
-				if(recordedCommands >= recordsPerCommandList)
-				{
-					try
-					{
-						list->StopRecording();
-					}
-					catch(...)
-					{
-						//error indication
-						return;
-					}
-					
-					queue->SubmitCommandList(list.get());
-					recordedCommands = 0;
-
-					try
-					{
-						list->StartRecording(allocator.get(), registry->GetPso(cmd->GetPsoHandle()));						
-					}
-					catch(...)
-					{
-						//error indidcation
-						return;						
-					}
-
-					list->RecordSetGraphicsSignature(registry->GetSignature(cmd->GetSignatureHandle()));					
-					windowSurface->RecordPipelineBindings(glist.Get(), &dsv);
-										
-				}
-				++recordedCommands;				
-			}
-
-			windowSurface->RecordPreparationForPresenting(glist.Get());
-			
-			const auto closeResult{ glist->Close() };
-			if(SUCCEEDED(closeResult))
-			{
-				queue->SubmitCommandList(list.get());
-			}
-
-			fence->Signal(0);
-			fence->SetEventOnValue(1, event);
-			queue->Signal(1, fence.get());
-
-			const auto result{ queue->GetQueue()->Wait(fence->GetFence().Get(), 2) };
-			if(FAILED(result))
-			{
-				throw;
-			}
-			
 		}
+
+			void FrameRenderer::RecordRenderTargetPreperations()
+			{			
+				const auto dsv{ depthSurface->GetHandleCpu() };
+				list->RecordClearDsv(dsv, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1, 0, 0, nullptr);
+				
+				auto glist{ list->AsGraphicsList() };
+				windowSurface->RecordPreparationForRendering(glist.Get());
+				windowSurface->RecordPipelineBindings(glist.Get(), &dsv);
+			
+			}
+
+			void FrameRenderer::RecordCommands()
+			{
+				commandsRecordedToList = 0;
+			
+				for(auto &&cmd : commands)
+				{				
+					RecordFixedCommandState(*cmd);
+					
+					cmd->Record(list.get(), *registry);
+					++commandsRecordedToList;			
+									
+					if(ListCapacityIsReached())
+					{
+						SubmitCurrentList();
+						ResetCurrentList();					
+					}
+				}
+			
+			}
+
+				void FrameRenderer::RecordFixedCommandState(RenderCommand &cmd) const
+				{
+					list->RecordSetPipelineState(registry->GetPso(cmd.GetPsoHandle()));
+					list->RecordSetGraphicsSignature(registry->GetSignature(cmd.GetSignatureHandle()));
+					
+				}
+
+				bool FrameRenderer::ListCapacityIsReached() const
+				{
+					return commandsRecordedToList >= recordsPerCommandList;
+			
+				}
+
+				void FrameRenderer::SubmitCurrentList()
+				{
+					list->StopRecording();
+
+					queue->SubmitCommandList(list.get());
+					commandsRecordedToList = 0;
+			
+				}
+
+				void FrameRenderer::ResetCurrentList()
+				{
+					list->StartRecording(allocator.get());						
+					
+					const auto dsv{ depthSurface->GetHandleCpu() };
+					windowSurface->RecordPipelineBindings(list->AsGraphicsList().Get(), &dsv);
+			
+				}
+
+			void FrameRenderer::SetupCompletionFence()
+			{
+				fence->Signal(0);
+				fence->SetEventOnValue(fenceCmdCompletionValue, event);
+				queue->Signal(fenceCmdCompletionValue, fence.get());
+			
+			}
+
+		
 
 		void FrameRenderer::WaitForCompletion()
 		{
@@ -187,19 +226,7 @@ namespace Renderer
 
 			windowSurface->Present();
 
-			fence->Signal(2);
-			
-		}
-
-		void FrameRenderer::Reinitialize()
-		{
-			for(auto &&cmd : commands)
-			{
-				cmd->ExecuteOperationOnResourceReferences(registry, &ResourceRegistry::RemoveReference);
-			}
-			commands.clear();
-			
-			allocator->Reset();
+			fence->Signal(fenceQueueReleaseValue);
 			
 		}
 
