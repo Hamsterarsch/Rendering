@@ -1,6 +1,5 @@
 #pragma once
 #include "Shared/PtrTypes.hpp"
-#include "DxPtrTypes.hpp"
 #include "RenderCommand.hpp"
 #include <vector>
 #include <d3d12.h>
@@ -21,6 +20,7 @@ namespace RHA
 }
 
 struct ID3D12Resource;
+
 
 namespace Renderer
 {
@@ -51,9 +51,7 @@ namespace Renderer
 			private: DepthSurface *depthSurface;
 			
 			private: static constexpr size_t recordsPerCommandList{ 50 };
-
-
-			
+					 					 			
 
 			public: FrameRenderer();
 			

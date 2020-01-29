@@ -116,7 +116,7 @@ namespace Renderer
 			auto glist{ list->AsGraphicsList() };
 			
 			const auto dsv{ depthSurface->GetHandleCpu() };
-			glist->ClearDepthStencilView(dsv, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1, 0, 0, nullptr);
+			list->RecordClearDsv(dsv, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1, 0, 0, nullptr);
 			
 			windowSurface->RecordPreparationForRendering(glist.Get());
 			windowSurface->RecordPipelineBindings(glist.Get(), &dsv);
@@ -124,31 +124,37 @@ namespace Renderer
 			size_t recordedCommands{ 0 };
 			for(auto &&cmd : commands)
 			{				
-				glist->SetPipelineState(registry->GetPso(cmd->GetPsoHandle()));
-				glist->SetGraphicsRootSignature(registry->GetSignature(cmd->GetSignatureHandle()));
+				list->RecordSetPipelineState(registry->GetPso(cmd->GetPsoHandle()));
+				list->RecordSetGraphicsSignature(registry->GetSignature(cmd->GetSignatureHandle()));
 				
 				cmd->Record(list.get(), *registry);
 								
 				if(recordedCommands >= recordsPerCommandList)
 				{
-					const auto closeResult{ glist->Close() };
-					if(FAILED(closeResult))
+					try
+					{
+						list->StopRecording();
+					}
+					catch(...)
 					{
 						//error indication
 						return;
 					}
-
+					
 					queue->SubmitCommandList(list.get());
 					recordedCommands = 0;
-					
-					auto resetResult = glist->Reset(allocator->GetAllocator().Get(), registry->GetPso(cmd->GetPsoHandle()));
-					if(FAILED(resetResult))
+
+					try
+					{
+						list->StartRecording(allocator.get(), registry->GetPso(cmd->GetPsoHandle()));						
+					}
+					catch(...)
 					{
 						//error indidcation
-						return;
+						return;						
 					}
-					
-					glist->SetGraphicsRootSignature(registry->GetSignature(cmd->GetSignatureHandle()));
+
+					list->RecordSetGraphicsSignature(registry->GetSignature(cmd->GetSignatureHandle()));					
 					windowSurface->RecordPipelineBindings(glist.Get(), &dsv);
 										
 				}
