@@ -47,7 +47,7 @@ namespace Renderer
 			
 			public: const RootSignatureData &GetSignatureDataRef(ResourceHandle::t_hash handle) const;
 
-			public: ID3D12RootSignature *GetSignature(ResourceHandle::t_hash handle);
+			public: ID3D12RootSignature *GetSignature(ResourceHandle::t_hash handle) const;
 
 
 			public: void RegisterPso(ResourceHandle::t_hash handle, const DxPtr<ID3D12PipelineState> &pipelineState);

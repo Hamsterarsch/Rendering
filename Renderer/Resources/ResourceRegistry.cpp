@@ -119,7 +119,7 @@ namespace Renderer
 			
 		}
 
-		ID3D12RootSignature *ResourceRegistry::GetSignature(ResourceHandle::t_hash handle)
+		ID3D12RootSignature *ResourceRegistry::GetSignature(ResourceHandle::t_hash handle) const
 		{
 			return rootSignatures.at(handle).signature.Get();
 						
