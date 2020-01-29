@@ -35,6 +35,9 @@
     <ClCompile Include="DX12\HeapImpl.cpp">
       <Filter>DX12</Filter>
     </ClCompile>
+    <ClCompile Include="DX12\DepthSurfaceImpl.cpp">
+      <Filter>DX12</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h" />
@@ -115,6 +118,18 @@
     </ClInclude>
     <ClInclude Include="Interface\Utility\Alignment.hpp">
       <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\DX12\AllocatableGpuMemory.hpp">
+      <Filter>Interface\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\DX12\DeallocatableGpuMemory.hpp">
+      <Filter>Interface\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DepthSurfaceImpl.hpp">
+      <Filter>DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\DX12\DepthSurface.hpp">
+      <Filter>Interface\DX12</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

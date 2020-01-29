@@ -12,11 +12,11 @@ namespace Renderer
 	{
 		using namespace RHA::DX12;
 		
-		ResourceFactory::ResourceFactory(DeviceResources *resources, Queue *queue) :
+		ResourceFactory::ResourceFactory(DeviceResources *resources, Queue *queue, UniquePtr<AllocatableGpuMemory> &&memory) :
 			queue{ queue },
 			resources{ resources },
 			uploadAddress{ 0 },
-			bufferHeaps{ resources, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT * 15, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT, D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS }
+			memory{ std::move(memory) }
 		{
 			uploadBuffer = Facade::MakeUploadHeap(resources, 1'000'000);
 			fence = Facade::MakeFence(resources);
@@ -29,6 +29,8 @@ namespace Renderer
 			
 		}
 
+		ResourceFactory::~ResourceFactory() noexcept = default;
+		
 	
 		
 		ResourceAllocation ResourceFactory::MakeBufferWithData(const void *data, const size_t sizeInBytes, const D3D12_RESOURCE_STATES desiredState)
@@ -39,7 +41,7 @@ namespace Renderer
 			CopyDataToUploadBuffer(data, sizeInBytes);
 
 			ResourceAllocation outAlloc{ this, ResourceTypes::Buffer };
-			outAlloc.allocation = bufferHeaps.Allocate(sizeInBytes);
+			outAlloc.allocation = memory->Allocate(sizeInBytes);
 						
 			const auto desc{ MakeBufferDesc(sizeInBytes) };
 			constexpr decltype(nullptr) BUFFER_CLEAR_VALUE{ nullptr };
@@ -119,17 +121,20 @@ namespace Renderer
 			{
 				if(FAILED(result))
 				{
-					throw Exception::CreationFailed{ "FrameSuballocator:: could not create a dx12 placed buffer on gpu heap to upload to" };
+					throw Exception::CreationFailed{ "ResourceFactory:: could not create a dx12 placed buffer on gpu heap to upload to" };
 				}
 			
 			}
 
 			DxPtr<ID3D12GraphicsCommandList> ResourceFactory::GetFreshCmdList()
 			{
-				auto glist{ list->AsGraphicsList() };
-				glist->Reset(allocator->GetAllocator().Get(), nullptr);
+				if(FAILED(allocator->Reset()))
+				{
+					throw Exception::Exception{ "Could not reset dx12 resource factory command allocator" };
+				}
 
-				return glist;
+				list = allocator->AllocateList();
+				return list->AsGraphicsList();
 			
 			}
 
@@ -141,35 +146,6 @@ namespace Renderer
 				queue->Signal(1, fence.get());
 				
 			}
-
-		void ResourceFactory::Deallocate(ResourceAllocation &allocation, ResourceTypes type)
-		{
-			switch(type)
-			{
-			case ResourceTypes::Buffer:
-				DeallocateBuffer(allocation);
-			default:
-				throw Exception::Exception{ "Resource type missing handling in dx12 resource factory deallocation" };				
-			}
-			
-		}
-
-			void ResourceFactory::DeallocateBuffer(ResourceAllocation &allocation)
-			{
-				bufferHeaps.Deallocate(allocation.allocation);				
-				CheckAndReleaseResourceRefs(allocation.resource);
-				
-			}
-
-				void ResourceFactory::CheckAndReleaseResourceRefs(DxPtr<ID3D12Resource> &resource)
-				{
-					const auto cutReferences{ resource.Reset() };
-					if(cutReferences > 0)
-					{
-						throw Exception::Exception{ "Deallocated a resource allocation whoose resource is still referenced" };//todo: this could be done in debuggin only
-					}
-			
-				}
 
 		
 	}

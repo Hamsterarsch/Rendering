@@ -29,13 +29,24 @@ namespace RHA
 			public: virtual void AllowHighOptimizationTimes(bool value) override;
 
 								
-			public: virtual DxPtr<ID3DBlob> MakeVertexShader(const wchar_t *filepath, const char *entrypoint) override;
+			public: virtual DxPtr<ID3DBlob> MakeVertexShader(const wchar_t *filepath, const char *entrypoint) const override;
 
-				private: void DoCompile(const wchar_t *filepath, const char *entrypoint, const char *shaderTypePrefix, ID3DBlob **outBytecode, ID3DBlob **outError);
+				private: DxPtr<ID3DBlob> DoCompileFromFile(const wchar_t *filepath, const char *entrypoint, const char *shaderTypePrefix) const;
 		
-					private: UINT MakeCompileFlags();
+					private: UINT MakeCompileFlags() const;
 
-			public: virtual DxPtr<ID3DBlob> MakePixelShader(const wchar_t *filepath, const char *entrypoint) override;
+				private: static void CheckCompilationFromFile(HRESULT result, const DxPtr<ID3DBlob> &errorBlob);
+
+			public: virtual DxPtr<ID3DBlob> MakeVertexShader(const char *shader, size_t shaderLength, const char *entrypoint) const override;
+
+				private: DxPtr<ID3DBlob> DoCompile(const char *shader, size_t shaderLength, const char *entrypoint, const char *shaderTypePrefix) const;
+
+					private: static void CheckCompilation(HRESULT result, const DxPtr<ID3DBlob> &errorBlob);
+			
+			
+			public: virtual DxPtr<ID3DBlob> MakePixelShader(const wchar_t *filepath, const char *entrypoint) const override;
+
+			public: virtual DxPtr<ID3DBlob> MakePixelShader(const char *shader, size_t shaderLength, const char *entrypoint) const override;
 			
 		};
 

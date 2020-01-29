@@ -5,7 +5,15 @@
 
 #include "Resources/ResourceFactory.hpp"
 #include "Resources/ResourceAllocation.hpp"
+#include "Resources/HandleFactory.hpp"
+#include "Resources/ResourceHandle.hpp"
+#include "Resources/ResourceRegistry.hpp"
+#include "Resources/Pso/PsoFactory.hpp"
+#include "Resources/RootSignature/RootSignatureFactory.hpp"
 
+#include "FrameRenderer.hpp"
+#include "RenderMeshCommand.hpp"
+#include "Resources/Pso/VertexLayoutProvider.hpp"
 
 
 #if _DEBUG
@@ -26,7 +34,34 @@ namespace Renderer
 	namespace DX12
 	{
 		using namespace RHA::DX12;
-	
+
+		struct InflightData
+		{
+			FrameRenderer renderer;
+			std::future<void> handle;
+		};
+		
+		struct Renderer::PrivateMembers
+		{
+			HandleFactory handleFactory;			
+			ResourceRegistry registry;
+			VertexLayoutProvider vertexLayoutProvider;
+			PsoFactory psoFactory;
+			RootSignatureFactory signatureFactory;
+			UniquePtr<ShaderFactory> shaderFactory;
+			InflightData activeFrameData;
+			std::list<FrameRenderer> pendingRenderers;
+			FrameRenderer commandTargetFrame;
+
+			PrivateMembers(DeviceResources *resources) :
+				psoFactory{ resources },
+				signatureFactory{ resources },
+				shaderFactory{ Facade::MakeShaderFactory(5, 0) }
+			{				
+			}				
+			
+		};
+		
 		struct TriangleData
 		{
 			D3D12_VERTEX_BUFFER_VIEW vertexView;
@@ -34,133 +69,26 @@ namespace Renderer
 		};
 		
 		Renderer::Renderer(HWND outputWindow) :
-			inflightFramesAmount{ 1 },
-			shouldUpdateRendering{ false }
+			maxPendingFrames{ 10 },
+			shouldUpdateRendering{ false },
+			privateMembers{ nullptr }
 		{
 			resources = Facade::MakeDeviceResources(D3D_FEATURE_LEVEL_11_0, enableDebugLayers);
-			commonQueue = Facade::MakeQueue(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT);
-			outputSurface = Facade::MakeWindowSurface(resources.get(), commonQueue.get(), outputWindow);
+			commonQueue = Facade::MakeQueue(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT);			
 			commonAllocator = Facade::MakeCmdAllocator(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT);
+
+			outputSurface = Facade::MakeWindowSurface(resources.get(), commonQueue.get(), outputWindow);
+			depthSurface = Facade::MakeDepthSurface(resources.get(), outputSurface->GetResourceTemplate()->GetDesc());
+			
 			closeFence = Facade::MakeFence(resources.get());
 			closeEvent = CreateEvent(nullptr, false, false, nullptr);
-			data = std::make_unique<TriangleData>();
-			rescFactory = std::make_unique<ResourceFactory>(resources.get(), commonQueue.get());			
-			auto shFactory{ Facade::MakeShaderFactory(5,0) };
-
-			auto vs
-			{
-				shFactory->MakeVertexShader
-				(
-					Filesystem::Conversions::MakeExeRelative(L"../Content/Shaders/Plain.vs").data(),
-					"main"
-				)
-			};
-
-			auto ps
-			{
-				shFactory->MakePixelShader
-				(
-					Filesystem::Conversions::MakeExeRelative(L"../Content/Shaders/Plain.ps").data(),
-					"main"
-				)
-			};
-
-
-			D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc{};
-
-			
-			D3D12_INPUT_ELEMENT_DESC inputElemDesc
-			{
-				"POSITION",
-				0,
-				DXGI_FORMAT_R32G32B32_FLOAT,
-				0,
-				0,
-				D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA ,
-				0
-			};
-			
-			D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
-			inputLayoutDesc.pInputElementDescs = &inputElemDesc;
-			inputLayoutDesc.NumElements = 1;
-			
-			
-			psoDesc.InputLayout = inputLayoutDesc;				
-			psoDesc.VS = D3D12_SHADER_BYTECODE{ vs->GetBufferPointer(), vs->GetBufferSize() };
-			psoDesc.PS = D3D12_SHADER_BYTECODE{ ps->GetBufferPointer(), ps->GetBufferSize() };
-			psoDesc.DepthStencilState.DepthEnable = false;
-			psoDesc.DepthStencilState.StencilEnable = false;
-
-			psoDesc.BlendState.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;//this is important 
-			
-			
-			D3D12_RASTERIZER_DESC rasterDesc{};
-			rasterDesc.FillMode = D3D12_FILL_MODE_SOLID;
-			rasterDesc.CullMode = D3D12_CULL_MODE_BACK;
-			rasterDesc.FrontCounterClockwise = true;
-			rasterDesc.DepthClipEnable = true;
-			
-			psoDesc.RasterizerState = rasterDesc;
-
-
-			psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-
-			
-			psoDesc.NumRenderTargets = 1;
-			psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM; //?
-			psoDesc.SampleDesc.Count = 1;
-			psoDesc.SampleDesc.Quality = 0;
-			psoDesc.SampleMask = UINT_MAX;
-			
-
-			D3D12_VERSIONED_ROOT_SIGNATURE_DESC signatureDesc{};
-			signatureDesc.Version = D3D_ROOT_SIGNATURE_VERSION_1_1;
-			signatureDesc.Desc_1_1 = D3D12_ROOT_SIGNATURE_DESC1{};
-			signatureDesc.Desc_1_1.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-			
-			DxPtr<ID3DBlob> signatureBlob, errorBlob;
-
-			auto r1 =
-			D3D12SerializeVersionedRootSignature(&signatureDesc, &signatureBlob, &errorBlob);
-			
-			auto r2 =
-			resources->GetDevice()->CreateRootSignature(0, signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(), IID_PPV_ARGS(&signature));
-
-			psoDesc.pRootSignature = signature.Get();
-					
-
-			auto r3 =
-			resources->GetDevice()->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&pipeline));
-
-			
-			//
-			struct
-			{
-				vertex vertices[3]{ {-0.75, -0.75, 0 }, {0.75, -0.75, 0}, {0, 0.75, 0} };
-				unsigned indices[3]{ 0,1,2 };
-			} meshdata;
-
-			meshBufferAllocation = std::make_unique<ResourceAllocation>
-			(
-				rescFactory->MakeBufferWithData(&meshdata, sizeof(meshdata), D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER | D3D12_RESOURCE_STATE_INDEX_BUFFER)
-			);
 						
-			data->vertexView.BufferLocation = meshBufferAllocation->resource->GetGPUVirtualAddress();
-			data->vertexView.SizeInBytes = sizeof(meshdata.vertices);
-			data->vertexView.StrideInBytes = sizeof(vertex);
+			resourceFactory = std::make_unique<ResourceFactory>(resources.get(), commonQueue.get(), std::make_unique<ResourceMemory>(resources.get(), D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT * 15, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT, D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS));			
+
+			privateMembers = std::make_unique<PrivateMembers>(resources.get());					   			
+			privateMembers->commandTargetFrame = FrameRenderer{ resources.get(), commonQueue.get(), privateMembers->registry, *outputSurface, *depthSurface };
 			
-			data->indexView.BufferLocation = meshBufferAllocation->resource->GetGPUVirtualAddress() + sizeof(meshdata.vertices);
-			data->indexView.SizeInBytes = sizeof(meshdata.indices);
-			data->indexView.Format = DXGI_FORMAT_R32_UINT;
-
-			
-			list = commonAllocator->AllocateList();
-			auto gral{ list->AsGraphicsList() };
-			gral->Close();		
-
-
 			updaterHandle = std::async( std::launch::async, &Renderer::UpdateRendering, this);
-
 			{
 				std::lock_guard<std::mutex> lock{ updaterMutex };
 				shouldUpdateRendering = true;			
@@ -178,40 +106,26 @@ namespace Renderer
 				}
 			
 				while(shouldUpdateRendering)
-				{
-					outputSurface->ScheduleBackbufferClear(commonQueue.get());
-
-					
-					auto gral{ list->AsGraphicsList() };
-					const auto d = gral->Reset(commonAllocator->GetAllocator().Get(), pipeline.Get());
-					if(FAILED(d))
+				{					
+					if(ActiveRendererIsInvalid())
 					{
-						throw 1;
-					}
+						continue;
+					}					
+				
+					//wait for the active frame to finish
+					privateMembers->activeFrameData.handle.wait();
+					privateMembers->activeFrameData.renderer.WaitForCompletion();//todo: use wait time to preprocess the next available frame
 					
-					outputSurface->RecordPipelineBindings(gral.Get());
-					gral->SetGraphicsRootSignature(signature.Get());
-					gral->IASetVertexBuffers(0, 1, &data->vertexView);
-					gral->IASetIndexBuffer(&data->indexView);
-					gral->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-					gral->DrawIndexedInstanced(3, 1, 0, 0, 0);
-					const auto r = gral->Close();
-					if(FAILED(r))
+					//todo: renderer retirement reference updates
+			
+					//if there are pending frames, launch one
+					if(ThereArePendingRenderers())
 					{
-						throw 1;
+						//launch a new frame
+						LaunchFrameRenderer(PopPendingRenderer());
+																		
 					}
-					commonQueue->SubmitCommandList(list.get());
-					
-					
-					outputSurface->SchedulePresentation(commonQueue.get());
 
-					//makeshift prevention of out of memory
-					closeFence->SetEventOnValue(1, closeEvent);
-					closeFence->Signal(1, commonQueue.get());
-					WaitForSingleObject(closeEvent, INFINITE);
-					closeFence->Signal(0);
-					
-					auto c = commonAllocator->GetAllocator()->Reset();
 				}
 
 				closeFence->GetFence()->SetEventOnCompletion(1, closeEvent);
@@ -221,6 +135,22 @@ namespace Renderer
 				return 0;
 			
 			}
+
+				bool Renderer::ActiveRendererIsInvalid()
+				{
+					std::lock_guard<std::mutex> lock{ frameLaunchMutex };
+					return privateMembers->activeFrameData.renderer.IsInvalid();
+			
+				}
+
+				void Renderer::LaunchFrameRenderer(FrameRenderer &&renderer)
+				{
+					std::lock_guard<std::mutex> lock{ frameLaunchMutex };
+								
+					privateMembers->activeFrameData.renderer = std::move(renderer); 																
+					privateMembers->activeFrameData.handle = std::async(std::launch::async, &FrameRenderer::ExecuteCommands, &privateMembers->activeFrameData.renderer);
+			
+				}
 
 		Renderer::~Renderer()
 		{
@@ -235,6 +165,168 @@ namespace Renderer
 			
 		}
 
+		size_t Renderer::MakeAndUploadBufferResource(const void *data, const size_t sizeInBytes)
+		{
+			auto handle{ privateMembers->handleFactory.MakeHandle(ResourceTypes::Buffer) };
+
+			auto allocation
+			{
+				resourceFactory->MakeBufferWithData(data, sizeInBytes, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER | D3D12_RESOURCE_STATE_INDEX_BUFFER)
+			};
+
+			privateMembers->registry.RegisterResource(handle, std::move(allocation));
+
+			return handle.hash;
+			
+		}
+
+
+		
+		void Renderer::CompileVertexShader(const char *shader, size_t length, SerializationHook *serializer) const
+		{
+			auto shaderBlob{ privateMembers->shaderFactory->MakeVertexShader(shader, length, "main")};
+
+			auto block{ serializer->BeginBlock(shaderBlob->GetBufferSize()) };
+			serializer->WriteToBlock(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize());			
+			
+		}
+
+
+		
+		void Renderer::CompilePixelShader(const char *shader, size_t length, SerializationHook* serializer) const
+		{
+			auto shaderBlob{ privateMembers->shaderFactory->MakePixelShader(shader, length, "main")};
+
+			auto block{ serializer->BeginBlock(shaderBlob->GetBufferSize()) };
+			serializer->WriteToBlock(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize());
+			
+		}
+
+
+		
+		void Renderer::SerializeRootSignature
+		(
+			unsigned cbvAmount,
+			unsigned srvAmount, 
+			unsigned uavAmount,
+			unsigned samplerAmount, 
+			SerializationHook *serializer
+		)
+		{
+			auto signatureBlob{ privateMembers->signatureFactory.SerializeRootSignature(cbvAmount, srvAmount, uavAmount, samplerAmount) };
+			const auto signatureSize{ signatureBlob->GetBufferSize() };
+
+			auto block{ serializer->BeginBlock(sizeof signatureSize + signatureBlob->GetBufferSize() + sizeof samplerAmount) };
+			serializer->WriteToBlock(&signatureSize, sizeof signatureSize);
+			serializer->WriteToBlock(signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize());
+			
+			serializer->WriteToBlock(&samplerAmount, sizeof samplerAmount);
+			
+		}
+
+		size_t Renderer::MakeRootSignature(const void *serializedData, size_t dataLength)
+		{
+			auto *signatureSize{ reinterpret_cast<const SIZE_T *>(serializedData) };
+			auto *signaturePtr{ reinterpret_cast<const unsigned char *>(serializedData) + sizeof *signatureSize};
+
+			auto signatureData{ privateMembers->signatureFactory.MakeRootSignature(signaturePtr, *signatureSize) };
+			signatureData.samplerAmount = *reinterpret_cast<const size_t *>(signaturePtr + *signatureSize);
+
+			const auto handle{ privateMembers->handleFactory.MakeHandle(ResourceTypes::Signature) };
+			privateMembers->registry.RegisterSignature(handle.hash, std::move(signatureData));
+
+			return handle.hash;
+			
+		}
+
+		size_t Renderer::MakePso(PipelineTypes pipelineType, VertexLayoutTypes vertexLayout, const ShaderList &shaders, size_t signatureHandle)
+		{
+			auto pipelineState{	privateMembers->psoFactory.MakePso(shaders, privateMembers->registry.GetSignature(signatureHandle), pipelineType, privateMembers->vertexLayoutProvider.GetLayoutDesc(vertexLayout), D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE) };
+			
+			auto handle{ privateMembers->handleFactory.MakeHandle(ResourceTypes::Pso) };
+			privateMembers->registry.RegisterPso(handle.hash, pipelineState);
+
+			return handle.hash;
+			
+		}
+
+		bool Renderer::ResourceHasToBeReloaded(size_t handle)
+		{
+			return privateMembers->registry.HandleIsInvalid(handle);
+			
+		}
+
+
+		void Renderer::RenderMesh(size_t signatureHandle, size_t psoHandle, size_t meshHandle, size_t sizeInBytes, size_t byteOffsetToIndices)
+		{
+			privateMembers->commandTargetFrame.AddCommand
+			(
+				std::make_unique<RenderMeshCommand>(signatureHandle, psoHandle, meshHandle, byteOffsetToIndices, sizeInBytes - byteOffsetToIndices)
+			);			
+
+		}
+
+		void Renderer::DispatchFrame()
+		{			
+			if(ActiveRendererIsInvalid())
+			{
+				LaunchFrameRenderer(std::move(privateMembers->commandTargetFrame));				
+			}
+			else
+			{
+				PushPendingRenderer(std::move(privateMembers->commandTargetFrame));
+			}
+			
+			privateMembers->commandTargetFrame = FrameRenderer{resources.get(), commonQueue.get(), privateMembers->registry, *outputSurface, *depthSurface};
+									
+			//batch commands where possible
+
+			//create descriptors for each command's resources
+			//on the frame renderers portion on the gpu descriptor heap
+			//(root signature tables are allowed to overlap unused parts)
+			
+			//get a frame renderer
+			
+		}
+
+		FrameRenderer Renderer::PopPendingRenderer()
+		{
+			std::lock_guard<std::mutex> lock{ pendingFramesMutex };
+
+			auto out{ std::move(privateMembers->pendingRenderers.front()) };
+			privateMembers->pendingRenderers.pop_front();
+
+			return out;
+			
+		}
+
+		void Renderer::PushPendingRenderer(FrameRenderer &&renderer)
+		{
+			std::lock_guard<std::mutex> lock{ pendingFramesMutex };
+
+			if(PendingRendererCountIsAtMax())
+			{
+				privateMembers->pendingRenderers.pop_back();
+			}
+			
+			privateMembers->pendingRenderers.push_back(std::move(renderer));
+			
+		}
+
+			bool Renderer::PendingRendererCountIsAtMax() const
+			{
+				return privateMembers->pendingRenderers.size() == maxPendingFrames;
+			
+			}
+
+
+		bool Renderer::ThereArePendingRenderers()
+		{
+			std::lock_guard<std::mutex> lock{ pendingFramesMutex };
+
+			return !privateMembers->pendingRenderers.empty();
+			
+		}
 
 		void Renderer::SubmitFrameInfo()
 		{

@@ -14,13 +14,15 @@ namespace RHA
 			DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(WindowSurface)
 
 
+			public: virtual DxPtr<ID3D12Resource> GetResourceTemplate() = 0;
 			
-			public: virtual void ScheduleBackbufferClear(Queue *queue) = 0;
+			public: virtual void Present() = 0;
 
-			public: virtual void SchedulePresentation(Queue *queue) = 0;
+			public: virtual void RecordPipelineBindings(ID3D12GraphicsCommandList *list, const D3D12_CPU_DESCRIPTOR_HANDLE *depthDescriptor) = 0;
 
-			public: virtual void RecordPipelineBindings(ID3D12GraphicsCommandList *list) = 0;
-							
+			public: virtual void RecordPreparationForRendering(ID3D12GraphicsCommandList *list) = 0;
+
+			public: virtual void RecordPreparationForPresenting(ID3D12GraphicsCommandList *list) = 0;
 							
 		};
 

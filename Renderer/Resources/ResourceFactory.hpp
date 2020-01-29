@@ -43,12 +43,14 @@ namespace Renderer
 			private: UniquePtr<CmdList> list;
 
 			private: D3D12_GPU_VIRTUAL_ADDRESS uploadAddress;
+
+
 			
-			private: ResourceMemory bufferHeaps;
+			protected: UniquePtr<AllocatableGpuMemory> memory;
 
 			
 
-			public: ResourceFactory(DeviceResources *resources, Queue *queue);
+			public: ResourceFactory(DeviceResources *resources, Queue *queue, UniquePtr<AllocatableGpuMemory> &&memory);
 
 			public: ResourceFactory(ResourceFactory &&other) noexcept = default;
 
@@ -57,6 +59,8 @@ namespace Renderer
 			public: ResourceFactory &operator=(ResourceFactory &&other) noexcept = default;
 
 			public: ResourceFactory &operator=(ResourceFactory &other) = delete;
+
+			public: virtual ~ResourceFactory() noexcept;
 
 											
 			public: ResourceAllocation MakeBufferWithData(const void *data, size_t sizeInBytes, D3D12_RESOURCE_STATES desiredState);
@@ -74,11 +78,9 @@ namespace Renderer
 				private: void SubmitListAndFenceSynchronization(CmdList *list);
 
 
-			public: void Deallocate(ResourceAllocation &allocation, ResourceTypes type);
+			public: virtual void Deallocate(ResourceAllocation &allocation, ResourceTypes type) {};
 			
-				private: void DeallocateBuffer(ResourceAllocation &allocation);
 
-					private: void CheckAndReleaseResourceRefs(DxPtr<ID3D12Resource> &resource);
 						
 		};
 

@@ -23,8 +23,9 @@ namespace RHA
 			public: virtual inline DxPtr<ID3D12CommandAllocator> GetAllocator() override { return allocator; }
 
 			public: virtual UniquePtr<class CmdList> AllocateList() override;
-			
-			
+
+			public: virtual HRESULT Reset() override;
+						
 		};
 		
 		

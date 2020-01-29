@@ -7,6 +7,7 @@
 #include "DX12/ShaderFactoryImpl.hpp"
 #include "DX12/UploadHeapImpl.hpp"
 #include "Dx12/HeapImpl.hpp"
+#include "DX12/DepthSurfaceImpl.hpp"
 
 
 namespace RHA
@@ -36,10 +37,11 @@ namespace RHA
 		UniquePtr<Queue> Facade::MakeQueue
 		(
 			DeviceResources *resources, 
-			D3D12_COMMAND_LIST_TYPE type
+			const D3D12_COMMAND_LIST_TYPE type,
+			const bool isHighPriority
 		)
 		{
-			return std::make_unique<QueueImpl>(resources, type);
+			return std::make_unique<QueueImpl>(resources, type, isHighPriority);
 			
 		}
 
@@ -76,7 +78,29 @@ namespace RHA
 			return std::make_unique<HeapImpl>(resources, sizeInBytes, alignment, flags);
 			
 		}
-		
+
+		UniquePtr<DescriptorHeap> Facade::MakeDescriptorHeap
+		(
+			DeviceResources *resources,
+			const D3D12_DESCRIPTOR_HEAP_TYPE type,
+			const size_t capacity,
+			const bool isGpuVisible
+		)
+		{
+			return std::make_unique<DescriptorHeapImpl>(resources, type, capacity, isGpuVisible);
+			
+		}
+
+		UniquePtr<DepthSurface> Facade::MakeDepthSurface
+		(
+			DeviceResources *resources,
+			const D3D12_RESOURCE_DESC &surfaceSpecsToMatch
+		)
+		{
+			return std::make_unique<DepthSurfaceImpl>(resources, surfaceSpecsToMatch);
+			
+		}
+
 		
 	}
 

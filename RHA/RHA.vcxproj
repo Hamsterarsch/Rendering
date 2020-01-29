@@ -157,6 +157,7 @@
   <ItemGroup>
     <ClInclude Include="DX12\CmdAllocatorImpl.hpp" />
     <ClInclude Include="DX12\CmdListImpl.hpp" />
+    <ClInclude Include="DX12\DepthSurfaceImpl.hpp" />
     <ClInclude Include="DX12\FenceImpl.hpp" />
     <ClInclude Include="DX12\HeapImpl.hpp" />
     <ClInclude Include="DX12\QueueImpl.hpp" />
@@ -165,8 +166,11 @@
     <ClInclude Include="DX12\ShaderFactoryImpl.hpp" />
     <ClInclude Include="DX12\UploadHeapImpl.hpp" />
     <ClInclude Include="DX12\WindowSurfaceImpl.hpp" />
+    <ClInclude Include="Interface\DX12\AllocatableGpuMemory.hpp" />
     <ClInclude Include="Interface\DX12\CmdAllocator.hpp" />
     <ClInclude Include="Interface\DX12\CmdList.hpp" />
+    <ClInclude Include="Interface\DX12\DeallocatableGpuMemory.hpp" />
+    <ClInclude Include="Interface\DX12\DepthSurface.hpp" />
     <ClInclude Include="Interface\DX12\DescriptorHeap.hpp" />
     <ClInclude Include="Interface\DX12\DeviceResources.hpp" />
     <ClInclude Include="Interface\DX12\Facade.hpp" />
@@ -187,6 +191,7 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="DX12\CmdAllocatorImpl.cpp" />
     <ClCompile Include="DX12\CmdListImpl.cpp" />
+    <ClCompile Include="DX12\DepthSurfaceImpl.cpp" />
     <ClCompile Include="DX12\DescriptorHeapImpl.cpp" />
     <ClCompile Include="DX12\DeviceResourcesImpl.cpp" />
     <ClCompile Include="DX12\FenceImpl.cpp" />

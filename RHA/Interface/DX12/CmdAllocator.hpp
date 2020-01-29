@@ -20,6 +20,8 @@ namespace RHA
 			public: virtual DxPtr<ID3D12CommandAllocator> GetAllocator() = 0;
 			
 			public: virtual UniquePtr<CmdList> AllocateList() = 0;
+
+			public: virtual HRESULT Reset() = 0;
 						
 		};
 

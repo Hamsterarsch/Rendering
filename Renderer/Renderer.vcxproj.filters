@@ -26,6 +26,59 @@
     <ClInclude Include="Interface\Resources\ResourceTypes.hpp">
       <Filter>Interface\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="Resources\SerialFactory.hpp">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\ResourceRegistry.hpp">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameRenderer.hpp" />
+    <ClInclude Include="Resources\ResourceFactoryDeallocatable.hpp">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderMeshCommand.hpp" />
+    <ClInclude Include="Resources\RootSignature\TableLayout.hpp">
+      <Filter>Resources\RootSignature</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\Descriptor\DescriptorAllocator.hpp">
+      <Filter>Resources\Descriptor</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\Descriptor\DescriptorChunk.hpp">
+      <Filter>Resources\Descriptor</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\Descriptor\DescriptorChunkRegistry.hpp">
+      <Filter>Resources\Descriptor</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\Descriptor\DescriptorMemory.hpp">
+      <Filter>Resources\Descriptor</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\Pso\PsoFactory.hpp">
+      <Filter>Resources\Pso</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\Resources\Pso\PipelineTypes.hpp">
+      <Filter>Interface\Resources\Pso</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\RootSignature\RootSignatureFactory.hpp">
+      <Filter>Resources\RootSignature</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\HandleFactory.hpp">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\Resources\Pso\VertexLayoutTypes.hpp">
+      <Filter>Interface\Resources\Pso</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\Pso\VertexLayoutProvider.hpp">
+      <Filter>Resources\Pso</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\Resources\Pso\ShaderList.hpp">
+      <Filter>Interface\Resources\Pso</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\RootSignature\RootSignatureData.hpp">
+      <Filter>Resources\RootSignature</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\RenderCommand.hpp">
+      <Filter>Interface</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -47,6 +100,41 @@
     <ClCompile Include="Resources\ResourceAllocation.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
+    <ClCompile Include="Resources\SerialFactory.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\ResourceRegistry.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameRenderer.cpp" />
+    <ClCompile Include="Resources\ResourceFactoryDeallocatable.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderMeshCommand.cpp" />
+    <ClCompile Include="Resources\RootSignature\TableLayout.cpp">
+      <Filter>Resources\RootSignature</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\Descriptor\DescriptorAllocator.cpp">
+      <Filter>Resources\Descriptor</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\Descriptor\DescriptorChunkRegistry.cpp">
+      <Filter>Resources\Descriptor</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\Descriptor\DescriptorMemory.cpp">
+      <Filter>Resources\Descriptor</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\RootSignature\RootSignatureFactory.cpp">
+      <Filter>Resources\RootSignature</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\Pso\PsoFactory.cpp">
+      <Filter>Resources\Pso</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\HandleFactory.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\Pso\VertexLayoutProvider.cpp">
+      <Filter>Resources\Pso</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">
@@ -57,6 +145,18 @@
     </Filter>
     <Filter Include="Interface\Resources">
       <UniqueIdentifier>{0422f1da-b27c-4a5f-9f1f-ded45e9e9bda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\RootSignature">
+      <UniqueIdentifier>{f86714ce-577f-4bc9-987a-8c04934cd6e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Descriptor">
+      <UniqueIdentifier>{a2b40c86-97dd-471e-81f7-3055626c278f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Pso">
+      <UniqueIdentifier>{f5586f5d-6685-4135-8175-704e2429a6a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interface\Resources\Pso">
+      <UniqueIdentifier>{81db0852-4be5-4c7b-a2bd-a94f81cda368}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -12,7 +12,7 @@ namespace Renderer
 
 		ResourceMemory::ResourceMemory(DeviceResources *resources, const size_t initialHeapSizeInBytes, const size_t alignment, const D3D12_HEAP_FLAGS heapFlags) :
 			resources{ resources },
-			initialHeapSize{ RHA::Utility::IncreaseValueToAlignment(initialHeapSizeInBytes, alignment) },
+			initialHeapSizeInBytes{ RHA::Utility::IncreaseValueToAlignment(initialHeapSizeInBytes, alignment) },
 			alignment{ alignment },
 			heapFlags{ heapFlags }		
 		{
@@ -20,7 +20,7 @@ namespace Renderer
 			
 		}
 
-			decltype(ResourceMemory::freeBlocks)::iterator ResourceMemory::MakeNewFreeBlock(const size_t sizeInBytes)
+			ResourceMemory::t_freeBlocksItr ResourceMemory::MakeNewFreeBlock(const size_t sizeInBytes)
 			{
 				memory.emplace_back
 				(
@@ -36,66 +36,110 @@ namespace Renderer
 						{}
 					}
 				);
-				
-				heapIndexMap.insert( {memory.back().heap->GetHeap().Get(), memory.size() - 1} );
 
-				freeBlocks.emplace_back( MemoryInfo{ memory.size() - 1, 0, sizeInBytes } );
+				const auto newHeapIndex{ memory.size()-1 };
+				heapIndexMap.insert( {memory.back().heap->GetHeap().Get(), newHeapIndex} );
+
+				freeBlocks.emplace_back( MemoryInfo{ newHeapIndex, 0, sizeInBytes } );
 				return --freeBlocks.end();
 			
 			}
 
 
-		
+
 		HeapAllocation ResourceMemory::Allocate(const size_t sizeInBytes)
-		{
-			//find a memory block						
-			auto targetBlock{ freeBlocks.end() };
-			
-			for(auto freeBlock{ freeBlocks.begin() }; freeBlock != freeBlocks.end(); ++freeBlock)
-			{
-				if(freeBlock->sizeInBytes >= sizeInBytes)
-				{
-					targetBlock = freeBlock;					
-					break;
-				}
-			}
-
-			//allocate a new block bc there are no free blocks large enough
+		{			
+			auto targetBlock{ FindFreeBlock(sizeInBytes) };						
 			if(targetBlock == freeBlocks.end()) 
-			{
-				auto newBlockSize{ initialHeapSize };
-				if(newBlockSize <= sizeInBytes)
-				{
-					newBlockSize = RHA::Utility::IncreaseValueToAlignment(sizeInBytes * 1.25, alignment);
-				}
-								
-				targetBlock = MakeNewFreeBlock(newBlockSize);
+			{			
+				targetBlock = MakeNewFreeBlock(GetBlockSizeForNewAllocation(sizeInBytes));
 			}
 
-			//"allocate" the block's memory
-			HeapAllocation alloc{};
-			alloc.heap = memory.at(targetBlock->heapIndex).heap->GetHeap().Get();
-			alloc.offsetToAllocation = targetBlock->offsetToAllocation;
-			alloc.allocationSize = min(RHA::Utility::IncreaseValueToAlignment(targetBlock->offsetToAllocation + sizeInBytes, alignment) - targetBlock->offsetToAllocation, targetBlock->sizeInBytes);
+			const auto allocation{ AllocateFromBlock(targetBlock, sizeInBytes) };
+			RegisterAllocationAsOccupiedBlock(targetBlock->heapIndex, allocation);			
+			AdjustFreeBlockDataAfterAllocation(targetBlock, allocation);
 			
-			//update the old block
-			targetBlock->offsetToAllocation += alloc.allocationSize;
-			targetBlock->sizeInBytes -= alloc.allocationSize;
-
-			if(targetBlock->sizeInBytes <= 0)
-			{
-				freeBlocks.erase(targetBlock);
-			}
-
-			//add an occupied block
-			memory.at(targetBlock->heapIndex).occupiedBlocks.insert( {alloc.offsetToAllocation, MemoryInfo{ targetBlock->heapIndex, alloc.offsetToAllocation, alloc.allocationSize} } );
-			
-			return alloc;
+			return allocation;
 			
 		}
 
+			ResourceMemory::t_freeBlocksItr ResourceMemory::FindFreeBlock(const size_t sizeInBytes)
+			{
+				for(auto currentBlock{ freeBlocks.begin() }; currentBlock != freeBlocks.end(); ++currentBlock)
+				{
+					if(currentBlock->sizeInBytes >= sizeInBytes)
+					{
+						return currentBlock;					
+						
+					}
+				}
 
-				
+				return freeBlocks.end();
+			
+			}
+
+			size_t ResourceMemory::GetBlockSizeForNewAllocation(const size_t allocationSizeInBytes) const
+			{
+				auto newBlockSize{ initialHeapSizeInBytes };
+				if(newBlockSize <= allocationSizeInBytes)
+				{
+					newBlockSize = RHA::Utility::IncreaseValueToAlignment(allocationSizeInBytes * 1.25, alignment);
+				}
+
+				return newBlockSize;
+			
+			}
+
+			HeapAllocation ResourceMemory::AllocateFromBlock(const t_freeBlocksItr &block, size_t allocationSizeInBytes)
+			{
+				HeapAllocation allocation{};
+				allocation.heap = memory.at(block->heapIndex).heap->GetHeap().Get();
+				allocation.offsetToAllocation = block->offsetToAllocation;
+				allocation.allocationSize = min( GetAlignedAllocationSizeForBlock(block, allocationSizeInBytes), block->sizeInBytes );
+
+				return allocation;
+			
+			}
+
+				size_t ResourceMemory::GetAlignedAllocationSizeForBlock
+				(
+					const decltype(freeBlocks)::iterator &block,
+					const size_t allocationSizeInBytes
+				)
+				{
+					const auto offsetToAllocationEnd{ block->offsetToAllocation + allocationSizeInBytes };
+					return RHA::Utility::IncreaseValueToAlignment(offsetToAllocationEnd, alignment) - block->offsetToAllocation;
+			
+				}
+
+			void ResourceMemory::RegisterAllocationAsOccupiedBlock(const size_t targetHeapIndex, const HeapAllocation &allocation)
+			{
+				memory.at(targetHeapIndex).occupiedBlocks.insert
+				({
+					allocation.offsetToAllocation,
+					MemoryInfo{ targetHeapIndex, allocation.offsetToAllocation, allocation.allocationSize }
+				});
+			
+			}
+
+			void ResourceMemory::AdjustFreeBlockDataAfterAllocation
+			(
+				decltype(freeBlocks)::iterator &block,
+				const HeapAllocation &allocation
+			)
+			{
+				block->offsetToAllocation += allocation.allocationSize;
+				block->sizeInBytes -= allocation.allocationSize;
+								
+				if(block->sizeInBytes <= 0)
+				{
+					freeBlocks.erase(block);
+				}
+			
+			}
+
+
+		
 		void ResourceMemory::Deallocate(const HeapAllocation &allocation)
 		{
 			//find data

@@ -8,8 +8,9 @@ namespace Renderer
 	{
 		Mesh,
 		Texture,
-		PSO,
-		Buffer
+		Pso,
+		Buffer,
+		Signature
 		
 	};
 

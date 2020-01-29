@@ -11,19 +11,7 @@
 namespace RHA
 {
 	namespace DX12
-	{
-		struct BufferData
-		{
-			DxPtr<ID3D12Resource> resource;
-
-			UniquePtr<CmdList> clearCmd, presentCmd;
-
-			UniquePtr<Fence> clearFence, presentFence;
-
-			HANDLE clearEvent, presentEvent;
-
-		};
-		
+	{		
 		class WindowSurfaceImpl : public WindowSurface
 		{			
 			private: static constexpr short bufferCount{ 2 };
@@ -32,12 +20,10 @@ namespace RHA
 
 			private: DxPtr<IDXGISwapChain1> swapChain;
 
-			private: std::array<BufferData, bufferCount> bufferData;
+			private: std::array<DxPtr<ID3D12Resource>, bufferCount> buffers;
 
 			private: DescriptorHeapImpl viewHeap;
-
-			private: CmdAllocatorImpl cmdAllocator;
-
+					 
 			private: unsigned currentBackbufferIndex;
 
 			private: D3D12_VIEWPORT defaultViewport;
@@ -65,16 +51,19 @@ namespace RHA
 					private: void CreateEventsForBuffer(unsigned bufferIndex);
 			
 					private: void CreateFencesForBuffer(unsigned bufferIndex, DeviceResources *resource);
-			
 
-			public: virtual void ScheduleBackbufferClear(Queue *queue) override;
-			
-				private: BufferData &GetBackbufferData();
 
-			
-			public: virtual void SchedulePresentation(Queue *queue) override;
+			public: virtual inline DxPtr<ID3D12Resource> GetResourceTemplate() override { return buffers[0]; };
+												   			
+			public: virtual void Present() override;
 
-			public: virtual void RecordPipelineBindings(ID3D12GraphicsCommandList *list) override;
+			public: virtual void RecordPipelineBindings(ID3D12GraphicsCommandList *list, const D3D12_CPU_DESCRIPTOR_HANDLE *depthDescriptor) override;
+
+				private: ID3D12Resource *GetBackbuffer();
+
+			public: virtual void RecordPreparationForRendering(ID3D12GraphicsCommandList *list) override;
+
+			public: virtual void RecordPreparationForPresenting(ID3D12GraphicsCommandList *list) override;
 								
 		};
 

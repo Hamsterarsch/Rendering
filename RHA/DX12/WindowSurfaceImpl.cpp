@@ -10,19 +10,14 @@ namespace RHA
 {
 	namespace DX12
 	{
-
-
 		WindowSurfaceImpl::WindowSurfaceImpl(DeviceResources *resources, Queue *queue, HWND window) :
-			viewHeap{ resources, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, bufferCount, false },
-			cmdAllocator{ resources, D3D12_COMMAND_LIST_TYPE_DIRECT },
+			viewHeap{ resources, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, bufferCount, false },			
 			currentBackbufferIndex{ 0 }
 		{
 			CreateSwapChain(resources, queue, window);
 
 			CreateViewsForChainBuffers(resources);
-					   			
-			PopulateBufferData(resources);
-			
+					   						
 		}
 
 			void WindowSurfaceImpl::CreateSwapChain(DeviceResources *resources, Queue *queue, HWND window)
@@ -85,15 +80,15 @@ namespace RHA
 
 			void WindowSurfaceImpl::CreateViewsForChainBuffers(DeviceResources *resources)
 			{
-				for (size_t bufferIndex{ 0 }; bufferIndex < bufferData.size(); ++bufferIndex)
+				for (size_t bufferIndex{ 0 }; bufferIndex < buffers.size(); ++bufferIndex)
 				{
 					const auto result
 					{
-						swapChain->GetBuffer(bufferIndex, IID_PPV_ARGS(&bufferData.at(bufferIndex).resource))
+						swapChain->GetBuffer(bufferIndex, IID_PPV_ARGS(&buffers.at(bufferIndex)))
 					};
 					CheckBufferQuery(result);
 
-					resources->GetDevice()->CreateRenderTargetView(bufferData.at(bufferIndex).resource.Get(), nullptr, viewHeap.GetHandleCpu(bufferIndex));
+					resources->GetDevice()->CreateRenderTargetView(buffers.at(bufferIndex).Get(), nullptr, viewHeap.GetHandleCpu(bufferIndex));
 				}
 			
 			}
@@ -107,109 +102,63 @@ namespace RHA
 				
 				}
 
-			void WindowSurfaceImpl::PopulateBufferData(DeviceResources *resources)
-			{
-				for (unsigned bufferIndex{ 0 }; bufferIndex < bufferCount; ++bufferIndex)
-				{
-					CreateClearCommandForBuffer(bufferIndex);
-					CreatePresentCommandForBuffer(bufferIndex);
-					CreateEventsForBuffer(bufferIndex);
-					CreateFencesForBuffer(bufferIndex, resources);			
-				}
+						
 
-			}
-
-				void WindowSurfaceImpl::CreateClearCommandForBuffer(unsigned bufferIndex)
-				{
-					bufferData.at(bufferIndex).clearCmd = cmdAllocator.AllocateList();
-					auto graphicsList{ bufferData.at(bufferIndex).clearCmd->AsGraphicsList() };
-
-					D3D12_RESOURCE_BARRIER toOutputTarget{};
-					toOutputTarget.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-					toOutputTarget.Transition.StateBefore = D3D12_RESOURCE_STATE_COMMON;
-					toOutputTarget.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-					toOutputTarget.Transition.pResource = bufferData.at(bufferIndex).resource.Get();
-					graphicsList->ResourceBarrier(1, &toOutputTarget);
-
-					auto rtv{ viewHeap.GetHandleCpu(bufferIndex) };
-					graphicsList->ClearRenderTargetView(rtv, clearColor, 0, nullptr);										
-			
-					graphicsList->Close();
-
-				}
-
-				void WindowSurfaceImpl::CreatePresentCommandForBuffer(unsigned bufferIndex)
-				{
-					bufferData.at(bufferIndex).presentCmd = cmdAllocator.AllocateList();
-					auto graphicsList{ bufferData.at(bufferIndex).presentCmd->AsGraphicsList() };
-
-					D3D12_RESOURCE_BARRIER toPresentable{};
-					toPresentable.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-					toPresentable.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-					toPresentable.Transition.StateAfter = D3D12_RESOURCE_STATE_COMMON;
-					toPresentable.Transition.pResource = bufferData.at(bufferIndex).resource.Get();
-
-					graphicsList->ResourceBarrier(1, &toPresentable);
-					graphicsList->Close();
-
-				}
-
-				void WindowSurfaceImpl::CreateEventsForBuffer(unsigned bufferIndex)
-				{
-					constexpr decltype(nullptr) DEFAULT_SECURITY{ nullptr };
-			
-					bufferData.at(bufferIndex).clearEvent = CreateEvent(DEFAULT_SECURITY, false, true, nullptr);
-					bufferData.at(bufferIndex).presentEvent = CreateEvent(DEFAULT_SECURITY, false, false, nullptr);
-
-				}
-
-				void WindowSurfaceImpl::CreateFencesForBuffer(unsigned bufferIndex, DeviceResources *resources)
-				{
-					bufferData.at(bufferIndex).clearFence = RHA::DX12::Facade::MakeFence(resources);
-					bufferData.at(bufferIndex).presentFence = RHA::DX12::Facade::MakeFence(resources);
-
-				}
-		
-		
-		void WindowSurfaceImpl::ScheduleBackbufferClear(Queue *queue)
-		{			
-			WaitForSingleObject(GetBackbufferData().clearEvent, INFINITE);
-			
-			queue->SubmitCommandList(GetBackbufferData().clearCmd.get());
-			GetBackbufferData().clearFence->GetFence()->SetEventOnCompletion(1, GetBackbufferData().clearEvent);
-			GetBackbufferData().clearFence->Signal(1, queue);
-			
-		}
-
-			BufferData &WindowSurfaceImpl::GetBackbufferData()
-			{
-				return bufferData.at(currentBackbufferIndex);
-			}
-
-		void WindowSurfaceImpl::SchedulePresentation(Queue *queue)
+		void WindowSurfaceImpl::Present()
 		{
-			queue->SubmitCommandList(GetBackbufferData().presentCmd.get());
-			GetBackbufferData().presentFence->GetFence()->SetEventOnCompletion(1, GetBackbufferData().presentEvent);
-			GetBackbufferData().presentFence->Signal(1, queue);
-
-			WaitForSingleObject(GetBackbufferData().presentEvent, INFINITE);
-
-			
 			currentBackbufferIndex = (currentBackbufferIndex + 1) % bufferCount;
 			swapChain->Present(0, 0);
 			
 		}
 
-		void WindowSurfaceImpl::RecordPipelineBindings(ID3D12GraphicsCommandList *list)
+		
+		
+		void WindowSurfaceImpl::RecordPipelineBindings(ID3D12GraphicsCommandList *list, const D3D12_CPU_DESCRIPTOR_HANDLE *depthDescriptor)
 		{
 			auto rtv{ viewHeap.GetHandleCpu(currentBackbufferIndex) };
-			list->OMSetRenderTargets(1, &rtv, false, nullptr);
+			list->OMSetRenderTargets(1, &rtv, false, depthDescriptor);
 			
 			list->RSSetViewports(1, &defaultViewport);
 			list->RSSetScissorRects(1, &defaultRect);
 			
 		}
+
+
+				
+		void WindowSurfaceImpl::RecordPreparationForRendering(ID3D12GraphicsCommandList *list)
+		{
+			D3D12_RESOURCE_BARRIER toOutputTarget{};
+			toOutputTarget.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+			toOutputTarget.Transition.StateBefore = D3D12_RESOURCE_STATE_COMMON;
+			toOutputTarget.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+			toOutputTarget.Transition.pResource = GetBackbuffer();
+			list->ResourceBarrier(1, &toOutputTarget);
+
+			auto rtv{ viewHeap.GetHandleCpu(currentBackbufferIndex) };
+			list->ClearRenderTargetView(rtv, clearColor, 0, nullptr);
+			
+		}
+			
+			ID3D12Resource *WindowSurfaceImpl::GetBackbuffer()
+			{
+				return buffers.at(currentBackbufferIndex).Get();
+			
+			}
+
 		
+		
+		void WindowSurfaceImpl::RecordPreparationForPresenting(ID3D12GraphicsCommandList *list)
+		{
+			D3D12_RESOURCE_BARRIER toPresentable{};
+			toPresentable.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+			toPresentable.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+			toPresentable.Transition.StateAfter = D3D12_RESOURCE_STATE_COMMON;
+			toPresentable.Transition.pResource = GetBackbuffer();
+
+			list->ResourceBarrier(1, &toPresentable);
+			
+		}
+
 		
 	}
 

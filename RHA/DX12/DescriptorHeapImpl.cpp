@@ -42,7 +42,7 @@ namespace RHA
 			
 			}
 
-		D3D12_CPU_DESCRIPTOR_HANDLE DescriptorHeapImpl::GetHandleCpu(const size_t index)
+		D3D12_CPU_DESCRIPTOR_HANDLE DescriptorHeapImpl::GetHandleCpu(const size_t index) const
 		{
 			HandleCorruptIndex(index);
 
@@ -65,7 +65,7 @@ namespace RHA
 				
 				}
 
-		D3D12_GPU_DESCRIPTOR_HANDLE DescriptorHeapImpl::GetHandleGpu(const size_t index)
+		D3D12_GPU_DESCRIPTOR_HANDLE DescriptorHeapImpl::GetHandleGpu(const size_t index) const
 		{
 			HandleCorruptIndex(index);
 
