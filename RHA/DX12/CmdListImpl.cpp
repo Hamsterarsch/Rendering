@@ -108,8 +108,19 @@ namespace RHA
 			
 		}
 
+		void CmdListImpl::RecordSetRenderTargets
+		(
+			const unsigned numTargets,
+			const D3D12_CPU_DESCRIPTOR_HANDLE *targetDescriptors,
+			const bool isTargetDescriptorARangeStart,
+			const D3D12_CPU_DESCRIPTOR_HANDLE *dsv
+		)
+		{
+			glist->OMSetRenderTargets(numTargets, targetDescriptors, isTargetDescriptorARangeStart, dsv);
+			
+		}
 
-		
+
 		void CmdListImpl::StopRecording()
 		{
 			const auto result{ glist->Close() };			

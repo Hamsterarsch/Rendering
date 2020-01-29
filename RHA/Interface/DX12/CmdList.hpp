@@ -46,6 +46,14 @@ namespace RHA
 			
 			public: virtual void RecordCopyResource(ID3D12Resource *destination, ID3D12Resource *source) = 0;
 
+			public: virtual void RecordSetRenderTargets
+			(
+				unsigned numTargets,
+				const D3D12_CPU_DESCRIPTOR_HANDLE *targetDescriptors,
+				bool isTargetDescriptorARangeStart,
+				const D3D12_CPU_DESCRIPTOR_HANDLE *dsv
+			) = 0;
+			
 			public: virtual void StopRecording() = 0;
 
 			public: virtual void StartRecording(CmdAllocator *allocator) = 0;

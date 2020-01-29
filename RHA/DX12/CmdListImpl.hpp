@@ -52,6 +52,14 @@ namespace RHA
 			
 			public: virtual void RecordCopyResource(ID3D12Resource *destination, ID3D12Resource *source) override;
 
+			public: virtual void RecordSetRenderTargets
+			(
+				unsigned numTargets,
+				const D3D12_CPU_DESCRIPTOR_HANDLE *targetDescriptors,
+				bool isTargetDescriptorARangeStart,
+				const D3D12_CPU_DESCRIPTOR_HANDLE *dsv
+			) override;
+			
 			
 			public: virtual void StopRecording() override;
 
