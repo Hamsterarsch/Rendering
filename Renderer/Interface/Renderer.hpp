@@ -81,8 +81,7 @@ namespace Renderer
 		};
 						
 		class RENDERER_DLLSPEC Renderer
-		{
-			
+		{			
 			private: const unsigned maxPendingFrames;
 			
 			private: std::mutex updaterMutex, frameLaunchMutex, pendingFramesMutex;
@@ -108,13 +107,8 @@ namespace Renderer
 			private: UniquePtr<RHA::DX12::DepthSurface> depthSurface;
 
 			private: UniquePtr<class ResourceFactory> resourceFactory;
-			/*
-					 UniquePtr<TriangleData> data;
-					 DxPtr<ID3D12RootSignature> signature;
-					 DxPtr<ID3D12PipelineState> pipeline;
-					 UniquePtr<RHA::DX12::CmdList> list;
-					 UniquePtr<class ResourceAllocation> meshBufferAllocation;*/
-						
+
+			
 			private: struct PrivateMembers;
 
 			private: UniquePtr<PrivateMembers> privateMembers;
@@ -127,13 +121,12 @@ namespace Renderer
 
 					private: bool ActiveRendererIsInvalid();
 			
+					private: bool ThereArePendingRenderers();
+			
 					private: void LaunchFrameRenderer(FrameRenderer &&renderer);
-
-				
-
+							 
 			public: ~Renderer();
-
-
+					
 			
 			public: size_t MakeAndUploadBufferResource(const void *data, size_t sizeInBytes);
 
@@ -147,9 +140,7 @@ namespace Renderer
 			public: size_t MakeRootSignature(const void *serializedData, size_t dataLength);
 			
 			public: size_t MakePso(PipelineTypes pipelineType, VertexLayoutTypes vertexLayout, const ShaderList &shaders, size_t signatureHandle);
-
-			
-			
+								
 
 			public: bool ResourceHasToBeReloaded(size_t handle);
 			
@@ -166,15 +157,7 @@ namespace Renderer
 
 				private: bool PendingRendererCountIsAtMax() const;
 			
-			public: bool ThereArePendingRenderers();
-								
-			
-			public: void SubmitFrameInfo();
-
-			public: void WaitForCapacity();
-
-			
-			
+											
 		};
 
 		

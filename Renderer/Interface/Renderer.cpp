@@ -22,20 +22,14 @@
 	constexpr bool enableDebugLayers = false;
 #endif
 
-
-
-struct vertex
-{
-	float x, y, z;
-};
-
+	
 namespace Renderer
 {
 	namespace DX12
 	{
 		using namespace RHA::DX12;
 
-		struct InflightData
+		struct ActiveFrameData
 		{
 			FrameRenderer renderer;
 			std::future<void> handle;
@@ -43,14 +37,22 @@ namespace Renderer
 		
 		struct Renderer::PrivateMembers
 		{
-			HandleFactory handleFactory;			
+			HandleFactory handleFactory;
+			
 			ResourceRegistry registry;
+			
 			VertexLayoutProvider vertexLayoutProvider;
+			
 			PsoFactory psoFactory;
+			
 			RootSignatureFactory signatureFactory;
+			
 			UniquePtr<ShaderFactory> shaderFactory;
-			InflightData activeFrameData;
+			
+			ActiveFrameData activeFrameData;
+			
 			std::list<FrameRenderer> pendingRenderers;
+			
 			FrameRenderer commandTargetFrame;
 
 			PrivateMembers(DeviceResources *resources) :
@@ -61,13 +63,7 @@ namespace Renderer
 			}				
 			
 		};
-		
-		struct TriangleData
-		{
-			D3D12_VERTEX_BUFFER_VIEW vertexView;
-			D3D12_INDEX_BUFFER_VIEW indexView;
-		};
-		
+
 		Renderer::Renderer(HWND outputWindow) :
 			maxPendingFrames{ 10 },
 			shouldUpdateRendering{ false },
@@ -83,10 +79,16 @@ namespace Renderer
 			closeFence = Facade::MakeFence(resources.get());
 			closeEvent = CreateEvent(nullptr, false, false, nullptr);
 						
-			resourceFactory = std::make_unique<ResourceFactory>(resources.get(), commonQueue.get(), std::make_unique<ResourceMemory>(resources.get(), D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT * 15, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT, D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS));			
+			resourceFactory = std::make_unique<ResourceFactory>
+			(
+				resources.get(),
+				commonQueue.get(),
+				std::make_unique<ResourceMemory>(resources.get(), D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT * 15, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT, D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS)
+			);			
 
 			privateMembers = std::make_unique<PrivateMembers>(resources.get());					   			
 			privateMembers->commandTargetFrame = FrameRenderer{ resources.get(), commonQueue.get(), privateMembers->registry, *outputSurface, *depthSurface };
+
 			
 			updaterHandle = std::async( std::launch::async, &Renderer::UpdateRendering, this);
 			{
@@ -143,6 +145,14 @@ namespace Renderer
 			
 				}
 
+				bool Renderer::ThereArePendingRenderers()
+				{
+					std::lock_guard<std::mutex> lock{ pendingFramesMutex };
+
+					return !privateMembers->pendingRenderers.empty();
+					
+				}
+
 				void Renderer::LaunchFrameRenderer(FrameRenderer &&renderer)
 				{
 					std::lock_guard<std::mutex> lock{ frameLaunchMutex };
@@ -152,6 +162,8 @@ namespace Renderer
 			
 				}
 
+
+		
 		Renderer::~Renderer()
 		{
 			{
@@ -165,6 +177,8 @@ namespace Renderer
 			
 		}
 
+
+		
 		size_t Renderer::MakeAndUploadBufferResource(const void *data, const size_t sizeInBytes)
 		{
 			auto handle{ privateMembers->handleFactory.MakeHandle(ResourceTypes::Buffer) };
@@ -320,19 +334,7 @@ namespace Renderer
 			}
 
 
-		bool Renderer::ThereArePendingRenderers()
-		{
-			std::lock_guard<std::mutex> lock{ pendingFramesMutex };
 
-			return !privateMembers->pendingRenderers.empty();
-			
-		}
-
-		void Renderer::SubmitFrameInfo()
-		{
-			
-					
-		}
 
 		
 	}
