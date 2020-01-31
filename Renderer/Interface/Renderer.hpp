@@ -84,9 +84,7 @@ namespace Renderer
 		{			
 			private: const unsigned maxPendingFrames;
 			
-			private: std::mutex updaterMutex, frameLaunchMutex, pendingFramesMutex;
-
-			private: std::condition_variable updaterCondition;
+			private: std::mutex frameLaunchMutex, pendingFramesMutex;
 
 			private: bool shouldUpdateRendering;
 			
@@ -96,8 +94,6 @@ namespace Renderer
 
 			private: UniquePtr<RHA::DX12::Queue> commonQueue;
 
-			private: UniquePtr<RHA::DX12::CmdAllocator> commonAllocator;
-			
 			private: UniquePtr<RHA::DX12::WindowSurface> outputSurface;
 
 			private: UniquePtr<RHA::DX12::Fence> closeFence;

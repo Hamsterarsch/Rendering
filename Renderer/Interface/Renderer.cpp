@@ -71,7 +71,6 @@ namespace Renderer
 		{
 			resources = Facade::MakeDeviceResources(D3D_FEATURE_LEVEL_11_0, enableDebugLayers);
 			commonQueue = Facade::MakeQueue(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT);			
-			commonAllocator = Facade::MakeCmdAllocator(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT);
 
 			outputSurface = Facade::MakeWindowSurface(resources.get(), commonQueue.get(), outputWindow);
 			depthSurface = Facade::MakeDepthSurface(resources.get(), outputSurface->GetResourceTemplate()->GetDesc());
@@ -90,23 +89,14 @@ namespace Renderer
 			privateMembers->commandTargetFrame = FrameRenderer{ resources.get(), commonQueue.get(), privateMembers->registry, *outputSurface, *depthSurface };
 
 			
+			shouldUpdateRendering = true;			
 			updaterHandle = std::async( std::launch::async, &Renderer::UpdateRendering, this);
-			{
-				std::lock_guard<std::mutex> lock{ updaterMutex };
-				shouldUpdateRendering = true;			
-			}
-			updaterCondition.notify_all();
+			
 				
 		}
 
 			int Renderer::UpdateRendering()
 			{
-				{
-					std::unique_lock<std::mutex> lock{ updaterMutex };
-					updaterCondition.wait(lock, [&shouldUpdateRendering = shouldUpdateRendering] { return shouldUpdateRendering; });
-					lock.unlock();
-				}
-			
 				while(shouldUpdateRendering)
 				{					
 					if(ActiveRendererIsInvalid())
@@ -166,8 +156,7 @@ namespace Renderer
 		
 		Renderer::~Renderer()
 		{
-			{
-				std::lock_guard<std::mutex> lock{ updaterMutex };
+			{				
 				shouldUpdateRendering = false;
 
 				updaterHandle.wait();
@@ -307,7 +296,7 @@ namespace Renderer
 		{
 			std::lock_guard<std::mutex> lock{ pendingFramesMutex };
 
-			auto out{ std::move(privateMembers->pendingRenderers.front()) };
+			auto out{ privateMembers->pendingRenderers.front() };
 			privateMembers->pendingRenderers.pop_front();
 
 			return out;
