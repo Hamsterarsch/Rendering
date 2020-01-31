@@ -5,6 +5,7 @@
 #include "DX12/DeviceResources.hpp"
 #include "DX12/Facade.hpp"
 #include "Resources/ResourceRegistry.hpp"
+#include "Shared/Exception/CreationFailedException.hpp"
 
 
 namespace Renderer
@@ -37,7 +38,7 @@ namespace Renderer
 		{
 			allocator = Facade::MakeCmdAllocator(resources, D3D12_COMMAND_LIST_TYPE_DIRECT);
 			fence = Facade::MakeFence(resources);
-			event = CreateEvent(nullptr, false, true, nullptr);
+			event = CreateEvent(nullptr, false, false, nullptr);
 						
 		}
 
@@ -130,25 +131,34 @@ namespace Renderer
 
 
 		
-		void FrameRenderer::ExecuteCommands()
+		int FrameRenderer::ExecuteCommands()
 		{
-			list = allocator->AllocateList();
-			
-			RecordRenderTargetPreperations();									
-			RecordCommands();
+			try
+			{
+				list = allocator->AllocateList();
+				
+				RecordRenderTargetPreparations();									
+				RecordCommands();
 
-			windowSurface->RecordPreparationForPresenting(list->AsGraphicsList().Get());
-			
-			list->StopRecording();
-			queue->SubmitCommandList(list.get());
-			
-			SetupCompletionFence();
+				windowSurface->RecordPreparationForPresenting(list->AsGraphicsList().Get());
+				
+				list->StopRecording();
+				queue->SubmitCommandList(list.get());
+				
+				SetupCompletionFence();
 
-			queue->Wait(fenceQueueReleaseValue, fence.get());
-						
+				queue->Wait(fenceQueueReleaseValue, fence.get());
+			}
+			catch(std::exception &e)
+			{
+				return 1;
+			}
+
+			return 0;
+			
 		}
 
-			void FrameRenderer::RecordRenderTargetPreperations()
+			void FrameRenderer::RecordRenderTargetPreparations()
 			{			
 				const auto dsv{ depthSurface->GetHandleCpu() };
 				list->RecordClearDsv(dsv, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1, 0, 0, nullptr);
@@ -224,6 +234,7 @@ namespace Renderer
 		{
 			WaitForSingleObject(event, INFINITE);
 
+			auto c = allocator->Reset();
 			windowSurface->Present();
 
 			fence->Signal(fenceQueueReleaseValue);

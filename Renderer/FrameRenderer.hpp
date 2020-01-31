@@ -82,7 +82,7 @@ namespace Renderer
 
 			public: void AddCommand(UniquePtr<RenderCommand> &&command);
 
-			public: void ExecuteCommands();
+			public: int ExecuteCommands();
 
 				private: void RecordRenderTargetPreparations();
 			
