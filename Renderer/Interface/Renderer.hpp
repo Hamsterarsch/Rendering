@@ -81,11 +81,7 @@ namespace Renderer
 		};
 						
 		class RENDERER_DLLSPEC Renderer
-		{			
-			private: const unsigned maxPendingFrames;
-			
-			private: std::mutex frameLaunchMutex, pendingFramesMutex;
-
+		{	
 			private: bool shouldUpdateRendering;
 			
 			private: std::future<int> updaterHandle;

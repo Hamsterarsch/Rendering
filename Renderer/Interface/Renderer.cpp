@@ -14,6 +14,7 @@
 #include "FrameRenderer.hpp"
 #include "RenderMeshCommand.hpp"
 #include "Resources/Pso/VertexLayoutProvider.hpp"
+#include "Shared/Types/Containers/QueueConcurrent.hpp"
 
 
 #if _DEBUG
@@ -28,12 +29,6 @@ namespace Renderer
 	namespace DX12
 	{
 		using namespace RHA::DX12;
-
-		struct ActiveFrameData
-		{
-			FrameRenderer renderer;
-			std::future<void> handle;
-		};
 		
 		struct Renderer::PrivateMembers
 		{
@@ -49,11 +44,11 @@ namespace Renderer
 			
 			UniquePtr<ShaderFactory> shaderFactory;
 			
-			ActiveFrameData activeFrameData;
-			
-			std::list<FrameRenderer> pendingRenderers;
-			
-			FrameRenderer commandTargetFrame;
+			QueueConcurrent<FrameRenderer> frames;
+
+			std::future<int> activeFrameHandle;
+						
+			std::list<UniquePtr<RenderCommand>> commands;
 
 			PrivateMembers(DeviceResources *resources) :
 				psoFactory{ resources },
@@ -65,7 +60,6 @@ namespace Renderer
 		};
 
 		Renderer::Renderer(HWND outputWindow) :
-			maxPendingFrames{ 10 },
 			shouldUpdateRendering{ false },
 			privateMembers{ nullptr }
 		{
@@ -86,9 +80,7 @@ namespace Renderer
 			);			
 
 			privateMembers = std::make_unique<PrivateMembers>(resources.get());					   			
-			privateMembers->commandTargetFrame = FrameRenderer{ resources.get(), commonQueue.get(), privateMembers->registry, *outputSurface, *depthSurface };
-
-			
+						
 			shouldUpdateRendering = true;			
 			updaterHandle = std::async( std::launch::async, &Renderer::UpdateRendering, this);
 			
@@ -97,73 +89,66 @@ namespace Renderer
 
 			int Renderer::UpdateRendering()
 			{
-				while(shouldUpdateRendering)
-				{					
-					if(ActiveRendererIsInvalid())
-					{
-						continue;
-					}					
-				
-					//wait for the active frame to finish
-					privateMembers->activeFrameData.handle.wait();
-					privateMembers->activeFrameData.renderer.WaitForCompletion();//todo: use wait time to preprocess the next available frame
-					
-					//todo: renderer retirement reference updates
-			
-					//if there are pending frames, launch one
-					if(ThereArePendingRenderers())
-					{
-						//launch a new frame
-						LaunchFrameRenderer(PopPendingRenderer());
+				try
+				{
+					while(shouldUpdateRendering)
+					{						
+						if(privateMembers->frames.IsEmpty())
+						{							
+							continue;
+						}
+
+						auto frame{ privateMembers->frames.Pop() };
 																		
+						privateMembers->activeFrameHandle = std::async(std::launch::async, &FrameRenderer::ExecuteCommands, &frame);
+						if(privateMembers->activeFrameHandle.get())
+						{
+							throw;
+						}
+
+						frame.WaitForCompletion();											
 					}
 
+					closeFence->GetFence()->SetEventOnCompletion(1, closeEvent);
+					closeFence->Signal(1, commonQueue.get());
+					WaitForSingleObject(closeEvent, INFINITE);
 				}
-
-				closeFence->GetFence()->SetEventOnCompletion(1, closeEvent);
-				closeFence->Signal(1, commonQueue.get());
-				WaitForSingleObject(closeEvent, INFINITE);
+				catch(std::exception &e)
+				{
+					return 1;
+				}
 				
 				return 0;
 			
 			}
 
-				bool Renderer::ActiveRendererIsInvalid()
-				{
-					std::lock_guard<std::mutex> lock{ frameLaunchMutex };
-					return privateMembers->activeFrameData.renderer.IsInvalid();
+
+		void Renderer::DispatchFrame()
+		{
+			if(privateMembers->frames.Size() >= 2)
+			{
+				privateMembers->commands.clear();
+				return;
+			}					
 			
-				}
-
-				bool Renderer::ThereArePendingRenderers()
-				{
-					std::lock_guard<std::mutex> lock{ pendingFramesMutex };
-
-					return !privateMembers->pendingRenderers.empty();
-					
-				}
-
-				void Renderer::LaunchFrameRenderer(FrameRenderer &&renderer)
-				{
-					std::lock_guard<std::mutex> lock{ frameLaunchMutex };
-								
-					privateMembers->activeFrameData.renderer = std::move(renderer); 																
-					privateMembers->activeFrameData.handle = std::async(std::launch::async, &FrameRenderer::ExecuteCommands, &privateMembers->activeFrameData.renderer);
+			FrameRenderer renderer{ resources.get(), commonQueue.get(), privateMembers->registry, *outputSurface, *depthSurface };
+			for(auto &&cmd : privateMembers->commands)
+			{
+				renderer.AddCommand(std::move(cmd));
+			}
+			privateMembers->commands.clear();
 			
-				}
-
+			privateMembers->frames.Push(std::move(renderer));
+			
+		}
 
 		
+		
 		Renderer::~Renderer()
-		{
-			{				
-				shouldUpdateRendering = false;
-
-				updaterHandle.wait();
-				auto f = updaterHandle.get();
-				
-			}
-			
+		{			
+			shouldUpdateRendering = false;					
+			auto result = updaterHandle.get();
+							
 		}
 
 
@@ -262,69 +247,17 @@ namespace Renderer
 
 		void Renderer::RenderMesh(size_t signatureHandle, size_t psoHandle, size_t meshHandle, size_t sizeInBytes, size_t byteOffsetToIndices)
 		{
-			privateMembers->commandTargetFrame.AddCommand
+			privateMembers->commands.emplace_back
 			(
 				std::make_unique<RenderMeshCommand>(signatureHandle, psoHandle, meshHandle, byteOffsetToIndices, sizeInBytes - byteOffsetToIndices)
 			);			
 
 		}
 
-		void Renderer::DispatchFrame()
-		{			
-			if(ActiveRendererIsInvalid())
-			{
-				LaunchFrameRenderer(std::move(privateMembers->commandTargetFrame));				
-			}
-			else
-			{
-				PushPendingRenderer(std::move(privateMembers->commandTargetFrame));
-			}
-			
-			privateMembers->commandTargetFrame = FrameRenderer{resources.get(), commonQueue.get(), privateMembers->registry, *outputSurface, *depthSurface};
-									
-			//batch commands where possible
-
-			//create descriptors for each command's resources
-			//on the frame renderers portion on the gpu descriptor heap
-			//(root signature tables are allowed to overlap unused parts)
-			
-			//get a frame renderer
-			
-		}
-
-		FrameRenderer Renderer::PopPendingRenderer()
-		{
-			std::lock_guard<std::mutex> lock{ pendingFramesMutex };
-
-			auto out{ privateMembers->pendingRenderers.front() };
-			privateMembers->pendingRenderers.pop_front();
-
-			return out;
-			
-		}
-
-		void Renderer::PushPendingRenderer(FrameRenderer &&renderer)
-		{
-			std::lock_guard<std::mutex> lock{ pendingFramesMutex };
-
-			if(PendingRendererCountIsAtMax())
-			{
-				privateMembers->pendingRenderers.pop_back();
-			}
-			
-			privateMembers->pendingRenderers.push_back(std::move(renderer));
-			
-		}
-
-			bool Renderer::PendingRendererCountIsAtMax() const
-			{
-				return privateMembers->pendingRenderers.size() == maxPendingFrames;
-			
-			}
 
 
 
-
+			   		 
 		
 	}
 
