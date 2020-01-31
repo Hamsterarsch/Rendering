@@ -84,7 +84,7 @@ namespace Renderer
 
 			public: void ExecuteCommands();
 
-				private: void RecordRenderTargetPreperations();
+				private: void RecordRenderTargetPreparations();
 			
 				private: void RecordCommands();
 
