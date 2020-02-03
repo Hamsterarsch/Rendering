@@ -14,7 +14,7 @@ namespace RHA
 			offsetToFreeRegion{ 0 },
 			alignment{ alignment }
 		{
-			if(AlignmentIsInvalid())
+			if(Utility::AlignmentIsInvalid(alignment))
 			{
 				throw Exception::CreationFailed{ "Tried to create a dx12 heap with invalid alignment" };
 			}
@@ -32,11 +32,6 @@ namespace RHA
 			CheckHeapCreation(result);
 						
 		}
-
-			bool HeapImpl::AlignmentIsInvalid() const
-			{
-				return alignment == 0 || (alignment & (alignment-1));
-			}
 
 			void HeapImpl::CheckHeapCreation(const HRESULT result) 
 			{			

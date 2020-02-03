@@ -25,8 +25,6 @@ namespace RHA
 
 				private: static void CheckHeapCreation(HRESULT result);
 			
-				private: bool AlignmentIsInvalid() const;
-
 						
 			public: virtual inline size_t GetSizeInBytes() const override { return sizeInBytes; }
 											
