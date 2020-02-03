@@ -12,6 +12,7 @@ namespace RHA
 		{
 			private: DxPtr<ID3D12CommandQueue> queue;
 
+			
 
 			public: QueueImpl(class DeviceResources *resources, D3D12_COMMAND_LIST_TYPE type, bool isHighPriority);
 

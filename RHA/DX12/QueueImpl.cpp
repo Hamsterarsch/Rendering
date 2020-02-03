@@ -11,14 +11,14 @@ namespace RHA
 	{
 		QueueImpl::QueueImpl(class DeviceResources *resources, const D3D12_COMMAND_LIST_TYPE type, const bool isHighPriority)
 		{
-			D3D12_COMMAND_QUEUE_DESC desc{};
-
-			constexpr int FIRST_ADAPTER{ 0 };
-			
+			D3D12_COMMAND_QUEUE_DESC desc;
+						
 			desc.Type = type;
 			desc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
-			desc.NodeMask = FIRST_ADAPTER;
 			desc.Priority = isHighPriority ? D3D12_COMMAND_QUEUE_PRIORITY_HIGH : D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
+			
+			constexpr int FIRST_ADAPTER{ 0 };
+			desc.NodeMask = FIRST_ADAPTER;
 
 			const auto result
 			{
