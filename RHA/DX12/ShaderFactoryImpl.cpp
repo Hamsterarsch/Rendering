@@ -7,7 +7,7 @@ namespace RHA
 {
 	namespace DX12
 	{
-		ShaderFactoryImpl::ShaderFactoryImpl(unsigned char shaderModelMajor, unsigned char shaderModelMinor) :
+		ShaderFactoryImpl::ShaderFactoryImpl(const unsigned char shaderModelMajor, const unsigned char shaderModelMinor) :
 			insertDebugInfo{ false },
 			skipOptimization{ false },
 			useHighOptimization{ false }
@@ -16,24 +16,32 @@ namespace RHA
 
 		}
 
-		void ShaderFactoryImpl::SkipOptimization(bool value)
+
+		
+		void ShaderFactoryImpl::SkipOptimization(const bool value)
 		{
 			skipOptimization = value;
 			
 		}
 
-		void ShaderFactoryImpl::AddDebugInfo(bool value)
+
+		
+		void ShaderFactoryImpl::AddDebugInfo(const bool value)
 		{
 			insertDebugInfo = value;
 			
 		}
 
-		void ShaderFactoryImpl::AllowHighOptimizationTimes(bool value)
+
+		
+		void ShaderFactoryImpl::AllowHighOptimizationTimes(const bool value)
 		{
 			useHighOptimization = value;
 			
 		}
 
+
+		
 		DxPtr<ID3DBlob> ShaderFactoryImpl::MakeVertexShader(const wchar_t *filepath, const char *entrypoint) const
 		{			
 			return DoCompileFromFile(filepath, entrypoint, "vs");
@@ -42,8 +50,7 @@ namespace RHA
 
 			DxPtr<ID3DBlob> ShaderFactoryImpl::DoCompileFromFile(const wchar_t *filepath, const char *entrypoint, const char *shaderTypePrefix) const
 			{
-				constexpr auto NONE{ nullptr };
-
+				static constexpr auto NO_DEFINES{ nullptr }, NO_INCLUDES{ nullptr };
 				DxPtr<ID3DBlob> shaderBlob{ nullptr }, errorBlob{ nullptr };
 			
 				const auto result
@@ -51,8 +58,8 @@ namespace RHA
 					D3DCompileFromFile
 					(
 						filepath,
-						NONE,
-						NONE,
+						NO_DEFINES,
+						NO_INCLUDES,
 						entrypoint,
 						(shaderTypePrefix + shaderModelSpec).data(),
 						MakeCompileFlags(),
@@ -70,9 +77,9 @@ namespace RHA
 				UINT ShaderFactoryImpl::MakeCompileFlags() const
 				{
 					UINT Flags{ 0 };
-					Flags |= (insertDebugInfo ? D3DCOMPILE_DEBUG : 0);
-					Flags |= (skipOptimization ? D3DCOMPILE_SKIP_OPTIMIZATION : 0);
-					Flags |= (useHighOptimization ? D3DCOMPILE_OPTIMIZATION_LEVEL3 : 0);
+					Flags |= insertDebugInfo ? D3DCOMPILE_DEBUG : 0;
+					Flags |= skipOptimization ? D3DCOMPILE_SKIP_OPTIMIZATION : 0;
+					Flags |= useHighOptimization ? D3DCOMPILE_OPTIMIZATION_LEVEL3 : 0;
 
 					return Flags;
 
@@ -111,10 +118,7 @@ namespace RHA
 			)
 			const
 			{
-				constexpr auto UNNAMED{ nullptr };
-				constexpr auto NO_DEFINES{ nullptr };
-				constexpr auto NO_INCLUDES{ nullptr };
-
+				static constexpr auto UNNAMED{ nullptr }, NO_DEFINES{ nullptr }, NO_INCLUDES{ nullptr };
 				DxPtr<ID3DBlob> shaderBlob{ nullptr }, errorBlob{ nullptr };
 
 				const auto result
@@ -157,16 +161,19 @@ namespace RHA
 				}
 
 
+		
 		DxPtr<ID3DBlob> ShaderFactoryImpl::MakePixelShader(const wchar_t *filepath, const char *entrypoint) const
 		{			
 			return DoCompileFromFile(filepath, entrypoint, "ps");
 						
 		}
 
+
+		
 		DxPtr<ID3DBlob> ShaderFactoryImpl::MakePixelShader
 		(
 			const char *shader, 
-			size_t shaderLength,
+			const size_t shaderLength,
 			const char *entrypoint
 		)
 		const
