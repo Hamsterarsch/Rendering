@@ -29,7 +29,7 @@ namespace RHA
 
 
 		
-		void FenceImpl::Signal(size_t value)
+		void FenceImpl::Signal(const size_t value)
 		{
 			const auto result
 			{
@@ -46,7 +46,7 @@ namespace RHA
 
 
 		
-		void FenceImpl::Signal(size_t value, Queue* queue)
+		void FenceImpl::Signal(const size_t value, Queue* queue)
 		{
 			const auto result
 			{
