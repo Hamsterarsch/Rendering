@@ -62,7 +62,7 @@ namespace RHA
 				{
 					DxPtr<IDXGIAdapter1> hardwareAdapter;
 					dxgiFactory->EnumAdapters1(adapterIndex, hardwareAdapter.GetAddressOf());
-					if (hardwareAdapter)
+					if (hardwareAdapter == nullptr)
 					{						
 						break;
 					}
