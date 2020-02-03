@@ -14,21 +14,29 @@ namespace RHA
 			{
 				resources->GetDevice()->CreateCommandAllocator(type, IID_PPV_ARGS(&allocator))
 			};
-
-			if(FAILED(result))
-			{
-				throw Exception::CreationFailed{ "Could not create dx12 command allocator" };
-			}			
-
+			CheckCreation(result);
 			
 		}
 
+			void CmdAllocatorImpl::CheckCreation(const HRESULT result)
+			{
+				if(FAILED(result))
+				{
+					throw Exception::CreationFailed{ "Could not create dx12 command allocator" };
+				}
+			
+			}
+
+
+		
 		UniquePtr<CmdList> CmdAllocatorImpl::AllocateList()
 		{			
 			return std::make_unique<CmdListImpl>(*resources, *this);
 			
 		}
 
+
+		
 		HRESULT CmdAllocatorImpl::Reset()
 		{
 			return allocator->Reset();
