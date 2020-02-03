@@ -22,7 +22,7 @@ namespace RHA
 			D3D12_HEAP_DESC desc{};
 			desc.Alignment = alignment;
 			desc.Properties.Type = D3D12_HEAP_TYPE_DEFAULT;
-			desc.SizeInBytes = Utility::IncreaseValueToAlignment(sizeInBytes, alignment);
+			desc.SizeInBytes = RHA::Utility::IncreaseValueToAlignment(sizeInBytes, alignment);
 			desc.Flags = flags;
 			
 			const auto result
@@ -38,7 +38,7 @@ namespace RHA
 				return alignment == 0 || (alignment & (alignment-1));
 			}
 
-			void HeapImpl::CheckHeapCreation(const HRESULT result) const
+			void HeapImpl::CheckHeapCreation(const HRESULT result) 
 			{			
 				if(FAILED(result))
 				{
@@ -65,7 +65,7 @@ namespace RHA
 			allocation.heap = heap.Get();
 			allocation.offsetToAllocation = offsetToFreeRegion;
 
-			UpdateAllocationOffsets(sizeInBytes);			
+			IncreaseFreeRegionOffset(sizeInBytes);			
 			allocation.allocationSize = offsetToFreeRegion - allocation.offsetToAllocation;
 			return allocation;
 						
@@ -80,9 +80,9 @@ namespace RHA
 			
 			}
 		
-			void HeapImpl::UpdateAllocationOffsets(const size_t sizeInBytes)
+			void HeapImpl::IncreaseFreeRegionOffset(const size_t sizeInBytes)
 			{				
-				offsetToFreeRegion = min(Utility::IncreaseValueToAlignment(offsetToFreeRegion + sizeInBytes, alignment), sizeInBytes);
+				offsetToFreeRegion = Utility::IncreaseValueToAlignment(offsetToFreeRegion + sizeInBytes, alignment);
 			
 			}
 
