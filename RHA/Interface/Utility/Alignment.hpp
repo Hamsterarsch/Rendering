@@ -11,6 +11,12 @@ namespace RHA
 		
 		}
 
+		inline bool AlignmentIsInvalid(const size_t alignment)
+		{
+			return alignment == 0	||	 alignment & alignment-1;
+			
+		}
+
 		
 	}
 	

@@ -39,7 +39,7 @@ namespace Renderer
 				private: static void CheckRootSignatureCreation(HRESULT result);
 
 			
-			public: RootSignatureData MakeRootSignature(const void *serializedSignature, size_t sizeInBytes);
+			public: RootSignatureData MakeRootSignature(const void *serializedSignature, size_t sizeInBytes, size_t samplerCount);
 									
 		};
 

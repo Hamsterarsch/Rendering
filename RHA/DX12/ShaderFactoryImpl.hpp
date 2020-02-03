@@ -10,13 +10,13 @@ namespace RHA
 	{
 		class ShaderFactoryImpl : public ShaderFactory
 		{
-			std::string shaderModelSpec;
+			private: std::string shaderModelSpec;
 			
-			bool insertDebugInfo;
+			private: bool insertDebugInfo;
 			
-			bool skipOptimization;
+			private: bool skipOptimization;
 			
-			bool useHighOptimization;
+			private: bool useHighOptimization;
 
 
 			

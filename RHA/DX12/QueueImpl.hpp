@@ -12,6 +12,7 @@ namespace RHA
 		{
 			private: DxPtr<ID3D12CommandQueue> queue;
 
+			
 
 			public: QueueImpl(class DeviceResources *resources, D3D12_COMMAND_LIST_TYPE type, bool isHighPriority);
 
@@ -20,6 +21,8 @@ namespace RHA
 			public: virtual void SubmitCommandList(CmdList *list) override;
 
 			public: virtual void Signal(size_t value, Fence *fence) override;
+
+			public: virtual void Wait(size_t minimumValue, Fence *fence) override;
 			
 		};
 		

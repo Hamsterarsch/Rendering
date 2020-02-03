@@ -130,7 +130,8 @@ namespace Renderer
 		RootSignatureData RootSignatureFactory::MakeRootSignature
 		(
 			const void *serializedSignature,
-			const size_t sizeInBytes
+			const size_t sizeInBytes,
+			const size_t samplerCount
 		)
 		{
 			DxPtr<ID3D12VersionedRootSignatureDeserializer> deserializer;
@@ -160,6 +161,7 @@ namespace Renderer
 			};
 			CheckRootSignatureCreation(result);
 
+			out.samplerAmount = samplerCount;			
 			return out;
 			
 		}

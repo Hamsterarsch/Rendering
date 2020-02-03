@@ -23,7 +23,7 @@ namespace Renderer
 			allocator = Facade::MakeCmdAllocator(resources, D3D12_COMMAND_LIST_TYPE_DIRECT);
 			
 			list = allocator->AllocateList();
-			list->AsGraphicsList()->Close();
+			list->StopRecording();
 
 			event = CreateEvent(nullptr, false, true, nullptr);
 			

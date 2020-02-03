@@ -38,7 +38,7 @@ namespace RHA
 			
 			}
 
-				void DeviceResourcesImpl::CheckDebugControllerCreation(HRESULT result) 
+				void DeviceResourcesImpl::CheckDebugControllerCreation(const HRESULT result) 
 				{
 					if (FAILED(result))
 					{
@@ -47,7 +47,7 @@ namespace RHA
 				
 				}
 
-			void DeviceResourcesImpl::CheckDxgiFactoryCreation(HRESULT result)
+			void DeviceResourcesImpl::CheckDxgiFactoryCreation(const HRESULT result)
 			{
 				if (FAILED(result))
 				{
@@ -58,43 +58,44 @@ namespace RHA
 
 			void DeviceResourcesImpl::CreateDeviceForFeatureLevel()
 			{
-				DxPtr<IDXGIAdapter1> hardwareAdapter;
 				for (UINT adapterIndex{ 0 }; ; ++adapterIndex)
 				{
-					if (dxgiFactory->EnumAdapters1(adapterIndex, hardwareAdapter.GetAddressOf()) == DXGI_ERROR_NOT_FOUND)//exit when there are no more adapters to iterate
-					{
-						continue;
+					DxPtr<IDXGIAdapter1> hardwareAdapter;
+					dxgiFactory->EnumAdapters1(adapterIndex, hardwareAdapter.GetAddressOf());
+					if (hardwareAdapter == nullptr)
+					{						
+						break;
 					}
-
-					DXGI_ADAPTER_DESC1 desc; hardwareAdapter->GetDesc1(&desc);
-										
+															
 					const auto result
 					{
 						D3D12CreateDevice(hardwareAdapter.Get(), minimumFeatureLevel, IID_PPV_ARGS(&device))
 					};
-
-
-					if (SUCCEEDED(result))
+					
+					if (SUCCEEDED(result) && DoesDeviceSupportAllOptions())
 					{
-						D3D12_FEATURE_DATA_D3D12_OPTIONS options;
-						device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS, &options, sizeof(decltype(options)) );
-						if(options.TiledResourcesTier > D3D12_TILED_RESOURCES_TIER_NOT_SUPPORTED)
-						{
-							break;					
-						}						
+						break;
 					}					
-					hardwareAdapter->Release();
-
+					
 				}
 				CheckDeviceCreation();
 			
 			}
 
+				bool DeviceResourcesImpl::DoesDeviceSupportAllOptions() const
+				{
+					D3D12_FEATURE_DATA_D3D12_OPTIONS options;
+					device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS, &options, sizeof(decltype(options)) );
+					
+					return options.TiledResourcesTier > D3D12_TILED_RESOURCES_TIER_NOT_SUPPORTED;
+			
+				}
+
 				void DeviceResourcesImpl::CheckDeviceCreation() const
 				{
 					if (!device)
 					{
-						throw Exception::CreationFailed{ "Could not create dx12 device" };
+						throw Exception::CreationFailed{ "Could not create dx12 device with tiled resource support" };
 					}
 			
 				}

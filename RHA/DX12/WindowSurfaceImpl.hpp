@@ -42,16 +42,6 @@ namespace RHA
 			
 					private: static void CheckBufferQuery(HRESULT result);
 							 				
-				private: void PopulateBufferData(DeviceResources *resources);
-			
-					private: void CreateClearCommandForBuffer(unsigned bufferIndex);
-			
-					private: void CreatePresentCommandForBuffer(unsigned bufferIndex);
-			
-					private: void CreateEventsForBuffer(unsigned bufferIndex);
-			
-					private: void CreateFencesForBuffer(unsigned bufferIndex, DeviceResources *resource);
-
 
 			public: virtual inline DxPtr<ID3D12Resource> GetResourceTemplate() override { return buffers[0]; };
 												   			

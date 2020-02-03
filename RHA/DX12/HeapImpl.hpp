@@ -23,10 +23,8 @@ namespace RHA
 
 			public: HeapImpl(DeviceResources *resources, size_t sizeInBytes, size_t alignment, D3D12_HEAP_FLAGS flags);
 
-				private: void CheckHeapCreation(HRESULT result) const;
+				private: static void CheckHeapCreation(HRESULT result);
 			
-				private: bool AlignmentIsInvalid() const;
-
 						
 			public: virtual inline size_t GetSizeInBytes() const override { return sizeInBytes; }
 											
@@ -36,7 +34,7 @@ namespace RHA
 
 				private: void CheckAllocationSize(size_t allocationSizeInBytes) const;
 						
-				private: void UpdateAllocationOffsets(size_t sizeInBytes);
+				private: void IncreaseFreeRegionOffset(size_t sizeInBytes);
 
 						
 			public: virtual void Reset() override;

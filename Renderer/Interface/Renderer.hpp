@@ -1,14 +1,11 @@
 #pragma once
 #include <Windows.h>
-#include <condition_variable>
 #include <future>
 #include "RendererExportHelper.hpp"
 #include "Shared/PtrTypes.hpp"
 #include "Resources/Pso/PipelineTypes.hpp"
 #include "Resources/Pso/ShaderList.hpp"
 #include "Resources/Pso/VertexLayoutTypes.hpp"
-
-
 #include "DxPtrTypes.hpp"
 #include "RenderCommand.hpp"
 
@@ -31,6 +28,7 @@ namespace RHA
 struct ID3D12RootSignature;
 struct ID3D12PipelineState;
 struct ID3D12Resource;
+
 
 namespace Renderer
 {
@@ -81,14 +79,7 @@ namespace Renderer
 		};
 						
 		class RENDERER_DLLSPEC Renderer
-		{
-			
-			private: const unsigned maxPendingFrames;
-			
-			private: std::mutex updaterMutex, frameLaunchMutex, pendingFramesMutex;
-
-			private: std::condition_variable updaterCondition;
-
+		{	
 			private: bool shouldUpdateRendering;
 			
 			private: std::future<int> updaterHandle;
@@ -97,8 +88,6 @@ namespace Renderer
 
 			private: UniquePtr<RHA::DX12::Queue> commonQueue;
 
-			private: UniquePtr<RHA::DX12::CmdAllocator> commonAllocator;
-			
 			private: UniquePtr<RHA::DX12::WindowSurface> outputSurface;
 
 			private: UniquePtr<RHA::DX12::Fence> closeFence;
@@ -108,15 +97,9 @@ namespace Renderer
 			private: UniquePtr<RHA::DX12::DepthSurface> depthSurface;
 
 			private: UniquePtr<class ResourceFactory> resourceFactory;
-			/*
-					 UniquePtr<TriangleData> data;
-					 DxPtr<ID3D12RootSignature> signature;
-					 DxPtr<ID3D12PipelineState> pipeline;
-					 UniquePtr<RHA::DX12::CmdList> list;
-					 UniquePtr<class ResourceAllocation> meshBufferAllocation;*/
-						
-			private: struct PrivateMembers;
 
+			private: struct PrivateMembers;
+			
 			private: UniquePtr<PrivateMembers> privateMembers;
 
 					 		
@@ -125,18 +108,31 @@ namespace Renderer
 
 				private: int UpdateRendering();
 
-					private: bool ActiveRendererIsInvalid();
+					private: void UpdateIdle();
 			
-					private: void LaunchFrameRenderer(FrameRenderer &&renderer);
+					private: void ExecuteNextFrame();
 
-				
-
+					private: void WaitForIdleQueue();
+							 
 			public: ~Renderer();
 
-
 			
-			public: size_t MakeAndUploadBufferResource(const void *data, size_t sizeInBytes);
+			public: void DispatchFrame();
 
+				private: bool NextFrameSlotIsOccupied() const;
+
+				private: void AbortDispatch();
+
+				private: FrameRenderer MakeFrameFromCommands();
+
+			public: void RenderMesh(size_t signatureHandle, size_t psoHandle, size_t meshHandle, size_t sizeInBytes, size_t byteOffsetToIndices);
+			
+			
+			public: size_t MakeBuffer(const void *data, size_t sizeInBytes);
+
+			public: void RemakeBuffer(const void *data, size_t sizeInBytes, size_t handle);
+			
+			
 			public: void CompileVertexShader(const char *shader, size_t length, SerializationHook *serializer) const;
 
 			public: void CompilePixelShader(const char *shader, size_t length, SerializationHook *serializer) const;
@@ -144,37 +140,20 @@ namespace Renderer
 
 			public: void SerializeRootSignature(unsigned cbvAmount, unsigned srvAmount, unsigned uavAmount, unsigned samplerAmount, SerializationHook *serializer);
 
-			public: size_t MakeRootSignature(const void *serializedData, size_t dataLength);
+			public: size_t MakeRootSignature(const void *serializedData);
+								
+				private: static SIZE_T ExtractSizeFrom(const void *data);
+
+				private: static const unsigned char *ExtractSignatureFrom(const void *data);
+
+				private: static size_t ExtractSamplerCountFrom(const void *data, SIZE_T signatureSize);
 			
 			public: size_t MakePso(PipelineTypes pipelineType, VertexLayoutTypes vertexLayout, const ShaderList &shaders, size_t signatureHandle);
-
-			
-			
-
-			public: bool ResourceHasToBeReloaded(size_t handle);
-			
-			public: void MakeBufferWithOldHandle(const void *data, size_t sizeInBytes, size_t handle);
-
-
-			public: void RenderMesh(size_t signatureHandle, size_t psoHandle, size_t meshHandle, size_t sizeInBytes, size_t byteOffsetToIndices);
-
-			public: void DispatchFrame();
-			
-			public: FrameRenderer PopPendingRenderer();
-
-			public: void PushPendingRenderer(FrameRenderer &&renderer);
-
-				private: bool PendingRendererCountIsAtMax() const;
-			
-			public: bool ThereArePendingRenderers();
 								
-			
-			public: void SubmitFrameInfo();
 
-			public: void WaitForCapacity();
-
+			public: bool ResourceMustBeRemade(size_t handle);
 			
-			
+									   					 											
 		};
 
 		

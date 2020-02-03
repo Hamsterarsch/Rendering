@@ -24,60 +24,153 @@ namespace RHA
 				)
 			};
 		
-			if(FAILED(result))
-			{
-				throw Exception::CreationFailed{ "Could not create dx12 command list" };
-			}
-
-			glist = AsGraphicsList();
+			CheckCreation(result);
+			glist = QueryGraphicsList();
 			
 		}
 
-		DxPtr<ID3D12GraphicsCommandList> CmdListImpl::AsGraphicsList()
+			void CmdListImpl::CheckCreation(const HRESULT result)
+			{
+				if(FAILED(result))
+				{
+					throw Exception::CreationFailed{ "Could not create dx12 command list" };
+				}
+				
+			}
+
+			DxPtr<ID3D12GraphicsCommandList> CmdListImpl::QueryGraphicsList()
+			{
+				DxPtr<ID3D12GraphicsCommandList> out;
+
+				const auto result
+				{
+					list.As(&out)
+				};
+
+				if(FAILED(result))
+				{
+					throw Exception::Exception{ "Conversion to dx12 graphics command list failed" };
+				}
+
+				return out;
+			
+			}
+
+
+					
+		void CmdListImpl::RecordSetPipelineState(ID3D12PipelineState *pipelineState)
 		{
-			DxPtr<ID3D12GraphicsCommandList> out;
-
-			const auto result
-			{
-				list.As(&out)
-			};
-
-			if(FAILED(result))
-			{
-				throw Exception::Exception{ "Conversion to dx12 graphics command list failed" };
-			}
-
-			return out;
+			glist->SetPipelineState(pipelineState);
 			
 		}
 
+
+		
+		void CmdListImpl::RecordSetGraphicsSignature(ID3D12RootSignature *signature)
+		{
+			glist->SetGraphicsRootSignature(signature);
+			
+		}
+
+
+		
 		void CmdListImpl::RecordCopyResource(ID3D12Resource *destination, ID3D12Resource *source)
 		{
 			glist->CopyResource(destination, source);
 			
 		}
 
-		void CmdListImpl::StopRecording()
+
+		
+		void CmdListImpl::RecordSetRenderTargets
+		(
+			const unsigned numTargets,
+			const D3D12_CPU_DESCRIPTOR_HANDLE *targetDescriptors,
+			const bool isTargetDescriptorARangeStart,
+			const D3D12_CPU_DESCRIPTOR_HANDLE *dsv
+		)
 		{
-			const auto result{ glist->Close() };
-			
-			if(FAILED(result))
-			{
-				if(result == E_OUTOFMEMORY)
-				{
-					throw Exception::OutOfMemory{ "Insufficient memory to close dx12 cmd list" };
-				}
-				
-				throw Exception::Exception{ "Could not close dx12 cmd list" };
-			}
+			glist->OMSetRenderTargets(numTargets, targetDescriptors, isTargetDescriptorARangeStart, dsv);
 			
 		}
 
-		void CmdListImpl::StartRecording(CmdAllocator *allocator)
+
+
+		void CmdListImpl::RecordClearDsv
+		(
+			const D3D12_CPU_DESCRIPTOR_HANDLE descriptor,
+			const D3D12_CLEAR_FLAGS flags,
+			const float depthValue,
+			const unsigned char stencilValue
+		)
 		{
-			glist->Reset(allocator->GetAllocator().Get(), nullptr);
+			RecordClearDsv(descriptor, flags, depthValue, stencilValue, 0, nullptr);
 			
 		}
+
+			void CmdListImpl::RecordClearDsv
+			(
+				const D3D12_CPU_DESCRIPTOR_HANDLE descriptor,
+				const D3D12_CLEAR_FLAGS flags,
+				const float depthValue,
+				const unsigned char stencilValue, 
+				const unsigned numRects,
+				const D3D12_RECT *clearRects
+			)
+			{
+				glist->ClearDepthStencilView(descriptor, flags, depthValue, stencilValue, numRects, clearRects);
+			
+			}
+
+
+		
+		void CmdListImpl::StopRecording()
+		{
+			const auto result{ glist->Close() };			
+			CheckClose(result);
+			
+		}
+
+			void CmdListImpl::CheckClose(const HRESULT result)
+			{
+				if(FAILED(result))
+				{
+					if(result == E_OUTOFMEMORY)
+					{
+						throw Exception::OutOfMemory{ "Insufficient memory to close dx12 cmd list" };
+					}
+					
+					throw Exception::Exception{ "Could not close dx12 cmd list" };
+				}
+				
+			}
+
+
+		
+		void CmdListImpl::StartRecording(CmdAllocator *allocator)
+		{
+			StartRecording(allocator, nullptr);
+			
+		}
+
+			void CmdListImpl::StartRecording(CmdAllocator *allocator, ID3D12PipelineState *initialPipeline)
+			{
+				const auto result
+				{
+					glist->Reset(allocator->GetAllocator().Get(), initialPipeline)
+				};
+				CheckReset(result);
+				
+			}
+
+				void CmdListImpl::CheckReset(const HRESULT result)
+				{
+					if(FAILED(result))
+					{
+						throw Exception::Exception{ "Could not reset dx12 graphics cmd list" };
+					}
+			
+				}
 
 		
 	}

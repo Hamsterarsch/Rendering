@@ -14,6 +14,7 @@
 #include "FrameRenderer.hpp"
 #include "RenderMeshCommand.hpp"
 #include "Resources/Pso/VertexLayoutProvider.hpp"
+#include "Shared/Types/Containers/QueueConcurrent.hpp"
 
 
 #if _DEBUG
@@ -22,36 +23,32 @@
 	constexpr bool enableDebugLayers = false;
 #endif
 
-
-
-struct vertex
-{
-	float x, y, z;
-};
-
+	
 namespace Renderer
 {
 	namespace DX12
 	{
 		using namespace RHA::DX12;
-
-		struct InflightData
-		{
-			FrameRenderer renderer;
-			std::future<void> handle;
-		};
 		
 		struct Renderer::PrivateMembers
 		{
-			HandleFactory handleFactory;			
+			HandleFactory handleFactory;
+			
 			ResourceRegistry registry;
+			
 			VertexLayoutProvider vertexLayoutProvider;
+			
 			PsoFactory psoFactory;
+			
 			RootSignatureFactory signatureFactory;
+			
 			UniquePtr<ShaderFactory> shaderFactory;
-			InflightData activeFrameData;
-			std::list<FrameRenderer> pendingRenderers;
-			FrameRenderer commandTargetFrame;
+			
+			QueueConcurrent<FrameRenderer> frames;
+
+			std::future<int> activeFrameHandle;
+						
+			std::list<UniquePtr<RenderCommand>> commandsToDispatch;
 
 			PrivateMembers(DeviceResources *resources) :
 				psoFactory{ resources },
@@ -61,21 +58,13 @@ namespace Renderer
 			}				
 			
 		};
-		
-		struct TriangleData
-		{
-			D3D12_VERTEX_BUFFER_VIEW vertexView;
-			D3D12_INDEX_BUFFER_VIEW indexView;
-		};
-		
+
 		Renderer::Renderer(HWND outputWindow) :
-			maxPendingFrames{ 10 },
 			shouldUpdateRendering{ false },
 			privateMembers{ nullptr }
 		{
 			resources = Facade::MakeDeviceResources(D3D_FEATURE_LEVEL_11_0, enableDebugLayers);
 			commonQueue = Facade::MakeQueue(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT);			
-			commonAllocator = Facade::MakeCmdAllocator(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT);
 
 			outputSurface = Facade::MakeWindowSurface(resources.get(), commonQueue.get(), outputWindow);
 			depthSurface = Facade::MakeDepthSurface(resources.get(), outputSurface->GetResourceTemplate()->GetDesc());
@@ -83,89 +72,136 @@ namespace Renderer
 			closeFence = Facade::MakeFence(resources.get());
 			closeEvent = CreateEvent(nullptr, false, false, nullptr);
 						
-			resourceFactory = std::make_unique<ResourceFactory>(resources.get(), commonQueue.get(), std::make_unique<ResourceMemory>(resources.get(), D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT * 15, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT, D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS));			
+			resourceFactory = std::make_unique<ResourceFactory>
+			(
+				resources.get(),
+				commonQueue.get(),
+				std::make_unique<ResourceMemory>(resources.get(), D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT * 15, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT, D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS)
+			);			
 
 			privateMembers = std::make_unique<PrivateMembers>(resources.get());					   			
-			privateMembers->commandTargetFrame = FrameRenderer{ resources.get(), commonQueue.get(), privateMembers->registry, *outputSurface, *depthSurface };
-			
+						
+			shouldUpdateRendering = true;			
 			updaterHandle = std::async( std::launch::async, &Renderer::UpdateRendering, this);
-			{
-				std::lock_guard<std::mutex> lock{ updaterMutex };
-				shouldUpdateRendering = true;			
-			}
-			updaterCondition.notify_all();
-				
+							
 		}
 
 			int Renderer::UpdateRendering()
 			{
+				try
 				{
-					std::unique_lock<std::mutex> lock{ updaterMutex };
-					updaterCondition.wait(lock, [&shouldUpdateRendering = shouldUpdateRendering] { return shouldUpdateRendering; });
-					lock.unlock();
-				}
-			
-				while(shouldUpdateRendering)
-				{					
-					if(ActiveRendererIsInvalid())
-					{
-						continue;
-					}					
-				
-					//wait for the active frame to finish
-					privateMembers->activeFrameData.handle.wait();
-					privateMembers->activeFrameData.renderer.WaitForCompletion();//todo: use wait time to preprocess the next available frame
-					
-					//todo: renderer retirement reference updates
-			
-					//if there are pending frames, launch one
-					if(ThereArePendingRenderers())
-					{
-						//launch a new frame
-						LaunchFrameRenderer(PopPendingRenderer());
-																		
+					while(shouldUpdateRendering)
+					{						
+						if(privateMembers->frames.IsEmpty())
+						{
+							UpdateIdle();
+							continue;
+						}
+						ExecuteNextFrame();										
 					}
 
+					WaitForIdleQueue();
 				}
-
-				closeFence->GetFence()->SetEventOnCompletion(1, closeEvent);
-				closeFence->Signal(1, commonQueue.get());
-				WaitForSingleObject(closeEvent, INFINITE);
-				
+				catch(std::exception &e)
+				{
+					return 1;
+				}
+			
 				return 0;
 			
 			}
 
-				bool Renderer::ActiveRendererIsInvalid()
+				void Renderer::UpdateIdle()
+				{					
+				}
+
+				void Renderer::ExecuteNextFrame()
 				{
-					std::lock_guard<std::mutex> lock{ frameLaunchMutex };
-					return privateMembers->activeFrameData.renderer.IsInvalid();
+					auto frame{ privateMembers->frames.Pop() };
+																	
+					privateMembers->activeFrameHandle = std::async(std::launch::async, &FrameRenderer::ExecuteCommands, &frame);
+					if(privateMembers->activeFrameHandle.get())
+					{
+						throw;
+					}
+
+					frame.WaitForCompletion();
 			
 				}
 
-				void Renderer::LaunchFrameRenderer(FrameRenderer &&renderer)
+				void Renderer::WaitForIdleQueue()
 				{
-					std::lock_guard<std::mutex> lock{ frameLaunchMutex };
-								
-					privateMembers->activeFrameData.renderer = std::move(renderer); 																
-					privateMembers->activeFrameData.handle = std::async(std::launch::async, &FrameRenderer::ExecuteCommands, &privateMembers->activeFrameData.renderer);
+					closeFence->GetFence()->SetEventOnCompletion(1, closeEvent);
+					closeFence->Signal(1, commonQueue.get());
+					WaitForSingleObject(closeEvent, INFINITE);
 			
 				}
 
+	
+		
 		Renderer::~Renderer()
-		{
-			{
-				std::lock_guard<std::mutex> lock{ updaterMutex };
-				shouldUpdateRendering = false;
+		{			
+			shouldUpdateRendering = false;					
+			auto result = updaterHandle.get();
+							
+		}
 
-				updaterHandle.wait();
-				auto f = updaterHandle.get();
-				
+
+
+		void Renderer::DispatchFrame()
+		{
+			if(NextFrameSlotIsOccupied())
+			{
+				AbortDispatch();
+				return;
 			}
+			
+			privateMembers->frames.Push
+			(
+				MakeFrameFromCommands()
+			);
 			
 		}
 
-		size_t Renderer::MakeAndUploadBufferResource(const void *data, const size_t sizeInBytes)
+			bool Renderer::NextFrameSlotIsOccupied() const
+			{
+				return privateMembers->frames.Size() >= 2;
+			
+			}
+
+			void Renderer::AbortDispatch()
+			{
+				privateMembers->commandsToDispatch.clear();
+			
+			}
+
+			FrameRenderer Renderer::MakeFrameFromCommands()
+			{
+				FrameRenderer renderer{ resources.get(), commonQueue.get(), privateMembers->registry, *outputSurface, *depthSurface };
+				for(auto &&cmd : privateMembers->commandsToDispatch)
+				{
+					renderer.AddCommand(std::move(cmd));
+				}
+				privateMembers->commandsToDispatch.clear();
+
+				return renderer;
+			
+			}
+
+		
+
+		void Renderer::RenderMesh(size_t signatureHandle, size_t psoHandle, size_t meshHandle, size_t sizeInBytes, size_t byteOffsetToIndices)
+		{
+			privateMembers->commandsToDispatch.emplace_back
+			(
+				std::make_unique<RenderMeshCommand>(signatureHandle, psoHandle, meshHandle, byteOffsetToIndices, sizeInBytes - byteOffsetToIndices)
+			);			
+
+		}
+
+		
+		
+		size_t Renderer::MakeBuffer(const void *data, const size_t sizeInBytes)
 		{
 			auto handle{ privateMembers->handleFactory.MakeHandle(ResourceTypes::Buffer) };
 
@@ -224,14 +260,21 @@ namespace Renderer
 			
 		}
 
-		size_t Renderer::MakeRootSignature(const void *serializedData, size_t dataLength)
+
+		
+		size_t Renderer::MakeRootSignature(const void *serializedData)
 		{
-			auto *signatureSize{ reinterpret_cast<const SIZE_T *>(serializedData) };
-			auto *signaturePtr{ reinterpret_cast<const unsigned char *>(serializedData) + sizeof *signatureSize};
-
-			auto signatureData{ privateMembers->signatureFactory.MakeRootSignature(signaturePtr, *signatureSize) };
-			signatureData.samplerAmount = *reinterpret_cast<const size_t *>(signaturePtr + *signatureSize);
-
+			const auto size{ ExtractSizeFrom(serializedData) };
+			auto signatureData
+			{
+				privateMembers->signatureFactory.MakeRootSignature
+				(
+					ExtractSignatureFrom(serializedData), 
+					size,
+					ExtractSamplerCountFrom(serializedData, size)
+				)
+			};
+			
 			const auto handle{ privateMembers->handleFactory.MakeHandle(ResourceTypes::Signature) };
 			privateMembers->registry.RegisterSignature(handle.hash, std::move(signatureData));
 
@@ -239,6 +282,31 @@ namespace Renderer
 			
 		}
 
+			SIZE_T Renderer::ExtractSizeFrom(const void *data)
+			{
+				return *reinterpret_cast<const SIZE_T *>(data);
+			
+			}
+
+			const unsigned char *Renderer::ExtractSignatureFrom(const void *data)
+			{
+				return reinterpret_cast<const unsigned char *>(data) + sizeof SIZE_T;
+			
+			}
+
+			size_t Renderer::ExtractSamplerCountFrom(const void *data, const SIZE_T signatureSize)
+			{
+				return *reinterpret_cast<const size_t *>
+				(
+					reinterpret_cast<const unsigned char *>(data)
+					+ sizeof SIZE_T
+					+ signatureSize
+				);
+			
+			}
+
+
+		
 		size_t Renderer::MakePso(PipelineTypes pipelineType, VertexLayoutTypes vertexLayout, const ShaderList &shaders, size_t signatureHandle)
 		{
 			auto pipelineState{	privateMembers->psoFactory.MakePso(shaders, privateMembers->registry.GetSignature(signatureHandle), pipelineType, privateMembers->vertexLayoutProvider.GetLayoutDesc(vertexLayout), D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE) };
@@ -250,90 +318,14 @@ namespace Renderer
 			
 		}
 
-		bool Renderer::ResourceHasToBeReloaded(size_t handle)
+
+		
+		bool Renderer::ResourceMustBeRemade(size_t handle)
 		{
 			return privateMembers->registry.HandleIsInvalid(handle);
 			
 		}
-
-
-		void Renderer::RenderMesh(size_t signatureHandle, size_t psoHandle, size_t meshHandle, size_t sizeInBytes, size_t byteOffsetToIndices)
-		{
-			privateMembers->commandTargetFrame.AddCommand
-			(
-				std::make_unique<RenderMeshCommand>(signatureHandle, psoHandle, meshHandle, byteOffsetToIndices, sizeInBytes - byteOffsetToIndices)
-			);			
-
-		}
-
-		void Renderer::DispatchFrame()
-		{			
-			if(ActiveRendererIsInvalid())
-			{
-				LaunchFrameRenderer(std::move(privateMembers->commandTargetFrame));				
-			}
-			else
-			{
-				PushPendingRenderer(std::move(privateMembers->commandTargetFrame));
-			}
-			
-			privateMembers->commandTargetFrame = FrameRenderer{resources.get(), commonQueue.get(), privateMembers->registry, *outputSurface, *depthSurface};
-									
-			//batch commands where possible
-
-			//create descriptors for each command's resources
-			//on the frame renderers portion on the gpu descriptor heap
-			//(root signature tables are allowed to overlap unused parts)
-			
-			//get a frame renderer
-			
-		}
-
-		FrameRenderer Renderer::PopPendingRenderer()
-		{
-			std::lock_guard<std::mutex> lock{ pendingFramesMutex };
-
-			auto out{ std::move(privateMembers->pendingRenderers.front()) };
-			privateMembers->pendingRenderers.pop_front();
-
-			return out;
-			
-		}
-
-		void Renderer::PushPendingRenderer(FrameRenderer &&renderer)
-		{
-			std::lock_guard<std::mutex> lock{ pendingFramesMutex };
-
-			if(PendingRendererCountIsAtMax())
-			{
-				privateMembers->pendingRenderers.pop_back();
-			}
-			
-			privateMembers->pendingRenderers.push_back(std::move(renderer));
-			
-		}
-
-			bool Renderer::PendingRendererCountIsAtMax() const
-			{
-				return privateMembers->pendingRenderers.size() == maxPendingFrames;
-			
-			}
-
-
-		bool Renderer::ThereArePendingRenderers()
-		{
-			std::lock_guard<std::mutex> lock{ pendingFramesMutex };
-
-			return !privateMembers->pendingRenderers.empty();
-			
-		}
-
-		void Renderer::SubmitFrameInfo()
-		{
-			
-					
-		}
-
+		
 		
 	}
 

@@ -18,6 +18,8 @@ namespace RHA
 
 			public: CmdAllocatorImpl(DeviceResources *resources, D3D12_COMMAND_LIST_TYPE type);
 
+				private: static void CheckCreation(HRESULT result);
+			
 			public: virtual inline D3D12_COMMAND_LIST_TYPE GetType() const override { return type; }
 			
 			public: virtual inline DxPtr<ID3D12CommandAllocator> GetAllocator() override { return allocator; }

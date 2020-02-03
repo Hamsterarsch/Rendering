@@ -116,9 +116,6 @@
     <ClInclude Include="Interface\DX12\Heap.hpp">
       <Filter>Interface\DX12</Filter>
     </ClInclude>
-    <ClInclude Include="Interface\Utility\Alignment.hpp">
-      <Filter>Interface</Filter>
-    </ClInclude>
     <ClInclude Include="Interface\DX12\AllocatableGpuMemory.hpp">
       <Filter>Interface\DX12</Filter>
     </ClInclude>
@@ -130,6 +127,9 @@
     </ClInclude>
     <ClInclude Include="Interface\DX12\DepthSurface.hpp">
       <Filter>Interface\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\Utility\Alignment.hpp">
+      <Filter>Interface\Utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -144,6 +144,9 @@
     </Filter>
     <Filter Include="Interface\Exception">
       <UniqueIdentifier>{70cad4f6-7e4f-4cc2-8c0f-296f436f5271}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interface\Utility">
+      <UniqueIdentifier>{b8681438-4e9a-4a30-b454-cf110b68a359}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

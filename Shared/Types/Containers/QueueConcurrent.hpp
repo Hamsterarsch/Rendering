@@ -9,9 +9,7 @@ class QueueConcurrent
 	private: std::queue<T> queue;
 
 	private: mutable std::mutex mutex;
-	
-
-	
+				 	
 
 	
 	public: void Push(const T &item);
@@ -23,9 +21,7 @@ class QueueConcurrent
 	public: bool IsEmpty() const;
 	
 	public: size_t Size() const;
-
-	
-	
+				
 };
 
 template <class T>
@@ -42,7 +38,7 @@ void QueueConcurrent<T>::Push(T &&item)
 {
 	std::lock_guard<std::mutex> lock{ mutex };
 
-	queue.push(item);
+	queue.push(std::move(item));
 	
 }
 

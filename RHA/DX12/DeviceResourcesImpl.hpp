@@ -8,14 +8,17 @@ namespace RHA
 	{
 		class DeviceResourcesImpl : public DeviceResources
 		{
-			DxPtr<IDXGIFactory4> dxgiFactory;
-			DxPtr<ID3D12Device> device;
-			const D3D_FEATURE_LEVEL minimumFeatureLevel;
+			private: DxPtr<IDXGIFactory4> dxgiFactory;
 			
+			private: DxPtr<ID3D12Device> device;
+			
+			private: const D3D_FEATURE_LEVEL minimumFeatureLevel;
+			
+
 			
 			public: DeviceResourcesImpl(D3D_FEATURE_LEVEL minimumFeatureLevel, bool shouldEnableDebugLayers);
 			
-				private: void EnableDebugLayers();
+				private: static void EnableDebugLayers();
 
 					private: static void CheckDebugControllerCreation(HRESULT result);
 
@@ -23,13 +26,15 @@ namespace RHA
 
 				private: void CreateDeviceForFeatureLevel();
 
+					private: bool DoesDeviceSupportAllOptions() const;
+
 					private: void CheckDeviceCreation() const;
 
+			
 			public: virtual inline DxPtr<ID3D12Device> GetDevice() override { return device; }
 			
 			public: virtual inline DxPtr<IDXGIFactory4> GetDxgiFactory() override { return dxgiFactory; }
-
-			
+								
 		};
 
 
