@@ -1,14 +1,11 @@
 #pragma once
 #include <Windows.h>
-#include <condition_variable>
 #include <future>
 #include "RendererExportHelper.hpp"
 #include "Shared/PtrTypes.hpp"
 #include "Resources/Pso/PipelineTypes.hpp"
 #include "Resources/Pso/ShaderList.hpp"
 #include "Resources/Pso/VertexLayoutTypes.hpp"
-
-
 #include "DxPtrTypes.hpp"
 #include "RenderCommand.hpp"
 
@@ -31,6 +28,7 @@ namespace RHA
 struct ID3D12RootSignature;
 struct ID3D12PipelineState;
 struct ID3D12Resource;
+
 
 namespace Renderer
 {
@@ -100,9 +98,8 @@ namespace Renderer
 
 			private: UniquePtr<class ResourceFactory> resourceFactory;
 
-			
 			private: struct PrivateMembers;
-
+			
 			private: UniquePtr<PrivateMembers> privateMembers;
 
 					 		
