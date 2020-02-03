@@ -2,13 +2,14 @@
 #include "Shared/Exception/CreationFailedException.hpp"
 #include "Shared/Exception/OutOfMemoryException.hpp"
 #include "DX12/UploadHeapImpl.hpp"
+#include "Utility/Alignment.hpp"
 
 
 namespace RHA
 {
 	namespace DX12
 	{
-		UploadHeapImpl::UploadHeapImpl(DeviceResources *resources, size_t sizeInBytes)
+		UploadHeapImpl::UploadHeapImpl(DeviceResources *resources, const size_t sizeInBytes)
 		{
 			D3D12_HEAP_PROPERTIES heapDesc{};
 			heapDesc.Type = D3D12_HEAP_TYPE_UPLOAD;
@@ -35,56 +36,69 @@ namespace RHA
 					IID_PPV_ARGS(&uploadBuffer)
 				)
 			};
-
-			if (FAILED(result))
-			{
-				throw Exception::CreationFailed{ "Could not create dx12 upload heap" };
-			}
-
-			D3D12_RANGE mappedRange{ 0, 0 };
-			void *dataStart;
-
-			uploadBuffer->Map(0, &mappedRange, &dataStart);
-
-			cpuSideStart = cpuSideAllocPos = reinterpret_cast<BYTE *>(dataStart);
-			cpuSideEnd = cpuSideStart + sizeInBytes;
+			CheckCreation(result);
+			
+			MapBufferCompletely(sizeInBytes);
 
 		}
 
+			void UploadHeapImpl::CheckCreation(const HRESULT result)
+			{
+				if (FAILED(result))
+				{
+					throw Exception::CreationFailed{ "Could not create dx12 upload heap" };
+				}
+			}
+
+			void UploadHeapImpl::MapBufferCompletely(const size_t bufferSizeInBytes)
+			{
+				D3D12_RANGE mappedRange{ 0, 0 };
+				void *dataStart;
+
+				uploadBuffer->Map(0, &mappedRange, &dataStart);
+
+				cpuSideStart = cpuSideAllocPos = reinterpret_cast<BYTE *>(dataStart);
+				cpuSideEnd = cpuSideStart + bufferSizeInBytes;
+			
+			}
+
 
 		
-		D3D12_GPU_VIRTUAL_ADDRESS UploadHeapImpl::CopyDataToUploadAddress(const void *data, size_t dataByteCount, size_t alignment)
+		D3D12_GPU_VIRTUAL_ADDRESS UploadHeapImpl::CopyDataToUploadAddress(const void *data, const size_t dataByteCount, const size_t alignment)
 		{
-			if (cpuSideAllocPos + dataByteCount > cpuSideEnd)
+			if (ThereIsNoCapacityFor(dataByteCount))
 			{
 				throw Exception::Exception{ "Upload heap out of memory" };
 			}
 
-			memcpy(cpuSideAllocPos, data, dataByteCount);
-			const intptr_t offsetToAllocation = cpuSideAllocPos - cpuSideStart;
-			cpuSideAllocPos += dataByteCount;
-
-			AdvanceAllocPosToAlignment(alignment);
-			return uploadBuffer->GetGPUVirtualAddress() + offsetToAllocation;
-
-		}
-
-			void UploadHeapImpl::AdvanceAllocPosToAlignment(const size_t alignment)
+			if (Utility::AlignmentIsInvalid(alignment))
 			{
-				if (AlignmentIsInvalid(alignment))
-				{
-					throw Exception::OutOfMemory{ "Upload heap alignment is invalid" };
-				}
-
-				cpuSideAllocPos = reinterpret_cast<BYTE *>((reinterpret_cast<size_t>(cpuSideAllocPos) + alignment - 1) & ~(alignment - 1));
-
+				throw Exception::OutOfMemory{ "Upload heap alignment is invalid" };
 			}
 
-				bool UploadHeapImpl::AlignmentIsInvalid(const size_t alignment)
-				{
-					return alignment == 0 || (alignment & (alignment-1));
+			const intptr_t offsetToAllocation{ cpuSideAllocPos - cpuSideStart };
+			const auto gpuAllocationStart{ uploadBuffer->GetGPUVirtualAddress() + offsetToAllocation };
+						
+			CopyToAllocSidePos(data, dataByteCount, alignment);
+			
+			return gpuAllocationStart;
+			
+		}
 
-				}
+			bool UploadHeapImpl::ThereIsNoCapacityFor(const size_t countBytes) const
+			{
+				return cpuSideAllocPos + countBytes > cpuSideEnd;
+			
+			}
+
+			void UploadHeapImpl::CopyToAllocSidePos(const void *data, const size_t dataByteCount, const size_t alignment)
+			{
+				memcpy(cpuSideAllocPos, data, dataByteCount);
+				cpuSideAllocPos += dataByteCount;
+				cpuSideAllocPos = reinterpret_cast<BYTE *>(Utility::IncreaseValueToAlignment(reinterpret_cast<size_t>(cpuSideAllocPos), alignment));
+				
+			}
+
 		
 	}
 	
