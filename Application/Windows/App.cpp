@@ -88,7 +88,7 @@ namespace Windows
 			meshSize = sizeof meshdata;
 			meshBytesToIndices = sizeof meshdata.vertices;
 
-			meshHandle = renderer.MakeAndUploadBufferResource(&meshdata, sizeof(meshdata));
+			meshHandle = renderer.MakeBuffer(&meshdata, sizeof(meshdata));
 						
 
 			std::ifstream shaderFile{Filesystem::Conversions::MakeExeRelative(L"../Content/Shaders/Plain.vs"), std::ios_base::in | std::ios_base::ate};
@@ -121,7 +121,7 @@ namespace Windows
 			SerializeContainer root{};
 			renderer.SerializeRootSignature(0,0,0,0, &root);
 
-			rootHandle = renderer.MakeRootSignature(root.GetData(), root.GetSize());
+			rootHandle = renderer.MakeRootSignature(root.GetData());
 
 
 			Renderer::ShaderList shaderList{};
@@ -139,17 +139,17 @@ namespace Windows
 
 		void App::Update()
 		{
-			if(renderer.ResourceHasToBeReloaded(meshHandle))
+			if(renderer.ResourceMustBeRemade(meshHandle))
 			{
 				throw;
 			}
 
-			if(renderer.ResourceHasToBeReloaded(psoHandle))
+			if(renderer.ResourceMustBeRemade(psoHandle))
 			{
 				throw;
 			}
 
-			if(renderer.ResourceHasToBeReloaded(rootHandle))
+			if(renderer.ResourceMustBeRemade(rootHandle))
 			{
 				throw;
 			}

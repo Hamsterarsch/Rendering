@@ -111,17 +111,31 @@ namespace Renderer
 
 				private: int UpdateRendering();
 
-					private: bool ActiveRendererIsInvalid();
+					private: void UpdateIdle();
 			
-					private: bool ThereArePendingRenderers();
-			
-					private: void LaunchFrameRenderer(FrameRenderer &&renderer);
+					private: void ExecuteNextFrame();
+
+					private: void WaitForIdleQueue();
 							 
 			public: ~Renderer();
-					
-			
-			public: size_t MakeAndUploadBufferResource(const void *data, size_t sizeInBytes);
 
+			
+			public: void DispatchFrame();
+
+				private: bool NextFrameSlotIsOccupied() const;
+
+				private: void AbortDispatch();
+
+				private: FrameRenderer MakeFrameFromCommands();
+
+			public: void RenderMesh(size_t signatureHandle, size_t psoHandle, size_t meshHandle, size_t sizeInBytes, size_t byteOffsetToIndices);
+			
+			
+			public: size_t MakeBuffer(const void *data, size_t sizeInBytes);
+
+			public: void RemakeBuffer(const void *data, size_t sizeInBytes, size_t handle);
+			
+			
 			public: void CompileVertexShader(const char *shader, size_t length, SerializationHook *serializer) const;
 
 			public: void CompilePixelShader(const char *shader, size_t length, SerializationHook *serializer) const;
@@ -129,27 +143,20 @@ namespace Renderer
 
 			public: void SerializeRootSignature(unsigned cbvAmount, unsigned srvAmount, unsigned uavAmount, unsigned samplerAmount, SerializationHook *serializer);
 
-			public: size_t MakeRootSignature(const void *serializedData, size_t dataLength);
+			public: size_t MakeRootSignature(const void *serializedData);
+								
+				private: static SIZE_T ExtractSizeFrom(const void *data);
+
+				private: static const unsigned char *ExtractSignatureFrom(const void *data);
+
+				private: static size_t ExtractSamplerCountFrom(const void *data, SIZE_T signatureSize);
 			
 			public: size_t MakePso(PipelineTypes pipelineType, VertexLayoutTypes vertexLayout, const ShaderList &shaders, size_t signatureHandle);
 								
 
-			public: bool ResourceHasToBeReloaded(size_t handle);
+			public: bool ResourceMustBeRemade(size_t handle);
 			
-			public: void MakeBufferWithOldHandle(const void *data, size_t sizeInBytes, size_t handle);
-
-
-			public: void RenderMesh(size_t signatureHandle, size_t psoHandle, size_t meshHandle, size_t sizeInBytes, size_t byteOffsetToIndices);
-
-			public: void DispatchFrame();
-			
-			public: FrameRenderer PopPendingRenderer();
-
-			public: void PushPendingRenderer(FrameRenderer &&renderer);
-
-				private: bool PendingRendererCountIsAtMax() const;
-			
-											
+									   					 											
 		};
 
 		
