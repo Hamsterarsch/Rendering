@@ -57,6 +57,44 @@ namespace RHA
 			}
 
 
+					
+		void CmdListImpl::RecordSetPipelineState(ID3D12PipelineState *pipelineState)
+		{
+			glist->SetPipelineState(pipelineState);
+			
+		}
+
+
+		
+		void CmdListImpl::RecordSetGraphicsSignature(ID3D12RootSignature *signature)
+		{
+			glist->SetGraphicsRootSignature(signature);
+			
+		}
+
+
+		
+		void CmdListImpl::RecordCopyResource(ID3D12Resource *destination, ID3D12Resource *source)
+		{
+			glist->CopyResource(destination, source);
+			
+		}
+
+
+		
+		void CmdListImpl::RecordSetRenderTargets
+		(
+			const unsigned numTargets,
+			const D3D12_CPU_DESCRIPTOR_HANDLE *targetDescriptors,
+			const bool isTargetDescriptorARangeStart,
+			const D3D12_CPU_DESCRIPTOR_HANDLE *dsv
+		)
+		{
+			glist->OMSetRenderTargets(numTargets, targetDescriptors, isTargetDescriptorARangeStart, dsv);
+			
+		}
+
+
 
 		void CmdListImpl::RecordClearDsv
 		(
@@ -86,41 +124,6 @@ namespace RHA
 
 
 		
-		void CmdListImpl::RecordSetPipelineState(ID3D12PipelineState *pipelineState)
-		{
-			glist->SetPipelineState(pipelineState);
-			
-		}
-
-
-		
-		void CmdListImpl::RecordSetGraphicsSignature(ID3D12RootSignature *signature)
-		{
-			glist->SetGraphicsRootSignature(signature);
-			
-		}
-
-
-		
-		void CmdListImpl::RecordCopyResource(ID3D12Resource *destination, ID3D12Resource *source)
-		{
-			glist->CopyResource(destination, source);
-			
-		}
-
-		void CmdListImpl::RecordSetRenderTargets
-		(
-			const unsigned numTargets,
-			const D3D12_CPU_DESCRIPTOR_HANDLE *targetDescriptors,
-			const bool isTargetDescriptorARangeStart,
-			const D3D12_CPU_DESCRIPTOR_HANDLE *dsv
-		)
-		{
-			glist->OMSetRenderTargets(numTargets, targetDescriptors, isTargetDescriptorARangeStart, dsv);
-			
-		}
-
-
 		void CmdListImpl::StopRecording()
 		{
 			const auto result{ glist->Close() };			

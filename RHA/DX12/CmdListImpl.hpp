@@ -25,7 +25,22 @@ namespace RHA
 			public: inline virtual DxPtr<ID3D12CommandList> GetList() override { return list; }
 
 			public: virtual DxPtr<ID3D12GraphicsCommandList> AsGraphicsList() override { return glist; }
+
 			
+			public: virtual void RecordSetPipelineState(ID3D12PipelineState *pipelineState) override;
+
+			public: virtual void RecordSetGraphicsSignature(ID3D12RootSignature *signature) override;
+			
+			public: virtual void RecordCopyResource(ID3D12Resource *destination, ID3D12Resource *source) override;
+
+			public: virtual void RecordSetRenderTargets
+			(
+				unsigned numTargets,
+				const D3D12_CPU_DESCRIPTOR_HANDLE *targetDescriptors,
+				bool isTargetDescriptorARangeStart,
+				const D3D12_CPU_DESCRIPTOR_HANDLE *dsv
+			) override;
+
 			public: virtual void RecordClearDsv
 			(
 				D3D12_CPU_DESCRIPTOR_HANDLE descriptor,
@@ -43,20 +58,6 @@ namespace RHA
 					unsigned int numRects,
 					const D3D12_RECT *clearRects
 				) override;
-									
-			public: virtual void RecordSetPipelineState(ID3D12PipelineState *pipelineState) override;
-
-			public: virtual void RecordSetGraphicsSignature(ID3D12RootSignature *signature) override;
-			
-			public: virtual void RecordCopyResource(ID3D12Resource *destination, ID3D12Resource *source) override;
-
-			public: virtual void RecordSetRenderTargets
-			(
-				unsigned numTargets,
-				const D3D12_CPU_DESCRIPTOR_HANDLE *targetDescriptors,
-				bool isTargetDescriptorARangeStart,
-				const D3D12_CPU_DESCRIPTOR_HANDLE *dsv
-			) override;
 			
 			
 			public: virtual void StopRecording() override;
