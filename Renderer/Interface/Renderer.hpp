@@ -102,6 +102,10 @@ namespace Renderer
 			
 			private: UniquePtr<PrivateMembers> privateMembers;
 
+			private: long long lastDispatchTime;
+
+			private: float shaderTimer;
+
 					 		
 			
 			public: Renderer(HWND outputWindow);
@@ -126,6 +130,9 @@ namespace Renderer
 				private: FrameRenderer MakeFrameFromCommands();
 
 			public: void RenderMesh(size_t signatureHandle, size_t psoHandle, size_t meshHandle, size_t sizeInBytes, size_t byteOffsetToIndices);
+
+			public: void SetCamera(float x, float y, float z, float pitch, float yaw, float roll);
+								
 			
 			
 			public: size_t MakeBuffer(const void *data, size_t sizeInBytes);

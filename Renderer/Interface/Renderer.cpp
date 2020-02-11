@@ -23,6 +23,8 @@
 	constexpr bool enableDebugLayers = false;
 #endif
 
+#include "ThirdParty/glm/gtc/matrix_transform.hpp"
+#include <chrono>
 	
 namespace Renderer
 {
@@ -50,10 +52,13 @@ namespace Renderer
 						
 			std::list<UniquePtr<RenderCommand>> commandsToDispatch;
 
+			glm::mat4 cameraToDispatch;
+			
 			PrivateMembers(DeviceResources *resources) :
 				psoFactory{ resources },
 				signatureFactory{ resources },
-				shaderFactory{ Facade::MakeShaderFactory(5, 0) }
+				shaderFactory{ Facade::MakeShaderFactory(5, 0) },
+				cameraToDispatch{}
 			{				
 			}				
 			
@@ -61,7 +66,9 @@ namespace Renderer
 
 		Renderer::Renderer(HWND outputWindow) :
 			shouldUpdateRendering{ false },
-			privateMembers{ nullptr }
+			privateMembers{ nullptr },
+			lastDispatchTime{ 0 },
+			shaderTimer{ 0 }
 		{
 			resources = Facade::MakeDeviceResources(D3D_FEATURE_LEVEL_11_0, enableDebugLayers);
 			commonQueue = Facade::MakeQueue(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT);			
@@ -83,7 +90,7 @@ namespace Renderer
 						
 			shouldUpdateRendering = true;			
 			updaterHandle = std::async( std::launch::async, &Renderer::UpdateRendering, this);
-							
+						SetCamera(1, 2, 3, 180, 0, 0);
 		}
 
 			int Renderer::UpdateRendering()
@@ -156,6 +163,11 @@ namespace Renderer
 				return;
 			}
 			
+			const auto currentTime{ std::chrono::steady_clock::now().time_since_epoch().count() };
+			const auto dispatchDelta{ currentTime - lastDispatchTime };
+			lastDispatchTime = currentTime;
+			shaderTimer += dispatchDelta;
+			
 			privateMembers->frames.Push
 			(
 				MakeFrameFromCommands()
@@ -199,8 +211,20 @@ namespace Renderer
 
 		}
 
+
 		
+		void Renderer::SetCamera(float x, float y, float z, float pitch, float yaw, float roll)
+		{
+			privateMembers->cameraToDispatch = glm::identity<glm::mat4>();
+			privateMembers->cameraToDispatch = translate(privateMembers->cameraToDispatch, {x, y, z});
+			privateMembers->cameraToDispatch = rotate	 (privateMembers->cameraToDispatch, pitch, {1,0,0});
+			privateMembers->cameraToDispatch = rotate	 (privateMembers->cameraToDispatch, yaw, {0,1,0});
+			privateMembers->cameraToDispatch = rotate	 (privateMembers->cameraToDispatch, roll, {0,0,1});
+			
+		}
+
 		
+
 		size_t Renderer::MakeBuffer(const void *data, const size_t sizeInBytes)
 		{
 			auto handle{ privateMembers->handleFactory.MakeHandle(ResourceTypes::Buffer) };
