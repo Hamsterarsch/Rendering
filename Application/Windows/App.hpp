@@ -13,6 +13,10 @@ namespace Windows
 
 		private: size_t meshHandle, psoHandle, rootHandle, meshSize, meshBytesToIndices;
 
+		private: size_t minstancePsoHandle;
+		
+		private: size_t transformBufferHandle;
+
 		
 		public: App();
 

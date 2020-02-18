@@ -6,6 +6,10 @@
 #include <fstream>
 
 
+#include "ThirdParty/glm/mat4x4.hpp"
+#include "ThirdParty/glm/gtc/matrix_transform.hpp"
+
+
 namespace Windows
 {
 	App::App() :
@@ -101,11 +105,12 @@ namespace Windows
 			shaderFile.read( shader.get(), charCount);
 						
 			renderer.CompileVertexShader(shader.get(), charCount, &vs);
-
-
+			
 			shaderFile.close();
 			}
-			
+
+			SerializeContainer ps{};
+			{
 			shaderFile.open(Filesystem::Conversions::MakeExeRelative(L"../Content/Shaders/Plain.ps"), std::ios_base::in | std::ios_base::ate);
 				
 			const auto psCharCount{ shaderFile.tellg() };
@@ -114,16 +119,17 @@ namespace Windows
 			auto pshader{ std::make_unique<char[]>(psCharCount) };
 			shaderFile.read( pshader.get(), psCharCount);
 						
-			SerializeContainer ps{};
 			renderer.CompilePixelShader(pshader.get(), psCharCount, &ps);
 
+			shaderFile.close();
+			}
 			
 			SerializeContainer root{};
 			renderer.SerializeRootSignature(0,0,0,0, &root);
 
 			rootHandle = renderer.MakeRootSignature(root.GetData());
 
-
+			{
 			Renderer::ShaderList shaderList{};
 			shaderList.vs.data = vs.GetData();
 			shaderList.vs.sizeInBytes = vs.GetSize();
@@ -131,9 +137,44 @@ namespace Windows
 			shaderList.ps.data = ps.GetData();
 			shaderList.ps.sizeInBytes = ps.GetSize();
 
-			
 			psoHandle = renderer.MakePso(Renderer::PipelineTypes::Opaque, Renderer::VertexLayoutTypes::PositionOnly, shaderList, rootHandle);
+			}
 
+
+			SerializeContainer vsm{};
+			{
+			shaderFile.open(Filesystem::Conversions::MakeExeRelative(L"../Content/Shaders/PlainMinstance.vs"), std::ios_base::in | std::ios_base::ate);
+				
+			const auto charCount{ shaderFile.tellg() };
+			shaderFile.seekg(0);
+
+			auto pshader{ std::make_unique<char[]>(charCount) };
+			shaderFile.read( pshader.get(), charCount);
+						
+			SerializeContainer ps{};
+			renderer.CompileVertexShader(pshader.get(), charCount, &vsm);
+
+			shaderFile.close();
+			}
+
+			{
+				Renderer::ShaderList shaderList{};
+				shaderList.vs.data = vsm.GetData();
+				shaderList.vs.sizeInBytes = vsm.GetSize();
+
+				shaderList.ps.data = ps.GetData();
+				shaderList.ps.sizeInBytes = ps.GetSize();
+
+				minstancePsoHandle = renderer.MakePso(Renderer::PipelineTypes::Opaque, Renderer::VertexLayoutTypes::PositionOnly, shaderList, rootHandle);
+			}
+			
+			std::vector<glm::mat4> transformData
+			{
+				glm::identity<glm::mat4>(),
+				translate(glm::identity<glm::mat4>(), {2, 0, 0})				
+			};
+			transformBufferHandle = renderer.MakeBuffer(transformData.data(), sizeof glm::mat4 * transformData.size());
+			
 			renderer.SetCamera(0, 0, -5, 0, 0, 0);
 		
 		}
@@ -155,7 +196,7 @@ namespace Windows
 				throw;
 			}
 
-			renderer.RenderMesh(rootHandle, psoHandle, meshHandle, meshSize, meshBytesToIndices);
+			renderer.RenderMesh(rootHandle, minstancePsoHandle, meshHandle, meshSize, meshBytesToIndices, transformBufferHandle, 2);
 			renderer.DispatchFrame();
 			
 		}

@@ -33,6 +33,13 @@ namespace Renderer
 			generalDataParameter.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 			generalDataParameter.Descriptor.Flags = D3D12_ROOT_DESCRIPTOR_FLAG_DATA_STATIC_WHILE_SET_AT_EXECUTE;			
 			parameters.emplace_back(generalDataParameter);
+
+			D3D12_ROOT_PARAMETER1 extraDataParameter{};
+			extraDataParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+			extraDataParameter.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+			extraDataParameter.Descriptor.Flags = D3D12_ROOT_DESCRIPTOR_FLAG_DATA_STATIC_WHILE_SET_AT_EXECUTE;
+			extraDataParameter.Descriptor.ShaderRegister = 1;
+			parameters.emplace_back(extraDataParameter);
 			
 			std::vector<D3D12_DESCRIPTOR_RANGE1> ranges{};
 			PushBackRangeIfNecessary(ranges, srvAmount, D3D12_DESCRIPTOR_RANGE_TYPE_SRV);

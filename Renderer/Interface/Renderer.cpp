@@ -12,7 +12,7 @@
 #include "Resources/RootSignature/RootSignatureFactory.hpp"
 
 #include "FrameRenderer.hpp"
-#include "RenderMeshCommand.hpp"
+#include "Commands/RenderMeshCommand.hpp"
 #include "Resources/Pso/VertexLayoutProvider.hpp"
 #include "Shared/Types/Containers/QueueConcurrent.hpp"
 #include "Resources/GlobalBufferData.hpp"
@@ -205,11 +205,11 @@ namespace Renderer
 
 		
 
-		void Renderer::RenderMesh(size_t signatureHandle, size_t psoHandle, size_t meshHandle, size_t sizeInBytes, size_t byteOffsetToIndices)
+		void Renderer::RenderMesh(size_t signatureHandle, size_t psoHandle, size_t meshHandle, size_t sizeInBytes, size_t byteOffsetToIndices, size_t transformBufferHandle, size_t instanceCount)
 		{
 			privateMembers->commandsToDispatch.emplace_back
 			(
-				std::make_unique<RenderMeshCommand>(signatureHandle, psoHandle, meshHandle, byteOffsetToIndices, sizeInBytes - byteOffsetToIndices)
+				std::make_unique<RenderMeshCommand>(signatureHandle, psoHandle, meshHandle, byteOffsetToIndices, sizeInBytes - byteOffsetToIndices, transformBufferHandle, instanceCount)
 			);			
 
 		}

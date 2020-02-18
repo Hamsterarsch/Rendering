@@ -152,7 +152,7 @@ namespace Renderer
 				queue->SubmitCommandList(list.get());
 				
 				SetupCompletionFence();
-
+				
 				queue->Wait(fenceQueueReleaseValue, fence.get());
 			}
 			catch(std::exception &e)
