@@ -133,7 +133,8 @@ namespace Windows
 
 			
 			psoHandle = renderer.MakePso(Renderer::PipelineTypes::Opaque, Renderer::VertexLayoutTypes::PositionOnly, shaderList, rootHandle);
-			
+
+			renderer.SetCamera(0, 0, -5, 0, 0, 0);
 		
 		}
 

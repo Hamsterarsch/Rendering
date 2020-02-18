@@ -91,7 +91,6 @@ namespace Renderer
 			updaterHandle = std::async( std::launch::async, &Renderer::UpdateRendering, this);
 
 			privateMembers->globalsToDispatch.projection = glm::perspectiveFovLH_ZO(glm::radians(90.f), outputSurface->GetWidth(), outputSurface->GetHeight(), .01f, 1000.f);
-			SetCamera(0,0,5,0,0,0);
 						
 		}
 
@@ -220,10 +219,10 @@ namespace Renderer
 		void Renderer::SetCamera(float x, float y, float z, float pitch, float yaw, float roll)
 		{
 			privateMembers->globalsToDispatch.view = glm::identity<glm::mat4>();
-			privateMembers->globalsToDispatch.view = translate(privateMembers->globalsToDispatch.view, {x, y, z});
-			privateMembers->globalsToDispatch.view = rotate	  (privateMembers->globalsToDispatch.view, glm::radians(pitch), {1,0,0});
-			privateMembers->globalsToDispatch.view = rotate	  (privateMembers->globalsToDispatch.view, glm::radians(yaw), {0,1,0});
-			privateMembers->globalsToDispatch.view = rotate	  (privateMembers->globalsToDispatch.view, glm::radians(roll), {0,0,1});
+			privateMembers->globalsToDispatch.view = rotate	  (privateMembers->globalsToDispatch.view, glm::radians(-pitch), {1,0,0});
+			privateMembers->globalsToDispatch.view = rotate	  (privateMembers->globalsToDispatch.view, glm::radians(-yaw), {0,1,0});
+			privateMembers->globalsToDispatch.view = rotate	  (privateMembers->globalsToDispatch.view, glm::radians(-roll), {0,0,1});
+			privateMembers->globalsToDispatch.view = translate(privateMembers->globalsToDispatch.view, {-x, -y, -z});
 			
 		}
 
