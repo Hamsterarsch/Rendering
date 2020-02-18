@@ -3,6 +3,7 @@
 #include "Resources/ResourceHandle.hpp"
 #include "Resources/RootSignature/RootSignatureData.hpp"
 #include "Resources/ResourceAllocation.hpp"
+#include <mutex>
 
 
 struct ID3D12PipelineState;
@@ -26,8 +27,10 @@ namespace Renderer
 
 			private: std::unordered_map<ResourceHandle::t_hash, DxPtr<ID3D12PipelineState>> pipelineStates;
 
+			private: mutable std::mutex referenceMutex, allocationMutex, signatureMutex, pipelineMutex;
 
 
+			
 			public: void RegisterResource(const ResourceHandle &handle, ResourceAllocation &&allocation);
 
 			public: void AddReference(ResourceHandle::t_hash handle);
@@ -46,7 +49,7 @@ namespace Renderer
 
 			public: void RegisterSignature(ResourceHandle::t_hash handle, RootSignatureData &&signatureData);
 			
-			public: const RootSignatureData &GetSignatureDataRef(ResourceHandle::t_hash handle) const;
+			private: const RootSignatureData &GetSignatureDataRef(ResourceHandle::t_hash handle) const;
 
 			public: ID3D12RootSignature *GetSignature(ResourceHandle::t_hash handle) const;
 

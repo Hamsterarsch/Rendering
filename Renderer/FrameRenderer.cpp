@@ -27,14 +27,16 @@ namespace Renderer
 			Queue *queue,
 			ResourceRegistry &registry,
 			WindowSurface &windowSurface, 
-			DepthSurface &depthSurface
+			DepthSurface &depthSurface,
+			size_t globalBufferHandle
 		) :
 			resources{ resources },
 			queue{ queue },
 			registry{ &registry },
 			windowSurface{ &windowSurface },
 			depthSurface{ &depthSurface },
-			commandsRecordedToList{ 0 }
+			commandsRecordedToList{ 0 },
+			globalBufferHandle{ globalBufferHandle }
 		{
 			allocator = Facade::MakeCmdAllocator(resources, D3D12_COMMAND_LIST_TYPE_DIRECT);
 			fence = Facade::MakeFence(resources);
@@ -55,7 +57,8 @@ namespace Renderer
 			registry{ std::move(other.registry) },
 			windowSurface{ std::move(other.windowSurface) },
 			depthSurface{ std::move(other.depthSurface) },
-			commandsRecordedToList{ std::move(other.commandsRecordedToList) }
+			commandsRecordedToList{ std::move(other.commandsRecordedToList) },
+			globalBufferHandle{ std::move(other.globalBufferHandle) }
 		{
 			other.resources = nullptr;
 			other.queue = nullptr;
@@ -96,6 +99,8 @@ namespace Renderer
 
 			commandsRecordedToList = std::move(rhs.commandsRecordedToList);
 
+			globalBufferHandle = std::move(rhs.globalBufferHandle);
+			
 			return *this;
 			
 		}
@@ -107,6 +112,7 @@ namespace Renderer
 			if(RegistryIsValid())
 			{
 				UnregisterAllCommands();
+				registry->RemoveReference(globalBufferHandle);
 			}
 			
 		}
@@ -116,7 +122,7 @@ namespace Renderer
 				for(auto &&cmd : commands)
 				{
 					cmd->ExecuteOperationOnResourceReferences(registry, &ResourceRegistry::RemoveReference);
-				}
+				}				
 			
 			}
 
@@ -193,7 +199,7 @@ namespace Renderer
 				{
 					list->RecordSetPipelineState(registry->GetPso(cmd.GetPsoHandle()));
 					list->RecordSetGraphicsSignature(registry->GetSignature(cmd.GetSignatureHandle()));
-					
+					list->AsGraphicsList()->SetGraphicsRootConstantBufferView(0, registry->GetResource(globalBufferHandle)->GetGPUVirtualAddress());
 				}
 
 				bool FrameRenderer::ListCapacityIsReached() const

@@ -56,12 +56,14 @@ namespace Renderer
 			private: static constexpr size_t recordsPerCommandList{ 50 };
 
 			private: static constexpr size_t fenceCmdCompletionValue{ 1 }, fenceQueueReleaseValue{ 2 };
-					 
+
+			private: size_t globalBufferHandle;
+
 			
 
 			public: FrameRenderer();
 			
-			public: FrameRenderer(DeviceResources *resources, Queue *queue, ResourceRegistry &registry, WindowSurface &windowSurface, DepthSurface &depthSurface);
+			public: FrameRenderer(DeviceResources *resources, Queue *queue, ResourceRegistry &registry, WindowSurface &windowSurface, DepthSurface &depthSurface, size_t globalBufferHandle);
 
 			public: FrameRenderer(FrameRenderer &&other) noexcept;
 

@@ -79,6 +79,9 @@
     <ClInclude Include="Interface\RenderCommand.hpp">
       <Filter>Interface</Filter>
     </ClInclude>
+    <ClInclude Include="Resources\GlobalBufferData.hpp">
+      <Filter>Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
