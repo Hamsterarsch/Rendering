@@ -43,8 +43,12 @@ namespace RHA
 					private: static void CheckBufferQuery(HRESULT result);
 							 				
 
-			public: virtual inline DxPtr<ID3D12Resource> GetResourceTemplate() override { return buffers[0]; };
-												   			
+			public: virtual inline float GetWidth() const override { return defaultViewport.Width; }
+
+			public: virtual inline float GetHeight() const override { return defaultViewport.Height; }
+			
+			public: virtual inline DxPtr<ID3D12Resource> GetResourceTemplate() override { return buffers[0]; }
+																	   			
 			public: virtual void Present() override;
 
 			public: virtual void RecordPipelineBindings(ID3D12GraphicsCommandList *list, const D3D12_CPU_DESCRIPTOR_HANDLE *depthDescriptor) override;
