@@ -8,6 +8,7 @@ namespace Renderer
 	{
 		void ResourceRegistry::RegisterResource(const ResourceHandle &handle, ResourceAllocation &&allocation)
 		{
+			std::lock_guard<std::mutex> lock{ referenceMutex };
 			resourceAllocations.insert(  { handle.hash, std::move(allocation) } );
 			AddReference(handle.hash);
 			
@@ -39,13 +40,15 @@ namespace Renderer
 
 		void ResourceRegistry::RemoveReference(const ResourceHandle::t_hash handle)
 		{
+			std::lock_guard<std::mutex> lock{ referenceMutex };
 			auto referenceData{ resourceReferences.find(handle) };
 			--referenceData->second;
 			
 			if(referenceData->second <= 0)
 			{
-				ResourceHandle realHandle{ handle };
+				const ResourceHandle realHandle{ handle };
 				RemoveEntity(realHandle);
+				resourceReferences.erase(referenceData);
 			}
 			
 		}
@@ -57,13 +60,22 @@ namespace Renderer
 				case ResourceTypes::Mesh: 
 				case ResourceTypes::Texture: 
 				case ResourceTypes::Buffer:
+					{
+					std::lock_guard<std::mutex> lock{ allocationMutex };
 					resourceAllocations.erase(handle.hash);
+					}
 					break;
 				case ResourceTypes::Pso:
+					{
+					std::lock_guard<std::mutex> lock{ pipelineMutex };
 					pipelineStates.erase(handle.hash);
+					}
 					break;
 				case ResourceTypes::Signature:
+					{
+					std::lock_guard<std::mutex> lock{ signatureMutex };
 					rootSignatures.erase(handle.hash);
+					}
 					break;
 				default: throw Exception::Exception{ "No removal handling for this resource type in dx12 resource registry" };
 				}
@@ -72,9 +84,10 @@ namespace Renderer
 
 
 		
-		bool ResourceRegistry::HandleIsInvalid(const ResourceHandle::t_hash hash)
-		{	
-			auto found{ resourceReferences.find(hash) };
+		bool ResourceRegistry::HandleIsInvalid(const ResourceHandle::t_hash handle)
+		{
+			std::lock_guard<std::mutex> lock{ referenceMutex};
+			auto found{ resourceReferences.find(handle) };
 			
 			if(found == resourceReferences.end())
 			{
@@ -94,6 +107,7 @@ namespace Renderer
 		
 		DxPtr<ID3D12Resource> ResourceRegistry::GetResource(const ResourceHandle::t_hash handle)
 		{
+			std::lock_guard<std::mutex> lock{ allocationMutex };
 			const auto allocation{ resourceAllocations.find(handle) };
 
 			if(allocation == resourceAllocations.end())
@@ -109,6 +123,7 @@ namespace Renderer
 		
 		void ResourceRegistry::RegisterSignature(const ResourceHandle::t_hash handle, RootSignatureData &&signatureData)
 		{
+			std::lock_guard<std::mutex> lock{ signatureMutex };
 			rootSignatures.insert( {handle, std::move(signatureData)} );
 			AddReference(handle);
 			
@@ -117,7 +132,7 @@ namespace Renderer
 
 		
 		const RootSignatureData &ResourceRegistry::GetSignatureDataRef(const ResourceHandle::t_hash handle) const
-		{
+		{//consider synchronization when in use
 			return rootSignatures.at(handle);
 			
 		}
@@ -126,6 +141,7 @@ namespace Renderer
 		
 		ID3D12RootSignature *ResourceRegistry::GetSignature(ResourceHandle::t_hash handle) const
 		{
+			std::lock_guard<std::mutex> lock{ signatureMutex };
 			return rootSignatures.at(handle).signature.Get();
 						
 		}
@@ -138,6 +154,7 @@ namespace Renderer
 			const DxPtr<ID3D12PipelineState> &pipelineState
 		)
 		{
+			std::lock_guard<std::mutex> lock{ pipelineMutex };
 			pipelineStates.insert( {handle, pipelineState} );
 			AddReference(handle);
 			
@@ -147,6 +164,7 @@ namespace Renderer
 		
 		ID3D12PipelineState *ResourceRegistry::GetPso(const ResourceHandle::t_hash handle) const
 		{
+			std::lock_guard<std::mutex> lock{ pipelineMutex };
 			return pipelineStates.at(handle).Get();
 			
 		}

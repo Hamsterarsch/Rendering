@@ -90,7 +90,8 @@ namespace Renderer
 			shouldUpdateRendering = true;			
 			updaterHandle = std::async( std::launch::async, &Renderer::UpdateRendering, this);
 
-			privateMembers->globalsToDispatch.projection = glm::perspectiveFovLH_ZO(90.f, outputSurface->GetWidth(), outputSurface->GetHeight(), 0.f, 1.f);
+			privateMembers->globalsToDispatch.projection = glm::perspectiveFovLH_ZO(glm::radians(90.f), outputSurface->GetWidth(), outputSurface->GetHeight(), .01f, 1000.f);
+			SetCamera(0,0,5,0,0,0);
 						
 		}
 
@@ -127,7 +128,7 @@ namespace Renderer
 				{
 					auto frame{ privateMembers->frames.Pop() };
 																	
-					privateMembers->activeFrameHandle = std::async(std::launch::async, &FrameRenderer::ExecuteCommands, &frame);
+					privateMembers->activeFrameHandle = std::async(std::launch::async, &FrameRenderer::ExecuteCommands, &frame);					
 					if(privateMembers->activeFrameHandle.get())
 					{
 						throw;
@@ -164,7 +165,7 @@ namespace Renderer
 				return;
 			}
 			
-			const auto currentTime{ std::chrono::steady_clock::now().time_since_epoch().count() };
+			const auto currentTime{ std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count() / 1000.f };
 			const auto dispatchDelta{ currentTime - lastDispatchTime };
 			lastDispatchTime = currentTime;
 			privateMembers->globalsToDispatch.time += dispatchDelta;
@@ -220,9 +221,9 @@ namespace Renderer
 		{
 			privateMembers->globalsToDispatch.view = glm::identity<glm::mat4>();
 			privateMembers->globalsToDispatch.view = translate(privateMembers->globalsToDispatch.view, {x, y, z});
-			privateMembers->globalsToDispatch.view = rotate	  (privateMembers->globalsToDispatch.view, pitch, {1,0,0});
-			privateMembers->globalsToDispatch.view = rotate	  (privateMembers->globalsToDispatch.view, yaw, {0,1,0});
-			privateMembers->globalsToDispatch.view = rotate	  (privateMembers->globalsToDispatch.view, roll, {0,0,1});
+			privateMembers->globalsToDispatch.view = rotate	  (privateMembers->globalsToDispatch.view, glm::radians(pitch), {1,0,0});
+			privateMembers->globalsToDispatch.view = rotate	  (privateMembers->globalsToDispatch.view, glm::radians(yaw), {0,1,0});
+			privateMembers->globalsToDispatch.view = rotate	  (privateMembers->globalsToDispatch.view, glm::radians(roll), {0,0,1});
 			
 		}
 
