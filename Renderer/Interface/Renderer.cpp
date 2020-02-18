@@ -15,6 +15,7 @@
 #include "RenderMeshCommand.hpp"
 #include "Resources/Pso/VertexLayoutProvider.hpp"
 #include "Shared/Types/Containers/QueueConcurrent.hpp"
+#include "Resources/GlobalBufferData.hpp"
 
 
 #if _DEBUG
@@ -52,13 +53,12 @@ namespace Renderer
 						
 			std::list<UniquePtr<RenderCommand>> commandsToDispatch;
 
-			glm::mat4 cameraToDispatch;
+			GlobalBufferData globalsToDispatch;
 			
 			PrivateMembers(DeviceResources *resources) :
 				psoFactory{ resources },
 				signatureFactory{ resources },
-				shaderFactory{ Facade::MakeShaderFactory(5, 0) },
-				cameraToDispatch{}
+				shaderFactory{ Facade::MakeShaderFactory(5, 0) }				
 			{				
 			}				
 			
@@ -67,8 +67,7 @@ namespace Renderer
 		Renderer::Renderer(HWND outputWindow) :
 			shouldUpdateRendering{ false },
 			privateMembers{ nullptr },
-			lastDispatchTime{ 0 },
-			shaderTimer{ 0 }
+			lastDispatchTime{ 0 }			
 		{
 			resources = Facade::MakeDeviceResources(D3D_FEATURE_LEVEL_11_0, enableDebugLayers);
 			commonQueue = Facade::MakeQueue(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT);			
@@ -90,7 +89,9 @@ namespace Renderer
 						
 			shouldUpdateRendering = true;			
 			updaterHandle = std::async( std::launch::async, &Renderer::UpdateRendering, this);
-						SetCamera(1, 2, 3, 180, 0, 0);
+
+			privateMembers->globalsToDispatch.projection = glm::perspectiveFovLH_ZO(90.f, outputSurface->GetWidth(), outputSurface->GetHeight(), 0.f, 1.f);
+						
 		}
 
 			int Renderer::UpdateRendering()
@@ -166,8 +167,8 @@ namespace Renderer
 			const auto currentTime{ std::chrono::steady_clock::now().time_since_epoch().count() };
 			const auto dispatchDelta{ currentTime - lastDispatchTime };
 			lastDispatchTime = currentTime;
-			shaderTimer += dispatchDelta;
-			
+			privateMembers->globalsToDispatch.time += dispatchDelta;
+					   			
 			privateMembers->frames.Push
 			(
 				MakeFrameFromCommands()
@@ -188,8 +189,10 @@ namespace Renderer
 			}
 
 			FrameRenderer Renderer::MakeFrameFromCommands()
-			{
-				FrameRenderer renderer{ resources.get(), commonQueue.get(), privateMembers->registry, *outputSurface, *depthSurface };
+			{			 
+				const auto globalBufferHandle{ MakeBuffer(&privateMembers->globalsToDispatch, sizeof decltype(privateMembers)::element_type::globalsToDispatch) };
+			
+				FrameRenderer renderer{ resources.get(), commonQueue.get(), privateMembers->registry, *outputSurface, *depthSurface, globalBufferHandle };
 				for(auto &&cmd : privateMembers->commandsToDispatch)
 				{
 					renderer.AddCommand(std::move(cmd));
@@ -215,11 +218,11 @@ namespace Renderer
 		
 		void Renderer::SetCamera(float x, float y, float z, float pitch, float yaw, float roll)
 		{
-			privateMembers->cameraToDispatch = glm::identity<glm::mat4>();
-			privateMembers->cameraToDispatch = translate(privateMembers->cameraToDispatch, {x, y, z});
-			privateMembers->cameraToDispatch = rotate	 (privateMembers->cameraToDispatch, pitch, {1,0,0});
-			privateMembers->cameraToDispatch = rotate	 (privateMembers->cameraToDispatch, yaw, {0,1,0});
-			privateMembers->cameraToDispatch = rotate	 (privateMembers->cameraToDispatch, roll, {0,0,1});
+			privateMembers->globalsToDispatch.view = glm::identity<glm::mat4>();
+			privateMembers->globalsToDispatch.view = translate(privateMembers->globalsToDispatch.view, {x, y, z});
+			privateMembers->globalsToDispatch.view = rotate	  (privateMembers->globalsToDispatch.view, pitch, {1,0,0});
+			privateMembers->globalsToDispatch.view = rotate	  (privateMembers->globalsToDispatch.view, yaw, {0,1,0});
+			privateMembers->globalsToDispatch.view = rotate	  (privateMembers->globalsToDispatch.view, roll, {0,0,1});
 			
 		}
 

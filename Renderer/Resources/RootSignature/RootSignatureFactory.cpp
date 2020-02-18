@@ -27,7 +27,13 @@ namespace Renderer
 			rootDesc.Version = D3D_ROOT_SIGNATURE_VERSION_1_1;
 
 			std::vector<D3D12_ROOT_PARAMETER1> parameters{};
-		
+
+			D3D12_ROOT_PARAMETER1 generalDataParameter{};
+			generalDataParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+			generalDataParameter.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+			generalDataParameter.Descriptor.Flags = D3D12_ROOT_DESCRIPTOR_FLAG_DATA_STATIC_WHILE_SET_AT_EXECUTE;			
+			parameters.emplace_back(generalDataParameter);
+			
 			std::vector<D3D12_DESCRIPTOR_RANGE1> ranges{};
 			PushBackRangeIfNecessary(ranges, srvAmount, D3D12_DESCRIPTOR_RANGE_TYPE_SRV);
 			PushBackRangeIfNecessary(ranges, uavAmount, D3D12_DESCRIPTOR_RANGE_TYPE_UAV);

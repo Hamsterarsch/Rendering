@@ -18,7 +18,7 @@ namespace Renderer
 			public: virtual size_t GetPsoHandle() const = 0;
 
 			public: virtual size_t GetSignatureHandle() const = 0;
-			
+								
 			public: virtual void ExecuteOperationOnResourceReferences(ResourceRegistry *registry, void(ResourceRegistry:: *operation)(size_t)) = 0;
 			
 			public: virtual void Record(RHA::DX12::CmdList *list, ResourceRegistry &registry) = 0;

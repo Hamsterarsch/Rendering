@@ -103,9 +103,7 @@ namespace Renderer
 			private: UniquePtr<PrivateMembers> privateMembers;
 
 			private: long long lastDispatchTime;
-
-			private: float shaderTimer;
-
+					 
 					 		
 			
 			public: Renderer(HWND outputWindow);
