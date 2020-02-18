@@ -159,6 +159,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Commands\RenderMeshCommand.hpp" />
     <ClInclude Include="FrameRenderer.hpp" />
     <ClInclude Include="Interface\RenderCommand.hpp" />
     <ClInclude Include="Interface\Renderer.hpp" />
@@ -168,7 +169,6 @@
     <ClInclude Include="Interface\Resources\Pso\VertexLayoutTypes.hpp" />
     <ClInclude Include="Interface\Resources\ResourceHandle.hpp" />
     <ClInclude Include="Interface\Resources\ResourceTypes.hpp" />
-    <ClInclude Include="RenderMeshCommand.hpp" />
     <ClInclude Include="Resources\Descriptor\DescriptorAllocator.hpp" />
     <ClInclude Include="Resources\Descriptor\DescriptorChunk.hpp" />
     <ClInclude Include="Resources\Descriptor\DescriptorChunkRegistry.hpp" />
@@ -190,11 +190,11 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Commands\RenderMeshCommand.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="FrameRenderer.cpp" />
     <ClCompile Include="Interface\Renderer.cpp" />
     <ClCompile Include="Interface\Resources\ResourceHandle.cpp" />
-    <ClCompile Include="RenderMeshCommand.cpp" />
     <ClCompile Include="Resources\Descriptor\DescriptorAllocator.cpp" />
     <ClCompile Include="Resources\Descriptor\DescriptorChunkRegistry.cpp" />
     <ClCompile Include="Resources\Descriptor\DescriptorMemory.cpp" />

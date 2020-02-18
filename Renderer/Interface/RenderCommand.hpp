@@ -12,12 +12,23 @@ namespace Renderer
 		
 		class RenderCommand
 		{
-			DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(RenderCommand)
+			DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS_NOCTOR(RenderCommand)
 
+
+			private: size_t signatureHandle;
+
+			private: size_t psoHandle;
+
+
+			public: RenderCommand(size_t signatureHandle, size_t psoHandle) :
+				signatureHandle{ signatureHandle },
+				psoHandle{ psoHandle }
+			{				
+			}
 			
-			public: virtual size_t GetPsoHandle() const = 0;
-
-			public: virtual size_t GetSignatureHandle() const = 0;
+			public: inline size_t GetSignatureHandle() const { return signatureHandle; }
+			
+			public: inline size_t GetPsoHandle() const { return psoHandle; }
 								
 			public: virtual void ExecuteOperationOnResourceReferences(ResourceRegistry *registry, void(ResourceRegistry:: *operation)(size_t)) = 0;
 			

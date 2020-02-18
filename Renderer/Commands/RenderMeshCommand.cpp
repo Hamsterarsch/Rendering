@@ -10,12 +10,22 @@ namespace Renderer
 	{
 
 
-		RenderMeshCommand::RenderMeshCommand(const size_t signatureHandle, const size_t psoHandle, const size_t meshHandle, const size_t byteOffsetToIndexData, const size_t indicesSizeInBytes) :
-			signatureHandle{ signatureHandle },
-			psoHandle{ psoHandle },
+		RenderMeshCommand::RenderMeshCommand
+		(
+			const size_t signatureHandle, 
+			const size_t psoHandle, 
+			const size_t meshHandle, 
+			const size_t byteOffsetToIndexData, 
+			const size_t indicesSizeInBytes, 
+			const size_t transformBufferHandle, 
+			const size_t instanceCount
+			) :
+			RenderCommand{ signatureHandle, psoHandle },
 			meshHandle{ meshHandle },
 			byteOffsetToIndexData{ byteOffsetToIndexData },
-			indicesSizeInBytes{ indicesSizeInBytes }			
+			indicesSizeInBytes{ indicesSizeInBytes },
+			transformBufferHandle{ transformBufferHandle },
+			instanceCount{ instanceCount }		
 		{
 		}
 
@@ -24,15 +34,20 @@ namespace Renderer
 			ResourceRegistry *registry,
 			void(ResourceRegistry:: *operation)(size_t)
 		)
-		{
+		{			
 			(registry->*operation)(meshHandle);
+
+			if(transformBufferHandle > 0)
+			{
+				(registry->*operation)(transformBufferHandle);				
+			}
 			
 		}
 
 		void RenderMeshCommand::Record
 		(
-			RHA::DX12::CmdList* list, 
-			ResourceRegistry& registry
+			RHA::DX12::CmdList *list, 
+			ResourceRegistry &registry
 		)
 		{
 			auto mesh{ registry.GetResource(meshHandle) };
@@ -52,7 +67,12 @@ namespace Renderer
 			g->IASetIndexBuffer(&views.indexView);
 			g->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-			g->DrawIndexedInstanced(indicesSizeInBytes / sizeof(unsigned), 1, 0, 0, 0);
+			if(transformBufferHandle > 0)
+			{
+				g->SetGraphicsRootConstantBufferView(1, registry.GetResource(transformBufferHandle)->GetGPUVirtualAddress());				
+			}
+			
+			g->DrawIndexedInstanced(indicesSizeInBytes / sizeof(unsigned), instanceCount, 0, 0, 0);
 			
 		}
 
