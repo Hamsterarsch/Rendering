@@ -6,11 +6,11 @@ namespace Renderer
 {
 	namespace DX12
 	{
-		void ResourceRegistry::RegisterResource(const ResourceHandle &handle, ResourceAllocation &&allocation)
+		void ResourceRegistry::RegisterResource(size_t handle, ResourceAllocation &&allocation)
 		{
 			std::lock_guard<std::mutex> lock{ referenceMutex };
-			resourceAllocations.insert(  { handle.hash, std::move(allocation) } );
-			AddReference(handle.hash);
+			resourceAllocations.insert(  { handle, std::move(allocation) } );
+			AddReference(handle);
 			
 		}
 

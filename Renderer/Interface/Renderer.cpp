@@ -67,7 +67,8 @@ namespace Renderer
 		Renderer::Renderer(HWND outputWindow) :
 			shouldUpdateRendering{ false },
 			privateMembers{ nullptr },
-			lastDispatchTime{ 0 }			
+			lastDispatchTime{ 0 },
+			globalBufferHandleToReuse{ 0 }
 		{
 			resources = Facade::MakeDeviceResources(D3D_FEATURE_LEVEL_11_0, enableDebugLayers);
 			commonQueue = Facade::MakeQueue(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT);			
@@ -134,6 +135,10 @@ namespace Renderer
 					}
 
 					frame.WaitForCompletion();
+					frame.UnregisterResources();
+
+					std::lock_guard<std::mutex> lock{ globalBufferMutex };
+					globalBufferHandleToReuse = frame.GetGlobalBufferHandle();
 			
 				}
 
@@ -189,10 +194,23 @@ namespace Renderer
 			}
 
 			FrameRenderer Renderer::MakeFrameFromCommands()
-			{			 
-				const auto globalBufferHandle{ MakeBuffer(&privateMembers->globalsToDispatch, sizeof decltype(privateMembers)::element_type::globalsToDispatch) };
+			{
+				size_t globalBufferHandleToUse{ 0 };
+				{
+				std::lock_guard<std::mutex> lock{ globalBufferMutex };	
+				if(globalBufferHandleToReuse <= 0)
+				{
+					globalBufferHandleToUse = MakeBuffer(&privateMembers->globalsToDispatch, sizeof decltype(privateMembers)::element_type::globalsToDispatch);
+				}
+				else
+				{
+					globalBufferHandleToUse = globalBufferHandleToReuse;
+					RemakeBuffer(&privateMembers->globalsToDispatch, sizeof decltype(privateMembers)::element_type::globalsToDispatch, globalBufferHandleToReuse);
+					globalBufferHandleToReuse = 0;
+				}
+				}				
 			
-				FrameRenderer renderer{ resources.get(), commonQueue.get(), privateMembers->registry, *outputSurface, *depthSurface, globalBufferHandle };
+				FrameRenderer renderer{ resources.get(), commonQueue.get(), privateMembers->registry, *outputSurface, *depthSurface, globalBufferHandleToUse };			
 				for(auto &&cmd : privateMembers->commandsToDispatch)
 				{
 					renderer.AddCommand(std::move(cmd));
@@ -232,19 +250,33 @@ namespace Renderer
 		{
 			auto handle{ privateMembers->handleFactory.MakeHandle(ResourceTypes::Buffer) };
 
-			auto allocation
-			{
-				resourceFactory->MakeBufferWithData(data, sizeInBytes, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER | D3D12_RESOURCE_STATE_INDEX_BUFFER)
-			};
-
-			privateMembers->registry.RegisterResource(handle, std::move(allocation));
-
-			return handle.hash;
+			return MakeBufferInternal(data, sizeInBytes, handle.hash);
 			
 		}
 
+			size_t Renderer::MakeBufferInternal(const void *data, const size_t sizeInBytes, const size_t handle)
+			{
+				auto allocation
+				{
+					resourceFactory->MakeBufferWithData(data, sizeInBytes, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER | D3D12_RESOURCE_STATE_INDEX_BUFFER)
+				};
+
+				privateMembers->registry.RegisterResource(handle, std::move(allocation));
+
+				return handle;
+			
+			}
+			
 
 		
+		void Renderer::RemakeBuffer(const void* data, size_t sizeInBytes, size_t handle)
+		{
+			MakeBufferInternal(data, sizeInBytes, handle);
+			
+		}
+
+		
+
 		void Renderer::CompileVertexShader(const char *shader, size_t length, SerializationHook *serializer) const
 		{
 			auto shaderBlob{ privateMembers->shaderFactory->MakeVertexShader(shader, length, "main")};

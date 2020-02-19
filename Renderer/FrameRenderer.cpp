@@ -109,12 +109,19 @@ namespace Renderer
 		
 		FrameRenderer::~FrameRenderer() noexcept
 		{
+			UnregisterResources();
+			
+		}
+
+		void FrameRenderer::UnregisterResources()
+		{
 			if(RegistryIsValid())
 			{
 				UnregisterAllCommands();
 				registry->RemoveReference(globalBufferHandle);
+				registry = nullptr;
 			}
-			
+		
 		}
 
 			void FrameRenderer::UnregisterAllCommands()

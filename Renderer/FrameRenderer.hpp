@@ -75,12 +75,16 @@ namespace Renderer
 			
 			public: ~FrameRenderer() noexcept;
 
+			public: void UnregisterResources();
+			
 				private: inline bool RegistryIsValid() const { return registry != nullptr; }
 
 				private: void UnregisterAllCommands();
 			
 			
 			public: inline bool IsInvalid() const { return resources == nullptr; }
+
+			public: inline size_t GetGlobalBufferHandle() const { return globalBufferHandle; }
 
 			public: void AddCommand(UniquePtr<RenderCommand> &&command);
 
@@ -101,6 +105,7 @@ namespace Renderer
 				private: void SetupCompletionFence();
 			
 			public: void WaitForCompletion();
+
 													
 		};
 		

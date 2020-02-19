@@ -103,7 +103,10 @@ namespace Renderer
 			private: UniquePtr<PrivateMembers> privateMembers;
 
 			private: long long lastDispatchTime;
-					 
+
+			private: std::mutex globalBufferMutex;
+
+			private: size_t globalBufferHandleToReuse;
 					 		
 			
 			public: Renderer(HWND outputWindow);
@@ -135,6 +138,8 @@ namespace Renderer
 			
 			public: size_t MakeBuffer(const void *data, size_t sizeInBytes);
 
+				private: size_t MakeBufferInternal(const void *data, size_t sizeInBytes, size_t handle);
+						 			
 			public: void RemakeBuffer(const void *data, size_t sizeInBytes, size_t handle);
 			
 			

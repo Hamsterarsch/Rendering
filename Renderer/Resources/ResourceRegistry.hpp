@@ -31,7 +31,7 @@ namespace Renderer
 
 
 			
-			public: void RegisterResource(const ResourceHandle &handle, ResourceAllocation &&allocation);
+			public: void RegisterResource(size_t handle, ResourceAllocation &&allocation);
 
 			public: void AddReference(ResourceHandle::t_hash handle);
 
