@@ -3,7 +3,6 @@
 #include "Shared/Filesystem/Conversions.hpp"
 
 
-#include "Resources/ResourceFactory.hpp"
 #include "Resources/ResourceAllocation.hpp"
 #include "Resources/HandleFactory.hpp"
 #include "Resources/ResourceHandle.hpp"
@@ -16,6 +15,7 @@
 #include "Resources/Pso/VertexLayoutProvider.hpp"
 #include "Shared/Types/Containers/QueueConcurrent.hpp"
 #include "Resources/GlobalBufferData.hpp"
+#include "Resources/ResourceFactoryDeallocatable.hpp"
 
 
 #if _DEBUG
@@ -79,7 +79,7 @@ namespace Renderer
 			closeFence = Facade::MakeFence(resources.get());
 			closeEvent = CreateEvent(nullptr, false, false, nullptr);
 						
-			resourceFactory = std::make_unique<ResourceFactory>
+			resourceFactory = std::make_unique<ResourceFactoryDeallocatable>
 			(
 				resources.get(),
 				commonQueue.get(),
