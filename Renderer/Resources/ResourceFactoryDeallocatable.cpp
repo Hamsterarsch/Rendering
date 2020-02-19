@@ -19,12 +19,13 @@ namespace Renderer
 
 
 
-		void ResourceFactoryDeallocatable::Deallocate(ResourceAllocation &allocation, ResourceTypes type)
+		void ResourceFactoryDeallocatable::Deallocate(ResourceAllocation &allocation, const ResourceTypes type)
 		{
 			switch(type)
 			{
 			case ResourceTypes::Buffer:
 				DeallocateBuffer(allocation);
+				break;
 			default:
 				throw Exception::Exception{ "Resource type missing handling in dx12 resource factory deallocation" };				
 			}
