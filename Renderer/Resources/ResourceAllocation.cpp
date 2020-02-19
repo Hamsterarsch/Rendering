@@ -27,20 +27,26 @@ namespace Renderer
 
 
 		
-		ResourceAllocation::ResourceAllocation(ResourceAllocation &&other) noexcept
+		ResourceAllocation::ResourceAllocation(ResourceAllocation &&other) noexcept :
+			owner{ std::move(other.owner) },
+			type{ std::move(other.type) },
+			resource{ std::move(other.resource) },
+			allocation{ std::move(other.allocation) }
 		{
-			*this = std::move(other);
+			other.owner = nullptr;
 			
 		}
 
 		ResourceAllocation& ResourceAllocation::operator=(ResourceAllocation &&other) noexcept
 		{
-			owner = other.owner;
+			owner = std::move(other.owner);
+			other.owner = nullptr;
+			
+			type = std::move(other.type);
 
 			resource = std::move(other.resource);
-			other.resource = nullptr;
-
-			allocation = other.allocation;
+			
+			allocation = std::move(other.allocation);
 			
 			return *this;
 			
