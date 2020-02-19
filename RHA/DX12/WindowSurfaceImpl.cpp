@@ -33,7 +33,7 @@ namespace RHA
 				swapDesc.Height = AUTO_OBTAIN;
 				swapDesc.Stereo = false;
 				swapDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-				swapDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+				swapDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
 				swapDesc.SampleDesc.Count = NO_MSAA;
 				swapDesc.BufferCount = bufferCount;
 				swapDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -107,7 +107,9 @@ namespace RHA
 		void WindowSurfaceImpl::Present()
 		{
 			currentBackbufferIndex = (currentBackbufferIndex + 1) % bufferCount;
-			swapChain->Present(0, 0);
+
+			static constexpr DXGI_PRESENT_PARAMETERS params{ 0, nullptr, nullptr, nullptr };
+			swapChain->Present1(1, 0, &params);
 			
 		}
 
