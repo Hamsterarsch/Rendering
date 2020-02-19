@@ -40,48 +40,43 @@ namespace Renderer
 			
 			CopyDataToUploadBuffer(data, sizeInBytes);
 
-			ResourceAllocation outAlloc{ this, ResourceTypes::Buffer };
-			outAlloc.allocation = memory->Allocate(sizeInBytes);
-						
-			const auto desc{ MakeBufferDesc(sizeInBytes) };
-			constexpr decltype(nullptr) BUFFER_CLEAR_VALUE{ nullptr };
-			const auto result
-			{		
-				resources->GetDevice()->CreatePlacedResource
-				(
-					outAlloc.allocation.heap, 
-					outAlloc.allocation.offsetToAllocation,
-					&desc,
-					D3D12_RESOURCE_STATE_COPY_DEST,
-					BUFFER_CLEAR_VALUE,
-					IID_PPV_ARGS(&outAlloc.resource)
-				)
-			};
-			CheckGpuResourceCreation(result);
+			ResourceAllocation outAlloc{ MakeBufferResource(sizeInBytes) };
 			
-			auto glist{ GetFreshCmdList() };
+			ClearCmdList();						
+			list->RecordBarrierAliasing(nullptr, outAlloc.resource.Get());			
+			list->RecordCopyBufferRegion(outAlloc.resource.Get(), 0, uploadBuffer->GetResource().Get(), 0, sizeInBytes);
+			list->RecordBarrierTransition(outAlloc.resource.Get(), D3D12_RESOURCE_STATE_COPY_DEST, desiredState);
+			list->StopRecording();
 			
-			D3D12_RESOURCE_BARRIER activationBarrier{};
-			activationBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_ALIASING;
-			activationBarrier.Aliasing.pResourceBefore = nullptr;
-			activationBarrier.Aliasing.pResourceAfter = outAlloc.resource.Get();
-			glist->ResourceBarrier(1, &activationBarrier);
-			
-			glist->CopyBufferRegion(outAlloc.resource.Get(), 0, uploadBuffer->GetResource().Get(), 0, sizeInBytes);
-						
-			D3D12_RESOURCE_BARRIER barrier{};
-			barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-			barrier.Transition.pResource = outAlloc.resource.Get();
-			barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
-			barrier.Transition.StateAfter = desiredState;
-			glist->ResourceBarrier(1, &barrier);
-			
-			glist->Close();
-
 			SubmitListAndFenceSynchronization(list.get());		
 			return outAlloc;
 			
 		}
+
+			ResourceAllocation ResourceFactory::MakeBufferResource(const size_t sizeInBytes)
+			{
+				ResourceAllocation outAlloc{ this, ResourceTypes::Buffer };
+				outAlloc.allocation = memory->Allocate(sizeInBytes);
+							
+				const auto desc{ MakeBufferDesc(sizeInBytes) };
+				constexpr decltype(nullptr) BUFFER_CLEAR_VALUE{ nullptr };
+				const auto result
+				{		
+					resources->GetDevice()->CreatePlacedResource
+					(
+						outAlloc.allocation.heap, 
+						outAlloc.allocation.offsetToAllocation,
+						&desc,
+						D3D12_RESOURCE_STATE_COPY_DEST,
+						BUFFER_CLEAR_VALUE,
+						IID_PPV_ARGS(&outAlloc.resource)
+					)
+				};
+				CheckGpuResourceCreation(result);
+
+				return outAlloc;
+			
+			}
 
 			void ResourceFactory::CopyDataToUploadBuffer(const void *data, const size_t sizeInBytes)
 			{							
@@ -126,7 +121,7 @@ namespace Renderer
 			
 			}
 
-			DxPtr<ID3D12GraphicsCommandList> ResourceFactory::GetFreshCmdList()
+			void ResourceFactory::ClearCmdList()
 			{
 				if(FAILED(allocator->Reset()))
 				{
@@ -134,8 +129,7 @@ namespace Renderer
 				}
 
 				list = allocator->AllocateList();
-				return list->AsGraphicsList();
-			
+							
 			}
 
 			void ResourceFactory::SubmitListAndFenceSynchronization(CmdList *list)

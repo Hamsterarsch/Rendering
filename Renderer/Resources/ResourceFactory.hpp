@@ -65,6 +65,8 @@ namespace Renderer
 											
 			public: ResourceAllocation MakeBufferWithData(const void *data, size_t sizeInBytes, D3D12_RESOURCE_STATES desiredState);
 
+				private: ResourceAllocation MakeBufferResource(size_t sizeInBytes);
+			
 				private: void CopyDataToUploadBuffer(const void *data, size_t sizeInBytes);
 
 					private: bool UploadBufferCanNotFitAllocation(size_t allocationSizeInBytes) const;
@@ -73,12 +75,12 @@ namespace Renderer
 
 				private: static void CheckGpuResourceCreation(HRESULT result);
 
-				private: DxPtr<ID3D12GraphicsCommandList> GetFreshCmdList();
+				private: void ClearCmdList();
 
 				private: void SubmitListAndFenceSynchronization(CmdList *list);
 
 
-			public: virtual void Deallocate(ResourceAllocation &allocation, ResourceTypes type) {};
+			public: virtual void Deallocate(ResourceAllocation &allocation, ResourceTypes type) {}
 			
 
 						
