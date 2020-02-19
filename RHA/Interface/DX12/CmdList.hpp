@@ -29,6 +29,14 @@ namespace RHA
 			
 			public: virtual void RecordCopyResource(ID3D12Resource *destination, ID3D12Resource *source) = 0;
 
+			public: virtual void RecordCopyBufferRegion(ID3D12Resource *dstBuffer, size_t dstOffset, ID3D12Resource *srcBuffer, size_t srcOffset, size_t sizeInBytes) = 0;
+			
+			
+			public: virtual void RecordBarrierAliasing(ID3D12Resource *resourceBefore, ID3D12Resource *resourceAfter) = 0;
+
+			public: virtual void RecordBarrierTransition(ID3D12Resource *resource, D3D12_RESOURCE_STATES stateBefore, D3D12_RESOURCE_STATES stateAfter) = 0;
+
+			
 			public: virtual void RecordSetRenderTargets
 			(
 				unsigned numTargets,

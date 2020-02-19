@@ -80,8 +80,46 @@ namespace RHA
 			
 		}
 
+		void CmdListImpl::RecordCopyBufferRegion
+		(
+			ID3D12Resource *dstBuffer, 
+			const size_t dstOffset, 
+			ID3D12Resource *srcBuffer,
+			const size_t srcOffset,
+			const size_t sizeInBytes
+		)
+		{
+			glist->CopyBufferRegion(dstBuffer, dstOffset, srcBuffer, srcOffset, sizeInBytes);
+			
+		}
+
+
+		void CmdListImpl::RecordBarrierAliasing(ID3D12Resource *resourceBefore, ID3D12Resource *resourceAfter)
+		{
+			D3D12_RESOURCE_BARRIER barrier{};
+			barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_ALIASING;
+			barrier.Aliasing.pResourceBefore = resourceBefore;
+			barrier.Aliasing.pResourceAfter = resourceAfter;
+
+			glist->ResourceBarrier(1, &barrier);			
+			
+		}
+
 
 		
+		void CmdListImpl::RecordBarrierTransition(ID3D12Resource *resource, const D3D12_RESOURCE_STATES stateBefore, const D3D12_RESOURCE_STATES stateAfter)
+		{
+			D3D12_RESOURCE_BARRIER barrier{};
+			barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+			barrier.Transition.pResource = resource;
+			barrier.Transition.StateBefore = stateBefore;
+			barrier.Transition.StateAfter = stateAfter;
+
+			glist->ResourceBarrier(1, &barrier);
+			
+		}
+
+
 		void CmdListImpl::RecordSetRenderTargets
 		(
 			const unsigned numTargets,
