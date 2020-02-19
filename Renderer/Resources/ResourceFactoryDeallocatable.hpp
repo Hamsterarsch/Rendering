@@ -11,7 +11,7 @@ namespace Renderer
 			public: ResourceFactoryDeallocatable(DeviceResources *resources, Queue *queue, UniquePtr<DeallocatableGpuMemory> &&memory);
 
 					
-			public: virtual void Deallocate(ResourceAllocation &allocation, ResourceTypes type) override;
+			public: virtual void DeallocateInternal(ResourceAllocation &allocation, ResourceTypes type) override;
 			
 				private: void DeallocateBuffer(ResourceAllocation &allocation);
 

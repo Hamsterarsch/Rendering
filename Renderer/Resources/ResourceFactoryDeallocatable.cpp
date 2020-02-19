@@ -19,7 +19,7 @@ namespace Renderer
 
 
 
-		void ResourceFactoryDeallocatable::Deallocate(ResourceAllocation &allocation, const ResourceTypes type)
+		void ResourceFactoryDeallocatable::DeallocateInternal(ResourceAllocation &allocation, const ResourceTypes type)
 		{
 			switch(type)
 			{

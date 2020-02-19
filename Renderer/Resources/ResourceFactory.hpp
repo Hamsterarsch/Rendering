@@ -3,6 +3,7 @@
 #include "Shared/PtrTypes.hpp"
 #include "Resources/ResourceAllocation.hpp"
 #include "Resources/ResourceMemory.hpp"
+#include <mutex>
 
 struct ID3D12Resource;
 
@@ -44,6 +45,8 @@ namespace Renderer
 
 			private: D3D12_GPU_VIRTUAL_ADDRESS uploadAddress;
 
+			private: std::mutex mutex;
+
 
 			
 			protected: UniquePtr<AllocatableGpuMemory> memory;
@@ -80,7 +83,9 @@ namespace Renderer
 				private: void SubmitListAndFenceSynchronization(CmdList *list);
 
 
-			public: virtual void Deallocate(ResourceAllocation &allocation, ResourceTypes type) {}
+			public: void Deallocate(ResourceAllocation &allocation, ResourceTypes type);
+
+			protected: virtual void DeallocateInternal(ResourceAllocation &allocation, ResourceTypes type) {};
 			
 
 						

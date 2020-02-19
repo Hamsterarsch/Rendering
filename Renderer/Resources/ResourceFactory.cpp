@@ -37,7 +37,8 @@ namespace Renderer
 		{
 			WaitForSingleObject(event, INFINITE);
 			fence->Signal(0);
-			
+
+			std::lock_guard<std::mutex> lock{ mutex };
 			CopyDataToUploadBuffer(data, sizeInBytes);
 
 			ResourceAllocation outAlloc{ MakeBufferResource(sizeInBytes) };
@@ -140,6 +141,16 @@ namespace Renderer
 				queue->Signal(1, fence.get());
 				
 			}
+
+
+		
+		void ResourceFactory::Deallocate(ResourceAllocation &allocation, const ResourceTypes type)
+		{
+			std::lock_guard<std::mutex> lock{ mutex };
+			
+			DeallocateInternal(allocation, type);
+			
+		}
 
 		
 	}
