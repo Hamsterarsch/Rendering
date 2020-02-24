@@ -13,7 +13,7 @@
 namespace Windows
 {
 	App::App() :
-		window{ {1920, 1080}, L"Window", L"UniqueClassName" },
+		window{ {1920, 1080}, true, L"Window", L"UniqueClassName" },
 		renderer{ window.GetHandle() }
 	{
 		Initialize();

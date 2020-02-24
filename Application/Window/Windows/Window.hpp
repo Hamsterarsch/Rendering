@@ -15,9 +15,11 @@ namespace Windows
 		
 		private: HWND handle;
 
+		private: bool isFullscreen;
+
 		
 		
-		public: Window(const Dimensions2D &size, const std::wstring &windowName, const std::wstring &className);
+		public: Window(const Dimensions2D &size, bool isBorderlessFullscreen, const std::wstring &windowName, const std::wstring &className);
 		
 			private: void CreateWindowClass() const;
 		
@@ -35,6 +37,8 @@ namespace Windows
 
 		
 		public: inline HWND GetHandle() const { return handle; }
+
+		public: inline bool GetIsFullscreen() const { return isFullscreen; }
 		
 				
 	};

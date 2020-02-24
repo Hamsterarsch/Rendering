@@ -4,9 +4,10 @@
 
 namespace Windows
 {
-	Window::Window(const Dimensions2D &size, const std::wstring &windowName, const std::wstring &className) :
+	Window::Window(const Dimensions2D &size, const bool isBorderlessFullscreen, const std::wstring &windowName, const std::wstring &className) :
 		windowName{ windowName },
-		className{ className }
+		className{ className },
+		isFullscreen{ isBorderlessFullscreen }
 	{
 		CreateWindowClass();
 
@@ -14,16 +15,31 @@ namespace Windows
 		constexpr decltype(nullptr) NO_PARENT{}, NO_MENU{};
 		constexpr LPARAM NO_INIT_MSG{ 0 };
 
+		const auto primaryDisplayWidth{ GetSystemMetrics(SM_CXSCREEN) };
+		const auto primaryDisplayHeight{ GetSystemMetrics(SM_CYSCREEN) };
+
+		/*
+		if(isBorderlessFullscreen)
+		{
+			DEVMODE primaryDisplaySettings{};
+			primaryDisplaySettings.dmSize = sizeof primaryDisplaySettings;
+			primaryDisplaySettings.dmPelsWidth = primaryDisplayWidth;
+			primaryDisplaySettings.dmPelsHeight = primaryDisplayHeight;
+			primaryDisplaySettings.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
+
+			ChangeDisplaySettings(&primaryDisplaySettings, CDS_FULLSCREEN);
+		}*/
+		
 		handle =
 		CreateWindow
 		(
 			className.data(),
 			this->windowName.data(),
-			WS_OVERLAPPEDWINDOW,
+			isBorderlessFullscreen ? 0 : WS_OVERLAPPEDWINDOW,
 			NO_X_DISP,
 			NO_Y_DISP,
-			size.GetWidth(),
-			size.GetHeight(),
+			isBorderlessFullscreen ? primaryDisplayWidth : size.GetWidth(),
+			isBorderlessFullscreen ? primaryDisplayHeight : size.GetHeight(),
 			NO_PARENT, 
 			NO_MENU, 
 			GetModuleHandle(nullptr),
@@ -34,7 +50,6 @@ namespace Windows
 		{
 			throw Exception::CreationFailed("Could not create window");
 		}
-		
 		ShowWindow(handle, SW_SHOW);
 		
 	}
