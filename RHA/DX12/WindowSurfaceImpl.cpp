@@ -12,7 +12,8 @@ namespace RHA
 	{
 		WindowSurfaceImpl::WindowSurfaceImpl(DeviceResources *resources, Queue *queue, HWND window) :
 			viewHeap{ resources, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, bufferCount, false },			
-			currentBackbufferIndex{ 0 }
+			currentBackbufferIndex{ 0 },
+			targetedVerticalBlank{ 0 }
 		{
 			CreateSwapChain(resources, queue, window);
 
@@ -23,7 +24,7 @@ namespace RHA
 			void WindowSurfaceImpl::CreateSwapChain(DeviceResources *resources, Queue *queue, HWND window)
 			{
 				DXGI_SWAP_CHAIN_FULLSCREEN_DESC fsDesc{};
-				fsDesc.Windowed = true;
+				fsDesc.Windowed = false;				
 								
 				constexpr unsigned AUTO_OBTAIN{ 0 };
 				constexpr unsigned NO_MSAA{ 1 };
@@ -54,18 +55,8 @@ namespace RHA
 				};
 				CheckSwapChainCreation(result);
 
-				DXGI_SWAP_CHAIN_DESC1 obtainedDesc{};
-				swapChain->GetDesc1(&obtainedDesc);
-
-				defaultViewport.Width = obtainedDesc.Width;
-				defaultViewport.Height = obtainedDesc.Height;
-				defaultViewport.MinDepth = 0;
-				defaultViewport.MaxDepth = 1;
-				defaultViewport.TopLeftX = defaultViewport.TopLeftX = 0;
-
-				defaultRect.left = defaultRect.top = 0;
-				defaultRect.bottom = obtainedDesc.Height;
-				defaultRect.right = obtainedDesc.Width;
+				InitializeFullscreenState();			
+				QueryViewportInformation();
 				
 			}
 
@@ -78,7 +69,31 @@ namespace RHA
 				
 				}
 
-			void WindowSurfaceImpl::CreateViewsForChainBuffers(DeviceResources *resources)
+				void WindowSurfaceImpl::InitializeFullscreenState()
+				{
+					swapChain->SetFullscreenState(true, nullptr);
+					swapChain->ResizeBuffers(0, 0, 0,DXGI_FORMAT_UNKNOWN, 0);
+			
+				}
+
+				void WindowSurfaceImpl::QueryViewportInformation()
+				{
+					DXGI_SWAP_CHAIN_DESC1 obtainedDesc{};
+					swapChain->GetDesc1(&obtainedDesc);
+
+					defaultViewport.Width = obtainedDesc.Width;
+					defaultViewport.Height = obtainedDesc.Height;
+					defaultViewport.MinDepth = 0;
+					defaultViewport.MaxDepth = 1;
+					defaultViewport.TopLeftX = defaultViewport.TopLeftX = 0;
+
+					defaultRect.left = defaultRect.top = 0;
+					defaultRect.bottom = obtainedDesc.Height;
+					defaultRect.right = obtainedDesc.Width;
+				
+				}
+
+		void WindowSurfaceImpl::CreateViewsForChainBuffers(DeviceResources *resources)
 			{
 				for (size_t bufferIndex{ 0 }; bufferIndex < buffers.size(); ++bufferIndex)
 				{
@@ -109,7 +124,7 @@ namespace RHA
 			currentBackbufferIndex = (currentBackbufferIndex + 1) % bufferCount;
 
 			static constexpr DXGI_PRESENT_PARAMETERS params{ 0, nullptr, nullptr, nullptr };
-			swapChain->Present1(1, 0, &params);
+			swapChain->Present1(targetedVerticalBlank, 0, &params);
 			
 		}
 

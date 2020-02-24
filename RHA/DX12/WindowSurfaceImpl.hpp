@@ -30,6 +30,8 @@ namespace RHA
 
 			private: D3D12_RECT defaultRect;
 
+			private: unsigned char targetedVerticalBlank;
+
 			
 					 			
 			public: WindowSurfaceImpl(class DeviceResources *resources, class Queue *queue, HWND window);
@@ -37,6 +39,10 @@ namespace RHA
 				private: void CreateSwapChain(class DeviceResources *resources, class Queue *queue, HWND window);
 			
 					private: static void CheckSwapChainCreation(HRESULT result);
+
+					private: void InitializeFullscreenState();
+			
+					private: void QueryViewportInformation();
 
 				private: void CreateViewsForChainBuffers(class DeviceResources *resources);
 			
@@ -46,6 +52,10 @@ namespace RHA
 			public: virtual inline float GetWidth() const override { return defaultViewport.Width; }
 
 			public: virtual inline float GetHeight() const override { return defaultViewport.Height; }
+
+			public: virtual inline void EnableVerticalSync() override { targetedVerticalBlank = 1; }
+
+			public: virtual inline void DisableVerticalSync() override { targetedVerticalBlank = 0; }
 			
 			public: virtual inline DxPtr<ID3D12Resource> GetResourceTemplate() override { return buffers[0]; }
 																	   			

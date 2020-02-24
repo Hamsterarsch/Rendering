@@ -17,6 +17,10 @@ namespace RHA
 			public: virtual inline float GetWidth() const = 0;
 			
 			public: virtual inline float GetHeight() const = 0;
+
+			public: virtual inline void EnableVerticalSync() = 0;
+
+			public: virtual inline void DisableVerticalSync() = 0;
 			
 			public: virtual DxPtr<ID3D12Resource> GetResourceTemplate() = 0;
 			
