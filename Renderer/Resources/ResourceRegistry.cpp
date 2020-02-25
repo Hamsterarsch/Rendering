@@ -8,33 +8,52 @@ namespace Renderer
 	{
 		void ResourceRegistry::RegisterResource(size_t handle, ResourceAllocation &&allocation)
 		{
-			std::lock_guard<std::mutex> lock{ referenceMutex };
+			{
+			std::lock_guard<std::mutex> lock{ allocationMutex };
 			resourceAllocations.insert(  { handle, std::move(allocation) } );
-			AddReference(handle);
+			}
+			
+			std::lock_guard<std::mutex> lock{ referenceMutex };
+			unreferencedResources.emplace(handle);
 			
 		}
 
-			void ResourceRegistry::AddReference(const ResourceHandle::t_hash handle)
+
+		
+		void ResourceRegistry::AddReference(const ResourceHandle::t_hash handle)
+		{
+			std::lock_guard<std::mutex> lock{ referenceMutex };
+		
+			auto bucket{ InsertOrFindReferenceData(handle) };
+			if(ThereAreNoReferencesIn(bucket))
 			{
-				++InsertOrFindReferenceData(handle)->second;
-				
+				unreferencedResources.erase(handle);
 			}
+			++bucket->second;
+			
+		}
 
-				decltype(ResourceRegistry::resourceReferences)::iterator ResourceRegistry::InsertOrFindReferenceData
-				(
-					const ResourceHandle::t_hash hash
-				)
+			decltype(ResourceRegistry::resourceReferences)::iterator ResourceRegistry::InsertOrFindReferenceData
+			(
+				const ResourceHandle::t_hash hash
+			)
+			{
+				auto referenceData{ resourceReferences.find(hash) };
+				if(referenceData == resourceReferences.end())
 				{
-					auto referenceData{ resourceReferences.find(hash) };
-					if(referenceData == resourceReferences.end())
-					{
-						return resourceReferences.insert( {hash, 0} );
-						
-					}
-
-					return referenceData;
-				
+					return resourceReferences.insert( {hash, 0} );
+					
 				}
+
+				return referenceData;
+			
+			}
+		
+			bool ResourceRegistry::ThereAreNoReferencesIn(const decltype(resourceReferences)::const_iterator &referenceBucket)
+			{
+				return referenceBucket->second <= 0;
+			
+			}
 
 		
 
@@ -44,17 +63,33 @@ namespace Renderer
 			auto referenceData{ resourceReferences.find(handle) };
 			--referenceData->second;
 			
-			if(referenceData->second <= 0)
+			if(ThereAreNoReferencesIn(referenceData))
 			{
-				const ResourceHandle realHandle{ handle };
-				RemoveEntity(realHandle);
+				unreferencedResources.emplace(handle);
 				resourceReferences.erase(referenceData);
 			}
 			
 		}
+				
 
-			void ResourceRegistry::RemoveEntity(const ResourceHandle &handle)
+
+		void ResourceRegistry::PurgeUnreferencedResources()
+		{
+			std::lock_guard<std::mutex> lockReferences{ referenceMutex };
+
+			for(auto &&unreferencedHandle : unreferencedResources)
+			{				
+				RemoveEntity(unreferencedHandle);				
+			}
+
+			unreferencedResources.clear();
+			
+		}
+		
+			void ResourceRegistry::RemoveEntity(const ResourceHandle::t_hash hash)
 			{
+				const ResourceHandle handle{ hash };
+			
 				switch(handle.GetResourceType())
 				{
 				case ResourceTypes::Mesh: 
@@ -86,15 +121,25 @@ namespace Renderer
 		
 		bool ResourceRegistry::HandleIsInvalid(const ResourceHandle::t_hash handle)
 		{
-			std::lock_guard<std::mutex> lock{ referenceMutex};
-			auto found{ resourceReferences.find(handle) };
-			
-			if(found == resourceReferences.end())
+			if(handle == 0)
 			{
 				return true;
 			}
+			
+			std::lock_guard<std::mutex> lock{ referenceMutex };
+			auto foundReferenceData{ resourceReferences.find(handle) };
+						
+			if(foundReferenceData == resourceReferences.end())
+			{
+				auto foundUnreferenced{ unreferencedResources.count(handle) };
+				if(foundUnreferenced)
+				{
+					return false;
+				}				
+				return true;
+			}
 
-			if(found->second == 0)
+			if(ThereAreNoReferencesIn(foundReferenceData))
 			{
 				throw;
 			}
@@ -105,6 +150,16 @@ namespace Renderer
 
 
 		
+		bool ResourceRegistry::HandleIsUnreferenced(const ResourceHandle::t_hash handle)
+		{
+			std::lock_guard<std::mutex> lock{ referenceMutex };
+			
+			return resourceReferences.find(handle) == resourceReferences.end() && unreferencedResources.find(handle) == unreferencedResources.end();
+			
+		}
+
+		
+
 		DxPtr<ID3D12Resource> ResourceRegistry::GetResource(const ResourceHandle::t_hash handle)
 		{
 			std::lock_guard<std::mutex> lock{ allocationMutex };

@@ -1,5 +1,6 @@
 #pragma once
 #include <unordered_map>
+#include <unordered_set>
 #include "Resources/ResourceHandle.hpp"
 #include "Resources/RootSignature/RootSignatureData.hpp"
 #include "Resources/ResourceAllocation.hpp"
@@ -23,10 +24,13 @@ namespace Renderer
 			
 			private: std::unordered_multimap<ResourceHandle::t_hash, size_t> resourceReferences;
 
+			private: std::unordered_set<ResourceHandle::t_hash> unreferencedResources;
+			
 			private: std::unordered_map<ResourceHandle::t_hash, RootSignatureData> rootSignatures;
 
 			private: std::unordered_map<ResourceHandle::t_hash, DxPtr<ID3D12PipelineState>> pipelineStates;
 
+			
 			private: mutable std::mutex referenceMutex, allocationMutex, signatureMutex, pipelineMutex;
 
 
@@ -35,15 +39,20 @@ namespace Renderer
 
 			public: void AddReference(ResourceHandle::t_hash handle);
 
+				private: static bool ThereAreNoReferencesIn(const decltype(resourceReferences)::const_iterator &referenceBucket);
+			
 				private: decltype(resourceReferences)::iterator InsertOrFindReferenceData(ResourceHandle::t_hash hash);
 
 			public: void RemoveReference(ResourceHandle::t_hash handle);
+			
+			public: void PurgeUnreferencedResources();
 
-				private: void RemoveEntity(const ResourceHandle &handle);
-
+				private: void RemoveEntity(ResourceHandle::t_hash hash);
 			
 			public: bool HandleIsInvalid(ResourceHandle::t_hash handle);
 
+			public: bool HandleIsUnreferenced(ResourceHandle::t_hash handle);
+			
 			public: DxPtr<ID3D12Resource> GetResource(ResourceHandle::t_hash handle);
 
 
