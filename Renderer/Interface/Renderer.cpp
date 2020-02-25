@@ -18,6 +18,7 @@
 #include "Resources/ResourceFactoryDeallocatable.hpp"
 
 
+
 #if _DEBUG
 	constexpr bool enableDebugLayers = true;
 #else
@@ -54,6 +55,10 @@ namespace Renderer
 			std::list<UniquePtr<RenderCommand>> commandsToDispatch;
 
 			GlobalBufferData globalsToDispatch;
+
+			std::forward_list<size_t> handlesToRetire;
+
+			std::mutex mutexRetiredHandles;
 			
 			PrivateMembers(DeviceResources *resources) :
 				psoFactory{ resources },
@@ -68,12 +73,13 @@ namespace Renderer
 			shouldUpdateRendering{ false },
 			privateMembers{ nullptr },
 			lastDispatchTime{ 0 },
-			globalBufferHandleToReuse{ 0 }
+			maxFramesPending{ 2 }
 		{
 			resources = Facade::MakeDeviceResources(D3D_FEATURE_LEVEL_11_0, enableDebugLayers);
 			commonQueue = Facade::MakeQueue(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT);			
 
 			outputSurface = Facade::MakeWindowSurface(resources.get(), commonQueue.get(), outputWindow);
+			outputSurface->EnableVerticalSync();			
 			depthSurface = Facade::MakeDepthSurface(resources.get(), outputSurface->GetResourceTemplate()->GetDesc());
 			
 			closeFence = Facade::MakeFence(resources.get());
@@ -136,10 +142,7 @@ namespace Renderer
 
 					frame.WaitForCompletion();
 					frame.UnregisterResources();
-
-					std::lock_guard<std::mutex> lock{ globalBufferMutex };
-					globalBufferHandleToReuse = frame.GetGlobalBufferHandle();
-			
+								
 				}
 
 				void Renderer::WaitForIdleQueue()
@@ -159,10 +162,10 @@ namespace Renderer
 							
 		}
 
-
+				
 
 		void Renderer::DispatchFrame()
-		{
+		{						
 			if(NextFrameSlotIsOccupied())
 			{
 				AbortDispatch();
@@ -178,12 +181,27 @@ namespace Renderer
 			(
 				MakeFrameFromCommands()
 			);
+
+			privateMembers->registry.PurgeUnreferencedResources();
+			{
+				std::lock_guard<std::mutex> lock{ privateMembers->mutexRetiredHandles };
+				privateMembers->handlesToRetire.remove_if([ &p = privateMembers ](const size_t &handle)
+				{
+					if(p->registry.HandleIsUnreferenced(handle))
+					{
+						p->handleFactory.RetireHandle(ResourceHandle{ handle });
+						return true;					
+					}
+					return false;
+					
+				});
+			}
 			
 		}
 
 			bool Renderer::NextFrameSlotIsOccupied() const
 			{
-				return privateMembers->frames.Size() >= 2;
+				return privateMembers->frames.Size() >= maxFramesPending;
 			
 			}
 
@@ -194,23 +212,10 @@ namespace Renderer
 			}
 
 			FrameRenderer Renderer::MakeFrameFromCommands()
-			{
-				size_t globalBufferHandleToUse{ 0 };
-				{
-				std::lock_guard<std::mutex> lock{ globalBufferMutex };	
-				if(globalBufferHandleToReuse <= 0)
-				{
-					globalBufferHandleToUse = MakeBuffer(&privateMembers->globalsToDispatch, sizeof decltype(privateMembers)::element_type::globalsToDispatch);
-				}
-				else
-				{
-					globalBufferHandleToUse = globalBufferHandleToReuse;
-					RemakeBuffer(&privateMembers->globalsToDispatch, sizeof decltype(privateMembers)::element_type::globalsToDispatch, globalBufferHandleToReuse);
-					globalBufferHandleToReuse = 0;
-				}
-				}				
-			
-				FrameRenderer renderer{ resources.get(), commonQueue.get(), privateMembers->registry, *outputSurface, *depthSurface, globalBufferHandleToUse };			
+			{					
+				HandleWrapper globalBuffer{ this, MakeBuffer(&privateMembers->globalsToDispatch, sizeof decltype(privateMembers)::element_type::globalsToDispatch) };
+									
+				FrameRenderer renderer{ resources.get(), commonQueue.get(), privateMembers->registry, *outputSurface, *depthSurface, std::move(globalBuffer) };			
 				for(auto &&cmd : privateMembers->commandsToDispatch)
 				{
 					renderer.AddCommand(std::move(cmd));
@@ -384,7 +389,17 @@ namespace Renderer
 			return privateMembers->registry.HandleIsInvalid(handle);
 			
 		}
+
+
 		
+		void Renderer::RetireHandle(const size_t handle)
+		{
+			std::lock_guard<std::mutex> lock{ privateMembers->mutexRetiredHandles };
+			
+			privateMembers->handlesToRetire.push_front(handle);
+			
+		}
+
 		
 	}
 

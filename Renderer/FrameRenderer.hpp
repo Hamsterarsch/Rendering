@@ -2,6 +2,7 @@
 #include "Shared/PtrTypes.hpp"
 #include "RenderCommand.hpp"
 #include <vector>
+#include "Resources/HandleWrapper.hpp"
 #include <d3d12.h>
 
 
@@ -57,13 +58,13 @@ namespace Renderer
 
 			private: static constexpr size_t fenceCmdCompletionValue{ 1 }, fenceQueueReleaseValue{ 2 };
 
-			private: size_t globalBufferHandle;
+			private: HandleWrapper globalBufferHandle;
 
 			
 
 			public: FrameRenderer();
 			
-			public: FrameRenderer(DeviceResources *resources, Queue *queue, ResourceRegistry &registry, WindowSurface &windowSurface, DepthSurface &depthSurface, size_t globalBufferHandle);
+			public: FrameRenderer(DeviceResources *resources, Queue *queue, ResourceRegistry &registry, WindowSurface &windowSurface, DepthSurface &depthSurface, HandleWrapper &&globalBuffer);
 
 			public: FrameRenderer(FrameRenderer &&other) noexcept;
 
@@ -83,8 +84,6 @@ namespace Renderer
 			
 			
 			public: inline bool IsInvalid() const { return resources == nullptr; }
-
-			public: inline size_t GetGlobalBufferHandle() const { return globalBufferHandle; }
 
 			public: void AddCommand(UniquePtr<RenderCommand> &&command);
 

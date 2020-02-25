@@ -104,10 +104,9 @@ namespace Renderer
 
 			private: long long lastDispatchTime;
 
-			private: std::mutex globalBufferMutex;
+			private: const unsigned char maxFramesPending;
 
-			private: size_t globalBufferHandleToReuse;
-					 		
+			
 			
 			public: Renderer(HWND outputWindow);
 
@@ -121,10 +120,10 @@ namespace Renderer
 							 
 			public: ~Renderer();
 
-			
+
 			public: void DispatchFrame();
 
-				private: bool NextFrameSlotIsOccupied() const;
+			public: bool NextFrameSlotIsOccupied() const;
 
 				private: void AbortDispatch();
 
@@ -162,6 +161,8 @@ namespace Renderer
 								
 
 			public: bool ResourceMustBeRemade(size_t handle);
+
+			public: void RetireHandle(size_t handle);
 			
 									   					 											
 		};

@@ -28,7 +28,7 @@ namespace Renderer
 			ResourceRegistry &registry,
 			WindowSurface &windowSurface, 
 			DepthSurface &depthSurface,
-			size_t globalBufferHandle
+			HandleWrapper &&globalBufferHandle
 		) :
 			resources{ resources },
 			queue{ queue },
@@ -36,11 +36,12 @@ namespace Renderer
 			windowSurface{ &windowSurface },
 			depthSurface{ &depthSurface },
 			commandsRecordedToList{ 0 },
-			globalBufferHandle{ globalBufferHandle }
+			globalBufferHandle{ std::move(globalBufferHandle) }
 		{
 			allocator = Facade::MakeCmdAllocator(resources, D3D12_COMMAND_LIST_TYPE_DIRECT);
 			fence = Facade::MakeFence(resources);
 			event = CreateEvent(nullptr, false, false, nullptr);
+			registry.AddReference(this->globalBufferHandle);
 						
 		}
 
