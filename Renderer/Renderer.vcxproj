@@ -164,6 +164,7 @@
     <ClInclude Include="Interface\RenderCommand.hpp" />
     <ClInclude Include="Interface\Renderer.hpp" />
     <ClInclude Include="Interface\RendererExportHelper.hpp" />
+    <ClInclude Include="Interface\Resources\HandleWrapper.hpp" />
     <ClInclude Include="Interface\Resources\Pso\PipelineTypes.hpp" />
     <ClInclude Include="Interface\Resources\Pso\ShaderList.hpp" />
     <ClInclude Include="Interface\Resources\Pso\VertexLayoutTypes.hpp" />
@@ -199,6 +200,7 @@
     <ClCompile Include="Resources\Descriptor\DescriptorMemory.cpp" />
     <ClCompile Include="Resources\DynamicHeapSet.cpp" />
     <ClCompile Include="Resources\HandleFactory.cpp" />
+    <ClCompile Include="Resources\HandleWrapper.cpp" />
     <ClCompile Include="Resources\Pso\PsoFactory.cpp" />
     <ClCompile Include="Resources\Pso\VertexLayoutProvider.cpp" />
     <ClCompile Include="Resources\ResourceAllocation.cpp" />

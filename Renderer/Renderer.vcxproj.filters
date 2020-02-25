@@ -84,6 +84,9 @@
     <ClInclude Include="Commands\RenderMeshCommand.hpp">
       <Filter>Commands</Filter>
     </ClInclude>
+    <ClInclude Include="Interface\Resources\HandleWrapper.hpp">
+      <Filter>Interface\Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -95,9 +98,6 @@
     </ClCompile>
     <ClCompile Include="Resources\DynamicHeapSet.cpp">
       <Filter>Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="Interface\Resources\ResourceHandle.cpp">
-      <Filter>Interface\Resources</Filter>
     </ClCompile>
     <ClCompile Include="Resources\ResourceMemory.cpp">
       <Filter>Resources</Filter>
@@ -141,6 +141,12 @@
     </ClCompile>
     <ClCompile Include="Commands\RenderMeshCommand.cpp">
       <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\HandleWrapper.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\ResourceHandle.cpp">
+      <Filter>Resources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
