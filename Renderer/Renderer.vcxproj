@@ -194,7 +194,6 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="FrameRenderer.cpp" />
     <ClCompile Include="Interface\Renderer.cpp" />
-    <ClCompile Include="Interface\Resources\ResourceHandle.cpp" />
     <ClCompile Include="Resources\Descriptor\DescriptorAllocator.cpp" />
     <ClCompile Include="Resources\Descriptor\DescriptorChunkRegistry.cpp" />
     <ClCompile Include="Resources\Descriptor\DescriptorMemory.cpp" />
@@ -205,6 +204,7 @@
     <ClCompile Include="Resources\ResourceAllocation.cpp" />
     <ClCompile Include="Resources\ResourceFactory.cpp" />
     <ClCompile Include="Resources\ResourceFactoryDeallocatable.cpp" />
+    <ClCompile Include="Resources\ResourceHandle.cpp" />
     <ClCompile Include="Resources\ResourceMemory.cpp" />
     <ClCompile Include="Resources\ResourceRegistry.cpp" />
     <ClCompile Include="Resources\RootSignature\RootSignatureFactory.cpp" />
