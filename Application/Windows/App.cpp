@@ -8,6 +8,7 @@
 
 #include "ThirdParty/glm/mat4x4.hpp"
 #include "ThirdParty/glm/gtc/matrix_transform.hpp"
+#include "Resources/HandleWrapper.hpp"
 
 
 namespace Windows
@@ -86,8 +87,8 @@ namespace Windows
 		{
 			struct
 			{
-				vertex vertices[3]{ {-0.75, -0.75, 0 }, {0.75, -0.75, 0}, {0, 0.75, 0} };
-				unsigned indices[3]{ 0,1,2 };
+				vertex vertices[4]{ {-0.75, -0.75, 0 }, {0.75, -0.75, 0}, {0.75, 0.75, 0}, { -0.75, 0.75, 0} };
+				unsigned indices[6]{ 0,1,2, 2,3,0 };
 			} meshdata;
 			meshSize = sizeof meshdata;
 			meshBytesToIndices = sizeof meshdata.vertices;
@@ -167,20 +168,27 @@ namespace Windows
 
 				minstancePsoHandle = renderer.MakePso(Renderer::PipelineTypes::Opaque, Renderer::VertexLayoutTypes::PositionOnly, shaderList, rootHandle);
 			}
-			
-			std::vector<glm::mat4> transformData
-			{
-				glm::identity<glm::mat4>(),
-				translate(glm::identity<glm::mat4>(), {2, 0, 0})				
-			};
-			transformBufferHandle = renderer.MakeBuffer(transformData.data(), sizeof glm::mat4 * transformData.size());
-			
+
 			renderer.SetCamera(0, 0, -5, 0, 0, 0);
 		
 		}
 
 		void App::Update()
-		{
+		{			
+			if(renderer.NextFrameSlotIsOccupied())
+			{
+				return;
+			}
+			
+			const auto currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count() / 1000.f;
+			const auto rot = rotate(glm::identity<glm::mat4>(), glm::radians(currentTime * 7), {0,0,1});
+			std::vector<glm::mat4> transformData
+			{
+				rot,
+				translate(glm::identity<glm::mat4>(), {4, 0, 0}) * rot
+			};						
+			const Renderer::DX12::HandleWrapper transformBufferHandle{ &renderer, renderer.MakeBuffer(transformData.data(), sizeof glm::mat4 * transformData.size()) };
+			
 			if(renderer.ResourceMustBeRemade(meshHandle))
 			{
 				throw;
@@ -196,7 +204,7 @@ namespace Windows
 				throw;
 			}
 
-			renderer.RenderMesh(rootHandle, minstancePsoHandle, meshHandle, meshSize, meshBytesToIndices, transformBufferHandle, 2);
+			renderer.RenderMesh(rootHandle, minstancePsoHandle, meshHandle, meshSize, meshBytesToIndices, transformBufferHandle, 2);			
 			renderer.DispatchFrame();
 			
 		}
