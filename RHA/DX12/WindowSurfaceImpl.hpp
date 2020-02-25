@@ -48,6 +48,8 @@ namespace RHA
 			
 					private: static void CheckBufferQuery(HRESULT result);
 							 				
+			public: virtual ~WindowSurfaceImpl() override;
+			
 
 			public: virtual inline float GetWidth() const override { return defaultViewport.Width; }
 
@@ -68,7 +70,7 @@ namespace RHA
 			public: virtual void RecordPreparationForRendering(ID3D12GraphicsCommandList *list) override;
 
 			public: virtual void RecordPreparationForPresenting(ID3D12GraphicsCommandList *list) override;
-								
+
 		};
 
 		

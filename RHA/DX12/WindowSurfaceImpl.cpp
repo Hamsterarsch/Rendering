@@ -119,6 +119,20 @@ namespace RHA
 
 						
 
+		WindowSurfaceImpl::~WindowSurfaceImpl()
+		{
+			DXGI_SWAP_CHAIN_FULLSCREEN_DESC fsDesc;			
+			swapChain->GetFullscreenDesc(&fsDesc);
+
+			if(!fsDesc.Windowed)
+			{
+				swapChain->SetFullscreenState(false, nullptr);
+			}
+			
+		}
+
+		
+		
 		void WindowSurfaceImpl::Present()
 		{
 			currentBackbufferIndex = (currentBackbufferIndex + 1) % bufferCount;
