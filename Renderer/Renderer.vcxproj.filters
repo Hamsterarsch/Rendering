@@ -87,6 +87,7 @@
     <ClInclude Include="Interface\Resources\HandleWrapper.hpp">
       <Filter>Interface\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="RendererMaster.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -148,6 +149,7 @@
     <ClCompile Include="Resources\ResourceHandle.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
+    <ClCompile Include="RendererMaster.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">
