@@ -7,7 +7,7 @@ namespace Filesystem
 {
 	namespace Conversions
 	{
-		std::string MakeExeRelative(const char *Path)
+		inline std::string MakeExeRelative(const char *Path)
 		{
 			wchar_t WcPathBuffer[256]{};
 			GetModuleFileName(nullptr, WcPathBuffer, 256);
@@ -38,7 +38,7 @@ namespace Filesystem
 
 		}
 
-		std::wstring MakeExeRelative(const wchar_t *Path)
+		inline std::wstring MakeExeRelative(const wchar_t *Path)
 		{
 			wchar_t WcPathBuffer[256]{};
 			GetModuleFileName(nullptr, WcPathBuffer, 256);
