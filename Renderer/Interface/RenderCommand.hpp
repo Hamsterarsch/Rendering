@@ -8,6 +8,7 @@ namespace Renderer
 {
 	namespace DX12
 	{
+		class ResourceRegistryReadOnly;
 		class ResourceRegistry;
 		
 		class RenderCommand
@@ -32,7 +33,7 @@ namespace Renderer
 								
 			public: virtual void ExecuteOperationOnResourceReferences(ResourceRegistry *registry, void(ResourceRegistry:: *operation)(size_t)) = 0;
 			
-			public: virtual void Record(RHA::DX12::CmdList *list, ResourceRegistry &registry) = 0;
+			public: virtual void Record(RHA::DX12::CmdList *list, ResourceRegistryReadOnly &registry) = 0;
 			
 		};
 

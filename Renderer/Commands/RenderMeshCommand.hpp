@@ -39,7 +39,7 @@ namespace Renderer
 						
 			public: virtual void ExecuteOperationOnResourceReferences(ResourceRegistry *registry, void(ResourceRegistry:: *operation)(size_t)) override;
 
-			public: virtual void Record(RHA::DX12::CmdList *list, ResourceRegistry &registry) override;
+			public: virtual void Record(RHA::DX12::CmdList *list, ResourceRegistryReadOnly &registry) override;
 						
 		};
 		

@@ -6,6 +6,78 @@ namespace Renderer
 {
 	namespace DX12
 	{
+		ID3D12PipelineState *ResourceRegistry::GetPso(const ResourceHandle::t_hash handle) 
+		{
+			std::lock_guard<std::mutex> lock{ pipelineMutex };
+			return pipelineStates.at(handle).Get();
+			
+		}
+
+
+		
+		ID3D12RootSignature *ResourceRegistry::GetSignature(ResourceHandle::t_hash handle) 
+		{
+			std::lock_guard<std::mutex> lock{ signatureMutex };
+			return rootSignatures.at(handle).signature.Get();
+						
+		}
+
+
+		
+		D3D12_GPU_VIRTUAL_ADDRESS ResourceRegistry::GetResourceGPUVirtualAddress(const ResourceHandle::t_hash handle) 
+		{
+			std::lock_guard<std::mutex> lock{ allocationMutex };
+			const auto allocation{ resourceAllocations.find(handle) };
+
+			if(allocation == resourceAllocations.end())
+			{
+				throw Exception::Exception{ "A resource with this handle does not exist in this dx12 resource registry" };
+			}
+			
+			return allocation->second.resource->GetGPUVirtualAddress();
+			
+		}
+		
+
+
+		void ResourceRegistry::RegisterPso
+		(
+			const ResourceHandle::t_hash handle,
+			const DxPtr<ID3D12PipelineState> &pipelineState
+		)
+		{
+			std::lock_guard<std::mutex> lock{ pipelineMutex };
+			pipelineStates.insert( {handle, pipelineState} );
+			AddReference(handle);
+			
+		}
+
+			void ResourceRegistry::AddReference(const ResourceHandle::t_hash handle)
+			{
+				std::lock_guard<std::mutex> lock{ referenceMutex };
+
+				
+				auto &referenceCount{ resourceReferences[handle] };
+				if(referenceCount == 0)
+				{
+					unreferencedResources.erase(handle);
+				}
+				++referenceCount;
+				
+			}
+
+
+		
+		void ResourceRegistry::RegisterSignature(const ResourceHandle::t_hash handle, RootSignatureData &&signatureData)
+		{
+			std::lock_guard<std::mutex> lock{ signatureMutex };
+			rootSignatures.insert( {handle, std::move(signatureData)} );
+			AddReference(handle);
+			
+		}
+
+
+		
 		void ResourceRegistry::RegisterResource(size_t handle, ResourceAllocation &&allocation)
 		{
 			{
@@ -17,46 +89,9 @@ namespace Renderer
 			unreferencedResources.emplace(handle);
 			
 		}
-
-
-		
-		void ResourceRegistry::AddReference(const ResourceHandle::t_hash handle)
-		{
-			std::lock_guard<std::mutex> lock{ referenceMutex };
-		
-			auto bucket{ InsertOrFindReferenceData(handle) };
-			if(ThereAreNoReferencesIn(bucket))
-			{
-				unreferencedResources.erase(handle);
-			}
-			++bucket->second;
-			
-		}
-
-			decltype(ResourceRegistry::resourceReferences)::iterator ResourceRegistry::InsertOrFindReferenceData
-			(
-				const ResourceHandle::t_hash hash
-			)
-			{
-				auto referenceData{ resourceReferences.find(hash) };
-				if(referenceData == resourceReferences.end())
-				{
-					return resourceReferences.insert( {hash, 0} );
-					
-				}
-
-				return referenceData;
-			
-			}
-		
-			bool ResourceRegistry::ThereAreNoReferencesIn(const decltype(resourceReferences)::const_iterator &referenceBucket)
-			{
-				return referenceBucket->second <= 0;
-			
-			}
-
 		
 
+		
 		void ResourceRegistry::RemoveReference(const ResourceHandle::t_hash handle)
 		{
 			std::lock_guard<std::mutex> lock{ referenceMutex };
@@ -70,6 +105,12 @@ namespace Renderer
 			}
 			
 		}
+
+			bool ResourceRegistry::ThereAreNoReferencesIn(const decltype(resourceReferences)::const_iterator &referenceBucket)
+			{
+				return referenceBucket->second <= 0;
+			
+			}
 				
 
 
@@ -159,68 +200,10 @@ namespace Renderer
 		}
 
 		
-
-		DxPtr<ID3D12Resource> ResourceRegistry::GetResource(const ResourceHandle::t_hash handle)
-		{
-			std::lock_guard<std::mutex> lock{ allocationMutex };
-			const auto allocation{ resourceAllocations.find(handle) };
-
-			if(allocation == resourceAllocations.end())
-			{
-				throw Exception::Exception{ "A resource with this handle does not exist in this dx12 resource registry" };
-			}
-			
-			return allocation->second.resource;
-			
-		}
-
-
-		
-		void ResourceRegistry::RegisterSignature(const ResourceHandle::t_hash handle, RootSignatureData &&signatureData)
-		{
-			std::lock_guard<std::mutex> lock{ signatureMutex };
-			rootSignatures.insert( {handle, std::move(signatureData)} );
-			AddReference(handle);
-			
-		}
-
-
 		
 		const RootSignatureData &ResourceRegistry::GetSignatureDataRef(const ResourceHandle::t_hash handle) const
 		{//consider synchronization when in use
 			return rootSignatures.at(handle);
-			
-		}
-
-
-		
-		ID3D12RootSignature *ResourceRegistry::GetSignature(ResourceHandle::t_hash handle) const
-		{
-			std::lock_guard<std::mutex> lock{ signatureMutex };
-			return rootSignatures.at(handle).signature.Get();
-						
-		}
-
-
-		
-		void ResourceRegistry::RegisterPso
-		(
-			const ResourceHandle::t_hash handle,
-			const DxPtr<ID3D12PipelineState> &pipelineState
-		)
-		{
-			std::lock_guard<std::mutex> lock{ pipelineMutex };
-			pipelineStates.insert( {handle, pipelineState} );
-			AddReference(handle);
-			
-		}
-
-
-		
-		ID3D12PipelineState *ResourceRegistry::GetPso(const ResourceHandle::t_hash handle) const
-		{
-			std::lock_guard<std::mutex> lock{ pipelineMutex };
-			return pipelineStates.at(handle).Get();
 			
 		}
 

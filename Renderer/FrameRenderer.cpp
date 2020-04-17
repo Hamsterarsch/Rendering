@@ -207,7 +207,7 @@ namespace Renderer
 				{
 					list->RecordSetPipelineState(registry->GetPso(cmd.GetPsoHandle()));
 					list->RecordSetGraphicsSignature(registry->GetSignature(cmd.GetSignatureHandle()));
-					list->AsGraphicsList()->SetGraphicsRootConstantBufferView(0, registry->GetResource(globalBufferHandle)->GetGPUVirtualAddress());
+					list->AsGraphicsList()->SetGraphicsRootConstantBufferView(0, registry->GetResourceGPUVirtualAddress(globalBufferHandle));
 				}
 
 				bool FrameRenderer::ListCapacityIsReached() const
