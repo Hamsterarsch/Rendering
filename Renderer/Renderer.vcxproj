@@ -185,6 +185,7 @@
     <ClInclude Include="Resources\ResourceFactoryDeallocatable.hpp" />
     <ClInclude Include="Resources\ResourceMemory.hpp" />
     <ClInclude Include="Resources\ResourceRegistry.hpp" />
+    <ClInclude Include="Resources\ResourceRegistryReadOnly.hpp" />
     <ClInclude Include="Resources\RootSignature\RootSignatureData.hpp" />
     <ClInclude Include="Resources\RootSignature\RootSignatureFactory.hpp" />
     <ClInclude Include="Resources\RootSignature\TableLayout.hpp" />

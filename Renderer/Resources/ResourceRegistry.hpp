@@ -1,15 +1,11 @@
 #pragma once
 #include <unordered_map>
 #include <unordered_set>
-#include "Shared/InterfaceHelpers.hpp"
+#include "Resources/ResourceRegistryReadOnly.hpp"
 #include "Resources/ResourceHandle.hpp"
 #include "Resources/RootSignature/RootSignatureData.hpp"
 #include "Resources/ResourceAllocation.hpp"
 #include <mutex>
-
-
-struct ID3D12PipelineState;
-struct ID3D12RootSignature;
 
 
 namespace Renderer
@@ -18,21 +14,6 @@ namespace Renderer
 	
 	namespace DX12
 	{
-		class ResourceRegistryReadOnly
-		{
-			DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(ResourceRegistryReadOnly)
-
-			
-			public: virtual ID3D12PipelineState *GetPso(ResourceHandle::t_hash handle) = 0;
-
-			public: virtual ID3D12RootSignature *GetSignature(ResourceHandle::t_hash handle) = 0; 
-
-			public: virtual D3D12_GPU_VIRTUAL_ADDRESS GetResourceGPUVirtualAddress(ResourceHandle::t_hash handle) = 0;
-			
-		};
-
-
-		
 		class ResourceRegistry : public ResourceRegistryReadOnly
 		{						
 			private: std::unordered_map<ResourceHandle::t_hash, ResourceAllocation> resourceAllocations;
