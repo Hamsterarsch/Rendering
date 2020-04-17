@@ -80,10 +80,6 @@ namespace Renderer
 						
 		class RENDERER_DLLSPEC Renderer
 		{	
-			private: bool shouldUpdateRendering;
-			
-			private: std::future<int> updaterHandle;
-
 			private: UniquePtr<RHA::DX12::DeviceResources> resources;
 
 			private: UniquePtr<RHA::DX12::Queue> commonQueue;
@@ -104,27 +100,19 @@ namespace Renderer
 
 			private: long long lastDispatchTime;
 
-			private: const unsigned char maxFramesPending;
+			private: const unsigned char maxScheduledFrames;
 
 			
 			
 			public: Renderer(HWND outputWindow);
-
-				private: int UpdateRendering();
-
-					private: void UpdateIdle();
-			
-					private: void ExecuteNextFrame();
-
-					private: void WaitForIdleQueue();
-							 
+												 
 			public: ~Renderer();
+
+				private: void WaitForIdleQueue();
 
 
 			public: void DispatchFrame();
-
-			public: bool NextFrameSlotIsOccupied() const;
-
+								
 				private: void AbortDispatch();
 
 				private: FrameRenderer MakeFrameFromCommands();
