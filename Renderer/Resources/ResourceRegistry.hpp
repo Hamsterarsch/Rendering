@@ -18,11 +18,10 @@ namespace Renderer
 	namespace DX12
 	{
 		class ResourceRegistry
-		{			
-			
+		{						
 			private: std::unordered_map<ResourceHandle::t_hash, ResourceAllocation> resourceAllocations;
 			
-			private: std::unordered_multimap<ResourceHandle::t_hash, size_t> resourceReferences;
+			private: std::unordered_map<ResourceHandle::t_hash, size_t> resourceReferences;
 
 			private: std::unordered_set<ResourceHandle::t_hash> unreferencedResources;
 			

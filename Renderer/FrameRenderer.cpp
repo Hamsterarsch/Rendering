@@ -114,25 +114,25 @@ namespace Renderer
 			
 		}
 
-		void FrameRenderer::UnregisterResources()
-		{
-			if(RegistryIsValid())
+			void FrameRenderer::UnregisterResources()
 			{
-				UnregisterAllCommands();
-				registry->RemoveReference(globalBufferHandle);
-				registry = nullptr;
-			}
-		
-		}
-
-			void FrameRenderer::UnregisterAllCommands()
-			{
-				for(auto &&cmd : commands)
+				if(RegistryIsValid())
 				{
-					cmd->ExecuteOperationOnResourceReferences(registry, &ResourceRegistry::RemoveReference);
-				}				
+					UnregisterAllCommands();
+					registry->RemoveReference(globalBufferHandle);
+					registry = nullptr;
+				}
 			
 			}
+
+				void FrameRenderer::UnregisterAllCommands()
+				{
+					for(auto &&cmd : commands)
+					{
+						cmd->ExecuteOperationOnResourceReferences(registry, &ResourceRegistry::RemoveReference);
+					}				
+				
+				}
 
 
 		

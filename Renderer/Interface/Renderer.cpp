@@ -16,7 +16,7 @@
 #include "Shared/Types/Containers/QueueConcurrent.hpp"
 #include "Resources/GlobalBufferData.hpp"
 #include "Resources/ResourceFactoryDeallocatable.hpp"
-
+#include "RendererMaster.hpp"
 
 
 #if _DEBUG
@@ -48,7 +48,7 @@ namespace Renderer
 			
 			UniquePtr<ShaderFactory> shaderFactory;
 			
-			QueueConcurrent<FrameRenderer> frames;
+			QueueConcurrent<FrameRenderer> framesToDestruct;
 
 			std::future<int> activeFrameHandle;
 						
@@ -59,21 +59,25 @@ namespace Renderer
 			std::forward_list<size_t> handlesToRetire;
 
 			std::mutex mutexRetiredHandles;
+
+			RendererMaster renderThread;
 			
-			PrivateMembers(DeviceResources *resources) :
+			PrivateMembers(DeviceResources *resources, unsigned char maxScheduledFrames) :
 				psoFactory{ resources },
 				signatureFactory{ resources },
-				shaderFactory{ Facade::MakeShaderFactory(5, 0) }				
+				shaderFactory{ Facade::MakeShaderFactory(5, 0) },
+				renderThread{ framesToDestruct, maxScheduledFrames }
 			{				
 			}				
 			
 		};
 
+
+		
 		Renderer::Renderer(HWND outputWindow) :
-			shouldUpdateRendering{ false },
 			privateMembers{ nullptr },
 			lastDispatchTime{ 0 },
-			maxFramesPending{ 2 }
+			maxScheduledFrames{ 2 }
 		{
 			resources = Facade::MakeDeviceResources(D3D_FEATURE_LEVEL_11_0, enableDebugLayers);
 			commonQueue = Facade::MakeQueue(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT);			
@@ -92,81 +96,33 @@ namespace Renderer
 				std::make_unique<ResourceMemory>(resources.get(), D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT * 15, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT, D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS)
 			);			
 
-			privateMembers = std::make_unique<PrivateMembers>(resources.get());					   			
+			privateMembers = std::make_unique<PrivateMembers>(resources.get(), maxScheduledFrames);					   			
 						
-			shouldUpdateRendering = true;			
-			updaterHandle = std::async( std::launch::async, &Renderer::UpdateRendering, this);
-
 			privateMembers->globalsToDispatch.projection = glm::perspectiveFovLH_ZO(glm::radians(90.f), outputSurface->GetWidth(), outputSurface->GetHeight(), .01f, 1000.f);
 						
 		}
-
-			int Renderer::UpdateRendering()
-			{
-				try
-				{
-					while(shouldUpdateRendering)
-					{						
-						if(privateMembers->frames.IsEmpty())
-						{
-							UpdateIdle();
-							continue;
-						}
-						ExecuteNextFrame();										
-					}
-
-					WaitForIdleQueue();
-				}
-				catch(std::exception &e)
-				{
-					return 1;
-				}
-			
-				return 0;
-			
-			}
-
-				void Renderer::UpdateIdle()
-				{					
-				}
-
-				void Renderer::ExecuteNextFrame()
-				{
-					auto frame{ privateMembers->frames.Pop() };
-																	
-					privateMembers->activeFrameHandle = std::async(std::launch::async, &FrameRenderer::ExecuteCommands, &frame);					
-					if(privateMembers->activeFrameHandle.get())
-					{
-						throw;
-					}
-
-					frame.WaitForCompletion();
-					frame.UnregisterResources();
-								
-				}
-
-				void Renderer::WaitForIdleQueue()
-				{
-					closeFence->GetFence()->SetEventOnCompletion(1, closeEvent);
-					closeFence->Signal(1, commonQueue.get());
-					WaitForSingleObject(closeEvent, INFINITE);
-			
-				}
-
+			   
 	
 		
 		Renderer::~Renderer()
 		{			
-			shouldUpdateRendering = false;					
-			auto result = updaterHandle.get();
-							
+			WaitForIdleQueue();
+			
 		}
 
-				
+			void Renderer::WaitForIdleQueue()
+			{
+				closeFence->GetFence()->SetEventOnCompletion(1, closeEvent);
+				closeFence->Signal(1, commonQueue.get());
+				WaitForSingleObject(closeEvent, INFINITE);
+			
+			}
+
+		
 
 		void Renderer::DispatchFrame()
-		{						
-			if(NextFrameSlotIsOccupied())
+		{			
+			if(privateMembers->renderThread.HasNoCapacityForFrames())
 			{
 				AbortDispatch();
 				return;
@@ -177,11 +133,16 @@ namespace Renderer
 			lastDispatchTime = currentTime;
 			privateMembers->globalsToDispatch.time += dispatchDelta;
 					   			
-			privateMembers->frames.Push
-			(
-				MakeFrameFromCommands()
-			);
+			privateMembers->renderThread.ScheduleFrame( MakeFrameFromCommands() );
 
+			for(; privateMembers->framesToDestruct.Size() > 0; )
+			{
+				auto frame{ privateMembers->framesToDestruct.Pop() };
+				frame.UnregisterResources();
+				
+				
+			}
+			
 			privateMembers->registry.PurgeUnreferencedResources();
 			{
 				std::lock_guard<std::mutex> lock{ privateMembers->mutexRetiredHandles };
@@ -198,12 +159,6 @@ namespace Renderer
 			}
 			
 		}
-
-			bool Renderer::NextFrameSlotIsOccupied() const
-			{
-				return privateMembers->frames.Size() >= maxFramesPending;
-			
-			}
 
 			void Renderer::AbortDispatch()
 			{
