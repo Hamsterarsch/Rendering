@@ -91,6 +91,9 @@
     <ClInclude Include="Resources\ResourceRegistryReadOnly.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
+    <ClInclude Include="Resources\ResourceRegistryUsingReferences.hpp">
+      <Filter>Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />

@@ -2,6 +2,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include "Resources/ResourceRegistryReadOnly.hpp"
+#include "ResourceRegistryUsingReferences.hpp"
 #include "Resources/ResourceHandle.hpp"
 #include "Resources/RootSignature/RootSignatureData.hpp"
 #include "Resources/ResourceAllocation.hpp"
@@ -14,7 +15,7 @@ namespace Renderer
 	
 	namespace DX12
 	{
-		class ResourceRegistry : public ResourceRegistryReadOnly
+		class ResourceRegistry : public ResourceRegistryReadOnly, public ResourceRegistryUsingReferences
 		{						
 			private: std::unordered_map<ResourceHandle::t_hash, ResourceAllocation> resourceAllocations;
 			
@@ -41,7 +42,7 @@ namespace Renderer
 			
 			public: void RegisterPso(ResourceHandle::t_hash handle, const DxPtr<ID3D12PipelineState> &pipelineState);
 			
-			public: void AddReference(ResourceHandle::t_hash handle);
+			public: virtual void AddReference(ResourceHandle::t_hash handle) override;
 					
 			public: void RegisterSignature(ResourceHandle::t_hash handle, RootSignatureData &&signatureData);
 
@@ -49,7 +50,7 @@ namespace Renderer
 
 
 			
-			public: void RemoveReference(ResourceHandle::t_hash handle);
+			public: virtual void RemoveReference(ResourceHandle::t_hash handle) override;
 			
 				private: static bool ThereAreNoReferencesIn(const decltype(resourceReferences)::const_iterator &referenceBucket);
 			
