@@ -12,27 +12,19 @@ namespace Renderer
 {
 	namespace DX12
 	{
-		FrameRenderer::FrameRenderer() :
-			resources{ nullptr },
-			queue{ nullptr },
-			registry{ nullptr },
-			windowSurface{ nullptr },
-			depthSurface{ nullptr }
-		{
-		}
-
 		FrameRenderer::FrameRenderer
 		(
 			DeviceResources *resources, 
 			Queue *queue,
-			ResourceRegistry &registry,
+			ResourceRegistry &masterRegistry,
 			WindowSurface &windowSurface, 
 			DepthSurface &depthSurface,
 			HandleWrapper &&globalBufferHandle
 		) :
 			resources{ resources },
 			queue{ queue },
-			registry{ &registry },
+			registryMaster{ &masterRegistry },
+			registryCopy{ masterRegistry },
 			windowSurface{ &windowSurface },
 			depthSurface{ &depthSurface },
 			commandsRecordedToList{ 0 },
@@ -41,7 +33,9 @@ namespace Renderer
 			allocator = Facade::MakeCmdAllocator(resources, D3D12_COMMAND_LIST_TYPE_DIRECT);
 			fence = Facade::MakeFence(resources);
 			event = CreateEvent(nullptr, false, false, nullptr);
-			registry.AddReference(this->globalBufferHandle);
+
+			masterRegistry.AddReference(this->globalBufferHandle);
+			registryCopy.AddReference(this->globalBufferHandle);
 						
 		}
 
@@ -55,7 +49,8 @@ namespace Renderer
 			fence{ std::move(other.fence) },
 			event{ std::move(other.event) },
 			commands{ std::move(other.commands) },
-			registry{ std::move(other.registry) },
+			registryMaster{ std::move(other.registryMaster) },
+			registryCopy{ std::move(other.registryCopy) },
 			windowSurface{ std::move(other.windowSurface) },
 			depthSurface{ std::move(other.depthSurface) },
 			commandsRecordedToList{ std::move(other.commandsRecordedToList) },
@@ -64,7 +59,7 @@ namespace Renderer
 			other.resources = nullptr;
 			other.queue = nullptr;
 			other.event = nullptr;		
-			other.registry = nullptr;
+			other.registryMaster = nullptr;
 			other.windowSurface = nullptr;
 			other.depthSurface = nullptr;
 
@@ -89,8 +84,10 @@ namespace Renderer
 			
 			commands = std::move(rhs.commands);
 			
-			registry = std::move(rhs.registry);
-			rhs.registry = nullptr;
+			registryMaster = std::move(rhs.registryMaster);
+			rhs.registryMaster = nullptr;
+
+			registryCopy = std::move(rhs.registryCopy);
 			
 			windowSurface = std::move(rhs.windowSurface);
 			rhs.windowSurface = nullptr;
@@ -118,9 +115,10 @@ namespace Renderer
 			{
 				if(RegistryIsValid())
 				{
+					registryCopy.Empty();					
 					UnregisterAllCommands();
-					registry->RemoveReference(globalBufferHandle);
-					registry = nullptr;
+					registryMaster->RemoveReference(globalBufferHandle);
+					registryMaster = nullptr;
 				}
 			
 			}
@@ -129,7 +127,7 @@ namespace Renderer
 				{
 					for(auto &&cmd : commands)
 					{
-						cmd->ExecuteOperationOnResourceReferences(registry, &ResourceRegistry::RemoveReference);
+						cmd->ExecuteOperationOnResourceReferences(registryMaster, &ResourceRegistryUsingReferences::RemoveReference);
 					}				
 				
 				}
@@ -138,7 +136,8 @@ namespace Renderer
 		
 		void FrameRenderer::AddCommand(UniquePtr<RenderCommand> &&command)
 		{			
-			command->ExecuteOperationOnResourceReferences(registry, &ResourceRegistry::AddReference);			
+			command->ExecuteOperationOnResourceReferences(registryMaster, &ResourceRegistryUsingReferences::AddReference);
+			command->ExecuteOperationOnResourceReferences(&registryCopy, &ResourceRegistryUsingReferences::AddReference);
 			commands.emplace_back(std::move(command));
 			
 		}
@@ -191,7 +190,7 @@ namespace Renderer
 				{				
 					RecordFixedCommandState(*cmd);
 					
-					cmd->Record(list.get(), *registry);
+					cmd->Record(list.get(), registryCopy);
 					++commandsRecordedToList;			
 									
 					if(ListCapacityIsReached())
@@ -203,11 +202,11 @@ namespace Renderer
 			
 			}
 
-				void FrameRenderer::RecordFixedCommandState(RenderCommand &cmd) const
+				void FrameRenderer::RecordFixedCommandState(RenderCommand &cmd) 
 				{
-					list->RecordSetPipelineState(registry->GetPso(cmd.GetPsoHandle()));
-					list->RecordSetGraphicsSignature(registry->GetSignature(cmd.GetSignatureHandle()));
-					list->AsGraphicsList()->SetGraphicsRootConstantBufferView(0, registry->GetResourceGPUVirtualAddress(globalBufferHandle));
+					list->RecordSetPipelineState(registryCopy.GetPso(cmd.GetPsoHandle()));
+					list->RecordSetGraphicsSignature(registryCopy.GetSignature(cmd.GetSignatureHandle()));
+					list->AsGraphicsList()->SetGraphicsRootConstantBufferView(0, registryCopy.GetResourceGPUVirtualAddress(globalBufferHandle));
 				}
 
 				bool FrameRenderer::ListCapacityIsReached() const

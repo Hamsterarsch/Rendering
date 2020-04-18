@@ -31,8 +31,8 @@ namespace Renderer
 
 		void RenderMeshCommand::ExecuteOperationOnResourceReferences
 		(
-			ResourceRegistry *registry,
-			void(ResourceRegistry:: *operation)(size_t)
+			ResourceRegistryUsingReferences *registry,
+			void(ResourceRegistryUsingReferences:: *operation)(size_t)
 		)
 		{			
 			(registry->*operation)(meshHandle);

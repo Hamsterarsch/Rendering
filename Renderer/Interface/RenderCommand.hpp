@@ -8,6 +8,7 @@ namespace Renderer
 {
 	namespace DX12
 	{
+		class ResourceRegistryUsingReferences;
 		class ResourceRegistryReadOnly;
 		class ResourceRegistry;
 		
@@ -31,7 +32,7 @@ namespace Renderer
 			
 			public: inline size_t GetPsoHandle() const { return psoHandle; }
 								
-			public: virtual void ExecuteOperationOnResourceReferences(ResourceRegistry *registry, void(ResourceRegistry:: *operation)(size_t)) = 0;
+			public: virtual void ExecuteOperationOnResourceReferences(ResourceRegistryUsingReferences *registry, void(ResourceRegistryUsingReferences:: *operation)(size_t)) = 0;
 			
 			public: virtual void Record(RHA::DX12::CmdList *list, ResourceRegistryReadOnly &registry) = 0;
 			

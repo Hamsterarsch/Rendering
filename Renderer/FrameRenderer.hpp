@@ -1,8 +1,9 @@
 #pragma once
 #include "Shared/PtrTypes.hpp"
 #include "RenderCommand.hpp"
-#include <vector>
+#include "Resources/ResourceRegistryDetachedReference.hpp"
 #include "Resources/HandleWrapper.hpp"
+#include <vector>
 #include <d3d12.h>
 
 
@@ -46,8 +47,10 @@ namespace Renderer
 			
 			private: std::vector<UniquePtr<RenderCommand>> commands;
 
-			private: ResourceRegistry *registry;
+			private: ResourceRegistry *registryMaster;
 
+			private: ResourceRegistryDetachedReference registryCopy;
+			
 			private: WindowSurface *windowSurface;
 
 			private: DepthSurface *depthSurface;
@@ -59,12 +62,10 @@ namespace Renderer
 			private: static constexpr size_t fenceCmdCompletionValue{ 1 }, fenceQueueReleaseValue{ 2 };
 
 			private: HandleWrapper globalBufferHandle;
-
+					 
 			
 
-			public: FrameRenderer();
-			
-			public: FrameRenderer(DeviceResources *resources, Queue *queue, ResourceRegistry &registry, WindowSurface &windowSurface, DepthSurface &depthSurface, HandleWrapper &&globalBuffer);
+			public: FrameRenderer(DeviceResources *resources, Queue *queue, ResourceRegistry &masterRegistry, WindowSurface &windowSurface, DepthSurface &depthSurface, HandleWrapper &&globalBuffer);
 
 			public: FrameRenderer(FrameRenderer &&other) noexcept;
 
@@ -78,7 +79,7 @@ namespace Renderer
 
 			public: void UnregisterResources();
 			
-				private: inline bool RegistryIsValid() const { return registry != nullptr; }
+				private: inline bool RegistryIsValid() const { return registryMaster != nullptr; }
 
 				private: void UnregisterAllCommands();
 			
@@ -93,7 +94,7 @@ namespace Renderer
 			
 				private: void RecordCommands();
 
-					private: void RecordFixedCommandState(RenderCommand &cmd) const;
+					private: void RecordFixedCommandState(RenderCommand &cmd);
 			
 					private: bool ListCapacityIsReached() const;
 
