@@ -91,6 +91,9 @@
     <ClInclude Include="Resources\ResourceRegistryReadOnly.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
+    <ClInclude Include="Resources\ResourceRegistryDetachedReference.hpp">
+      <Filter>Resources</Filter>
+    </ClInclude>
     <ClInclude Include="Resources\ResourceRegistryUsingReferences.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
@@ -156,6 +159,9 @@
       <Filter>Resources</Filter>
     </ClCompile>
     <ClCompile Include="RendererMaster.cpp" />
+    <ClCompile Include="Resources\ResourceRegistryDetachedReference.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">
