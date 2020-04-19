@@ -2,7 +2,6 @@
 #include "Resources/SerialFactory.hpp"
 #include "Resources/ResourceHandle.hpp"
 #include <unordered_map>
-#include <mutex>
 #include <forward_list>
 
 
@@ -38,10 +37,6 @@ namespace Renderer
 
 		private: std::unordered_map<ResourceHandle::t_resourceTypes, HandleBucket> retiredHandles;
 		
-		private: std::mutex mutexSerialFactory;
-
-		private: std::mutex mutexRetiredHandles;
-				 
 				 		
 
 		public: ResourceHandle MakeHandle(ResourceHandle::t_resourceTypes type);

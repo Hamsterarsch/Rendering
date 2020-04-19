@@ -57,23 +57,17 @@ namespace Renderer
 	
 	ResourceHandle HandleFactory::MakeHandle(const ResourceHandle::t_resourceTypes type)
 	{
+		if(retiredHandles[type].IsNotEmpty())
 		{
-			std::lock_guard<std::mutex> lock{ mutexRetiredHandles };
-			if(retiredHandles[type].IsNotEmpty())
-			{
-				return retiredHandles[type].PopHandle();
-			}
+			return retiredHandles[type].PopHandle();
 		}
 		
-		std::lock_guard<std::mutex> lock{ mutexSerialFactory };		
 		return ResourceHandle{ type, serialFactories[type].GetNextSerial() };
 				
 	}
 
 	void HandleFactory::RetireHandle(const ResourceHandle &handle)
 	{
-		std::lock_guard<std::mutex> lock{ mutexRetiredHandles };
-		
 		retiredHandles[handle.GetResourceType()].PushHandle(handle);		
 				
 	}

@@ -58,8 +58,6 @@ namespace Renderer
 
 			std::forward_list<size_t> handlesToRetire;
 
-			std::mutex mutexRetiredHandles;
-
 			RendererMaster renderThread;
 			
 			PrivateMembers(DeviceResources *resources, unsigned char maxScheduledFrames) :
@@ -143,7 +141,6 @@ namespace Renderer
 			
 			privateMembers->registry.PurgeUnreferencedResources();
 			{
-				std::lock_guard<std::mutex> lock{ privateMembers->mutexRetiredHandles };
 				privateMembers->handlesToRetire.remove_if([ &p = privateMembers ](const size_t &handle)
 				{
 					if(p->registry.IsHandleUnknown(handle))
@@ -347,8 +344,6 @@ namespace Renderer
 		
 		void Renderer::RetireHandle(const size_t handle)
 		{
-			std::lock_guard<std::mutex> lock{ privateMembers->mutexRetiredHandles };
-			
 			privateMembers->handlesToRetire.push_front(handle);
 			
 		}
