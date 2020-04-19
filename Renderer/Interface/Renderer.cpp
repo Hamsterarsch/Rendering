@@ -138,9 +138,7 @@ namespace Renderer
 			for(; privateMembers->framesToDestruct.Size() > 0; )
 			{
 				auto frame{ privateMembers->framesToDestruct.Pop() };
-				frame.UnregisterResources();
-				
-				
+				frame.UnregisterResources();				
 			}
 			
 			privateMembers->registry.PurgeUnreferencedResources();
@@ -148,7 +146,7 @@ namespace Renderer
 				std::lock_guard<std::mutex> lock{ privateMembers->mutexRetiredHandles };
 				privateMembers->handlesToRetire.remove_if([ &p = privateMembers ](const size_t &handle)
 				{
-					if(p->registry.HandleIsUnreferenced(handle))
+					if(p->registry.IsHandleUnknown(handle))
 					{
 						p->handleFactory.RetireHandle(ResourceHandle{ handle });
 						return true;					

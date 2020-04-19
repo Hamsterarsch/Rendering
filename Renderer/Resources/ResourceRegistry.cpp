@@ -171,7 +171,7 @@ namespace Renderer
 
 
 		
-		bool ResourceRegistry::HandleIsUnreferenced(const ResourceHandle::t_hash handle)
+		bool ResourceRegistry::IsHandleUnknown(const ResourceHandle::t_hash handle)
 		{
 			return resourceReferences.find(handle) == resourceReferences.end() && unreferencedResources.find(handle) == unreferencedResources.end();
 			

@@ -56,7 +56,7 @@ namespace Renderer
 			
 			public: bool HandleIsInvalid(ResourceHandle::t_hash handle);
 
-			public: bool HandleIsUnreferenced(ResourceHandle::t_hash handle);
+			public: bool IsHandleUnknown(ResourceHandle::t_hash handle);
 			
 
 			private: const RootSignatureData &GetSignatureDataRef(ResourceHandle::t_hash handle) const;
