@@ -139,6 +139,9 @@ namespace Renderer
 		{			
 			command->ExecuteOperationOnResourceReferences(registryMaster, &ResourceRegistryUsingReferences::AddReference);
 			command->ExecuteOperationOnResourceReferences(&registryCopy, &ResourceRegistryUsingReferences::AddReference);
+			registryCopy.AddReference(command->GetPsoHandle());
+			registryCopy.AddReference(command->GetSignatureHandle());
+			
 			commands.emplace_back(std::move(command));
 			
 		}
