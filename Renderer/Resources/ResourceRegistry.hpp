@@ -6,7 +6,6 @@
 #include "Resources/ResourceHandle.hpp"
 #include "Resources/RootSignature/RootSignatureData.hpp"
 #include "Resources/ResourceAllocation.hpp"
-#include <mutex>
 
 
 namespace Renderer
@@ -28,9 +27,6 @@ namespace Renderer
 			private: std::unordered_map<ResourceHandle::t_hash, DxPtr<ID3D12PipelineState>> pipelineStates;
 
 			
-			private: mutable std::mutex referenceMutex, allocationMutex, signatureMutex, pipelineMutex;
-
-
 			
 			public: virtual ID3D12PipelineState *GetPso(ResourceHandle::t_hash handle) override;
 			

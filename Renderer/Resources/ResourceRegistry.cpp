@@ -8,7 +8,6 @@ namespace Renderer
 	{
 		ID3D12PipelineState *ResourceRegistry::GetPso(const ResourceHandle::t_hash handle) 
 		{
-			std::lock_guard<std::mutex> lock{ pipelineMutex };
 			return pipelineStates.at(handle).Get();
 			
 		}
@@ -17,7 +16,6 @@ namespace Renderer
 		
 		ID3D12RootSignature *ResourceRegistry::GetSignature(ResourceHandle::t_hash handle) 
 		{
-			std::lock_guard<std::mutex> lock{ signatureMutex };
 			return rootSignatures.at(handle).signature.Get();
 						
 		}
@@ -26,7 +24,6 @@ namespace Renderer
 		
 		D3D12_GPU_VIRTUAL_ADDRESS ResourceRegistry::GetResourceGPUVirtualAddress(const ResourceHandle::t_hash handle) 
 		{
-			std::lock_guard<std::mutex> lock{ allocationMutex };
 			const auto allocation{ resourceAllocations.find(handle) };
 
 			if(allocation == resourceAllocations.end())
@@ -46,7 +43,6 @@ namespace Renderer
 			const DxPtr<ID3D12PipelineState> &pipelineState
 		)
 		{
-			std::lock_guard<std::mutex> lock{ pipelineMutex };
 			pipelineStates.insert( {handle, pipelineState} );
 			AddReference(handle);
 			
@@ -54,9 +50,6 @@ namespace Renderer
 
 			void ResourceRegistry::AddReference(const ResourceHandle::t_hash handle)
 			{
-				std::lock_guard<std::mutex> lock{ referenceMutex };
-
-				
 				auto &referenceCount{ resourceReferences[handle] };
 				if(referenceCount == 0)
 				{
@@ -70,7 +63,6 @@ namespace Renderer
 		
 		void ResourceRegistry::RegisterSignature(const ResourceHandle::t_hash handle, RootSignatureData &&signatureData)
 		{
-			std::lock_guard<std::mutex> lock{ signatureMutex };
 			rootSignatures.insert( {handle, std::move(signatureData)} );
 			AddReference(handle);
 			
@@ -80,12 +72,7 @@ namespace Renderer
 		
 		void ResourceRegistry::RegisterResource(size_t handle, ResourceAllocation &&allocation)
 		{
-			{
-			std::lock_guard<std::mutex> lock{ allocationMutex };
 			resourceAllocations.insert(  { handle, std::move(allocation) } );
-			}
-			
-			std::lock_guard<std::mutex> lock{ referenceMutex };
 			unreferencedResources.emplace(handle);
 			
 		}
@@ -94,7 +81,6 @@ namespace Renderer
 		
 		void ResourceRegistry::RemoveReference(const ResourceHandle::t_hash handle)
 		{
-			std::lock_guard<std::mutex> lock{ referenceMutex };
 			auto referenceData{ resourceReferences.find(handle) };
 			--referenceData->second;
 			
@@ -116,8 +102,6 @@ namespace Renderer
 
 		void ResourceRegistry::PurgeUnreferencedResources()
 		{
-			std::lock_guard<std::mutex> lockReferences{ referenceMutex };
-
 			for(auto &&unreferencedHandle : unreferencedResources)
 			{				
 				RemoveEntity(unreferencedHandle);				
@@ -137,19 +121,16 @@ namespace Renderer
 				case ResourceTypes::Texture: 
 				case ResourceTypes::Buffer:
 					{
-					std::lock_guard<std::mutex> lock{ allocationMutex };
 					resourceAllocations.erase(handle.hash);
 					}
 					break;
 				case ResourceTypes::Pso:
 					{
-					std::lock_guard<std::mutex> lock{ pipelineMutex };
 					pipelineStates.erase(handle.hash);
 					}
 					break;
 				case ResourceTypes::Signature:
 					{
-					std::lock_guard<std::mutex> lock{ signatureMutex };
 					rootSignatures.erase(handle.hash);
 					}
 					break;
@@ -167,7 +148,6 @@ namespace Renderer
 				return true;
 			}
 			
-			std::lock_guard<std::mutex> lock{ referenceMutex };
 			auto foundReferenceData{ resourceReferences.find(handle) };
 						
 			if(foundReferenceData == resourceReferences.end())
@@ -193,8 +173,6 @@ namespace Renderer
 		
 		bool ResourceRegistry::HandleIsUnreferenced(const ResourceHandle::t_hash handle)
 		{
-			std::lock_guard<std::mutex> lock{ referenceMutex };
-			
 			return resourceReferences.find(handle) == resourceReferences.end() && unreferencedResources.find(handle) == unreferencedResources.end();
 			
 		}
