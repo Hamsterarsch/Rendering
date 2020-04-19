@@ -116,6 +116,14 @@ namespace Renderer
 			
 			}
 
+
+		
+		bool Renderer::IsBusy() const
+		{
+			return privateMembers->renderThread.HasNoCapacityForFrames();
+			
+		}
+
 		
 
 		void Renderer::DispatchFrame()

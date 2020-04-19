@@ -111,6 +111,8 @@ namespace Renderer
 				private: void WaitForIdleQueue();
 
 
+			public: bool IsBusy() const;
+			
 			public: void DispatchFrame();
 								
 				private: void AbortDispatch();
