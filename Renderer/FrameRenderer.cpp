@@ -119,6 +119,7 @@ namespace Renderer
 					UnregisterAllCommands();
 					registryMaster->RemoveReference(globalBufferHandle);
 					registryMaster = nullptr;
+					globalBufferHandle.Reset();
 				}
 			
 			}
