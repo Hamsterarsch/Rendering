@@ -59,7 +59,7 @@ namespace Renderer
 			
 			private: static constexpr size_t recordsPerCommandList{ 50 };
 
-			private: static constexpr size_t fenceCmdCompletionValue{ 1 }, fenceQueueReleaseValue{ 2 };
+			private: static constexpr size_t fenceCmdCompletionValue{ 1 };
 
 			private: HandleWrapper globalBufferHandle;
 					 

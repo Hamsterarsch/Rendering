@@ -164,7 +164,6 @@ namespace Renderer
 				
 				SetupCompletionFence();
 				
-				queue->Wait(fenceQueueReleaseValue, fence.get());
 			}
 			catch(std::exception &e)
 			{
@@ -253,8 +252,6 @@ namespace Renderer
 
 			auto c = allocator->Reset();
 			windowSurface->Present();
-
-			fence->Signal(fenceQueueReleaseValue);
 			
 		}
 
