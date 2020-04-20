@@ -24,11 +24,18 @@ namespace Renderer
 
 			public: HandleWrapper &operator=(const HandleWrapper &) = delete;
 
-			public: HandleWrapper(HandleWrapper &&other);
+			public: HandleWrapper(HandleWrapper &&other) noexcept;
 
-			public: HandleWrapper &operator=(HandleWrapper &&rhs);
+				private: void Invalidate();
+			
+			public: HandleWrapper &operator=(HandleWrapper &&rhs) noexcept;
+
 			
 			public: ~HandleWrapper();
+								
+			public: void Reset();
+
+			public: bool IsValid() const;
 			
 			public: inline operator size_t() const { return handle; } 
 			
@@ -36,6 +43,6 @@ namespace Renderer
 	
 		
 	}
-#
+
 	
 }

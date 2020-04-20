@@ -185,6 +185,9 @@
     <ClInclude Include="Resources\ResourceFactoryDeallocatable.hpp" />
     <ClInclude Include="Resources\ResourceMemory.hpp" />
     <ClInclude Include="Resources\ResourceRegistry.hpp" />
+    <ClInclude Include="Resources\ResourceRegistryDetachedReference.hpp" />
+    <ClInclude Include="Resources\ResourceRegistryReadOnly.hpp" />
+    <ClInclude Include="Resources\ResourceRegistryUsingReferences.hpp" />
     <ClInclude Include="Resources\RootSignature\RootSignatureData.hpp" />
     <ClInclude Include="Resources\RootSignature\RootSignatureFactory.hpp" />
     <ClInclude Include="Resources\RootSignature\TableLayout.hpp" />
@@ -211,6 +214,7 @@
     <ClCompile Include="Resources\ResourceHandle.cpp" />
     <ClCompile Include="Resources\ResourceMemory.cpp" />
     <ClCompile Include="Resources\ResourceRegistry.cpp" />
+    <ClCompile Include="Resources\ResourceRegistryDetachedReference.cpp" />
     <ClCompile Include="Resources\RootSignature\RootSignatureFactory.cpp" />
     <ClCompile Include="Resources\RootSignature\TableLayout.cpp" />
     <ClCompile Include="Resources\SerialFactory.cpp" />

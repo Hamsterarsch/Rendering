@@ -3,7 +3,6 @@
 #include "Shared/PtrTypes.hpp"
 #include "Resources/ResourceAllocation.hpp"
 #include "Resources/ResourceMemory.hpp"
-#include <mutex>
 
 struct ID3D12Resource;
 
@@ -44,8 +43,6 @@ namespace Renderer
 			private: UniquePtr<CmdList> list;
 
 			private: D3D12_GPU_VIRTUAL_ADDRESS uploadAddress;
-
-			private: std::mutex mutex;
 
 
 			

@@ -23,25 +23,29 @@ namespace Renderer
 
 
 		
-		HandleWrapper::HandleWrapper(HandleWrapper &&other) :
+		HandleWrapper::HandleWrapper(HandleWrapper &&other) noexcept :
 			origin{ other.origin },
 			handle{ other.handle }
 		{
-			other.origin = nullptr;
-			other.handle = 0;
+			other.Invalidate();
 			
 		}
 
+			void HandleWrapper::Invalidate()
+			{
+				handle = 0;
+				origin = nullptr;
+			
+			}
+
 
 		
-		HandleWrapper &HandleWrapper::operator=(HandleWrapper &&rhs)
+		HandleWrapper &HandleWrapper::operator=(HandleWrapper &&rhs) noexcept
 		{
-			origin = rhs.origin;
-			rhs.origin = nullptr;
-			
+			origin = rhs.origin;			
 			handle = rhs.handle;
-			rhs.handle = 0;
 
+			rhs.Invalidate();
 			return *this;
 			
 		}
@@ -50,12 +54,25 @@ namespace Renderer
 		
 		HandleWrapper::~HandleWrapper()
 		{
-			if(origin != nullptr && handle > 0)
-			{
-				origin->RetireHandle(handle);
-			}
+			Reset();
 			
 		}
+
+			void HandleWrapper::Reset()
+			{
+				if(IsValid())
+				{
+					origin->RetireHandle(handle);
+					Invalidate();
+				}
+			
+			}
+
+				bool HandleWrapper::IsValid() const
+				{
+					return origin != nullptr && handle > 0;
+			
+				}
 
 		
 	}

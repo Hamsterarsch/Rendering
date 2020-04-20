@@ -26,6 +26,8 @@ namespace Renderer
 
 		
 		public: t_resourceTypes GetResourceType() const;
+
+			public: static t_resourceTypes GetResourceType(t_hash hash);
 			
 		public: t_serial GetSerial() const;
 					 					 		

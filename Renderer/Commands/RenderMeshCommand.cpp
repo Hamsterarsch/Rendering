@@ -31,8 +31,8 @@ namespace Renderer
 
 		void RenderMeshCommand::ExecuteOperationOnResourceReferences
 		(
-			ResourceRegistry *registry,
-			void(ResourceRegistry:: *operation)(size_t)
+			ResourceRegistryUsingReferences *registry,
+			void(ResourceRegistryUsingReferences:: *operation)(size_t)
 		)
 		{			
 			(registry->*operation)(meshHandle);
@@ -47,12 +47,10 @@ namespace Renderer
 		void RenderMeshCommand::Record
 		(
 			RHA::DX12::CmdList *list, 
-			ResourceRegistry &registry
+			ResourceRegistryReadOnly &registry
 		)
-		{
-			auto mesh{ registry.GetResource(meshHandle) };
-						
-			views.vertexView.BufferLocation = mesh->GetGPUVirtualAddress();
+		{	
+			views.vertexView.BufferLocation = registry.GetResourceGPUVirtualAddress(meshHandle);
 			views.vertexView.SizeInBytes = byteOffsetToIndexData;
 			views.vertexView.StrideInBytes = vertexStride;
 
@@ -69,7 +67,7 @@ namespace Renderer
 
 			if(transformBufferHandle > 0)
 			{
-				g->SetGraphicsRootConstantBufferView(1, registry.GetResource(transformBufferHandle)->GetGPUVirtualAddress());				
+				g->SetGraphicsRootConstantBufferView(1, registry.GetResourceGPUVirtualAddress(transformBufferHandle));				
 			}
 			
 			g->DrawIndexedInstanced(indicesSizeInBytes / sizeof(unsigned), instanceCount, 0, 0, 0);

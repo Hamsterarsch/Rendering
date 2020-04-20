@@ -175,9 +175,10 @@ namespace Windows
 
 		void App::Update()
 		{			
-			if(renderer.NextFrameSlotIsOccupied())
+			if(renderer.IsBusy())
 			{
 				return;
+				
 			}
 			
 			const auto currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count() / 1000.f;
