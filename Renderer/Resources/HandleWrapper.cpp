@@ -27,21 +27,25 @@ namespace Renderer
 			origin{ other.origin },
 			handle{ other.handle }
 		{
-			other.origin = nullptr;
-			other.handle = 0;
+			other.Invalidate();
 			
 		}
+
+			void HandleWrapper::Invalidate()
+			{
+				handle = 0;
+				origin = nullptr;
+			
+			}
 
 
 		
 		HandleWrapper &HandleWrapper::operator=(HandleWrapper &&rhs) noexcept
 		{
-			origin = rhs.origin;
-			rhs.origin = nullptr;
-			
+			origin = rhs.origin;			
 			handle = rhs.handle;
-			rhs.handle = 0;
 
+			rhs.Invalidate();
 			return *this;
 			
 		}
@@ -59,6 +63,7 @@ namespace Renderer
 				if(IsValid())
 				{
 					origin->RetireHandle(handle);
+					Invalidate();
 				}
 			
 			}

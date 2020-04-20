@@ -26,7 +26,10 @@ namespace Renderer
 
 			public: HandleWrapper(HandleWrapper &&other) noexcept;
 
+				private: void Invalidate();
+			
 			public: HandleWrapper &operator=(HandleWrapper &&rhs) noexcept;
+
 			
 			public: ~HandleWrapper();
 								
