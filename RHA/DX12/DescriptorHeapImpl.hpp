@@ -27,6 +27,8 @@ namespace RHA
 				private: static void CheckHeapCreation(HRESULT result);
 			
 
+			public: inline virtual ID3D12DescriptorHeap *GetHeap() override { return heap.Get(); }
+			
 			public: inline  virtual size_t Size() const override { return capacity; }
 			
 			public: virtual D3D12_CPU_DESCRIPTOR_HANDLE GetHandleCpu(size_t index) const override;
