@@ -69,7 +69,9 @@ namespace Renderer
 			public: void CreateCbv(ID3D12Resource *resource, size_t tableOffset, size_t bufferSizeInBytes);
 
 			public: void CreateSampler(const D3D12_SAMPLER_DESC &desc, size_t tableOffset);
-	
+
+			public: void CreateUavBuffer(ID3D12Resource *resource, size_t tableOffset, size_t firstIndex, size_t numElements, size_t strideInBytes);
+				
 		};
 
 		
