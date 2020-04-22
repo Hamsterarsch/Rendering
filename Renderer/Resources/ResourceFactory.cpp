@@ -141,9 +141,44 @@ namespace Renderer
 				queue->Signal(1, fence.get());
 				
 			}
-
+			
 
 		
+		DxPtr<ID3D12Resource> ResourceFactory::MakeCommittedBuffer
+		(
+			const size_t sizeInBytes,
+			const D3D12_RESOURCE_STATES desiredState,
+			const D3D12_HEAP_TYPE heapType,
+			const D3D12_HEAP_FLAGS heapFlags,
+			const D3D12_RESOURCE_FLAGS bufferFlags
+		)
+		{
+			D3D12_HEAP_PROPERTIES heapProperties{};
+			heapProperties.Type = heapType;
+						
+			const auto desc{ MakeBufferDesc(sizeInBytes, bufferFlags) };
+			constexpr decltype(nullptr) BUFFER_CLEAR_VALUE{ nullptr };
+
+			DxPtr<ID3D12Resource> outResource;
+			const auto result
+			{		
+				resources->GetDevice()->CreateCommittedResource
+				(
+					&heapProperties,
+					heapFlags,
+					&desc,
+					desiredState,
+					BUFFER_CLEAR_VALUE,
+					IID_PPV_ARGS(&outResource)
+				)
+			};
+			CheckGpuResourceCreation(result);
+
+			return outResource;
+			
+		}
+
+
 		void ResourceFactory::Deallocate(ResourceAllocation &allocation, const ResourceTypes type)
 		{
 			DeallocateInternal(allocation, type);

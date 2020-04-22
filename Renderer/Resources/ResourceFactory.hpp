@@ -79,6 +79,15 @@ namespace Renderer
 
 				private: void SubmitListAndFenceSynchronization(CmdList *list);
 
+			public: DxPtr<ID3D12Resource> MakeCommittedBuffer
+			(
+				size_t sizeInBytes,
+				D3D12_RESOURCE_STATES desiredState,
+				D3D12_HEAP_TYPE heapType, 
+				D3D12_HEAP_FLAGS heapFlags,
+				D3D12_RESOURCE_FLAGS bufferFlags = D3D12_RESOURCE_FLAG_NONE
+			);
+
 
 			public: void Deallocate(ResourceAllocation &allocation, ResourceTypes type);
 
