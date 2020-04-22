@@ -34,6 +34,7 @@ namespace Renderer
 			
 			public: virtual D3D12_GPU_VIRTUAL_ADDRESS GetResourceGPUVirtualAddress(ResourceHandle::t_hash handle) override;
 
+			public: virtual ID3D12Resource *GetResource(ResourceHandle::t_hash handle);
 
 			
 			public: void RegisterPso(ResourceHandle::t_hash handle, const DxPtr<ID3D12PipelineState> &pipelineState);
@@ -59,7 +60,16 @@ namespace Renderer
 			public: bool IsHandleUnknown(ResourceHandle::t_hash handle);
 			
 
-			private: const RootSignatureData &GetSignatureDataRef(ResourceHandle::t_hash handle) const;
+			public: size_t GetSignatureCbvOffset(ResourceHandle::t_hash handle, size_t cbvOrdinal) const;
+
+				private: size_t GetSignatureOffset(ResourceHandle::t_hash handle, size_t ordinal, size_t (TableLayout:: *getter)(unsigned short) const) const;
+			
+			public: size_t GetSignatureSrvOffset(ResourceHandle::t_hash handle, size_t srvOrdinal) const;
+			
+			public: size_t GetSignatureUavOffset(ResourceHandle::t_hash handle, size_t uavOrdinal) const;
+
+			
+			public: const RootSignatureData &GetSignatureDataRef(ResourceHandle::t_hash handle) const;
 												
 		};
 

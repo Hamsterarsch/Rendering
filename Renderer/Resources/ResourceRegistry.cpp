@@ -34,8 +34,16 @@ namespace Renderer
 			return allocation->second.resource->GetGPUVirtualAddress();
 			
 		}
-		
 
+
+		
+		ID3D12Resource *ResourceRegistry::GetResource(const ResourceHandle::t_hash handle)
+		{
+			return resourceAllocations.at(handle).resource.Get();
+			
+		}
+
+		
 
 		void ResourceRegistry::RegisterPso
 		(
@@ -177,11 +185,39 @@ namespace Renderer
 			
 		}
 
+
+
 		
+		size_t ResourceRegistry::GetSignatureCbvOffset(const ResourceHandle::t_hash handle, const size_t cbvOrdinal) const
+		{
+			return GetSignatureOffset(handle, cbvOrdinal, &TableLayout::GetCbvOffset);
+			
+		}
+
+			size_t ResourceRegistry::GetSignatureOffset
+			(
+				const ResourceHandle::t_hash handle,
+				const size_t ordinal,
+				size_t (TableLayout:: *const getter)(unsigned short) const
+			) const
+			{
+				return (rootSignatures.at(handle).layout.*getter)(ordinal);
+			
+			}
+
+
 		
-		const RootSignatureData &ResourceRegistry::GetSignatureDataRef(const ResourceHandle::t_hash handle) const
-		{//consider synchronization when in use
-			return rootSignatures.at(handle);
+		size_t ResourceRegistry::GetSignatureSrvOffset(const ResourceHandle::t_hash handle, size_t srvOrdinal) const
+		{
+			return GetSignatureOffset(handle, srvOrdinal, &TableLayout::GetSrvOffset);
+			
+		}
+
+
+		
+		size_t ResourceRegistry::GetSignatureUavOffset(const ResourceHandle::t_hash handle, const size_t uavOrdinal) const
+		{
+			return GetSignatureOffset(handle, uavOrdinal, &TableLayout::GetUavOffset);
 			
 		}
 
