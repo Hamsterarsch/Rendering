@@ -46,6 +46,8 @@ namespace Renderer
 				private: static D3D12_SHADER_BYTECODE ConvertBlobToBytecode(const Blob &blob);
 
 				private: static void CheckPipelineCreation(HRESULT result);
+
+			public: DxPtr<ID3D12PipelineState> MakePso(const Blob &compiledComputeShader, ID3D12RootSignature *signature);
 						
 		};
 
