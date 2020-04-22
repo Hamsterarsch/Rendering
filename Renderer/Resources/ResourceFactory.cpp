@@ -33,14 +33,14 @@ namespace Renderer
 		
 	
 		
-		ResourceAllocation ResourceFactory::MakeBufferWithData(const void *data, const size_t sizeInBytes, const D3D12_RESOURCE_STATES desiredState)
+		ResourceAllocation ResourceFactory::MakeBufferWithData(const void *data, const size_t sizeInBytes, const D3D12_RESOURCE_STATES desiredState, const D3D12_RESOURCE_FLAGS flags)
 		{
 			WaitForSingleObject(event, INFINITE);
 			fence->Signal(0);
 
 			CopyDataToUploadBuffer(data, sizeInBytes);
 
-			ResourceAllocation outAlloc{ MakeBufferResource(sizeInBytes) };
+			ResourceAllocation outAlloc{ MakePlacedBufferResource(sizeInBytes, flags) };
 			
 			ClearCmdList();						
 			list->RecordBarrierAliasing(nullptr, outAlloc.resource.Get());			
@@ -52,31 +52,6 @@ namespace Renderer
 			return outAlloc;
 			
 		}
-
-			ResourceAllocation ResourceFactory::MakeBufferResource(const size_t sizeInBytes)
-			{
-				ResourceAllocation outAlloc{ this, ResourceTypes::Buffer };
-				outAlloc.allocation = memory->Allocate(sizeInBytes);
-							
-				const auto desc{ MakeBufferDesc(sizeInBytes) };
-				constexpr decltype(nullptr) BUFFER_CLEAR_VALUE{ nullptr };
-				const auto result
-				{		
-					resources->GetDevice()->CreatePlacedResource
-					(
-						outAlloc.allocation.heap, 
-						outAlloc.allocation.offsetToAllocation,
-						&desc,
-						D3D12_RESOURCE_STATE_COPY_DEST,
-						BUFFER_CLEAR_VALUE,
-						IID_PPV_ARGS(&outAlloc.resource)
-					)
-				};
-				CheckGpuResourceCreation(result);
-
-				return outAlloc;
-			
-			}
 
 			void ResourceFactory::CopyDataToUploadBuffer(const void *data, const size_t sizeInBytes)
 			{							
@@ -95,22 +70,48 @@ namespace Renderer
 					return uploadBuffer->GetSizeInBytes() < allocationSizeInBytes;
 					
 				}
-		
-			D3D12_RESOURCE_DESC ResourceFactory::MakeBufferDesc(const size_t sizeInBytes)
-			{
-				D3D12_RESOURCE_DESC desc{};
-				desc.Alignment = D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT;
-				desc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-				desc.Width = sizeInBytes;
-				desc.DepthOrArraySize = 1;
-				desc.Height = 1;
-				desc.MipLevels = 1;
-				desc.SampleDesc.Count = 1;
-				desc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
-				return desc;
+			ResourceAllocation ResourceFactory::MakePlacedBufferResource(const size_t sizeInBytes, const D3D12_RESOURCE_FLAGS flags)
+			{
+				ResourceAllocation outAlloc{ this, ResourceTypes::Buffer };
+				outAlloc.allocation = memory->Allocate(sizeInBytes);
+							
+				const auto desc{ MakeBufferDesc(sizeInBytes, flags) };
+				constexpr decltype(nullptr) BUFFER_CLEAR_VALUE{ nullptr };
+				const auto result
+				{		
+					resources->GetDevice()->CreatePlacedResource
+					(
+						outAlloc.allocation.heap, 
+						outAlloc.allocation.offsetToAllocation,
+						&desc,
+						D3D12_RESOURCE_STATE_COPY_DEST,
+						BUFFER_CLEAR_VALUE,
+						IID_PPV_ARGS(&outAlloc.resource)
+					)
+				};
+				CheckGpuResourceCreation(result);
+
+				return outAlloc;
 			
 			}
+		
+				D3D12_RESOURCE_DESC ResourceFactory::MakeBufferDesc(const size_t sizeInBytes, const D3D12_RESOURCE_FLAGS flags)
+				{
+					D3D12_RESOURCE_DESC desc{};
+					desc.Alignment = D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT;
+					desc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+					desc.Width = sizeInBytes;
+					desc.DepthOrArraySize = 1;
+					desc.Height = 1;
+					desc.MipLevels = 1;
+					desc.SampleDesc.Count = 1;
+					desc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+					desc.Flags = flags;
+			
+					return desc;
+				
+				}
 
 			void ResourceFactory::CheckGpuResourceCreation(const HRESULT result)
 			{

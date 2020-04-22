@@ -63,15 +63,15 @@ namespace Renderer
 			public: virtual ~ResourceFactory() noexcept;
 
 											
-			public: ResourceAllocation MakeBufferWithData(const void *data, size_t sizeInBytes, D3D12_RESOURCE_STATES desiredState);
-
-				private: ResourceAllocation MakeBufferResource(size_t sizeInBytes);
-			
+			public: ResourceAllocation MakeBufferWithData(const void *data, size_t sizeInBytes, D3D12_RESOURCE_STATES desiredState, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
+								
 				private: void CopyDataToUploadBuffer(const void *data, size_t sizeInBytes);
 
 					private: bool UploadBufferCanNotFitAllocation(size_t allocationSizeInBytes) const;
+			
+				private: ResourceAllocation MakePlacedBufferResource(size_t sizeInBytes, D3D12_RESOURCE_FLAGS flags);
 
-				private: static D3D12_RESOURCE_DESC MakeBufferDesc(size_t sizeInBytes);
+					private: static D3D12_RESOURCE_DESC MakeBufferDesc(size_t sizeInBytes, D3D12_RESOURCE_FLAGS flags);
 
 				private: static void CheckGpuResourceCreation(HRESULT result);
 
