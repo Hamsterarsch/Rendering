@@ -36,6 +36,8 @@ namespace Renderer
 					
 		}
 
+
+
 		void DescriptorMemory::RetireViewDescriptorChunk(const DescriptorChunk &chunk)
 		{
 			std::lock_guard<std::mutex> lock{ layoutMutex };
@@ -43,6 +45,8 @@ namespace Renderer
 			
 		}
 
+
+		
 		void DescriptorMemory::RetireSamplerDescriptorChunk(const DescriptorChunk &chunk)
 		{
 			std::lock_guard<std::mutex> lock{ layoutMutex };
@@ -50,6 +54,7 @@ namespace Renderer
 			
 		}
 
+		
 
 		D3D12_CPU_DESCRIPTOR_HANDLE DescriptorMemory::GetViewHandleCpu(const size_t index) const
 		{
@@ -57,23 +62,43 @@ namespace Renderer
 			
 		}
 
+
+		
 		D3D12_GPU_DESCRIPTOR_HANDLE DescriptorMemory::GetViewHandleGpu(const size_t index) const
 		{
 			return view.memory->GetHandleGpu(index);
 			
 		}
+
+
 		
 		D3D12_CPU_DESCRIPTOR_HANDLE DescriptorMemory::GetSamplerHandleCpu(const size_t index) const
 		{
 			return sampler.memory->GetHandleCpu(index);
 		}
 
+
+		
 		D3D12_GPU_DESCRIPTOR_HANDLE DescriptorMemory::GetSamplerHandleGpu(const size_t index) const
 		{
 			return sampler.memory->GetHandleGpu(index);
 			
 		}
+
 		
+		
+		void DescriptorMemory::RecordListBinding(CmdList *list)
+		{
+			ID3D12DescriptorHeap *heaps[]
+			{
+				view.memory->GetHeap(),
+				sampler.memory->GetHeap()					
+			};
+
+			list->AsGraphicsList()->SetDescriptorHeaps(ARRAYSIZE(heaps), heaps);
+			
+		}
+
 		
 	}
 
