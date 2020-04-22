@@ -17,6 +17,8 @@
 #include "Resources/GlobalBufferData.hpp"
 #include "Resources/ResourceFactoryDeallocatable.hpp"
 #include "RendererMaster.hpp"
+#include "Resources/Descriptor/DescriptorMemory.hpp"
+#include <fstream>
 
 
 #if _DEBUG
@@ -27,7 +29,35 @@
 
 #include "ThirdParty/glm/gtc/matrix_transform.hpp"
 #include <chrono>
-	
+
+	class SerializeContainer : public Renderer::DX12::SerializationHook
+	{
+		public: const unsigned char *GetData() { return saved.get(); }
+
+		public: size_t GetSize() const { return size; }
+		
+		UniquePtr<unsigned char[]> saved;
+		size_t currentWriteOffset{ 0 };
+		size_t size{ 0 };
+		
+		public:	void WriteToBlock(const void *data, size_t sizeInBytes) override
+		{
+			auto *bytePtr{ reinterpret_cast<const unsigned char *>(data) };
+			memcpy(saved.get() + currentWriteOffset, data, sizeInBytes);
+
+			currentWriteOffset += sizeInBytes;
+			
+		}
+
+		protected: void OnBeginBlock() override
+		{
+			size = GetBlockSize();
+			saved = std::make_unique<unsigned char[]>(size);
+			
+		}
+		
+	};
+
 namespace Renderer
 {
 	namespace DX12
@@ -70,7 +100,67 @@ namespace Renderer
 			
 		};
 
+		struct BoundingBox
+		{
+			glm::vec3 center;
+			glm::vec3 halfExtents;
+		};
 
+		class GridBoundingBoxes
+		{
+			public: 
+			const unsigned tilesizeX{ 128 };
+
+			const unsigned tilesizeY{ 128 };
+
+			const unsigned gridsizeX;
+
+			const unsigned gridsizeY;
+
+			float fovTermForDepthCompute;
+
+			const unsigned gridsizeZ;
+
+			std::vector<BoundingBox> boundingBoxes;
+				
+
+
+			public: GridBoundingBoxes(float screenwidth, float screenheight, float nearDistance, float farDistance, float fovRadians)
+				:
+				gridsizeX{ static_cast<unsigned>(screenwidth) / tilesizeX },
+				gridsizeY{ static_cast<unsigned>(screenheight) / tilesizeY },
+				fovTermForDepthCompute{ std::abs(2*std::tan(fovRadians/2)/gridsizeY) },
+				gridsizeZ{static_cast<unsigned>(std::log(farDistance/nearDistance) / std::log(1 + fovTermForDepthCompute) + 1) },
+				boundingBoxes(gridsizeX * gridsizeY * gridsizeZ, BoundingBox{})				
+			{				
+			}
+
+			BoundingBox &Get(unsigned x, unsigned y, unsigned z)
+			{
+				return boundingBoxes[ gridsizeX + y*gridsizeX + z*gridsizeX*gridsizeY ];
+				
+			}
+
+			size_t SizeInBytes() { return sizeof(decltype(boundingBoxes)::value_type) * boundingBoxes.size(); }
+
+			void *GetData() { return boundingBoxes.data(); }
+
+			size_t GetStride() { return sizeof(decltype(boundingBoxes)::value_type); }
+
+			size_t GetSize() { return boundingBoxes.size(); }
+			
+		};
+
+		struct GridData
+		{
+			glm::mat4x4 inverseProjection;
+			glm::uvec3 gridDimensions;
+			float fovTermForDepthCompute;
+			glm::vec2 screenDimensions;
+			float nearDistance;
+			float farDistance;
+			
+		};
 		
 		Renderer::Renderer(HWND outputWindow) :
 			privateMembers{ nullptr },
@@ -95,9 +185,122 @@ namespace Renderer
 			);			
 
 			privateMembers = std::make_unique<PrivateMembers>(resources.get(), maxScheduledFrames);					   			
-						
-			privateMembers->globalsToDispatch.projection = glm::perspectiveFovLH_ZO(glm::radians(90.f), outputSurface->GetWidth(), outputSurface->GetHeight(), .01f, 1000.f);
-						
+
+
+
+			
+			GridData gridData;
+			gridData.screenDimensions.x = outputSurface->GetWidth();
+			gridData.screenDimensions.y = outputSurface->GetHeight();
+			gridData.nearDistance = 10;
+			gridData.farDistance = 50'000.f;
+			const auto fov{ glm::radians(90.f) };
+			
+			privateMembers->globalsToDispatch.projection = glm::perspectiveFovLH_ZO(fov, gridData.screenDimensions.x, gridData.screenDimensions.y, gridData.nearDistance, gridData.farDistance);
+			gridData.inverseProjection = glm::inverse(privateMembers->globalsToDispatch.projection);
+
+
+			//init volume tiles
+			{
+				GridBoundingBoxes gbb{gridData.screenDimensions.x, gridData.screenDimensions.y, gridData.nearDistance, gridData.farDistance, fov};
+				gridData.gridDimensions.x = gbb.gridsizeX;
+				gridData.gridDimensions.y = gbb.gridsizeY;
+				gridData.gridDimensions.z = gbb.gridsizeZ;
+				gridData.fovTermForDepthCompute = gbb.fovTermForDepthCompute;
+
+							
+				auto gridWriteBufferHandle = HandleWrapper{this, privateMembers->handleFactory.MakeHandle(ResourceTypes::Buffer) };
+				privateMembers->registry.RegisterResource
+				(
+					gridWriteBufferHandle, 
+					resourceFactory->MakeBufferWithData(gbb.GetData(), gbb.SizeInBytes(), D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS)
+				);				
+				auto constantsBuffer = MakeBuffer(&gridData, sizeof gridData);
+				
+				
+				auto alloc = Facade::MakeCmdAllocator(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT);
+				auto list = alloc->AllocateList();
+				auto glist = list->AsGraphicsList();
+
+				
+				SerializeContainer s{};
+				SerializeRootSignature(0,0,1,0, &s);
+				auto rootHandle{ MakeRootSignature(s.GetData()) };
+				glist->SetComputeRootSignature(privateMembers->registry.GetSignature(rootHandle));
+				glist->SetComputeRootConstantBufferView(0, privateMembers->registry.GetResourceGPUVirtualAddress(constantsBuffer));
+
+				DescriptorMemory descriptorMemory{resources.get(), 1'000'000, 2048};
+				descriptorMemory.RecordListBinding(list.get());
+				auto descriptorAllocator{ descriptorMemory.GetDescriptorAllocator(1, 0) };
+								
+				descriptorAllocator.OpenNewTable();
+				descriptorAllocator.CreateUavBuffer
+				(
+					privateMembers->registry.GetResource(gridWriteBufferHandle), 
+					privateMembers->registry.GetSignatureUavOffset(rootHandle, 1),
+					0,
+					gbb.GetSize(),
+					gbb.GetStride()
+				);
+				const auto tableStart{ descriptorAllocator.GetCurrentTableStartForView() };								
+				glist->SetComputeRootDescriptorTable(2, tableStart);
+
+				
+				std::ifstream shaderFile{Filesystem::Conversions::MakeExeRelative(L"../Content/Shaders/ComputeVolumeTileGridBB.cs"), std::ios_base::in | std::ios_base::ate};
+				SerializeContainer cs{};
+				{					
+				const auto csCharCount{ shaderFile.tellg() };
+				shaderFile.seekg(0);
+
+				auto csshader{ std::make_unique<char[]>(csCharCount) };
+				shaderFile.read( csshader.get(), csCharCount);
+							
+				CompileComputeShader(csshader.get(), csCharCount, &cs);
+
+				shaderFile.close();
+				}
+
+				Blob csBlob{cs.GetData(), cs.GetSize()};
+				auto compPso{ MakePso(csBlob, rootHandle) };				
+				glist->SetPipelineState(privateMembers->registry.GetPso(compPso));
+
+				
+				glist->Dispatch
+				(
+					std::ceil(gridData.gridDimensions.x / 4.f),
+					std::ceil(gridData.gridDimensions.y / 4.f),
+					std::ceil(gridData.gridDimensions.z / 4.f)
+				);
+
+				
+				auto *resource = privateMembers->registry.GetResource(gridWriteBufferHandle);
+				list->RecordBarrierTransition(resource, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_COPY_SOURCE);
+
+				auto readbackBuffer = resourceFactory->MakeCommittedBuffer(gbb.SizeInBytes(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_HEAP_TYPE_READBACK, D3D12_HEAP_FLAG_NONE);
+				list->RecordCopyResource(readbackBuffer.Get(), resource);
+
+				
+				auto r = glist->Close();
+				commonQueue->SubmitCommandList(list.get());
+
+				
+				auto f{ Facade::MakeFence(resources.get()) };
+				auto event = CreateEvent(nullptr, false, false, nullptr);
+				f->SetEventOnValue(1, event);
+				commonQueue->Signal(1, f.get());
+
+				WaitForSingleObject(event, INFINITE);
+
+				void *boundingBoxData;
+				auto res = readbackBuffer->Map(0, nullptr, &boundingBoxData);
+
+				memcpy(gbb.GetData(), boundingBoxData, gbb.SizeInBytes());
+
+				D3D12_RANGE range{0,0};
+				readbackBuffer->Unmap(0, &range);
+								
+			}
+			
 		}
 			   
 	
@@ -348,7 +551,8 @@ namespace Renderer
 			auto handle{ privateMembers->handleFactory.MakeHandle(ResourceTypes::Pso) };
 			privateMembers->registry.RegisterPso(handle.hash, pipelineState);
 
-			return handle.hash;
+			return handle;
+			
 		}
 
 
