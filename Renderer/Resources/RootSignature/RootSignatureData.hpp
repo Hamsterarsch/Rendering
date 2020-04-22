@@ -18,8 +18,8 @@ namespace Renderer
 				samplerAmount{ 0 },
 				layout
 				{
-					signatureDesc.NumParameters > 0 && signatureDesc.pParameters[0].ParameterType == D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE
-					? &signatureDesc.pParameters[0].DescriptorTable
+					signatureDesc.NumParameters > 0 && signatureDesc.pParameters[2].ParameterType == D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE
+					? &signatureDesc.pParameters[2].DescriptorTable
 					: nullptr
 				}
 			{				
