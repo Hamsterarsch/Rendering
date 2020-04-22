@@ -135,6 +135,8 @@ namespace Renderer
 			public: void CompileVertexShader(const char *shader, size_t length, SerializationHook *serializer) const;
 
 			public: void CompilePixelShader(const char *shader, size_t length, SerializationHook *serializer) const;
+
+			public: void CompileComputeShader(const char *shader, size_t length, SerializationHook *serializer) const;
 			
 
 			public: void SerializeRootSignature(unsigned cbvAmount, unsigned srvAmount, unsigned uavAmount, unsigned samplerAmount, SerializationHook *serializer);

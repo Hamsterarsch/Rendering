@@ -261,7 +261,19 @@ namespace Renderer
 		}
 
 
+
 		
+		void Renderer::CompileComputeShader(const char *shader, const size_t length, SerializationHook *serializer) const
+		{
+			auto shaderBlob{ privateMembers->shaderFactory->MakeComputeShader(shader, length, "main") };
+
+			auto block{ serializer->BeginBlock(shaderBlob->GetBufferSize() )};
+			serializer->WriteToBlock(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize());
+			
+		}
+
+		
+
 		void Renderer::SerializeRootSignature
 		(
 			unsigned cbvAmount,
