@@ -42,9 +42,10 @@ namespace Renderer
 			parameters.emplace_back(extraDataParameter);
 			
 			std::vector<D3D12_DESCRIPTOR_RANGE1> ranges{};
+			offsetInDescriptorTable = 0;
+			PushBackRangeIfNecessary(ranges, cbvAmount, D3D12_DESCRIPTOR_RANGE_TYPE_CBV);
 			PushBackRangeIfNecessary(ranges, srvAmount, D3D12_DESCRIPTOR_RANGE_TYPE_SRV);
 			PushBackRangeIfNecessary(ranges, uavAmount, D3D12_DESCRIPTOR_RANGE_TYPE_UAV);
-			PushBackRangeIfNecessary(ranges, cbvAmount, D3D12_DESCRIPTOR_RANGE_TYPE_CBV);
 										
 			D3D12_ROOT_PARAMETER1 viewParamDesc{};
 			viewParamDesc.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
@@ -99,6 +100,7 @@ namespace Renderer
 				if(descriptorAmount > 0)
 				{
 					container.push_back(MakeRangeDesc(descriptorAmount, type));
+					offsetInDescriptorTable += descriptorAmount;
 				}
 				
 			}
@@ -107,11 +109,11 @@ namespace Renderer
 				(
 					const unsigned descriptorAmount,
 					const D3D12_DESCRIPTOR_RANGE_TYPE type
-				)
+				) const
 				{
 					D3D12_DESCRIPTOR_RANGE1 rangeDesc{};
-					rangeDesc.Flags = D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC;
-					rangeDesc.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+					rangeDesc.Flags = D3D12_DESCRIPTOR_RANGE_FLAG_DATA_VOLATILE | D3D12_DESCRIPTOR_RANGE_FLAG_DESCRIPTORS_VOLATILE;
+					rangeDesc.OffsetInDescriptorsFromTableStart = offsetInDescriptorTable;
 					rangeDesc.BaseShaderRegister = 0;
 					rangeDesc.NumDescriptors = descriptorAmount;
 					rangeDesc.RangeType = type;
