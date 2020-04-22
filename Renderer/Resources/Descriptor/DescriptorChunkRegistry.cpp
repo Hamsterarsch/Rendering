@@ -11,6 +11,11 @@ namespace Renderer
 
 	DescriptorChunk DescriptorChunkRegistry::Allocate(const size_t descriptorCapacity)
 	{
+		if(descriptorCapacity <= 0)
+		{
+			return { 0, 0 };
+		}
+		
 		auto freeChunk{ FindFreeChunk(descriptorCapacity) };
 
 		if(freeChunk == freeChunks.end())
