@@ -47,6 +47,9 @@ namespace RHA
 			public: virtual DxPtr<ID3DBlob> MakePixelShader(const wchar_t *filepath, const char *entrypoint) const override;
 
 			public: virtual DxPtr<ID3DBlob> MakePixelShader(const char *shader, size_t shaderLength, const char *entrypoint) const override;
+
+			
+			public: virtual DxPtr<ID3DBlob> MakeComputeShader(const char* shader, size_t shaderLength, const char* entrypoint) const override;
 			
 		};
 

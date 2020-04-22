@@ -182,6 +182,19 @@ namespace RHA
 			
 		}
 
+
+		
+		DxPtr<ID3DBlob> ShaderFactoryImpl::MakeComputeShader
+		(
+			const char *shader,
+			const size_t shaderLength,
+			const char *entrypoint
+		) const
+		{
+			return DoCompile(shader, shaderLength, entrypoint, "cs");
+			
+		}
+
 		
 	}
 

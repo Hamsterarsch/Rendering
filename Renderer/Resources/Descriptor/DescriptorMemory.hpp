@@ -9,6 +9,7 @@ namespace RHA
 {
 	namespace DX12
 	{
+		class CmdList;
 		class DeviceResources;
 	}
 }
@@ -63,6 +64,9 @@ namespace Renderer
 			public: D3D12_CPU_DESCRIPTOR_HANDLE GetSamplerHandleCpu(size_t index) const;
 
 			public: D3D12_GPU_DESCRIPTOR_HANDLE GetSamplerHandleGpu(size_t index) const;
+
+
+			public: void RecordListBinding(CmdList *list);
 								
 		};
 			   

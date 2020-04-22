@@ -135,6 +135,8 @@ namespace Renderer
 			public: void CompileVertexShader(const char *shader, size_t length, SerializationHook *serializer) const;
 
 			public: void CompilePixelShader(const char *shader, size_t length, SerializationHook *serializer) const;
+
+			public: void CompileComputeShader(const char *shader, size_t length, SerializationHook *serializer) const;
 			
 
 			public: void SerializeRootSignature(unsigned cbvAmount, unsigned srvAmount, unsigned uavAmount, unsigned samplerAmount, SerializationHook *serializer);
@@ -149,6 +151,7 @@ namespace Renderer
 			
 			public: size_t MakePso(PipelineTypes pipelineType, VertexLayoutTypes vertexLayout, const ShaderList &shaders, size_t signatureHandle);
 								
+			public: size_t MakePso(const Blob &csBlob, size_t signatureHandle);
 
 			public: bool ResourceMustBeRemade(size_t handle);
 

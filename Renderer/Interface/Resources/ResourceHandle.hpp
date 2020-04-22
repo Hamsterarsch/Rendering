@@ -25,6 +25,8 @@ namespace Renderer
 		public:	explicit ResourceHandle(t_hash hash);
 
 		
+		public: inline operator t_hash() const { return hash; }
+		
 		public: t_resourceTypes GetResourceType() const;
 
 			public: static t_resourceTypes GetResourceType(t_hash hash);

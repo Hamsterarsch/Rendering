@@ -147,6 +147,26 @@ namespace Renderer
 			
 		}
 
+
+
+		
+		void DescriptorAllocator::CreateUavBuffer(ID3D12Resource *resource, const size_t tableOffset, const size_t firstIndex, const size_t numElements, const size_t strideInBytes)
+		{
+			CheckIfValidOpenTable();
+
+			D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc{};
+			uavDesc.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
+			uavDesc.Buffer.FirstElement = firstIndex;
+			uavDesc.Buffer.NumElements = numElements;
+			uavDesc.Buffer.StructureByteStride = strideInBytes;
+						
+			const auto descriptorIndex{ view.offsetToTableStart + tableOffset };
+			resources->GetDevice()->CreateUnorderedAccessView(resource, nullptr, &uavDesc, parent->GetViewHandleCpu(descriptorIndex));
+
+			UpdateAfterTableIndexForView(descriptorIndex);
+			
+		}
+
 		
 	}
 

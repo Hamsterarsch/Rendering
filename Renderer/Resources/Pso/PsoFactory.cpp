@@ -34,7 +34,7 @@ namespace Renderer
 			desc.PS = ConvertBlobToBytecode(shaders.ps);
 
 			desc.pRootSignature = signature;
-
+			
 			DxPtr<ID3D12PipelineState> pipeline;
 			const auto result
 			{
@@ -98,7 +98,7 @@ namespace Renderer
 				{
 					return {};
 				}
-
+				
 				return { blob.data, blob.sizeInBytes };
 				
 			}
@@ -111,6 +111,25 @@ namespace Renderer
 				}
 			
 			}
+
+			
+		
+		DxPtr<ID3D12PipelineState> PsoFactory::MakePso(const Blob &compiledComputeShader, ID3D12RootSignature *signature)
+		{
+			D3D12_COMPUTE_PIPELINE_STATE_DESC desc{};
+			desc.CS = ConvertBlobToBytecode(compiledComputeShader);
+			desc.pRootSignature = signature;
+
+			DxPtr<ID3D12PipelineState> pipeline;
+			const auto result
+			{
+				resources->GetDevice()->CreateComputePipelineState(&desc, IID_PPV_ARGS(&pipeline))
+			};
+			CheckPipelineCreation(result);
+
+			return pipeline;
+			
+		}
 
 		
 	}

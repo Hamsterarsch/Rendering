@@ -23,6 +23,8 @@ namespace Renderer
 		{
 			private: RHA::DX12::DeviceResources *resources;
 
+			private: size_t offsetInDescriptorTable;
+
 
 
 			public: explicit RootSignatureFactory(RHA::DX12::DeviceResources *resources);			
@@ -32,7 +34,7 @@ namespace Renderer
 
 				private: void PushBackRangeIfNecessary(std::vector<D3D12_DESCRIPTOR_RANGE1> &container,  unsigned descriptorAmount, D3D12_DESCRIPTOR_RANGE_TYPE type);
 				
-					private: static D3D12_DESCRIPTOR_RANGE1 MakeRangeDesc(unsigned descriptorAmount, D3D12_DESCRIPTOR_RANGE_TYPE type);
+					private: D3D12_DESCRIPTOR_RANGE1 MakeRangeDesc(unsigned descriptorAmount, D3D12_DESCRIPTOR_RANGE_TYPE type) const;
 
 				private: static void CheckSerialization(HRESULT result);
 
