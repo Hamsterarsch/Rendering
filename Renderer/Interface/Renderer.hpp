@@ -151,6 +151,7 @@ namespace Renderer
 			
 			public: size_t MakePso(PipelineTypes pipelineType, VertexLayoutTypes vertexLayout, const ShaderList &shaders, size_t signatureHandle);
 								
+			public: size_t MakePso(const Blob &csBlob, size_t signatureHandle);
 
 			public: bool ResourceMustBeRemade(size_t handle);
 

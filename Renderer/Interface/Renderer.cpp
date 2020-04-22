@@ -349,6 +349,18 @@ namespace Renderer
 			privateMembers->registry.RegisterPso(handle.hash, pipelineState);
 
 			return handle.hash;
+		}
+
+
+		
+		size_t Renderer::MakePso(const Blob &csBlob, const size_t signatureHandle)
+		{
+			auto pipelineState{ privateMembers->psoFactory.MakePso(csBlob, privateMembers->registry.GetSignature(signatureHandle)) };
+
+			auto handle{ privateMembers->handleFactory.MakeHandle(ResourceTypes::Pso) };
+			privateMembers->registry.RegisterPso(handle, pipelineState);
+
+			return handle;
 			
 		}
 
