@@ -5,18 +5,18 @@ struct BoundingBox
 };
 RWStructuredBuffer<BoundingBox> outBox : register(u0);
 
-struct GridData
+struct VolumeTileGridData
 {
 	float4x4 inverseProjection;	
 	uint3 gridDimensions;
 	float fovTermForDepthCompute;
-	float2 screenDimensions;
+	uint2 screenDimensions;
 	float nearDistance;
 	float farDistance;
 	
 	
 };
-GridData gridData : register(b0);
+VolumeTileGridData gridData : register(b0);
 
 float3 FindIntersectionWithZPlane(float planeZ, float3 linevec)
 {
