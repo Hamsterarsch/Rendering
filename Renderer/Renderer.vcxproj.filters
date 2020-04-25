@@ -97,6 +97,12 @@
     <ClInclude Include="Resources\ResourceRegistryUsingReferences.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
+    <ClInclude Include="Lighting\LightGrid\VolumeTileGrid.hpp">
+      <Filter>Lighting\LightGrid</Filter>
+    </ClInclude>
+    <ClInclude Include="Lighting\ProjectionInfo.hpp">
+      <Filter>Lighting</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -187,6 +193,12 @@
     </Filter>
     <Filter Include="Commands">
       <UniqueIdentifier>{b526f4d7-e40e-4611-9c77-f5e6f623ac51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lighting">
+      <UniqueIdentifier>{b0a0db8e-7e66-4b16-bfda-3131e48028b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lighting\LightGrid">
+      <UniqueIdentifier>{ce76d3ed-a52c-438b-9da7-01cacaabf5f6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

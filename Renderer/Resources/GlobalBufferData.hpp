@@ -1,18 +1,21 @@
 #pragma once
 #include <ThirdParty/glm/mat4x4.hpp>
+#include "Math/Interface/Types/Matrix.hpp"
 
 
 namespace Renderer
 {
 	struct GlobalBufferData
 	{
-		glm::mat4 view;
+		Math::Matrix view;
 		
-		glm::mat4 projection;
+		Math::Matrix projection;
 		
 		float time;
 
 		GlobalBufferData() :			
+			view{},
+			projection{},
 			time{ 0 }
 		{			
 		}

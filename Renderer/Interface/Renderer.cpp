@@ -21,6 +21,9 @@
 #include <fstream>
 
 
+#include "Lighting/ProjectionInfo.hpp"
+
+
 #if _DEBUG
 	constexpr bool enableDebugLayers = true;
 #else
@@ -151,16 +154,6 @@ namespace Renderer
 			
 		};
 
-		struct GridData
-		{
-			glm::mat4x4 inverseProjection;
-			glm::uvec3 gridDimensions;
-			float fovTermForDepthCompute;
-			glm::vec2 screenDimensions;
-			float nearDistance;
-			float farDistance;
-			
-		};
 		
 		Renderer::Renderer(HWND outputWindow) :
 			privateMembers{ nullptr },
@@ -189,15 +182,15 @@ namespace Renderer
 
 
 			
-			GridData gridData;
+			ProjectionInfo gridData;
 			gridData.screenDimensions.x = outputSurface->GetWidth();
 			gridData.screenDimensions.y = outputSurface->GetHeight();
 			gridData.nearDistance = 10;
 			gridData.farDistance = 50'000.f;
 			const auto fov{ glm::radians(90.f) };
 			
-			privateMembers->globalsToDispatch.projection = glm::perspectiveFovLH_ZO(fov, gridData.screenDimensions.x, gridData.screenDimensions.y, gridData.nearDistance, gridData.farDistance);
-			gridData.inverseProjection = glm::inverse(privateMembers->globalsToDispatch.projection);
+			privateMembers->globalsToDispatch.projection = Math::Matrix::MakeProjection(fov, gridData.screenDimensions.x, gridData.screenDimensions.y, gridData.nearDistance, gridData.farDistance);
+			gridData.inverseProjection = privateMembers->globalsToDispatch.projection.Inverse();
 
 
 			//init volume tiles
@@ -206,7 +199,7 @@ namespace Renderer
 				gridData.gridDimensions.x = gbb.gridsizeX;
 				gridData.gridDimensions.y = gbb.gridsizeY;
 				gridData.gridDimensions.z = gbb.gridsizeZ;
-				gridData.fovTermForDepthCompute = gbb.fovTermForDepthCompute;
+				gridData.fovTermForTileGridDepthCompute = gbb.fovTermForDepthCompute;
 
 							
 				auto gridWriteBufferHandle = HandleWrapper{this, privateMembers->handleFactory.MakeHandle(ResourceTypes::Buffer) };
@@ -402,11 +395,8 @@ namespace Renderer
 		
 		void Renderer::SetCamera(float x, float y, float z, float pitch, float yaw, float roll)
 		{
-			privateMembers->globalsToDispatch.view = glm::identity<glm::mat4>();
-			privateMembers->globalsToDispatch.view = rotate	  (privateMembers->globalsToDispatch.view, glm::radians(-pitch), {1,0,0});
-			privateMembers->globalsToDispatch.view = rotate	  (privateMembers->globalsToDispatch.view, glm::radians(-yaw), {0,1,0});
-			privateMembers->globalsToDispatch.view = rotate	  (privateMembers->globalsToDispatch.view, glm::radians(-roll), {0,0,1});
-			privateMembers->globalsToDispatch.view = translate(privateMembers->globalsToDispatch.view, {-x, -y, -z});
+			privateMembers->globalsToDispatch.view = Math::Matrix::MakeRotation(-pitch, -yaw, -roll);
+			privateMembers->globalsToDispatch.view.Translate(x, y, z);
 			
 		}
 
