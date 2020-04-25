@@ -152,10 +152,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Interface\MathExportHelper.hpp" />
+    <ClInclude Include="Interface\Types\Vector.hpp" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Interface\Types\Vector.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

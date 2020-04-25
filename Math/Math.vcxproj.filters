@@ -8,10 +8,21 @@
     <ClInclude Include="Interface\MathExportHelper.hpp">
       <Filter>Interface</Filter>
     </ClInclude>
+    <ClInclude Include="Interface\Types\Vector.hpp">
+      <Filter>Interface\Types</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">
       <UniqueIdentifier>{cc58d2ce-caa3-4cec-a637-bcd28924855d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Interface\Types">
+      <UniqueIdentifier>{b4c2b182-b8fa-4e71-a696-b0de52d8d032}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Interface\Types\Vector.inl">
+      <Filter>Interface\Types</Filter>
+    </None>
   </ItemGroup>
 </Project>
