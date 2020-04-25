@@ -5,6 +5,12 @@
     <ClCompile Include="Interface\Types\Matrix.cpp">
       <Filter>Interface\Types</Filter>
     </ClCompile>
+    <ClCompile Include="Interface\Utility.cpp">
+      <Filter>Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Interface\Types\Angle.cpp">
+      <Filter>Interface\Types</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h" />
@@ -15,6 +21,15 @@
       <Filter>Interface\Types</Filter>
     </ClInclude>
     <ClInclude Include="Interface\Types\Matrix.hpp">
+      <Filter>Interface\Types</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\Types\BoundingBox.hpp">
+      <Filter>Interface\Types</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\Utility.hpp">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\Types\Angle.hpp">
       <Filter>Interface\Types</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,5 +1,7 @@
 #pragma once
 #include "ThirdParty/glm/vec2.hpp"
+#include "ThirdParty/glm/vec3.hpp"
+#include "ThirdParty/glm/vec4.hpp"
 
 
 namespace Math

@@ -152,13 +152,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Interface\MathExportHelper.hpp" />
+    <ClInclude Include="Interface\Types\BoundingBox.hpp" />
+    <ClInclude Include="Interface\Types\Angle.hpp" />
     <ClInclude Include="Interface\Types\Matrix.hpp" />
     <ClInclude Include="Interface\Types\Vector.hpp" />
+    <ClInclude Include="Interface\Utility.hpp" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="Interface\Types\Angle.cpp" />
     <ClCompile Include="Interface\Types\Matrix.cpp" />
+    <ClCompile Include="Interface\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Interface\Types\Vector.inl" />
