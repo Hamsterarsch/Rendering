@@ -2,6 +2,9 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="Interface\Types\Matrix.cpp">
+      <Filter>Interface\Types</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h" />
@@ -9,6 +12,9 @@
       <Filter>Interface</Filter>
     </ClInclude>
     <ClInclude Include="Interface\Types\Vector.hpp">
+      <Filter>Interface\Types</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\Types\Matrix.hpp">
       <Filter>Interface\Types</Filter>
     </ClInclude>
   </ItemGroup>
