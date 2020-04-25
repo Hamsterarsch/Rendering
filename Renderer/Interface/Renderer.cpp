@@ -21,7 +21,10 @@
 #include <fstream>
 
 
-#include "Lighting/ProjectionInfo.hpp"
+#include "ShaderRelevantTypes/VolumeTileGridData.hpp"
+#include "Types/Angle.hpp"
+#include "Utility.hpp"
+#include "Lighting/LightGrid/VolumeTileGrid.hpp"
 
 
 #if _DEBUG
@@ -159,7 +162,7 @@ namespace Renderer
 			privateMembers{ nullptr },
 			lastDispatchTime{ 0 },
 			maxScheduledFrames{ 2 }
-		{
+		{			
 			resources = Facade::MakeDeviceResources(D3D_FEATURE_LEVEL_11_0, enableDebugLayers);
 			commonQueue = Facade::MakeQueue(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT);			
 
@@ -182,12 +185,12 @@ namespace Renderer
 
 
 			
-			ProjectionInfo gridData;
+			VolumeTileGridData gridData;
 			gridData.screenDimensions.x = outputSurface->GetWidth();
 			gridData.screenDimensions.y = outputSurface->GetHeight();
 			gridData.nearDistance = 10;
 			gridData.farDistance = 50'000.f;
-			const auto fov{ glm::radians(90.f) };
+			const auto fov{ Math::Radians(90.f) };
 			
 			privateMembers->globalsToDispatch.projection = Math::Matrix::MakeProjection(fov, gridData.screenDimensions.x, gridData.screenDimensions.y, gridData.nearDistance, gridData.farDistance);
 			gridData.inverseProjection = privateMembers->globalsToDispatch.projection.Inverse();
@@ -195,12 +198,7 @@ namespace Renderer
 
 			//init volume tiles
 			{
-				GridBoundingBoxes gbb{gridData.screenDimensions.x, gridData.screenDimensions.y, gridData.nearDistance, gridData.farDistance, fov};
-				gridData.gridDimensions.x = gbb.gridsizeX;
-				gridData.gridDimensions.y = gbb.gridsizeY;
-				gridData.gridDimensions.z = gbb.gridsizeZ;
-				gridData.fovTermForTileGridDepthCompute = gbb.fovTermForDepthCompute;
-
+				VolumeTileGrid gbb(Math::VectorUint2{128,128}, 90.f, gridData);
 							
 				auto gridWriteBufferHandle = HandleWrapper{this, privateMembers->handleFactory.MakeHandle(ResourceTypes::Buffer) };
 				privateMembers->registry.RegisterResource
@@ -232,8 +230,8 @@ namespace Renderer
 					privateMembers->registry.GetResource(gridWriteBufferHandle), 
 					privateMembers->registry.GetSignatureUavOffset(rootHandle, 1),
 					0,
-					gbb.GetSize(),
-					gbb.GetStride()
+					gbb.GetTileCount(),
+					gbb.GetTileStride()
 				);
 				const auto tableStart{ descriptorAllocator.GetCurrentTableStartForView() };								
 				glist->SetComputeRootDescriptorTable(2, tableStart);
@@ -260,9 +258,9 @@ namespace Renderer
 				
 				glist->Dispatch
 				(
-					std::ceil(gridData.gridDimensions.x / 4.f),
-					std::ceil(gridData.gridDimensions.y / 4.f),
-					std::ceil(gridData.gridDimensions.z / 4.f)
+					std::ceil(gridData.outGridDimensions.x / 4.f),
+					std::ceil(gridData.outGridDimensions.y / 4.f),
+					std::ceil(gridData.outGridDimensions.z / 4.f)
 				);
 
 				

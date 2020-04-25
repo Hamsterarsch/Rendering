@@ -3,15 +3,15 @@
 
 namespace Renderer
 {
-	struct ProjectionInfo
+	struct VolumeTileGridData
 	{
 		Math::Matrix inverseProjection;
 		
-		Math::VectorUint3 gridDimensions;
+		Math::VectorUint3 outGridDimensions;
 		
-		float fovTermForTileGridDepthCompute;
+		float outFovTermForTileGridDepthCompute;
 		
-		Math::Vector2 screenDimensions;
+		Math::VectorUint2 screenDimensions;
 		
 		float nearDistance;
 		

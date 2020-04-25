@@ -100,8 +100,8 @@
     <ClInclude Include="Lighting\LightGrid\VolumeTileGrid.hpp">
       <Filter>Lighting\LightGrid</Filter>
     </ClInclude>
-    <ClInclude Include="Lighting\ProjectionInfo.hpp">
-      <Filter>Lighting</Filter>
+    <ClInclude Include="ShaderRelevantTypes\VolumeTileGridData.hpp">
+      <Filter>ShaderRelevantTypes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -168,6 +168,9 @@
     <ClCompile Include="Resources\ResourceRegistryDetachedReference.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
+    <ClCompile Include="Lighting\LightGrid\VolumeTileGrid.cpp">
+      <Filter>Lighting\LightGrid</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">
@@ -199,6 +202,9 @@
     </Filter>
     <Filter Include="Lighting\LightGrid">
       <UniqueIdentifier>{ce76d3ed-a52c-438b-9da7-01cacaabf5f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ShaderRelevantTypes">
+      <UniqueIdentifier>{4a9d49ad-d017-48e6-b89a-1860419f8e9e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
