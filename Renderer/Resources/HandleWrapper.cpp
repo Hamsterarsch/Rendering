@@ -15,7 +15,7 @@ namespace Renderer
 
 
 		
-		HandleWrapper::HandleWrapper(Renderer *origin, const size_t handle) :
+		HandleWrapper::HandleWrapper(IRenderer *origin, const size_t handle) :
 			origin{ origin },
 			handle{ handle }
 		{

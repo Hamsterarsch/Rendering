@@ -36,7 +36,7 @@
 #include "ThirdParty/glm/gtc/matrix_transform.hpp"
 #include <chrono>
 
-	class SerializeContainer : public Renderer::DX12::SerializationHook
+	class SerializeContainer : public Renderer::SerializationHook
 	{
 		public: const unsigned char *GetData() { return saved.get(); }
 
@@ -575,6 +575,9 @@ namespace Renderer
 		
 	}
 
+
+	UniquePtr<IRenderer> MakeRenderer(HWND outputWindow) { return std::make_unique<DX12::Renderer>(outputWindow);  }
+	
 	
 }
 

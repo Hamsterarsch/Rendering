@@ -32,11 +32,6 @@ struct ID3D12Resource;
 
 namespace Renderer
 {
-	namespace DX12
-	{
-		class FrameRenderer;
-		struct TriangleData;
-
 		class SerializationHook
 		{
 			DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(SerializationHook)
@@ -77,8 +72,53 @@ namespace Renderer
 			public: virtual void WriteToBlock(const void *data, size_t sizeInBytes) {};
 
 		};
+	
+		class RENDERER_DLLSPEC IRenderer
+		{
+			DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(IRenderer)
+			
+
+			public: virtual bool IsBusy() const = 0;
+			
+			public: virtual void DispatchFrame() = 0;
+
+			public: virtual void RenderMesh(size_t signatureHandle, size_t psoHandle, size_t meshHandle, size_t sizeInBytes, size_t byteOffsetToIndices, size_t transformBufferHandle = 0, size_t instanceCount = 1) = 0;
+
+			public: virtual void SetCamera(float x, float y, float z, float pitch, float yaw, float roll) = 0;
+					
+			public: virtual size_t MakeBuffer(const void *data, size_t sizeInBytes) = 0;
+
+			public: virtual void RemakeBuffer(const void *data, size_t sizeInBytes, size_t handle) = 0;
+			
+			public: virtual void CompileVertexShader(const char *shader, size_t length, SerializationHook *serializer) const = 0;
 						
-		class RENDERER_DLLSPEC Renderer
+			public: virtual void CompilePixelShader(const char *shader, size_t length, SerializationHook *serializer) const = 0;
+						
+			public: virtual void CompileComputeShader(const char *shader, size_t length, SerializationHook *serializer) const = 0;
+						
+			public: virtual void SerializeRootSignature(unsigned cbvAmount, unsigned srvAmount, unsigned uavAmount, unsigned samplerAmount, SerializationHook *serializer) = 0;
+						
+			public: virtual size_t MakeRootSignature(const void *serializedData) = 0;
+						
+			public: virtual size_t MakePso(PipelineTypes pipelineType, VertexLayoutTypes vertexLayout, const ShaderList &shaders, size_t signatureHandle) = 0;
+						
+			public: virtual size_t MakePso(const Blob &csBlob, size_t signatureHandle) = 0;
+						
+			public: virtual bool ResourceMustBeRemade(size_t handle) = 0;
+						
+			public: virtual void RetireHandle(size_t handle) = 0;
+
+		};
+
+	
+	
+	namespace DX12
+	{
+		class FrameRenderer;
+		struct TriangleData;
+		
+		
+		class Renderer : public IRenderer
 		{	
 			private: UniquePtr<RHA::DX12::DeviceResources> resources;
 
@@ -111,37 +151,37 @@ namespace Renderer
 				private: void WaitForIdleQueue();
 
 
-			public: bool IsBusy() const;
+			public: virtual bool IsBusy() const override;
 			
-			public: void DispatchFrame();
+			public: virtual void DispatchFrame() override;
 								
 				private: void AbortDispatch();
 
 				private: FrameRenderer MakeFrameFromCommands();
 
-			public: void RenderMesh(size_t signatureHandle, size_t psoHandle, size_t meshHandle, size_t sizeInBytes, size_t byteOffsetToIndices, size_t transformBufferHandle = 0, size_t instanceCount = 1);
+			public: virtual void RenderMesh(size_t signatureHandle, size_t psoHandle, size_t meshHandle, size_t sizeInBytes, size_t byteOffsetToIndices, size_t transformBufferHandle = 0, size_t instanceCount = 1) override;
 
-			public: void SetCamera(float x, float y, float z, float pitch, float yaw, float roll);
+			public: virtual void SetCamera(float x, float y, float z, float pitch, float yaw, float roll) override;
 								
 			
 			
-			public: size_t MakeBuffer(const void *data, size_t sizeInBytes);
+			public: virtual size_t MakeBuffer(const void *data, size_t sizeInBytes) override;
 
 				private: size_t MakeBufferInternal(const void *data, size_t sizeInBytes, size_t handle);
 						 			
-			public: void RemakeBuffer(const void *data, size_t sizeInBytes, size_t handle);
+			public: virtual void RemakeBuffer(const void *data, size_t sizeInBytes, size_t handle) override;
 			
 			
-			public: void CompileVertexShader(const char *shader, size_t length, SerializationHook *serializer) const;
+			public: virtual void CompileVertexShader(const char *shader, size_t length, SerializationHook *serializer) const override;
 
-			public: void CompilePixelShader(const char *shader, size_t length, SerializationHook *serializer) const;
+			public: virtual void CompilePixelShader(const char *shader, size_t length, SerializationHook *serializer) const override;
 
-			public: void CompileComputeShader(const char *shader, size_t length, SerializationHook *serializer) const;
+			public: virtual void CompileComputeShader(const char *shader, size_t length, SerializationHook *serializer) const override;
 			
 
-			public: void SerializeRootSignature(unsigned cbvAmount, unsigned srvAmount, unsigned uavAmount, unsigned samplerAmount, SerializationHook *serializer);
+			public: virtual void SerializeRootSignature(unsigned cbvAmount, unsigned srvAmount, unsigned uavAmount, unsigned samplerAmount, SerializationHook *serializer) override;
 
-			public: size_t MakeRootSignature(const void *serializedData);
+			public: virtual size_t MakeRootSignature(const void *serializedData) override;
 								
 				private: static SIZE_T ExtractSizeFrom(const void *data);
 
@@ -149,19 +189,21 @@ namespace Renderer
 
 				private: static size_t ExtractSamplerCountFrom(const void *data, SIZE_T signatureSize);
 			
-			public: size_t MakePso(PipelineTypes pipelineType, VertexLayoutTypes vertexLayout, const ShaderList &shaders, size_t signatureHandle);
+			public: virtual size_t MakePso(PipelineTypes pipelineType, VertexLayoutTypes vertexLayout, const ShaderList &shaders, size_t signatureHandle) override;
 								
-			public: size_t MakePso(const Blob &csBlob, size_t signatureHandle);
+			public: virtual size_t MakePso(const Blob &csBlob, size_t signatureHandle) override;
 
-			public: bool ResourceMustBeRemade(size_t handle);
+			public: virtual bool ResourceMustBeRemade(size_t handle) override;
 
-			public: void RetireHandle(size_t handle);
+			public: virtual void RetireHandle(size_t handle) override;
 			
 									   					 											
 		};
 
 		
 	}
+
+	UniquePtr<IRenderer> RENDERER_DLLSPEC MakeRenderer(HWND outputWindow);
 	
 	
 }

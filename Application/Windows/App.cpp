@@ -15,7 +15,7 @@ namespace Windows
 {
 	App::App() :
 		window{ {1920, 1080}, true, L"Window", L"UniqueClassName" },
-		renderer{ window.GetHandle() }
+		renderer{ Renderer::MakeRenderer(window.GetHandle()) }
 	{
 		Initialize();
 
@@ -54,7 +54,7 @@ namespace Windows
 		float x, y, z;
 	};
 
-	class SerializeContainer : public Renderer::DX12::SerializationHook
+	class SerializeContainer : public Renderer::SerializationHook
 	{
 		public: const unsigned char *GetData() { return saved.get(); }
 
@@ -93,7 +93,7 @@ namespace Windows
 			meshSize = sizeof meshdata;
 			meshBytesToIndices = sizeof meshdata.vertices;
 
-			meshHandle = renderer.MakeBuffer(&meshdata, sizeof(meshdata));
+			meshHandle = renderer->MakeBuffer(&meshdata, sizeof(meshdata));
 						
 
 			std::ifstream shaderFile{Filesystem::Conversions::MakeExeRelative(L"../Content/Shaders/Plain.vs"), std::ios_base::in | std::ios_base::ate};
@@ -105,7 +105,7 @@ namespace Windows
 			auto shader{ std::make_unique<char[]>(charCount) };
 			shaderFile.read( shader.get(), charCount);
 						
-			renderer.CompileVertexShader(shader.get(), charCount, &vs);
+			renderer->CompileVertexShader(shader.get(), charCount, &vs);
 			
 			shaderFile.close();
 			}
@@ -120,15 +120,15 @@ namespace Windows
 			auto pshader{ std::make_unique<char[]>(psCharCount) };
 			shaderFile.read( pshader.get(), psCharCount);
 						
-			renderer.CompilePixelShader(pshader.get(), psCharCount, &ps);
+			renderer->CompilePixelShader(pshader.get(), psCharCount, &ps);
 
 			shaderFile.close();
 			}
 			
 			SerializeContainer root{};
-			renderer.SerializeRootSignature(0,0,0,0, &root);
+			renderer->SerializeRootSignature(0,0,0,0, &root);
 
-			rootHandle = renderer.MakeRootSignature(root.GetData());
+			rootHandle = renderer->MakeRootSignature(root.GetData());
 
 			{
 			Renderer::ShaderList shaderList{};
@@ -138,7 +138,7 @@ namespace Windows
 			shaderList.ps.data = ps.GetData();
 			shaderList.ps.sizeInBytes = ps.GetSize();
 
-			psoHandle = renderer.MakePso(Renderer::PipelineTypes::Opaque, Renderer::VertexLayoutTypes::PositionOnly, shaderList, rootHandle);
+			psoHandle = renderer->MakePso(Renderer::PipelineTypes::Opaque, Renderer::VertexLayoutTypes::PositionOnly, shaderList, rootHandle);
 			}
 
 
@@ -153,7 +153,7 @@ namespace Windows
 			shaderFile.read( pshader.get(), charCount);
 						
 			SerializeContainer ps{};
-			renderer.CompileVertexShader(pshader.get(), charCount, &vsm);
+			renderer->CompileVertexShader(pshader.get(), charCount, &vsm);
 
 			shaderFile.close();
 			}
@@ -166,16 +166,16 @@ namespace Windows
 				shaderList.ps.data = ps.GetData();
 				shaderList.ps.sizeInBytes = ps.GetSize();
 
-				minstancePsoHandle = renderer.MakePso(Renderer::PipelineTypes::Opaque, Renderer::VertexLayoutTypes::PositionOnly, shaderList, rootHandle);
+				minstancePsoHandle = renderer->MakePso(Renderer::PipelineTypes::Opaque, Renderer::VertexLayoutTypes::PositionOnly, shaderList, rootHandle);
 			}
 
-			renderer.SetCamera(0, 0, -5, 0, 0, 0);
+			renderer->SetCamera(0, 0, -5, 0, 0, 0);
 		
 		}
 
 		void App::Update()
 		{			
-			if(renderer.IsBusy())
+			if(renderer->IsBusy())
 			{
 				return;
 				
@@ -188,25 +188,25 @@ namespace Windows
 				rot,
 				translate(glm::identity<glm::mat4>(), {4, 0, 0}) * rot
 			};						
-			const Renderer::DX12::HandleWrapper transformBufferHandle{ &renderer, renderer.MakeBuffer(transformData.data(), sizeof glm::mat4 * transformData.size()) };
+			const Renderer::DX12::HandleWrapper transformBufferHandle{ renderer.get(), renderer->MakeBuffer(transformData.data(), sizeof glm::mat4 * transformData.size()) };
 			
-			if(renderer.ResourceMustBeRemade(meshHandle))
+			if(renderer->ResourceMustBeRemade(meshHandle))
 			{
 				throw;
 			}
 
-			if(renderer.ResourceMustBeRemade(psoHandle))
+			if(renderer->ResourceMustBeRemade(psoHandle))
 			{
 				throw;
 			}
 
-			if(renderer.ResourceMustBeRemade(rootHandle))
+			if(renderer->ResourceMustBeRemade(rootHandle))
 			{
 				throw;
 			}
 
-			renderer.RenderMesh(rootHandle, minstancePsoHandle, meshHandle, meshSize, meshBytesToIndices, transformBufferHandle, 2);			
-			renderer.DispatchFrame();
+			renderer->RenderMesh(rootHandle, minstancePsoHandle, meshHandle, meshSize, meshBytesToIndices, transformBufferHandle, 2);			
+			renderer->DispatchFrame();
 			
 		}
 
