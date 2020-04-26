@@ -1,5 +1,16 @@
 #pragma once
 #include "Interface/Renderer.hpp"
+#include "Resources/ResourceAllocation.hpp"
+#include "Resources/HandleFactory.hpp"
+#include "Resources/ResourceRegistry.hpp"
+#include "Resources/Pso/PsoFactory.hpp"
+#include "Resources/RootSignature/RootSignatureFactory.hpp"
+#include "Resources/Pso/VertexLayoutProvider.hpp"
+#include "Resources/GlobalBufferData.hpp"
+#include "Resources/ResourceFactoryDeallocatable.hpp"
+#include "Shared/Types/Containers/QueueConcurrent.hpp"
+#include "DX12/ShaderFactory.hpp"
+#include "RendererMaster.hpp"
 
 
 namespace Renderer
@@ -10,28 +21,47 @@ namespace Renderer
 		
 		class ForwardRenderer final : public Renderer
 		{	
+			private: long long lastDispatchTime;
+
+			private: const unsigned char maxScheduledFrames;
+			
 			private: UniquePtr<RHA::DX12::DeviceResources> resources;
 
 			private: UniquePtr<RHA::DX12::Queue> commonQueue;
 
 			private: UniquePtr<RHA::DX12::WindowSurface> outputSurface;
 
+			private: UniquePtr<RHA::DX12::DepthSurface> depthSurface;
+			
 			private: UniquePtr<RHA::DX12::Fence> closeFence;
 
 			private: HANDLE closeEvent;
-
-			private: UniquePtr<RHA::DX12::DepthSurface> depthSurface;
-
-			private: UniquePtr<class ResourceFactory> resourceFactory;
-
-			private: struct PrivateMembers;
+					 
+			private: HandleFactory handleFactory;
 			
-			private: UniquePtr<PrivateMembers> privateMembers;
+			private: ResourceRegistry registry;
+			
+			private: VertexLayoutProvider vertexLayoutProvider;
+			
+			private: PsoFactory psoFactory;
+			
+			private: RootSignatureFactory signatureFactory;
+			
+			private: UniquePtr<ShaderFactory> shaderFactory;
+			
+			private: QueueConcurrent<FrameRenderer> framesToDestruct;
 
-			private: long long lastDispatchTime;
+			private: std::future<int> activeFrameHandle;
+						
+			private: std::list<UniquePtr<RenderCommand>> commandsToDispatch;
 
-			private: const unsigned char maxScheduledFrames;
+			private: GlobalBufferData globalsToDispatch;
 
+			private: std::forward_list<size_t> handlesToRetire;
+
+			private: RendererMaster renderThread;
+
+			private: UniquePtr<class ResourceFactory> resourceFactory;					 
 			
 			
 			public: ForwardRenderer(HWND outputWindow);

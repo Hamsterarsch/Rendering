@@ -2,21 +2,13 @@
 #include "DX12/Facade.hpp"
 #include "Shared/Filesystem/Conversions.hpp"
 
-
-#include "Resources/ResourceAllocation.hpp"
-#include "Resources/HandleFactory.hpp"
-#include "Resources/ResourceHandle.hpp"
-#include "Resources/ResourceRegistry.hpp"
-#include "Resources/Pso/PsoFactory.hpp"
-#include "Resources/RootSignature/RootSignatureFactory.hpp"
-
 #include "FrameRenderer.hpp"
 #include "Commands/RenderMeshCommand.hpp"
-#include "Resources/Pso/VertexLayoutProvider.hpp"
-#include "Shared/Types/Containers/QueueConcurrent.hpp"
-#include "Resources/GlobalBufferData.hpp"
-#include "Resources/ResourceFactoryDeallocatable.hpp"
-#include "RendererMaster.hpp"
+
+
+
+
+
 #include "Resources/Descriptor/DescriptorMemory.hpp"
 #include <fstream>
 
@@ -42,70 +34,36 @@ namespace Renderer
 	{
 		using namespace RHA::DX12;
 		
-		struct ForwardRenderer::PrivateMembers
-		{
-			HandleFactory handleFactory;
-			
-			ResourceRegistry registry;
-			
-			VertexLayoutProvider vertexLayoutProvider;
-			
-			PsoFactory psoFactory;
-			
-			RootSignatureFactory signatureFactory;
-			
-			UniquePtr<ShaderFactory> shaderFactory;
-			
-			QueueConcurrent<FrameRenderer> framesToDestruct;
-
-			std::future<int> activeFrameHandle;
-						
-			std::list<UniquePtr<RenderCommand>> commandsToDispatch;
-
-			GlobalBufferData globalsToDispatch;
-
-			std::forward_list<size_t> handlesToRetire;
-
-			RendererMaster renderThread;
-			
-			PrivateMembers(DeviceResources *resources, unsigned char maxScheduledFrames) :
-				psoFactory{ resources },
-				signatureFactory{ resources },
-				shaderFactory{ Facade::MakeShaderFactory(5, 0) },
-				renderThread{ framesToDestruct, maxScheduledFrames }
-			{				
-			}				
-			
-		};
+		
 
 		
-		ForwardRenderer::ForwardRenderer(HWND outputWindow) :
-			privateMembers{ nullptr },
+		ForwardRenderer::ForwardRenderer(HWND outputWindow)
+			:
 			lastDispatchTime{ 0 },
-			maxScheduledFrames{ 2 }
+			maxScheduledFrames{ 2 },
+			resources{ Facade::MakeDeviceResources(D3D_FEATURE_LEVEL_11_0, enableDebugLayers) },
+			commonQueue{ Facade::MakeQueue(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT) },
+			outputSurface{ Facade::MakeWindowSurface(resources.get(), commonQueue.get(), outputWindow) },
+			depthSurface{ Facade::MakeDepthSurface(resources.get(), outputSurface->GetResourceTemplate()->GetDesc()) },
+			closeFence{ Facade::MakeFence(resources.get()) },
+			closeEvent{ CreateEvent(nullptr, false, false, nullptr) },
+			psoFactory{ resources.get() },
+			signatureFactory{ resources.get() },
+			shaderFactory{ Facade::MakeShaderFactory(5, 0) },
+			renderThread{ framesToDestruct, maxScheduledFrames },
+			resourceFactory
+			{
+				std::make_unique<ResourceFactoryDeallocatable>
+				(
+					resources.get(),
+					commonQueue.get(),
+					std::make_unique<ResourceMemory>(resources.get(), D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT * 15, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT, D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS)
+				)
+			}		
 		{			
-			resources = Facade::MakeDeviceResources(D3D_FEATURE_LEVEL_11_0, enableDebugLayers);
-			commonQueue = Facade::MakeQueue(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT);			
-
-			outputSurface = Facade::MakeWindowSurface(resources.get(), commonQueue.get(), outputWindow);
-			outputSurface->EnableVerticalSync();			
-			depthSurface = Facade::MakeDepthSurface(resources.get(), outputSurface->GetResourceTemplate()->GetDesc());
+			outputSurface->EnableVerticalSync();	
 			
-			closeFence = Facade::MakeFence(resources.get());
-			closeEvent = CreateEvent(nullptr, false, false, nullptr);
-						
-			resourceFactory = std::make_unique<ResourceFactoryDeallocatable>
-			(
-				resources.get(),
-				commonQueue.get(),
-				std::make_unique<ResourceMemory>(resources.get(), D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT * 15, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT, D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS)
-			);			
 
-			privateMembers = std::make_unique<PrivateMembers>(resources.get(), maxScheduledFrames);					   			
-
-
-
-			
 			VolumeTileGridData gridData;
 			gridData.screenDimensions.x = outputSurface->GetWidth();
 			gridData.screenDimensions.y = outputSurface->GetHeight();
@@ -113,16 +71,16 @@ namespace Renderer
 			gridData.farDistance = 50'000.f;
 			const auto fov{ Math::Radians(90.f) };
 			
-			privateMembers->globalsToDispatch.projection = Math::Matrix::MakeProjection(fov, gridData.screenDimensions.x, gridData.screenDimensions.y, gridData.nearDistance, gridData.farDistance);
-			gridData.inverseProjection = privateMembers->globalsToDispatch.projection.Inverse();
+			globalsToDispatch.projection = Math::Matrix::MakeProjection(fov, gridData.screenDimensions.x, gridData.screenDimensions.y, gridData.nearDistance, gridData.farDistance);
+			gridData.inverseProjection = globalsToDispatch.projection.Inverse();
 
 
 			//init volume tiles
 			{
 				VolumeTileGrid gbb(Math::VectorUint2{128,128}, 90.f, gridData);
 							
-				auto gridWriteBufferHandle = HandleWrapper{this, privateMembers->handleFactory.MakeHandle(ResourceTypes::Buffer) };
-				privateMembers->registry.RegisterResource
+				auto gridWriteBufferHandle = HandleWrapper{this, handleFactory.MakeHandle(ResourceTypes::Buffer) };
+				registry.RegisterResource
 				(
 					gridWriteBufferHandle, 
 					resourceFactory->MakeBufferWithData(gbb.GetData(), gbb.SizeInBytes(), D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS)
@@ -138,8 +96,8 @@ namespace Renderer
 				SerializeContainer s{};
 				SerializeRootSignature(0,0,1,0, &s);
 				auto rootHandle{ MakeRootSignature(s.GetData()) };
-				glist->SetComputeRootSignature(privateMembers->registry.GetSignature(rootHandle));
-				glist->SetComputeRootConstantBufferView(0, privateMembers->registry.GetResourceGPUVirtualAddress(constantsBuffer));
+				glist->SetComputeRootSignature(registry.GetSignature(rootHandle));
+				glist->SetComputeRootConstantBufferView(0, registry.GetResourceGPUVirtualAddress(constantsBuffer));
 
 				DescriptorMemory descriptorMemory{resources.get(), 1'000'000, 2048};
 				descriptorMemory.RecordListBinding(list.get());
@@ -148,8 +106,8 @@ namespace Renderer
 				descriptorAllocator.OpenNewTable();
 				descriptorAllocator.CreateUavBuffer
 				(
-					privateMembers->registry.GetResource(gridWriteBufferHandle), 
-					privateMembers->registry.GetSignatureUavOffset(rootHandle, 1),
+					registry.GetResource(gridWriteBufferHandle), 
+					registry.GetSignatureUavOffset(rootHandle, 1),
 					0,
 					gbb.GetTileCount(),
 					gbb.GetTileStride()
@@ -174,7 +132,7 @@ namespace Renderer
 
 				Blob csBlob{cs.GetData(), cs.GetSize()};
 				auto compPso{ MakePso(csBlob, rootHandle) };				
-				glist->SetPipelineState(privateMembers->registry.GetPso(compPso));
+				glist->SetPipelineState(registry.GetPso(compPso));
 
 				
 				glist->Dispatch
@@ -185,7 +143,7 @@ namespace Renderer
 				);
 
 				
-				auto *resource = privateMembers->registry.GetResource(gridWriteBufferHandle);
+				auto *resource = registry.GetResource(gridWriteBufferHandle);
 				list->RecordBarrierTransition(resource, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_COPY_SOURCE);
 
 				auto readbackBuffer = resourceFactory->MakeCommittedBuffer(gbb.SizeInBytes(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_HEAP_TYPE_READBACK, D3D12_HEAP_FLAG_NONE);
@@ -235,7 +193,7 @@ namespace Renderer
 		
 		bool ForwardRenderer::IsBusy() const
 		{
-			return privateMembers->renderThread.HasNoCapacityForFrames();
+			return renderThread.HasNoCapacityForFrames();
 			
 		}
 
@@ -243,7 +201,7 @@ namespace Renderer
 
 		void ForwardRenderer::DispatchFrame()
 		{			
-			if(privateMembers->renderThread.HasNoCapacityForFrames())
+			if(renderThread.HasNoCapacityForFrames())
 			{
 				AbortDispatch();
 				return;
@@ -252,23 +210,23 @@ namespace Renderer
 			const auto currentTime{ std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count() / 1000.f };
 			const auto dispatchDelta{ currentTime - lastDispatchTime };
 			lastDispatchTime = currentTime;
-			privateMembers->globalsToDispatch.time += dispatchDelta;
+			globalsToDispatch.time += dispatchDelta;
 					   			
-			privateMembers->renderThread.ScheduleFrame( MakeFrameFromCommands() );
+			renderThread.ScheduleFrame( MakeFrameFromCommands() );
 
-			for(; privateMembers->framesToDestruct.Size() > 0; )
+			for(; framesToDestruct.Size() > 0; )
 			{
-				auto frame{ privateMembers->framesToDestruct.Pop() };
+				auto frame{ framesToDestruct.Pop() };
 				frame.UnregisterResources();				
 			}
 			
-			privateMembers->registry.PurgeUnreferencedResources();
+			registry.PurgeUnreferencedResources();
 			{
-				privateMembers->handlesToRetire.remove_if([ &p = privateMembers ](const size_t &handle)
+				handlesToRetire.remove_if([ &reg = registry, &hfac = handleFactory ](const size_t &handle)
 				{
-					if(p->registry.IsHandleUnknown(handle))
+					if(reg.IsHandleUnknown(handle))
 					{
-						p->handleFactory.RetireHandle(ResourceHandle{ handle });
+						hfac.RetireHandle(ResourceHandle{ handle });
 						return true;					
 					}
 					return false;
@@ -280,20 +238,20 @@ namespace Renderer
 
 			void ForwardRenderer::AbortDispatch()
 			{
-				privateMembers->commandsToDispatch.clear();
+				commandsToDispatch.clear();
 			
 			}
 
 			FrameRenderer ForwardRenderer::MakeFrameFromCommands()
 			{					
-				HandleWrapper globalBuffer{ this, MakeBuffer(&privateMembers->globalsToDispatch, sizeof decltype(privateMembers)::element_type::globalsToDispatch) };
+				HandleWrapper globalBuffer{ this, MakeBuffer(&globalsToDispatch, sizeof globalsToDispatch) };
 									
-				FrameRenderer renderer{ resources.get(), commonQueue.get(), privateMembers->registry, *outputSurface, *depthSurface, std::move(globalBuffer) };			
-				for(auto &&cmd : privateMembers->commandsToDispatch)
+				FrameRenderer renderer{ resources.get(), commonQueue.get(), registry, *outputSurface, *depthSurface, std::move(globalBuffer) };			
+				for(auto &&cmd : commandsToDispatch)
 				{
 					renderer.AddCommand(std::move(cmd));
 				}
-				privateMembers->commandsToDispatch.clear();
+				commandsToDispatch.clear();
 
 				return renderer;
 			
@@ -303,7 +261,7 @@ namespace Renderer
 
 		void ForwardRenderer::RenderMesh(size_t signatureHandle, size_t psoHandle, size_t meshHandle, size_t sizeInBytes, size_t byteOffsetToIndices, size_t transformBufferHandle, size_t instanceCount)
 		{
-			privateMembers->commandsToDispatch.emplace_back
+			commandsToDispatch.emplace_back
 			(
 				std::make_unique<RenderMeshCommand>(signatureHandle, psoHandle, meshHandle, byteOffsetToIndices, sizeInBytes - byteOffsetToIndices, transformBufferHandle, instanceCount)
 			);			
@@ -314,8 +272,8 @@ namespace Renderer
 		
 		void ForwardRenderer::SetCamera(float x, float y, float z, float pitch, float yaw, float roll)
 		{
-			privateMembers->globalsToDispatch.view = Math::Matrix::MakeRotation(-pitch, -yaw, -roll);
-			privateMembers->globalsToDispatch.view.Translate(x, y, z);
+			globalsToDispatch.view = Math::Matrix::MakeRotation(-pitch, -yaw, -roll);
+			globalsToDispatch.view.Translate(x, y, z);
 			
 		}
 
@@ -323,7 +281,7 @@ namespace Renderer
 
 		size_t ForwardRenderer::MakeBuffer(const void *data, const size_t sizeInBytes)
 		{
-			auto handle{ privateMembers->handleFactory.MakeHandle(ResourceTypes::Buffer) };
+			auto handle{ handleFactory.MakeHandle(ResourceTypes::Buffer) };
 
 			return MakeBufferInternal(data, sizeInBytes, handle.hash);
 			
@@ -336,7 +294,7 @@ namespace Renderer
 					resourceFactory->MakeBufferWithData(data, sizeInBytes, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER | D3D12_RESOURCE_STATE_INDEX_BUFFER)
 				};
 
-				privateMembers->registry.RegisterResource(handle, std::move(allocation));
+				registry.RegisterResource(handle, std::move(allocation));
 
 				return handle;
 			
@@ -354,7 +312,7 @@ namespace Renderer
 
 		void ForwardRenderer::CompileVertexShader(const char *shader, size_t length, SerializationHook *serializer) const
 		{
-			auto shaderBlob{ privateMembers->shaderFactory->MakeVertexShader(shader, length, "main")};
+			auto shaderBlob{ shaderFactory->MakeVertexShader(shader, length, "main")};
 
 			auto block{ serializer->BeginBlock(shaderBlob->GetBufferSize()) };
 			serializer->WriteToBlock(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize());			
@@ -365,7 +323,7 @@ namespace Renderer
 		
 		void ForwardRenderer::CompilePixelShader(const char *shader, size_t length, SerializationHook* serializer) const
 		{
-			auto shaderBlob{ privateMembers->shaderFactory->MakePixelShader(shader, length, "main")};
+			auto shaderBlob{ shaderFactory->MakePixelShader(shader, length, "main")};
 
 			auto block{ serializer->BeginBlock(shaderBlob->GetBufferSize()) };
 			serializer->WriteToBlock(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize());
@@ -377,7 +335,7 @@ namespace Renderer
 		
 		void ForwardRenderer::CompileComputeShader(const char *shader, const size_t length, SerializationHook *serializer) const
 		{
-			auto shaderBlob{ privateMembers->shaderFactory->MakeComputeShader(shader, length, "main") };
+			auto shaderBlob{ shaderFactory->MakeComputeShader(shader, length, "main") };
 
 			auto block{ serializer->BeginBlock(shaderBlob->GetBufferSize() )};
 			serializer->WriteToBlock(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize());
@@ -395,7 +353,7 @@ namespace Renderer
 			SerializationHook *serializer
 		)
 		{
-			auto signatureBlob{ privateMembers->signatureFactory.SerializeRootSignature(cbvAmount, srvAmount, uavAmount, samplerAmount) };
+			auto signatureBlob{ signatureFactory.SerializeRootSignature(cbvAmount, srvAmount, uavAmount, samplerAmount) };
 			const auto signatureSize{ signatureBlob->GetBufferSize() };
 
 			auto block{ serializer->BeginBlock(sizeof signatureSize + signatureBlob->GetBufferSize() + sizeof samplerAmount) };
@@ -413,7 +371,7 @@ namespace Renderer
 			const auto size{ ExtractSizeFrom(serializedData) };
 			auto signatureData
 			{
-				privateMembers->signatureFactory.MakeRootSignature
+				signatureFactory.MakeRootSignature
 				(
 					ExtractSignatureFrom(serializedData), 
 					size,
@@ -421,8 +379,8 @@ namespace Renderer
 				)
 			};
 			
-			const auto handle{ privateMembers->handleFactory.MakeHandle(ResourceTypes::Signature) };
-			privateMembers->registry.RegisterSignature(handle.hash, std::move(signatureData));
+			const auto handle{ handleFactory.MakeHandle(ResourceTypes::Signature) };
+			registry.RegisterSignature(handle.hash, std::move(signatureData));
 
 			return handle.hash;
 			
@@ -455,10 +413,10 @@ namespace Renderer
 		
 		size_t ForwardRenderer::MakePso(PipelineTypes pipelineType, VertexLayoutTypes vertexLayout, const ShaderList &shaders, size_t signatureHandle)
 		{
-			auto pipelineState{	privateMembers->psoFactory.MakePso(shaders, privateMembers->registry.GetSignature(signatureHandle), pipelineType, privateMembers->vertexLayoutProvider.GetLayoutDesc(vertexLayout), D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE) };
+			auto pipelineState{	psoFactory.MakePso(shaders, registry.GetSignature(signatureHandle), pipelineType, vertexLayoutProvider.GetLayoutDesc(vertexLayout), D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE) };
 			
-			auto handle{ privateMembers->handleFactory.MakeHandle(ResourceTypes::Pso) };
-			privateMembers->registry.RegisterPso(handle.hash, pipelineState);
+			auto handle{ handleFactory.MakeHandle(ResourceTypes::Pso) };
+			registry.RegisterPso(handle.hash, pipelineState);
 
 			return handle;
 			
@@ -468,10 +426,10 @@ namespace Renderer
 		
 		size_t ForwardRenderer::MakePso(const Blob &csBlob, const size_t signatureHandle)
 		{
-			auto pipelineState{ privateMembers->psoFactory.MakePso(csBlob, privateMembers->registry.GetSignature(signatureHandle)) };
+			auto pipelineState{ psoFactory.MakePso(csBlob, registry.GetSignature(signatureHandle)) };
 
-			auto handle{ privateMembers->handleFactory.MakeHandle(ResourceTypes::Pso) };
-			privateMembers->registry.RegisterPso(handle, pipelineState);
+			auto handle{ handleFactory.MakeHandle(ResourceTypes::Pso) };
+			registry.RegisterPso(handle, pipelineState);
 
 			return handle;
 			
@@ -481,7 +439,7 @@ namespace Renderer
 		
 		bool ForwardRenderer::ResourceMustBeRemade(size_t handle)
 		{
-			return privateMembers->registry.HandleIsInvalid(handle);
+			return registry.HandleIsInvalid(handle);
 			
 		}
 
@@ -489,8 +447,12 @@ namespace Renderer
 		
 		void ForwardRenderer::RetireHandle(const size_t handle)
 		{
-			privateMembers->handlesToRetire.push_front(handle);
+			handlesToRetire.push_front(handle);
 			
 		}
+
+		
 	}
+
+	
 }
