@@ -8,7 +8,7 @@ namespace Renderer
 	{
 		class FrameRenderer;
 		
-		class ForwardRenderer : public Renderer
+		class ForwardRenderer final : public Renderer
 		{	
 			private: UniquePtr<RHA::DX12::DeviceResources> resources;
 

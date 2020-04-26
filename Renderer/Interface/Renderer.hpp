@@ -6,7 +6,6 @@
 #include "Resources/Pso/PipelineTypes.hpp"
 #include "Resources/Pso/ShaderList.hpp"
 #include "Resources/Pso/VertexLayoutTypes.hpp"
-#include "DxPtrTypes.hpp"
 #include "RenderCommand.hpp"
 
 

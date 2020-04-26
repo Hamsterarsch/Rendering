@@ -78,57 +78,6 @@ namespace Renderer
 			
 		};
 
-		struct BoundingBox
-		{
-			glm::vec3 center;
-			glm::vec3 halfExtents;
-		};
-
-		class GridBoundingBoxes
-		{
-			public: 
-			const unsigned tilesizeX{ 128 };
-
-			const unsigned tilesizeY{ 128 };
-
-			const unsigned gridsizeX;
-
-			const unsigned gridsizeY;
-
-			float fovTermForDepthCompute;
-
-			const unsigned gridsizeZ;
-
-			std::vector<BoundingBox> boundingBoxes;
-				
-
-
-			public: GridBoundingBoxes(float screenwidth, float screenheight, float nearDistance, float farDistance, float fovRadians)
-				:
-				gridsizeX{ static_cast<unsigned>(screenwidth) / tilesizeX },
-				gridsizeY{ static_cast<unsigned>(screenheight) / tilesizeY },
-				fovTermForDepthCompute{ std::abs(2*std::tan(fovRadians/2)/gridsizeY) },
-				gridsizeZ{static_cast<unsigned>(std::log(farDistance/nearDistance) / std::log(1 + fovTermForDepthCompute) + 1) },
-				boundingBoxes(gridsizeX * gridsizeY * gridsizeZ, BoundingBox{})				
-			{				
-			}
-
-			BoundingBox &Get(unsigned x, unsigned y, unsigned z)
-			{
-				return boundingBoxes[ gridsizeX + y*gridsizeX + z*gridsizeX*gridsizeY ];
-				
-			}
-
-			size_t SizeInBytes() { return sizeof(decltype(boundingBoxes)::value_type) * boundingBoxes.size(); }
-
-			void *GetData() { return boundingBoxes.data(); }
-
-			size_t GetStride() { return sizeof(decltype(boundingBoxes)::value_type); }
-
-			size_t GetSize() { return boundingBoxes.size(); }
-			
-		};
-
 		
 		ForwardRenderer::ForwardRenderer(HWND outputWindow) :
 			privateMembers{ nullptr },
@@ -178,7 +127,7 @@ namespace Renderer
 					gridWriteBufferHandle, 
 					resourceFactory->MakeBufferWithData(gbb.GetData(), gbb.SizeInBytes(), D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS)
 				);				
-				auto constantsBuffer = MakeBuffer(&gridData, sizeof gridData);
+				auto constantsBuffer = ForwardRenderer::MakeBuffer(&gridData, sizeof gridData);
 				
 				
 				auto alloc = Facade::MakeCmdAllocator(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT);

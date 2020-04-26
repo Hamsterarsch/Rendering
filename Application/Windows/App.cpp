@@ -129,7 +129,7 @@ namespace Windows
 
 			shaderFile.close();
 			}
-
+			
 			{
 				Renderer::ShaderList shaderList{};
 				shaderList.vs.data = vsm.GetData();
