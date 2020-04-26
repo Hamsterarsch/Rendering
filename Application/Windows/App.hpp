@@ -9,7 +9,7 @@ namespace Windows
 	{
 		private: Windows::Window window;
 
-		private: UniquePtr<Renderer::IRenderer> renderer;
+		private: UniquePtr<Renderer::Renderer> renderer;
 
 		private: size_t meshHandle, psoHandle, rootHandle, meshSize, meshBytesToIndices;
 

@@ -4,14 +4,14 @@
 
 namespace Renderer
 {
-	class IRenderer;
+	class Renderer;
 	
 	namespace DX12
 	{
 		
 		class RENDERER_DLLSPEC HandleWrapper
 		{
-			private: IRenderer *origin;
+			private: Renderer *origin;
 			
 			private: size_t handle;
 					 
@@ -19,7 +19,7 @@ namespace Renderer
 
 			public: HandleWrapper();
 			
-			public: HandleWrapper(IRenderer *origin, size_t handle);
+			public: HandleWrapper(Renderer *origin, size_t handle);
 
 			public: HandleWrapper(const HandleWrapper &) = delete;
 

@@ -164,6 +164,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Commands\RenderMeshCommand.hpp" />
+    <ClInclude Include="ForwardRenderer.hpp" />
     <ClInclude Include="FrameRenderer.hpp" />
     <ClInclude Include="Interface\RenderCommand.hpp" />
     <ClInclude Include="Interface\Renderer.hpp" />
@@ -174,6 +175,8 @@
     <ClInclude Include="Interface\Resources\Pso\VertexLayoutTypes.hpp" />
     <ClInclude Include="Interface\Resources\ResourceHandle.hpp" />
     <ClInclude Include="Interface\Resources\ResourceTypes.hpp" />
+    <ClInclude Include="Interface\Resources\SerializationContainer.hpp" />
+    <ClInclude Include="Interface\Resources\SerializationHook.hpp" />
     <ClInclude Include="Lighting\LightGrid\VolumeTileGrid.hpp" />
     <ClInclude Include="RendererMaster.hpp" />
     <ClInclude Include="Resources\Descriptor\DescriptorAllocator.hpp" />
@@ -203,6 +206,7 @@
   <ItemGroup>
     <ClCompile Include="Commands\RenderMeshCommand.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="ForwardRenderer.cpp" />
     <ClCompile Include="FrameRenderer.cpp" />
     <ClCompile Include="Interface\Renderer.cpp" />
     <ClCompile Include="Lighting\LightGrid\VolumeTileGrid.cpp" />
@@ -225,6 +229,8 @@
     <ClCompile Include="Resources\RootSignature\RootSignatureFactory.cpp" />
     <ClCompile Include="Resources\RootSignature\TableLayout.cpp" />
     <ClCompile Include="Resources\SerialFactory.cpp" />
+    <ClCompile Include="Resources\SerializationContainer.cpp" />
+    <ClCompile Include="Resources\SerializationHook.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Math\Math.vcxproj">

@@ -9,7 +9,7 @@
 #include "ThirdParty/glm/mat4x4.hpp"
 #include "ThirdParty/glm/gtc/matrix_transform.hpp"
 #include "Resources/HandleWrapper.hpp"
-
+#include "Resources/SerializationContainer.hpp"
 
 namespace Windows
 {
@@ -54,34 +54,6 @@ namespace Windows
 		float x, y, z;
 	};
 
-	class SerializeContainer : public Renderer::SerializationHook
-	{
-		public: const unsigned char *GetData() { return saved.get(); }
-
-		public: size_t GetSize() const { return size; }
-		
-		UniquePtr<unsigned char[]> saved;
-		size_t currentWriteOffset{ 0 };
-		size_t size{ 0 };
-		
-		public:	void WriteToBlock(const void *data, size_t sizeInBytes) override
-		{
-			auto *bytePtr{ reinterpret_cast<const unsigned char *>(data) };
-			memcpy(saved.get() + currentWriteOffset, data, sizeInBytes);
-
-			currentWriteOffset += sizeInBytes;
-			
-		}
-
-		protected: void OnBeginBlock() override
-		{
-			size = GetBlockSize();
-			saved = std::make_unique<unsigned char[]>(size);
-			
-		}
-		
-	};
-
 		
 		void App::Initialize()
 		{
@@ -97,7 +69,7 @@ namespace Windows
 						
 
 			std::ifstream shaderFile{Filesystem::Conversions::MakeExeRelative(L"../Content/Shaders/Plain.vs"), std::ios_base::in | std::ios_base::ate};
-			SerializeContainer vs{};
+			Renderer::SerializeContainer vs{};
 			{
 			const auto charCount{ shaderFile.tellg() };
 			shaderFile.seekg(0);
@@ -110,7 +82,7 @@ namespace Windows
 			shaderFile.close();
 			}
 
-			SerializeContainer ps{};
+			Renderer::SerializeContainer ps{};
 			{
 			shaderFile.open(Filesystem::Conversions::MakeExeRelative(L"../Content/Shaders/Plain.ps"), std::ios_base::in | std::ios_base::ate);
 				
@@ -125,7 +97,7 @@ namespace Windows
 			shaderFile.close();
 			}
 			
-			SerializeContainer root{};
+			Renderer::SerializeContainer root{};
 			renderer->SerializeRootSignature(0,0,0,0, &root);
 
 			rootHandle = renderer->MakeRootSignature(root.GetData());
@@ -142,7 +114,7 @@ namespace Windows
 			}
 
 
-			SerializeContainer vsm{};
+			Renderer::SerializeContainer vsm{};
 			{
 			shaderFile.open(Filesystem::Conversions::MakeExeRelative(L"../Content/Shaders/PlainMinstance.vs"), std::ios_base::in | std::ios_base::ate);
 				
@@ -152,7 +124,7 @@ namespace Windows
 			auto pshader{ std::make_unique<char[]>(charCount) };
 			shaderFile.read( pshader.get(), charCount);
 						
-			SerializeContainer ps{};
+			Renderer::SerializeContainer ps{};
 			renderer->CompileVertexShader(pshader.get(), charCount, &vsm);
 
 			shaderFile.close();
