@@ -5,6 +5,7 @@
 #include "DX12/DeviceResources.hpp"
 #include "DX12/Facade.hpp"
 #include "Resources/ResourceRegistry.hpp"
+#include "Commands/RenderCommand.hpp"
 #include "Shared/Exception/CreationFailedException.hpp"
 
 
@@ -193,7 +194,7 @@ namespace Renderer
 			
 				for(auto &&cmd : commands)
 				{				
-					RecordFixedCommandState(*cmd);
+					cmd->RecordFixedCommandState(list.get(), registryCopy, globalBufferHandle);
 					
 					cmd->Record(list.get(), registryCopy);
 					++commandsRecordedToList;			
@@ -206,13 +207,6 @@ namespace Renderer
 				}
 			
 			}
-
-				void FrameWorker::RecordFixedCommandState(RenderCommand &cmd) 
-				{
-					list->RecordSetPipelineState(registryCopy.GetPso(cmd.GetPsoHandle()));
-					list->RecordSetGraphicsSignature(registryCopy.GetSignature(cmd.GetSignatureHandle()));
-					list->AsGraphicsList()->SetGraphicsRootConstantBufferView(0, registryCopy.GetResourceGpuAddress(globalBufferHandle));
-				}
 
 				bool FrameWorker::ListCapacityIsReached() const
 				{

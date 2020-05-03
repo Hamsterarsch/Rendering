@@ -1,6 +1,5 @@
 #pragma once
 #include "Shared/PtrTypes.hpp"
-#include "RenderCommand.hpp"
 #include "Resources/ResourceRegistryDetachedReference.hpp"
 #include "Resources/HandleWrapper.hpp"
 #include <vector>
@@ -12,6 +11,7 @@ namespace RHA
 {
 	namespace DX12
 	{
+		class CmdList;
 		class WindowSurface;
 		class DepthSurface;
 		class DescriptorHeap;
@@ -46,7 +46,7 @@ namespace Renderer
 					 					 			
 			private: HANDLE event;
 			
-			private: std::vector<UniquePtr<RenderCommand>> commands;
+			private: std::vector<UniquePtr<class RenderCommand>> commands;
 
 			private: ResourceRegistry *registryMaster;
 
@@ -105,8 +105,6 @@ namespace Renderer
 				private: void RecordRenderTargetPreparations();
 			
 				private: void RecordCommands();
-
-					private: void RecordFixedCommandState(RenderCommand &cmd);
 			
 					private: bool ListCapacityIsReached() const;
 
