@@ -30,6 +30,8 @@ namespace RHA
 			public: virtual void RecordSetPipelineState(ID3D12PipelineState *pipelineState) override;
 
 			public: virtual void RecordSetGraphicsSignature(ID3D12RootSignature *signature) override;
+
+			public: virtual void RecordSetComputeSignature(ID3D12RootSignature *signature) override;
 			
 			public: virtual void RecordCopyResource(ID3D12Resource *destination, ID3D12Resource *source) override;
 
@@ -39,6 +41,11 @@ namespace RHA
 			public: virtual void RecordBarrierAliasing(ID3D12Resource *resourceBefore, ID3D12Resource *resourceAfter) override;
 
 			public: virtual void RecordBarrierTransition(ID3D12Resource *resource, D3D12_RESOURCE_STATES stateBefore, D3D12_RESOURCE_STATES stateAfter) override;
+
+
+			public: virtual void RecordSetGraphicsSignatureCbv(unsigned parameterIndex, D3D12_GPU_VIRTUAL_ADDRESS bufferAddress) override;
+
+			public: virtual void RecordSetComputeSignatureCbv(unsigned parameterIndex, D3D12_GPU_VIRTUAL_ADDRESS bufferAddress) override;
 
 			
 			public: virtual void RecordSetRenderTargets

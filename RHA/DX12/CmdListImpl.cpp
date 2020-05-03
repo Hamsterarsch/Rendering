@@ -74,6 +74,14 @@ namespace RHA
 
 
 		
+		void CmdListImpl::RecordSetComputeSignature(ID3D12RootSignature *signature)
+		{
+			glist->SetComputeRootSignature(signature);
+						
+		}
+
+		
+
 		void CmdListImpl::RecordCopyResource(ID3D12Resource *destination, ID3D12Resource *source)
 		{
 			glist->CopyResource(destination, source);
@@ -119,6 +127,23 @@ namespace RHA
 			
 		}
 
+		
+
+		void CmdListImpl::RecordSetGraphicsSignatureCbv(const unsigned parameterIndex, const D3D12_GPU_VIRTUAL_ADDRESS bufferAddress)
+		{
+			glist->SetGraphicsRootConstantBufferView(parameterIndex, bufferAddress);
+			
+		}
+
+
+		
+		void CmdListImpl::RecordSetComputeSignatureCbv(const unsigned parameterIndex, const D3D12_GPU_VIRTUAL_ADDRESS bufferAddress)
+		{
+			glist->SetComputeRootConstantBufferView(parameterIndex, bufferAddress);
+			
+		}
+
+		
 
 		void CmdListImpl::RecordSetRenderTargets
 		(

@@ -26,6 +26,8 @@ namespace RHA
 			public: virtual void RecordSetPipelineState(ID3D12PipelineState *pipelineState) = 0;
 
 			public: virtual void RecordSetGraphicsSignature(ID3D12RootSignature *signature) = 0;
+
+			public: virtual void RecordSetComputeSignature(ID3D12RootSignature *signature) = 0;
 			
 			public: virtual void RecordCopyResource(ID3D12Resource *destination, ID3D12Resource *source) = 0;
 
@@ -36,6 +38,11 @@ namespace RHA
 
 			public: virtual void RecordBarrierTransition(ID3D12Resource *resource, D3D12_RESOURCE_STATES stateBefore, D3D12_RESOURCE_STATES stateAfter) = 0;
 
+
+			public: virtual void RecordSetGraphicsSignatureCbv(unsigned parameterIndex, D3D12_GPU_VIRTUAL_ADDRESS bufferAddress) = 0;
+
+			public: virtual void RecordSetComputeSignatureCbv(unsigned parameterIndex, D3D12_GPU_VIRTUAL_ADDRESS bufferAddress) = 0;
+			
 			
 			public: virtual void RecordSetRenderTargets
 			(
