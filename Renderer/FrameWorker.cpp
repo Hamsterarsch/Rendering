@@ -19,7 +19,8 @@ namespace Renderer
 			ResourceRegistry &masterRegistry,
 			WindowSurface &windowSurface, 
 			DepthSurface &depthSurface,
-			HandleWrapper &&globalBufferHandle
+			HandleWrapper &&globalBufferHandle,
+			bool shouldPresentOnComplete
 		) :
 			resources{ resources },
 			queue{ queue },
@@ -28,7 +29,8 @@ namespace Renderer
 			windowSurface{ &windowSurface },
 			depthSurface{ &depthSurface },
 			commandsRecordedToList{ 0 },
-			globalBufferHandle{ std::move(globalBufferHandle) }
+			globalBufferHandle{ std::move(globalBufferHandle) },
+			isAllowedToPresent{ shouldPresentOnComplete }
 		{
 			allocator = Facade::MakeCmdAllocator(resources, D3D12_COMMAND_LIST_TYPE_DIRECT);
 			fence = Facade::MakeFence(resources);
@@ -250,10 +252,19 @@ namespace Renderer
 		{
 			WaitForSingleObject(event, INFINITE);
 
-			auto c = allocator->Reset();
-			windowSurface->Present();
+			auto c = allocator->Reset();//todo error handling
+			PresentIfAllowed();
 			
 		}
+
+			void FrameWorker::PresentIfAllowed()
+			{
+				if(isAllowedToPresent)
+				{
+					windowSurface->Present();		
+				}
+			
+			}
 
 		
 	}

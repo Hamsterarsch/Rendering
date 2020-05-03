@@ -63,10 +63,21 @@ namespace Renderer
 			private: static constexpr size_t fenceCmdCompletionValue{ 1 };
 
 			private: HandleWrapper globalBufferHandle;
+
+			private: bool isAllowedToPresent;
 					 
 			
 
-			public: FrameWorker(DeviceResources *resources, Queue *queue, ResourceRegistry &masterRegistry, WindowSurface &windowSurface, DepthSurface &depthSurface, HandleWrapper &&globalBuffer);
+			public: FrameWorker
+			(
+				DeviceResources *resources,
+				Queue *queue,
+				ResourceRegistry &masterRegistry,
+				WindowSurface &windowSurface,
+				DepthSurface &depthSurface,
+				HandleWrapper &&globalBuffer,
+				bool shouldPresentOnComplete = true
+			);
 
 			public: FrameWorker(FrameWorker &&other) noexcept;
 
@@ -106,6 +117,8 @@ namespace Renderer
 				private: void SetupCompletionFence();
 			
 			public: void WaitForCompletion();
+
+				private: void PresentIfAllowed();
 
 													
 		};
