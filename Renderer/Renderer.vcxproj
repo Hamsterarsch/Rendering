@@ -163,6 +163,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Commands\CommandInitVolumeTileGrid.hpp" />
     <ClInclude Include="Commands\RenderCommand.hpp" />
     <ClInclude Include="Commands\RenderCommandCompute.hpp" />
     <ClInclude Include="Commands\RenderCommandGraphics.hpp" />

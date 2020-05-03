@@ -122,6 +122,9 @@
     <ClInclude Include="Commands\RenderCommandGraphics.hpp">
       <Filter>Commands</Filter>
     </ClInclude>
+    <ClInclude Include="Commands\CommandInitVolumeTileGrid.hpp">
+      <Filter>Commands</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
