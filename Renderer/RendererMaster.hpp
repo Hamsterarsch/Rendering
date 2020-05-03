@@ -1,7 +1,7 @@
 #pragma once
 #include "Shared/Types/Containers/QueueConcurrent.hpp"
 #include <future>
-#include "FrameRenderer.hpp"
+#include "FrameWorker.hpp"
 
 
 namespace Renderer
@@ -10,9 +10,9 @@ namespace Renderer
 	{
 		class RendererMaster
 		{
-			private: QueueConcurrent<FrameRenderer> inputQueue;
+			private: QueueConcurrent<FrameWorker> inputQueue;
 
-			private: QueueConcurrent<FrameRenderer> *outputQueue;
+			private: QueueConcurrent<FrameWorker> *outputQueue;
 
 			private: std::future<int> updaterHandle;
 
@@ -24,7 +24,7 @@ namespace Renderer
 
 			
 			
-			public: RendererMaster(QueueConcurrent<FrameRenderer> &outputQueue, unsigned char maxScheduledFrames);
+			public: RendererMaster(QueueConcurrent<FrameWorker> &outputQueue, unsigned char maxScheduledFrames);
 
 				private: int Update();
 
@@ -47,7 +47,7 @@ namespace Renderer
 
 				private: bool UpdaterThreadHasFinished() const;
 
-			public: void ScheduleFrame(FrameRenderer &&frame);
+			public: void ScheduleFrameWorker(FrameWorker &&frame);
 			
 			public: bool HasNoCapacityForFrames() const;
 

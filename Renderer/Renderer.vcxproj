@@ -165,7 +165,7 @@
   <ItemGroup>
     <ClInclude Include="Commands\RenderMeshCommand.hpp" />
     <ClInclude Include="ForwardRenderer.hpp" />
-    <ClInclude Include="FrameRenderer.hpp" />
+    <ClInclude Include="FrameWorker.hpp" />
     <ClInclude Include="Interface\RenderCommand.hpp" />
     <ClInclude Include="Interface\Renderer.hpp" />
     <ClInclude Include="Interface\RendererExportHelper.hpp" />
@@ -209,7 +209,7 @@
     <ClCompile Include="Commands\RenderMeshCommand.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="ForwardRenderer.cpp" />
-    <ClCompile Include="FrameRenderer.cpp" />
+    <ClCompile Include="FrameWorker.cpp" />
     <ClCompile Include="Interface\Renderer.cpp" />
     <ClCompile Include="Lighting\LightGrid\VolumeTileGrid.cpp" />
     <ClCompile Include="RendererMaster.cpp" />

@@ -1,4 +1,4 @@
-#include "FrameRenderer.hpp"
+#include "FrameWorker.hpp"
 #include <d3d12.h>
 #include "DX12/CmdAllocator.hpp"
 #include "DX12/Queue.hpp"
@@ -12,7 +12,7 @@ namespace Renderer
 {
 	namespace DX12
 	{
-		FrameRenderer::FrameRenderer
+		FrameWorker::FrameWorker
 		(
 			DeviceResources *resources, 
 			Queue *queue,
@@ -41,7 +41,7 @@ namespace Renderer
 
 
 		
-		FrameRenderer::FrameRenderer(FrameRenderer &&other) noexcept :
+		FrameWorker::FrameWorker(FrameWorker &&other) noexcept :
 			resources{ std::move(other.resources) },
 			queue{ std::move(other.queue) },
 			allocator{ std::move(other.allocator) },
@@ -67,7 +67,7 @@ namespace Renderer
 
 
 		
-		FrameRenderer &FrameRenderer::operator=(FrameRenderer &&rhs) noexcept
+		FrameWorker &FrameWorker::operator=(FrameWorker &&rhs) noexcept
 		{
 			resources = std::move(rhs.resources);
 			rhs.resources = nullptr;
@@ -105,13 +105,13 @@ namespace Renderer
 
 
 		
-		FrameRenderer::~FrameRenderer() noexcept
+		FrameWorker::~FrameWorker() noexcept
 		{
 			UnregisterResources();
 			
 		}
 
-			void FrameRenderer::UnregisterResources()
+			void FrameWorker::UnregisterResources()
 			{
 				if(RegistryIsValid())
 				{
@@ -124,7 +124,7 @@ namespace Renderer
 			
 			}
 
-				void FrameRenderer::UnregisterAllCommands()
+				void FrameWorker::UnregisterAllCommands()
 				{
 					for(auto &&cmd : commands)
 					{
@@ -135,7 +135,7 @@ namespace Renderer
 
 
 		
-		void FrameRenderer::AddCommand(UniquePtr<RenderCommand> &&command)
+		void FrameWorker::AddCommand(UniquePtr<RenderCommand> &&command)
 		{			
 			command->ExecuteOperationOnResourceReferences(registryMaster, &UsesReferences::AddReference);
 			command->ExecuteOperationOnResourceReferences(&registryCopy, &UsesReferences::AddReference);
@@ -148,7 +148,7 @@ namespace Renderer
 
 
 		
-		int FrameRenderer::ExecuteCommands()
+		int FrameWorker::ExecuteCommands()
 		{
 			try
 			{
@@ -174,7 +174,7 @@ namespace Renderer
 			
 		}
 
-			void FrameRenderer::RecordRenderTargetPreparations()
+			void FrameWorker::RecordRenderTargetPreparations()
 			{			
 				const auto dsv{ depthSurface->GetHandleCpu() };
 				list->RecordClearDsv(dsv, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1, 0, 0, nullptr);
@@ -185,7 +185,7 @@ namespace Renderer
 			
 			}
 
-			void FrameRenderer::RecordCommands()
+			void FrameWorker::RecordCommands()
 			{
 				commandsRecordedToList = 0;
 			
@@ -205,20 +205,20 @@ namespace Renderer
 			
 			}
 
-				void FrameRenderer::RecordFixedCommandState(RenderCommand &cmd) 
+				void FrameWorker::RecordFixedCommandState(RenderCommand &cmd) 
 				{
 					list->RecordSetPipelineState(registryCopy.GetPso(cmd.GetPsoHandle()));
 					list->RecordSetGraphicsSignature(registryCopy.GetSignature(cmd.GetSignatureHandle()));
 					list->AsGraphicsList()->SetGraphicsRootConstantBufferView(0, registryCopy.GetResourceGpuAddress(globalBufferHandle));
 				}
 
-				bool FrameRenderer::ListCapacityIsReached() const
+				bool FrameWorker::ListCapacityIsReached() const
 				{
 					return commandsRecordedToList >= recordsPerCommandList;
 			
 				}
 
-				void FrameRenderer::SubmitCurrentList()
+				void FrameWorker::SubmitCurrentList()
 				{
 					list->StopRecording();
 
@@ -227,7 +227,7 @@ namespace Renderer
 			
 				}
 
-				void FrameRenderer::ResetCurrentList()
+				void FrameWorker::ResetCurrentList()
 				{
 					list->StartRecording(allocator.get());						
 					
@@ -236,7 +236,7 @@ namespace Renderer
 			
 				}
 
-			void FrameRenderer::SetupCompletionFence()
+			void FrameWorker::SetupCompletionFence()
 			{
 				fence->Signal(0);
 				fence->SetEventOnValue(fenceCmdCompletionValue, event);
@@ -246,7 +246,7 @@ namespace Renderer
 
 		
 
-		void FrameRenderer::WaitForCompletion()
+		void FrameWorker::WaitForCompletion()
 		{
 			WaitForSingleObject(event, INFINITE);
 

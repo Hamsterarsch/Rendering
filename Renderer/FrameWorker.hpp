@@ -32,7 +32,7 @@ namespace Renderer
 		using namespace RHA::DX12;
 		
 		//takes in commands and batches them for gpu submission. renders everything to non swap chain targets
-		class FrameRenderer
+		class FrameWorker
 		{
 			private: DeviceResources *resources;
 
@@ -66,17 +66,17 @@ namespace Renderer
 					 
 			
 
-			public: FrameRenderer(DeviceResources *resources, Queue *queue, ResourceRegistry &masterRegistry, WindowSurface &windowSurface, DepthSurface &depthSurface, HandleWrapper &&globalBuffer);
+			public: FrameWorker(DeviceResources *resources, Queue *queue, ResourceRegistry &masterRegistry, WindowSurface &windowSurface, DepthSurface &depthSurface, HandleWrapper &&globalBuffer);
 
-			public: FrameRenderer(FrameRenderer &&other) noexcept;
+			public: FrameWorker(FrameWorker &&other) noexcept;
 
-			public: FrameRenderer &operator=(FrameRenderer &&rhs) noexcept;
+			public: FrameWorker &operator=(FrameWorker &&rhs) noexcept;
 			
-			public: FrameRenderer(const FrameRenderer &) = delete;
+			public: FrameWorker(const FrameWorker &) = delete;
 
-			public: FrameRenderer &operator=(const FrameRenderer &) = delete;
+			public: FrameWorker &operator=(const FrameWorker &) = delete;
 			
-			public: ~FrameRenderer() noexcept;
+			public: ~FrameWorker() noexcept;
 
 			public: void UnregisterResources();
 			

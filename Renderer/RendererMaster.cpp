@@ -5,7 +5,7 @@ namespace Renderer
 {
 	namespace DX12
 	{
-		RendererMaster::RendererMaster(QueueConcurrent<FrameRenderer> &outputQueue, unsigned char maxScheduledFrames) :
+		RendererMaster::RendererMaster(QueueConcurrent<FrameWorker> &outputQueue, unsigned char maxScheduledFrames) :
 			outputQueue{ &outputQueue },
 			shouldUpdateRendering{ true },
 			maxScheduledFrames{ maxScheduledFrames }
@@ -45,7 +45,7 @@ namespace Renderer
 				{
 					auto frame{ inputQueue.Pop() };
 																	
-					activeFrameHandle = std::async(std::launch::async, &FrameRenderer::ExecuteCommands, &frame);					
+					activeFrameHandle = std::async(std::launch::async, &FrameWorker::ExecuteCommands, &frame);					
 					if(activeFrameHandle.get())
 					{
 						throw;
@@ -92,7 +92,7 @@ namespace Renderer
 
 		
 
-		void RendererMaster::ScheduleFrame(FrameRenderer &&frame)
+		void RendererMaster::ScheduleFrameWorker(FrameWorker &&frame)
 		{
 			if(this->HasNoCapacityForFrames())
 			{

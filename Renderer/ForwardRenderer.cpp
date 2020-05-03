@@ -2,7 +2,7 @@
 #include "RHA/Interface/DX12/Facade.hpp"
 #include "Shared/Filesystem/Conversions.hpp"
 
-#include "FrameRenderer.hpp"
+#include "FrameWorker.hpp"
 #include "Commands/RenderMeshCommand.hpp"
 
 
@@ -209,7 +209,7 @@ namespace Renderer
 			lastDispatchTime = currentTime;
 			globalsToDispatch.time += dispatchDelta;
 					   			
-			renderThread.ScheduleFrame( MakeFrameFromCommands() );
+			renderThread.ScheduleFrameWorker( MakeFrameWorkerFromCommands() );
 
 			for(; framesToDestruct.Size() > 0; )
 			{
@@ -227,11 +227,11 @@ namespace Renderer
 			
 			}
 
-			FrameRenderer ForwardRenderer::MakeFrameFromCommands()
+			FrameWorker ForwardRenderer::MakeFrameWorkerFromCommands()
 			{					
 				HandleWrapper globalBuffer{ this, MakeBuffer(&globalsToDispatch, sizeof globalsToDispatch) };
 									
-				FrameRenderer renderer{ resources.get(), commonQueue.get(), registry, *outputSurface, *depthSurface, std::move(globalBuffer) };			
+				FrameWorker renderer{ resources.get(), commonQueue.get(), registry, *outputSurface, *depthSurface, std::move(globalBuffer) };			
 				for(auto &&cmd : commandsToDispatch)
 				{
 					renderer.AddCommand(std::move(cmd));

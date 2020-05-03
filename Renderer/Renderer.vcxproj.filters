@@ -29,7 +29,6 @@
     <ClInclude Include="Resources\SerialFactory.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
-    <ClInclude Include="FrameRenderer.hpp" />
     <ClInclude Include="Resources\ResourceFactoryDeallocatable.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
@@ -116,6 +115,7 @@
     <ClInclude Include="Interface\Resources\MaintainsRenderResources.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
+    <ClInclude Include="FrameWorker.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -137,7 +137,6 @@
     <ClCompile Include="Resources\SerialFactory.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
-    <ClCompile Include="FrameRenderer.cpp" />
     <ClCompile Include="Resources\ResourceFactoryDeallocatable.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
@@ -194,6 +193,7 @@
     <ClCompile Include="Resources\ResourceRegistry.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
+    <ClCompile Include="FrameWorker.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">

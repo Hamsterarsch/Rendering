@@ -36,7 +36,7 @@ namespace Renderer
 	namespace DX12
 	{
 		class ResourceFactory;
-		class FrameRenderer;
+		class FrameWorker;
 		
 		class ForwardRenderer final : public Renderer
 		{	
@@ -65,7 +65,7 @@ namespace Renderer
 			
 			private: UniquePtr<ShaderFactory> shaderFactory;
 			
-			private: QueueConcurrent<FrameRenderer> framesToDestruct;
+			private: QueueConcurrent<FrameWorker> framesToDestruct;
 
 			private: std::future<int> activeFrameHandle;
 						
@@ -93,7 +93,7 @@ namespace Renderer
 								
 				private: void AbortDispatch();
 
-				private: FrameRenderer MakeFrameFromCommands();
+				private: FrameWorker MakeFrameWorkerFromCommands();
 
 			public: virtual void RenderMesh(size_t signatureHandle, size_t psoHandle, size_t meshHandle, size_t sizeInBytes, size_t byteOffsetToIndices, size_t transformBufferHandle = 0, size_t instanceCount = 1) override;
 
