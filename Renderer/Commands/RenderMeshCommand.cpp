@@ -20,7 +20,7 @@ namespace Renderer
 			const size_t transformBufferHandle, 
 			const size_t instanceCount
 			) :
-			RenderCommand{ signatureHandle, psoHandle },
+			RenderCommandGraphics{ signatureHandle, psoHandle },
 			meshHandle{ meshHandle },
 			byteOffsetToIndexData{ byteOffsetToIndexData },
 			indicesSizeInBytes{ indicesSizeInBytes },

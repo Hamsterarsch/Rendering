@@ -1,12 +1,12 @@
 #pragma once
-#include "RenderCommand.hpp"
+#include "Commands/RenderCommandGraphics.hpp"
 
 
 namespace Renderer
 {
 	namespace DX12
 	{
-		class RenderMeshCommand : public RenderCommand
+		class RenderMeshCommand : public RenderCommandGraphics
 		{			
 			private: size_t meshHandle;
 			

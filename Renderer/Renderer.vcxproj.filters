@@ -71,9 +71,6 @@
     <ClInclude Include="Resources\RootSignature\RootSignatureData.hpp">
       <Filter>Resources\RootSignature</Filter>
     </ClInclude>
-    <ClInclude Include="Interface\RenderCommand.hpp">
-      <Filter>Interface</Filter>
-    </ClInclude>
     <ClInclude Include="Resources\GlobalBufferData.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
@@ -116,6 +113,15 @@
       <Filter>Resources</Filter>
     </ClInclude>
     <ClInclude Include="FrameWorker.hpp" />
+    <ClInclude Include="Commands\RenderCommand.hpp">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\RenderCommandCompute.hpp">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\RenderCommandGraphics.hpp">
+      <Filter>Commands</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />

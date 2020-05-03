@@ -163,10 +163,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Commands\RenderCommand.hpp" />
+    <ClInclude Include="Commands\RenderCommandCompute.hpp" />
+    <ClInclude Include="Commands\RenderCommandGraphics.hpp" />
     <ClInclude Include="Commands\RenderMeshCommand.hpp" />
     <ClInclude Include="ForwardRenderer.hpp" />
     <ClInclude Include="FrameWorker.hpp" />
-    <ClInclude Include="Interface\RenderCommand.hpp" />
     <ClInclude Include="Interface\Renderer.hpp" />
     <ClInclude Include="Interface\RendererExportHelper.hpp" />
     <ClInclude Include="Interface\Resources\HandleWrapper.hpp" />
