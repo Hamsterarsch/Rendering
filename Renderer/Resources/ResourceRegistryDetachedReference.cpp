@@ -8,13 +8,19 @@ namespace Renderer
 	{
 		ResourceRegistryDetachedReference::ResourceRegistryDetachedReference
 		(
-			ResourceRegistryReadOnly &referencedRegistry
+			HasQueriableResources &referencedRegistry
 		) :
 		referencedRegistry{ &referencedRegistry }
 		{
 		}
 
+
 		
+		ID3D12Resource *ResourceRegistryDetachedReference::GetResource(const ResourceHandle::t_hash handle)
+		{
+			return resources.at(handle).resource;
+		}
+
 
 		ID3D12PipelineState *ResourceRegistryDetachedReference::GetPso(const ResourceHandle::t_hash handle)
 		{
@@ -32,9 +38,9 @@ namespace Renderer
 
 
 		
-		D3D12_GPU_VIRTUAL_ADDRESS ResourceRegistryDetachedReference::GetResourceGPUVirtualAddress(const ResourceHandle::t_hash handle)
+		D3D12_GPU_VIRTUAL_ADDRESS ResourceRegistryDetachedReference::GetResourceGpuAddress(const ResourceHandle::t_hash handle)
 		{
-			return resources.at(handle).resourceGPUAddress;
+			return resources.at(handle).resource->GetGPUVirtualAddress();
 			
 		}
 
@@ -47,7 +53,7 @@ namespace Renderer
 			case ResourceTypes::Mesh: 
 			case ResourceTypes::Buffer: 
 			case ResourceTypes::Texture:
-				this->AddResourceGPUVirtualAddress(handle, referencedRegistry->GetResourceGPUVirtualAddress(handle));
+				this->AddResource(handle, referencedRegistry->GetResource(handle));
 				break;
 			case ResourceTypes::Pso:
 				this->AddPso(handle, referencedRegistry->GetPso(handle));
@@ -84,10 +90,10 @@ namespace Renderer
 
 
 				
-		void ResourceRegistryDetachedReference::AddResourceGPUVirtualAddress(const ResourceHandle::t_hash handle, D3D12_GPU_VIRTUAL_ADDRESS address)
+		void ResourceRegistryDetachedReference::AddResource(const ResourceHandle::t_hash handle, ID3D12Resource *resource)
 		{			
 			Bucket bucket;
-			bucket.resourceGPUAddress = address;
+			bucket.resource = resource;
 			
 			resources[handle] = bucket;
 			

@@ -128,7 +128,7 @@ namespace Renderer
 				{
 					for(auto &&cmd : commands)
 					{
-						cmd->ExecuteOperationOnResourceReferences(registryMaster, &ResourceRegistryUsingReferences::RemoveReference);
+						cmd->ExecuteOperationOnResourceReferences(registryMaster, &UsesReferences::RemoveReference);
 					}				
 				
 				}
@@ -137,8 +137,8 @@ namespace Renderer
 		
 		void FrameRenderer::AddCommand(UniquePtr<RenderCommand> &&command)
 		{			
-			command->ExecuteOperationOnResourceReferences(registryMaster, &ResourceRegistryUsingReferences::AddReference);
-			command->ExecuteOperationOnResourceReferences(&registryCopy, &ResourceRegistryUsingReferences::AddReference);
+			command->ExecuteOperationOnResourceReferences(registryMaster, &UsesReferences::AddReference);
+			command->ExecuteOperationOnResourceReferences(&registryCopy, &UsesReferences::AddReference);
 			registryCopy.AddReference(command->GetPsoHandle());
 			registryCopy.AddReference(command->GetSignatureHandle());
 			
@@ -209,7 +209,7 @@ namespace Renderer
 				{
 					list->RecordSetPipelineState(registryCopy.GetPso(cmd.GetPsoHandle()));
 					list->RecordSetGraphicsSignature(registryCopy.GetSignature(cmd.GetSignatureHandle()));
-					list->AsGraphicsList()->SetGraphicsRootConstantBufferView(0, registryCopy.GetResourceGPUVirtualAddress(globalBufferHandle));
+					list->AsGraphicsList()->SetGraphicsRootConstantBufferView(0, registryCopy.GetResourceGpuAddress(globalBufferHandle));
 				}
 
 				bool FrameRenderer::ListCapacityIsReached() const

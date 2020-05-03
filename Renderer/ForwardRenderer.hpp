@@ -1,22 +1,41 @@
 #pragma once
 #include "Interface/Renderer.hpp"
 #include "Resources/ResourceAllocation.hpp"
-#include "Resources/HandleFactory.hpp"
-#include "Resources/ResourceRegistry.hpp"
 #include "Resources/Pso/PsoFactory.hpp"
 #include "Resources/RootSignature/RootSignatureFactory.hpp"
 #include "Resources/Pso/VertexLayoutProvider.hpp"
 #include "Resources/GlobalBufferData.hpp"
-#include "Resources/ResourceFactoryDeallocatable.hpp"
 #include "Shared/Types/Containers/QueueConcurrent.hpp"
 #include "DX12/ShaderFactory.hpp"
 #include "RendererMaster.hpp"
+#include "Resources/ResourceRegistry.hpp"
+#include <forward_list>
 
+/*
+namespace RHA
+{
+	namespace DX12
+	{
+		class DeviceResources;
+		class Queue;
+		class CmdAllocator;
+		class CmdList;
+		class WindowSurface;
+		class Fence;
+		class UploadHeap;
+		class DepthSurface;
+	}
+}
+
+struct ID3D12RootSignature;
+struct ID3D12PipelineState;
+struct ID3D12Resource;*/
 
 namespace Renderer
 {
 	namespace DX12
 	{
+		class ResourceFactory;
 		class FrameRenderer;
 		
 		class ForwardRenderer final : public Renderer
@@ -37,10 +56,7 @@ namespace Renderer
 
 			private: HANDLE closeEvent;
 					 
-			private: HandleFactory handleFactory;
-			
-			private: ResourceRegistry registry;
-			
+
 			private: VertexLayoutProvider vertexLayoutProvider;
 			
 			private: PsoFactory psoFactory;
@@ -57,12 +73,12 @@ namespace Renderer
 
 			private: GlobalBufferData globalsToDispatch;
 
-			private: std::forward_list<size_t> handlesToRetire;
-
 			private: RendererMaster renderThread;
 
-			private: UniquePtr<class ResourceFactory> resourceFactory;					 
-			
+			private: UniquePtr<ResourceFactory> resourceFactory;
+
+			private: ResourceRegistry registry;
+					
 			
 			public: ForwardRenderer(HWND outputWindow);
 												 

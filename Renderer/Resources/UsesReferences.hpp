@@ -7,9 +7,9 @@ namespace Renderer
 {
 	namespace DX12
 	{
-		class ResourceRegistryUsingReferences
+		class UsesReferences
 		{
-			DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(ResourceRegistryUsingReferences)
+			DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(UsesReferences)
 
 
 			public: virtual void AddReference(ResourceHandle::t_hash handle) = 0;

@@ -1,80 +1,77 @@
 #pragma once
-#include <unordered_map>
-#include <unordered_set>
-#include "Resources/ResourceRegistryReadOnly.hpp"
-#include "ResourceRegistryUsingReferences.hpp"
-#include "Resources/ResourceHandle.hpp"
-#include "Resources/RootSignature/RootSignatureData.hpp"
-#include "Resources/ResourceAllocation.hpp"
+#include "Shared/PtrTypes.hpp"
+#include "Resources/MaintainsRenderResources.hpp"
+#include <forward_list>
+#include "Resources/HandleFactory.hpp"
+#include "Resources/Registry.hpp"
 
 
 namespace Renderer
 {
-	struct ResourceHandle;
-	
+	class SerializationHook;
+	class HandleFactory;
+		
 	namespace DX12
-	{
-		class ResourceRegistry : public ResourceRegistryReadOnly, public ResourceRegistryUsingReferences
-		{						
-			private: std::unordered_map<ResourceHandle::t_hash, ResourceAllocation> resourceAllocations;
-			
-			private: std::unordered_map<ResourceHandle::t_hash, size_t> resourceReferences;
+	{		
+		class RootSignatureFactory;
 
-			private: std::unordered_set<ResourceHandle::t_hash> unreferencedResources;
-			
-			private: std::unordered_map<ResourceHandle::t_hash, RootSignatureData> rootSignatures;
+		class ResourceRegistry : public UsesReferences, public HasQueriableResources, public CanPurgeUnreferencedEntities
+		{
+			private: HandleMapResource registryResource;
 
-			private: std::unordered_map<ResourceHandle::t_hash, DxPtr<ID3D12PipelineState>> pipelineStates;
+			private: HandleMapPso registryPso;
 
+			private: HandleMapSignature registrySignature;
+
+			private: HandleFactory handleProvider;
+
+			private: std::forward_list<ResourceHandle::t_hash> handlesToRetire;
 			
+
+
+			public: bool IsHandleUnknown(ResourceHandle::t_hash handle)	const;
+
+			public: ResourceHandle::t_hash Register(ResourceAllocation &&allocation);
 			
+			public: void Register(ResourceHandle::t_hash handle, ResourceAllocation &&allocation);
+
+			public: ResourceHandle::t_hash Register(RootSignatureData &&signature);
+			
+			public: void Register(ResourceHandle::t_hash handle, RootSignatureData &&signature);
+
+			public: ResourceHandle::t_hash Register(DxPtr<ID3D12PipelineState> &&pipeline);
+			
+			public: void Register(ResourceHandle::t_hash handle, DxPtr<ID3D12PipelineState> &&pipeline);
+
+			public: virtual ID3D12Resource *GetResource(ResourceHandle::t_hash handle) override;
+
+			public: virtual D3D12_GPU_VIRTUAL_ADDRESS GetResourceGpuAddress(ResourceHandle::t_hash handle) override;
+
 			public: virtual ID3D12PipelineState *GetPso(ResourceHandle::t_hash handle) override;
-			
+
 			public: virtual ID3D12RootSignature *GetSignature(ResourceHandle::t_hash handle) override;
-			
-			public: virtual D3D12_GPU_VIRTUAL_ADDRESS GetResourceGPUVirtualAddress(ResourceHandle::t_hash handle) override;
-
-			public: virtual ID3D12Resource *GetResource(ResourceHandle::t_hash handle);
 
 			
-			public: void RegisterPso(ResourceHandle::t_hash handle, const DxPtr<ID3D12PipelineState> &pipelineState);
+			public: size_t GetSignatureCbvOffset(ResourceHandle::t_hash handle, size_t cbvOrdinal);
+
+				private: size_t GetSignatureOffset(ResourceHandle::t_hash handle, size_t ordinal, size_t (TableLayout:: *getter)(unsigned short) const);
 			
-			public: virtual void AddReference(ResourceHandle::t_hash handle) override;
+			public: size_t GetSignatureSrvOffset(ResourceHandle::t_hash handle, size_t srvOrdinal);
+			
+			public: size_t GetSignatureUavOffset(ResourceHandle::t_hash handle, size_t uavOrdinal);
+
+
+			public: void RetireHandle(ResourceHandle::t_hash handle);
+
+			public: virtual void PurgeUnreferencedEntities() override;
 					
-			public: void RegisterSignature(ResourceHandle::t_hash handle, RootSignatureData &&signatureData);
+			public: virtual void AddReference(ResourceHandle::t_hash handle) override;
 
-			public: void RegisterResource(size_t handle, ResourceAllocation &&allocation);
-
-
+			private: void ExecuteReferenceOperationOnCorrectRegistry(ResourceHandle::t_hash handle, void (UsesReferences::*operation)(ResourceHandle::t_hash));
 			
 			public: virtual void RemoveReference(ResourceHandle::t_hash handle) override;
 			
-				private: static bool ThereAreNoReferencesIn(const decltype(resourceReferences)::const_iterator &referenceBucket);
-			
-			public: void PurgeUnreferencedResources();
-
-				private: void RemoveEntity(ResourceHandle::t_hash hash);
-			
-			public: bool HandleIsInvalid(ResourceHandle::t_hash handle);
-
-			public: bool IsHandleUnknown(ResourceHandle::t_hash handle);
-			
-
-			public: size_t GetSignatureCbvOffset(ResourceHandle::t_hash handle, size_t cbvOrdinal) const;
-
-				private: size_t GetSignatureOffset(ResourceHandle::t_hash handle, size_t ordinal, size_t (TableLayout:: *getter)(unsigned short) const) const;
-			
-			public: size_t GetSignatureSrvOffset(ResourceHandle::t_hash handle, size_t srvOrdinal) const;
-			
-			public: size_t GetSignatureUavOffset(ResourceHandle::t_hash handle, size_t uavOrdinal) const;
-
-			
-			public: const RootSignatureData &GetSignatureDataRef(ResourceHandle::t_hash handle) const;
-												
 		};
-
-
+		
 	}
-	
-	
 }

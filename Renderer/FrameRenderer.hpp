@@ -5,6 +5,7 @@
 #include "Resources/HandleWrapper.hpp"
 #include <vector>
 #include <d3d12.h>
+#include "Resources/ResourceRegistry.hpp"
 
 
 namespace RHA

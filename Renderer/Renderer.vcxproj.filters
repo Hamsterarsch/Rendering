@@ -29,9 +29,6 @@
     <ClInclude Include="Resources\SerialFactory.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Resources\ResourceRegistry.hpp">
-      <Filter>Resources</Filter>
-    </ClInclude>
     <ClInclude Include="FrameRenderer.hpp" />
     <ClInclude Include="Resources\ResourceFactoryDeallocatable.hpp">
       <Filter>Resources</Filter>
@@ -88,13 +85,7 @@
       <Filter>Interface\Resources</Filter>
     </ClInclude>
     <ClInclude Include="RendererMaster.hpp" />
-    <ClInclude Include="Resources\ResourceRegistryReadOnly.hpp">
-      <Filter>Resources</Filter>
-    </ClInclude>
     <ClInclude Include="Resources\ResourceRegistryDetachedReference.hpp">
-      <Filter>Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="Resources\ResourceRegistryUsingReferences.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
     <ClInclude Include="Lighting\LightGrid\VolumeTileGrid.hpp">
@@ -109,6 +100,21 @@
     </ClInclude>
     <ClInclude Include="Interface\Resources\SerializationContainer.hpp">
       <Filter>Interface\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\UsesReferences.hpp">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\HasQueriableResources.hpp">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\Registry.hpp">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\ResourceRegistry.hpp">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\Resources\MaintainsRenderResources.hpp">
+      <Filter>Resources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -129,9 +135,6 @@
       <Filter>Resources</Filter>
     </ClCompile>
     <ClCompile Include="Resources\SerialFactory.cpp">
-      <Filter>Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="Resources\ResourceRegistry.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
     <ClCompile Include="FrameRenderer.cpp" />
@@ -183,6 +186,12 @@
       <Filter>Resources</Filter>
     </ClCompile>
     <ClCompile Include="Resources\SerializationHook.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\Registry.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\ResourceRegistry.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
   </ItemGroup>

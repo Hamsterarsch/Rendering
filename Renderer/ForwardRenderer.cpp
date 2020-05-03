@@ -1,9 +1,18 @@
 #include "ForwardRenderer.hpp"
-#include "DX12/Facade.hpp"
+#include "RHA/Interface/DX12/Facade.hpp"
 #include "Shared/Filesystem/Conversions.hpp"
 
 #include "FrameRenderer.hpp"
 #include "Commands/RenderMeshCommand.hpp"
+
+
+#include "Math/Interface/Utility.hpp"
+#include "Lighting/LightGrid/VolumeTileGrid.hpp"
+#include "ShaderRelevantTypes/VolumeTileGridData.hpp"
+
+#include "Resources/HandleFactory.hpp"
+#include "Resources/ResourceRegistry.hpp"
+#include "Resources/ResourceFactoryDeallocatable.hpp"
 
 
 
@@ -13,11 +22,6 @@
 #include <fstream>
 
 #include "Interface/Resources/SerializationContainer.hpp"
-
-#include "ShaderRelevantTypes/VolumeTileGridData.hpp"
-#include "Types/Angle.hpp"
-#include "Utility.hpp"
-#include "Lighting/LightGrid/VolumeTileGrid.hpp"
 
 
 #if _DEBUG
@@ -50,16 +54,7 @@ namespace Renderer
 			psoFactory{ resources.get() },
 			signatureFactory{ resources.get() },
 			shaderFactory{ Facade::MakeShaderFactory(5, 0) },
-			renderThread{ framesToDestruct, maxScheduledFrames },
-			resourceFactory
-			{
-				std::make_unique<ResourceFactoryDeallocatable>
-				(
-					resources.get(),
-					commonQueue.get(),
-					std::make_unique<ResourceMemory>(resources.get(), D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT * 15, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT, D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS)
-				)
-			}		
+			renderThread{ framesToDestruct, maxScheduledFrames }
 		{			
 			outputSurface->EnableVerticalSync();	
 			
@@ -79,12 +74,14 @@ namespace Renderer
 			{
 				VolumeTileGrid gbb(Math::VectorUint2{128,128}, 90.f, gridData);
 							
-				auto gridWriteBufferHandle = HandleWrapper{this, handleFactory.MakeHandle(ResourceTypes::Buffer) };
-				registry.RegisterResource
-				(
-					gridWriteBufferHandle, 
-					resourceFactory->MakeBufferWithData(gbb.GetData(), gbb.SizeInBytes(), D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS)
-				);				
+				auto gridWriteBufferHandle = HandleWrapper
+				{
+					this,
+					registry.Register
+					(					
+						resourceFactory->MakeBufferWithData(gbb.GetData(), gbb.SizeInBytes(), D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS)						
+					)
+				};				
 				auto constantsBuffer = ForwardRenderer::MakeBuffer(&gridData, sizeof gridData);
 				
 				
@@ -97,7 +94,7 @@ namespace Renderer
 				SerializeRootSignature(0,0,1,0, &s);
 				auto rootHandle{ MakeRootSignature(s.GetData()) };
 				glist->SetComputeRootSignature(registry.GetSignature(rootHandle));
-				glist->SetComputeRootConstantBufferView(0, registry.GetResourceGPUVirtualAddress(constantsBuffer));
+				glist->SetComputeRootConstantBufferView(0, registry.GetResourceGpuAddress(constantsBuffer));
 
 				DescriptorMemory descriptorMemory{resources.get(), 1'000'000, 2048};
 				descriptorMemory.RecordListBinding(list.get());
@@ -220,19 +217,7 @@ namespace Renderer
 				frame.UnregisterResources();				
 			}
 			
-			registry.PurgeUnreferencedResources();
-			{
-				handlesToRetire.remove_if([ &reg = registry, &hfac = handleFactory ](const size_t &handle)
-				{
-					if(reg.IsHandleUnknown(handle))
-					{
-						hfac.RetireHandle(ResourceHandle{ handle });
-						return true;					
-					}
-					return false;
-					
-				});
-			}
+			registry.PurgeUnreferencedEntities();
 			
 		}
 
@@ -280,10 +265,11 @@ namespace Renderer
 		
 
 		size_t ForwardRenderer::MakeBuffer(const void *data, const size_t sizeInBytes)
-		{
-			auto handle{ handleFactory.MakeHandle(ResourceTypes::Buffer) };
-
-			return MakeBufferInternal(data, sizeInBytes, handle.hash);
+		{			
+			return registry.Register
+			(
+				resourceFactory->MakeBufferWithData(data, sizeInBytes, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER | D3D12_RESOURCE_STATE_INDEX_BUFFER)				
+			);
 			
 		}
 
@@ -294,8 +280,14 @@ namespace Renderer
 					resourceFactory->MakeBufferWithData(data, sizeInBytes, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER | D3D12_RESOURCE_STATE_INDEX_BUFFER)
 				};
 
-				registry.RegisterResource(handle, std::move(allocation));
+			
+				if(handle == 0)
+				{
+					return registry.Register(std::move(allocation));
+					
+				}
 
+				registry.Register(handle, std::move(allocation));
 				return handle;
 			
 			}
@@ -378,12 +370,9 @@ namespace Renderer
 					ExtractSamplerCountFrom(serializedData, size)
 				)
 			};
-			
-			const auto handle{ handleFactory.MakeHandle(ResourceTypes::Signature) };
-			registry.RegisterSignature(handle.hash, std::move(signatureData));
-
-			return handle.hash;
-			
+						
+			return registry.Register(std::move(signatureData));
+						
 		}
 
 			SIZE_T ForwardRenderer::ExtractSizeFrom(const void *data)
@@ -413,12 +402,8 @@ namespace Renderer
 		
 		size_t ForwardRenderer::MakePso(PipelineTypes pipelineType, VertexLayoutTypes vertexLayout, const ShaderList &shaders, size_t signatureHandle)
 		{
-			auto pipelineState{	psoFactory.MakePso(shaders, registry.GetSignature(signatureHandle), pipelineType, vertexLayoutProvider.GetLayoutDesc(vertexLayout), D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE) };
-			
-			auto handle{ handleFactory.MakeHandle(ResourceTypes::Pso) };
-			registry.RegisterPso(handle.hash, pipelineState);
-
-			return handle;
+			auto pipelineState{	psoFactory.MakePso(shaders, registry.GetSignature(signatureHandle), pipelineType, vertexLayoutProvider.GetLayoutDesc(vertexLayout), D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE) };		
+			return registry.Register(std::move(pipelineState));
 			
 		}
 
@@ -427,11 +412,7 @@ namespace Renderer
 		size_t ForwardRenderer::MakePso(const Blob &csBlob, const size_t signatureHandle)
 		{
 			auto pipelineState{ psoFactory.MakePso(csBlob, registry.GetSignature(signatureHandle)) };
-
-			auto handle{ handleFactory.MakeHandle(ResourceTypes::Pso) };
-			registry.RegisterPso(handle, pipelineState);
-
-			return handle;
+			return registry.Register(std::move(pipelineState));
 			
 		}
 
@@ -439,7 +420,7 @@ namespace Renderer
 		
 		bool ForwardRenderer::ResourceMustBeRemade(size_t handle)
 		{
-			return registry.HandleIsInvalid(handle);
+			return registry.IsHandleUnknown(handle);
 			
 		}
 
@@ -447,7 +428,7 @@ namespace Renderer
 		
 		void ForwardRenderer::RetireHandle(const size_t handle)
 		{
-			handlesToRetire.push_front(handle);
+			registry.RetireHandle(handle);
 			
 		}
 
