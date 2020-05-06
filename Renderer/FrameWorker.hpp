@@ -5,6 +5,7 @@
 #include <vector>
 #include <d3d12.h>
 #include "Resources/ResourceRegistry.hpp"
+#include "Resources/RenderSurface.hpp"
 
 
 namespace RHA
@@ -52,9 +53,7 @@ namespace Renderer
 
 			private: ResourceRegistryDetachedReference registryCopy;
 			
-			private: WindowSurface *windowSurface;
-
-			private: DepthSurface *depthSurface;
+			private: RenderSurface outputSurface;
 
 			private: size_t commandsRecordedToList;
 			
@@ -73,8 +72,7 @@ namespace Renderer
 				DeviceResources *resources,
 				Queue *queue,
 				ResourceRegistry &masterRegistry,
-				WindowSurface &windowSurface,
-				DepthSurface &depthSurface,
+				const RenderSurface &outputSurface,
 				HandleWrapper &&globalBuffer,
 				bool shouldPresentOnComplete = true
 			);
@@ -101,8 +99,6 @@ namespace Renderer
 			public: void AddCommand(UniquePtr<RenderCommand> &&command);
 
 			public: int ExecuteCommands();
-
-				private: void RecordRenderTargetPreparations();
 			
 				private: void RecordCommands();
 			

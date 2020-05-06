@@ -231,7 +231,7 @@ namespace Renderer
 			{					
 				HandleWrapper globalBuffer{ this, MakeBuffer(&globalsToDispatch, sizeof globalsToDispatch) };
 									
-				FrameWorker renderer{ resources.get(), commonQueue.get(), registry, *outputSurface, *depthSurface, std::move(globalBuffer) };			
+				FrameWorker renderer{ resources.get(), commonQueue.get(), registry, RenderSurface{ outputSurface.get(), depthSurface.get() }, std::move(globalBuffer) };			
 				for(auto &&cmd : commandsToDispatch)
 				{
 					renderer.AddCommand(std::move(cmd));

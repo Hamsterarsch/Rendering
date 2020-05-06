@@ -18,8 +18,7 @@ namespace Renderer
 			DeviceResources *resources, 
 			Queue *queue,
 			ResourceRegistry &masterRegistry,
-			WindowSurface &windowSurface, 
-			DepthSurface &depthSurface,
+			const RenderSurface &outputSurface,
 			HandleWrapper &&globalBufferHandle,
 			bool shouldPresentOnComplete
 		) :
@@ -27,8 +26,7 @@ namespace Renderer
 			queue{ queue },
 			registryMaster{ &masterRegistry },
 			registryCopy{ masterRegistry },
-			windowSurface{ &windowSurface },
-			depthSurface{ &depthSurface },
+			outputSurface{ outputSurface },
 			commandsRecordedToList{ 0 },
 			globalBufferHandle{ std::move(globalBufferHandle) },
 			isAllowedToPresent{ shouldPresentOnComplete }
@@ -54,17 +52,11 @@ namespace Renderer
 			commands{ std::move(other.commands) },
 			registryMaster{ std::move(other.registryMaster) },
 			registryCopy{ std::move(other.registryCopy) },
-			windowSurface{ std::move(other.windowSurface) },
-			depthSurface{ std::move(other.depthSurface) },
+			outputSurface{ std::move(other.outputSurface) },
 			commandsRecordedToList{ std::move(other.commandsRecordedToList) },
 			globalBufferHandle{ std::move(other.globalBufferHandle) }
-		{
-			other.resources = nullptr;
-			other.queue = nullptr;
-			other.event = nullptr;		
-			other.registryMaster = nullptr;
-			other.windowSurface = nullptr;
-			other.depthSurface = nullptr;
+		{	
+			other.registryMaster = nullptr;			
 
 		}
 
@@ -72,34 +64,20 @@ namespace Renderer
 		
 		FrameWorker &FrameWorker::operator=(FrameWorker &&rhs) noexcept
 		{
-			resources = std::move(rhs.resources);
-			rhs.resources = nullptr;
-			
-			queue = std::move(rhs.queue);
-			rhs.queue = nullptr;
-			
+			resources = std::move(rhs.resources);						
+			queue = std::move(rhs.queue);						
 			allocator = std::move(rhs.allocator);
 			list = std::move(rhs.list);
-			fence = std::move(rhs.fence);
-			
-			event = std::move(rhs.event);
-			rhs.event = nullptr;
-			
+			fence = std::move(rhs.fence);			
+			event = std::move(rhs.event);						
 			commands = std::move(rhs.commands);
 			
 			registryMaster = std::move(rhs.registryMaster);
 			rhs.registryMaster = nullptr;
 
-			registryCopy = std::move(rhs.registryCopy);
-			
-			windowSurface = std::move(rhs.windowSurface);
-			rhs.windowSurface = nullptr;
-			
-			depthSurface = std::move(rhs.depthSurface);
-			rhs.depthSurface = nullptr;
-
+			registryCopy = std::move(rhs.registryCopy);			
+			outputSurface = std::move(rhs.outputSurface);
 			commandsRecordedToList = std::move(rhs.commandsRecordedToList);
-
 			globalBufferHandle = std::move(rhs.globalBufferHandle);
 			
 			return *this;
@@ -156,12 +134,11 @@ namespace Renderer
 			try
 			{
 				list = allocator->AllocateList();
-				
-				RecordRenderTargetPreparations();									
-				RecordCommands();
 
-				windowSurface->RecordPreparationForPresenting(list->AsGraphicsList().Get());
-				
+				outputSurface.RecordSurfacePreparations(*list);									
+				RecordCommands();
+				outputSurface.RecordPresentPreparations(*list);
+								
 				list->StopRecording();
 				queue->SubmitCommandList(list.get());
 				
@@ -176,17 +153,6 @@ namespace Renderer
 			return 0;
 			
 		}
-
-			void FrameWorker::RecordRenderTargetPreparations()
-			{			
-				const auto dsv{ depthSurface->GetHandleCpu() };
-				list->RecordClearDsv(dsv, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1, 0, 0, nullptr);
-				
-				auto glist{ list->AsGraphicsList() };
-				windowSurface->RecordPreparationForRendering(glist.Get());
-				windowSurface->RecordPipelineBindings(glist.Get(), &dsv);
-			
-			}
 
 			void FrameWorker::RecordCommands()
 			{
@@ -226,10 +192,8 @@ namespace Renderer
 				void FrameWorker::ResetCurrentList()
 				{
 					list->StartRecording(allocator.get());						
+					outputSurface.RecordBindSurfaces(*list);
 					
-					const auto dsv{ depthSurface->GetHandleCpu() };
-					windowSurface->RecordPipelineBindings(list->AsGraphicsList().Get(), &dsv);
-			
 				}
 
 			void FrameWorker::SetupCompletionFence()
@@ -255,7 +219,7 @@ namespace Renderer
 			{
 				if(isAllowedToPresent)
 				{
-					windowSurface->Present();		
+					outputSurface.Present();
 				}
 			
 			}
