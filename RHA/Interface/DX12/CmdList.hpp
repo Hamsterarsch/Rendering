@@ -51,6 +51,12 @@ namespace RHA
 				bool isTargetDescriptorARangeStart,
 				const D3D12_CPU_DESCRIPTOR_HANDLE *dsv
 			) = 0;
+
+			public: virtual void RecordClearRtv
+			(
+				D3D12_CPU_DESCRIPTOR_HANDLE descriptor,
+				const float(&color)[4]
+			) = 0;
 			
 			public: virtual void RecordClearDsv
 			(
@@ -68,6 +74,18 @@ namespace RHA
 				unsigned char stencilValue,
 				unsigned int numRects,
 				const D3D12_RECT *clearRects
+			) = 0;
+
+			public: virtual void RecordSetViewports
+			(
+				const D3D12_VIEWPORT *viewports,
+				size_t numViewports
+			) = 0;
+
+			public: virtual void RecordSetScissorRects
+			(
+				const D3D12_RECT *rects,
+				size_t numRects
 			) = 0;
 
 			

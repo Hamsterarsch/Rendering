@@ -158,6 +158,14 @@ namespace RHA
 		}
 
 
+				
+		void CmdListImpl::RecordClearRtv(D3D12_CPU_DESCRIPTOR_HANDLE descriptor, const float(&color)[4])
+		{
+			glist->ClearRenderTargetView(descriptor, color, 0, nullptr);
+			
+		}
+
+		
 
 		void CmdListImpl::RecordClearDsv
 		(
@@ -185,8 +193,24 @@ namespace RHA
 			
 			}
 
+		
+
+		void CmdListImpl::RecordSetViewports(const D3D12_VIEWPORT *const viewports, const size_t numViewports)
+		{
+			glist->RSSetViewports(numViewports, viewports);
+			
+		}
 
 		
+
+		void CmdListImpl::RecordSetScissorRects(const D3D12_RECT *const rects, const size_t numRects)
+		{
+			glist->RSSetScissorRects(numRects, rects);
+			
+		}
+
+		
+
 		void CmdListImpl::StopRecording()
 		{
 			const auto result{ glist->Close() };			

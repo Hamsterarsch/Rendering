@@ -1,14 +1,13 @@
 #pragma once
 #include "Shared/InterfaceHelpers.hpp"
-
-
-struct ID3D12GraphicsCommandList;
+#include "DxPtrTypes.hpp"
 
 
 namespace RHA
 {
 	namespace DX12
 	{
+		class CmdList;
 		class WindowSurface
 		{
 			DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(WindowSurface)
@@ -26,11 +25,11 @@ namespace RHA
 			
 			public: virtual void Present() = 0;
 
-			public: virtual void RecordPipelineBindings(ID3D12GraphicsCommandList *list, const D3D12_CPU_DESCRIPTOR_HANDLE *depthDescriptor) = 0;
+			public: virtual void RecordPipelineBindings(CmdList &list, const D3D12_CPU_DESCRIPTOR_HANDLE *depthDescriptor) = 0;
 
-			public: virtual void RecordPreparationForRendering(ID3D12GraphicsCommandList *list) = 0;
+			public: virtual void RecordPreparationForRendering(CmdList &list) = 0;
 
-			public: virtual void RecordPreparationForPresenting(ID3D12GraphicsCommandList *list) = 0;
+			public: virtual void RecordPreparationForPresenting(CmdList &list) = 0;
 							
 		};
 
