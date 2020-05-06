@@ -125,6 +125,9 @@
     <ClInclude Include="Commands\CommandInitVolumeTileGrid.hpp">
       <Filter>Commands</Filter>
     </ClInclude>
+    <ClInclude Include="Resources\RenderSurface.hpp">
+      <Filter>Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -203,6 +206,9 @@
       <Filter>Resources</Filter>
     </ClCompile>
     <ClCompile Include="FrameWorker.cpp" />
+    <ClCompile Include="Resources\RenderSurface.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">

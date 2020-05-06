@@ -192,6 +192,7 @@
     <ClInclude Include="Resources\HandleFactory.hpp" />
     <ClInclude Include="Resources\Pso\PsoFactory.hpp" />
     <ClInclude Include="Resources\Pso\VertexLayoutProvider.hpp" />
+    <ClInclude Include="Resources\RenderSurface.hpp" />
     <ClInclude Include="Resources\ResourceAllocation.hpp" />
     <ClInclude Include="Resources\ResourceFactory.hpp" />
     <ClInclude Include="Resources\ResourceFactoryDeallocatable.hpp" />
@@ -224,6 +225,7 @@
     <ClCompile Include="Resources\HandleWrapper.cpp" />
     <ClCompile Include="Resources\Pso\PsoFactory.cpp" />
     <ClCompile Include="Resources\Pso\VertexLayoutProvider.cpp" />
+    <ClCompile Include="Resources\RenderSurface.cpp" />
     <ClCompile Include="Resources\ResourceAllocation.cpp" />
     <ClCompile Include="Resources\ResourceFactory.cpp" />
     <ClCompile Include="Resources\ResourceFactoryDeallocatable.cpp" />
