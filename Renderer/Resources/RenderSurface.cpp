@@ -51,7 +51,7 @@ namespace Renderer
 
 				void RenderSurface::RecordBindColorAndDepthSurface(RHA::DX12::CmdList &list) const
 				{
-					auto dsv{ DepthSurfaceIsValid() ? surfaceDepth->GetHandleCpu() : nullptr };
+					D3D12_CPU_DESCRIPTOR_HANDLE dsv{ DepthSurfaceIsValid() ? surfaceDepth->GetHandleCpu() : D3D12_CPU_DESCRIPTOR_HANDLE{} };
 					surfaceColor->RecordPipelineBindings
 					(
 						list,

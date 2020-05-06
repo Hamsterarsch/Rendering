@@ -20,7 +20,7 @@ namespace Renderer
 			private: RHA::DX12::DepthSurface *surfaceDepth;
 
 
-			RenderSurface(RHA::DX12::WindowSurface *colorSurface, RHA::DX12::DepthSurface *depthSurface);
+			public: RenderSurface(RHA::DX12::WindowSurface *colorSurface, RHA::DX12::DepthSurface *depthSurface);
 
 			public: void RecordSurfacePreparations(RHA::DX12::CmdList &list);
 
