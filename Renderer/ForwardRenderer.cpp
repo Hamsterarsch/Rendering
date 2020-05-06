@@ -300,6 +300,17 @@ namespace Renderer
 			
 		}
 
+
+		
+		size_t ForwardRenderer::MakeUavBuffer(const void *data, const size_t sizeInBytes)
+		{						
+			return registry.Register
+			(					
+				resourceFactory->MakeBufferWithData(data, sizeInBytes, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS)						
+			);				
+			
+		}
+
 		
 
 		void ForwardRenderer::CompileVertexShader(const char *shader, size_t length, SerializationHook *serializer) const

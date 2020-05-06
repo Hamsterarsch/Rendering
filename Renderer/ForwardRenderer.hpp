@@ -107,6 +107,9 @@ namespace Renderer
 						 			
 			public: virtual void RemakeBuffer(const void *data, size_t sizeInBytes, size_t handle) override;
 			
+
+			public: virtual size_t MakeUavBuffer(const void *data, size_t sizeInBytes) override;
+
 			
 			public: virtual void CompileVertexShader(const char *shader, size_t length, SerializationHook *serializer) const override;
 
@@ -132,7 +135,7 @@ namespace Renderer
 			public: virtual bool ResourceMustBeRemade(size_t handle) override;
 
 			public: virtual void RetireHandle(size_t handle) override;
-												   					 											
+								
 		};
 
 		
