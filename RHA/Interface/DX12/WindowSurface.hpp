@@ -2,6 +2,8 @@
 #include "Shared/InterfaceHelpers.hpp"
 #include "DxPtrTypes.hpp"
 
+struct ID3D12Resource;
+struct D3D12_CPU_DESCRIPTOR_HANDLE;
 
 namespace RHA
 {
