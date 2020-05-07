@@ -102,6 +102,20 @@ namespace RHA
 		}
 
 
+		
+		void CmdListImpl::RecordDispatch
+		(
+			const unsigned groupCountX, 
+			const unsigned groupCountY, 
+			const unsigned groupCountZ
+		)		
+		{
+			glist->Dispatch(groupCountX, groupCountY, groupCountZ);
+			
+		}
+
+		
+
 		void CmdListImpl::RecordBarrierAliasing(ID3D12Resource *resourceBefore, ID3D12Resource *resourceAfter)
 		{
 			D3D12_RESOURCE_BARRIER barrier{};
@@ -140,6 +154,18 @@ namespace RHA
 		void CmdListImpl::RecordSetComputeSignatureCbv(const unsigned parameterIndex, const D3D12_GPU_VIRTUAL_ADDRESS bufferAddress)
 		{
 			glist->SetComputeRootConstantBufferView(parameterIndex, bufferAddress);
+			
+		}
+
+
+		
+		void CmdListImpl::RecordSetComputeSignatureTable
+		(
+			const unsigned parameterIndex,
+			const D3D12_GPU_DESCRIPTOR_HANDLE startHandle
+		)
+		{
+			glist->SetComputeRootDescriptorTable(parameterIndex, startHandle);
 			
 		}
 

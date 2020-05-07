@@ -32,6 +32,8 @@ namespace RHA
 			public: virtual void RecordCopyResource(ID3D12Resource *destination, ID3D12Resource *source) = 0;
 
 			public: virtual void RecordCopyBufferRegion(ID3D12Resource *dstBuffer, size_t dstOffset, ID3D12Resource *srcBuffer, size_t srcOffset, size_t sizeInBytes) = 0;
+
+			public: virtual void RecordDispatch(unsigned groupCountX, unsigned groupCountY, unsigned groupCountZ) = 0;
 			
 			
 			public: virtual void RecordBarrierAliasing(ID3D12Resource *resourceBefore, ID3D12Resource *resourceAfter) = 0;
@@ -42,6 +44,8 @@ namespace RHA
 			public: virtual void RecordSetGraphicsSignatureCbv(unsigned parameterIndex, D3D12_GPU_VIRTUAL_ADDRESS bufferAddress) = 0;
 
 			public: virtual void RecordSetComputeSignatureCbv(unsigned parameterIndex, D3D12_GPU_VIRTUAL_ADDRESS bufferAddress) = 0;
+
+			public: virtual void RecordSetComputeSignatureTable(unsigned parameterIndex, D3D12_GPU_DESCRIPTOR_HANDLE startAddress) = 0;
 			
 			
 			public: virtual void RecordSetRenderTargets
