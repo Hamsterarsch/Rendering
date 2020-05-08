@@ -97,7 +97,7 @@ namespace Renderer
 								
 				private: void AbortDispatch();
 
-				private: FrameWorker MakeFrameWorkerFromCommands();
+				private: FrameWorker MakeFrameWorkerFromCommands(bool shouldUseColorSurface, bool shouldUseDepthSurface, bool shouldPresentSurface);
 
 			public: virtual void RenderMesh(size_t signatureHandle, size_t psoHandle, size_t meshHandle, size_t sizeInBytes, size_t byteOffsetToIndices, size_t transformBufferHandle = 0, size_t instanceCount = 1) override;
 
