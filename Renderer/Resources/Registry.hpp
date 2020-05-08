@@ -50,6 +50,8 @@ namespace Renderer
 				}
 				
 				entities.insert( {handle, std::move(entity)} );
+				references.insert( {handle, 0} );
+				unreferenced.emplace(handle);
 				
 			}
 
