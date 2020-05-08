@@ -212,6 +212,9 @@
     <ClCompile Include="Resources\RenderSurface.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
+    <ClCompile Include="Commands\CommandInitVolumeTileGrid.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">

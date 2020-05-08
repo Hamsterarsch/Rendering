@@ -211,6 +211,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Commands\CommandInitVolumeTileGrid.cpp" />
     <ClCompile Include="Commands\RenderMeshCommand.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="ForwardRenderer.cpp" />
