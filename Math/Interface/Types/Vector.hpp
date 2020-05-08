@@ -14,6 +14,8 @@ namespace Math
 		public: constexpr auto operator+=(const t_target &other) -> t_target &;
 
 		public: constexpr auto operator-=(const t_target &other) -> t_target &;
+
+		public: constexpr VectorBase &operator/=(const typename t_glm::value_type &scalar);
 		
 	};
 	   	
@@ -22,7 +24,12 @@ namespace Math
 
 	template <class T>
 	constexpr auto operator-(const T &lhs, const T &rhs) -> decltype(VectorBase<T, typename T::t_wrapped>(std::declval<T>()), std::declval<T>());
-	
+
+	template <class T>
+	constexpr auto operator/(const T &lhs, const typename T::t_value &scalar) -> decltype(VectorBase<T, typename T::t_wrapped>(std::declval<T>()), std::declval<T>());
+
+	template <class T>
+	constexpr auto operator/(const typename T::t_value &scalar, const T &rhs) -> decltype(VectorBase<T, typename T::t_wrapped>(std::declval<T>()), std::declval<T>());
 	
 	
 	template<class t_glm, unsigned length = t_glm::length()>
