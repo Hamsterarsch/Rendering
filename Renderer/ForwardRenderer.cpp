@@ -258,7 +258,7 @@ namespace Renderer
 		void ForwardRenderer::SetCamera(float x, float y, float z, float pitch, float yaw, float roll)
 		{
 			globalsToDispatch.view = Math::Matrix::MakeRotation(-pitch, -yaw, -roll);
-			globalsToDispatch.view.Translate(x, y, z);
+			globalsToDispatch.view.Translate(-x, -y, -z);
 			
 		}
 

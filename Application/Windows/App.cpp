@@ -141,7 +141,7 @@ namespace Windows
 				minstancePsoHandle = renderer->MakePso(Renderer::PipelineTypes::Opaque, Renderer::VertexLayoutTypes::PositionOnly, shaderList, rootHandle);
 			}
 
-			renderer->SetCamera(0, 0, -5, 0, 0, 0);
+			renderer->SetCamera(0, 0, -11, 0, 0, 0);
 		
 		}
 
