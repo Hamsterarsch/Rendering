@@ -11,6 +11,7 @@
 #include "Resources/ResourceRegistry.hpp"
 #include <forward_list>
 #include "Resources/MaintainsInternalRenderResources.hpp"
+#include "Resources/Descriptor/DescriptorMemory.hpp"
 
 /*
 namespace RHA
@@ -76,9 +77,11 @@ namespace Renderer
 
 			private: RendererMaster renderThread;
 
-			private: UniquePtr<ResourceFactory> resourceFactory;
+			private: UniquePtr<ResourceFactory> bufferFactory;
 
 			private: ResourceRegistry registry;
+
+			private: DescriptorMemory descriptors;
 					
 			
 			public: ForwardRenderer(HWND outputWindow);

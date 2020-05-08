@@ -36,6 +36,8 @@ namespace Renderer
 
 			protected: static constexpr unsigned char GetGlobalBufferSlot() { return 0; }
 
+			public: virtual void ExecutePostGpuWork() {}
+
 			public: virtual void RecordFixedCommandState(RHA::DX12::CmdList *list, HasQueriableResources &registry, size_t globalBufferHandle) const = 0;
 								
 			public: virtual void ExecuteOperationOnResourceReferences(UsesReferences *registry, void(UsesReferences:: *operation)(size_t)) = 0;

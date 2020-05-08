@@ -54,10 +54,26 @@ namespace Renderer
 			psoFactory{ resources.get() },
 			signatureFactory{ resources.get() },
 			shaderFactory{ Facade::MakeShaderFactory(5, 0) },
-			renderThread{ framesToDestruct, maxScheduledFrames }
+			renderThread{ framesToDestruct },
+			bufferFactory
+			{
+				std::make_unique<ResourceFactoryDeallocatable>
+				(
+					resources.get(),
+					commonQueue.get(),
+					std::make_unique<ResourceMemory>
+					(
+						resources.get(),
+						D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT * 32,
+						D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT,
+						D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS 
+					)
+				)
+			},
+			descriptors{resources.get(), 1'000'000, 2048}
 		{			
 			outputSurface->EnableVerticalSync();	
-			
+
 
 			VolumeTileGridData gridData;
 			gridData.screenDimensions.x = outputSurface->GetWidth();
@@ -268,7 +284,7 @@ namespace Renderer
 		{			
 			return registry.Register
 			(
-				resourceFactory->MakeBufferWithData(data, sizeInBytes, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER | D3D12_RESOURCE_STATE_INDEX_BUFFER)				
+				bufferFactory->MakeBufferWithData(data, sizeInBytes, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER | D3D12_RESOURCE_STATE_INDEX_BUFFER)				
 			);
 			
 		}
@@ -277,7 +293,7 @@ namespace Renderer
 			{
 				auto allocation
 				{
-					resourceFactory->MakeBufferWithData(data, sizeInBytes, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER | D3D12_RESOURCE_STATE_INDEX_BUFFER)
+					bufferFactory->MakeBufferWithData(data, sizeInBytes, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER | D3D12_RESOURCE_STATE_INDEX_BUFFER)
 				};
 
 			
@@ -306,7 +322,7 @@ namespace Renderer
 		{						
 			return registry.Register
 			(					
-				resourceFactory->MakeBufferWithData(data, sizeInBytes, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS)						
+				bufferFactory->MakeBufferWithData(data, sizeInBytes, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS)						
 			);				
 			
 		}
