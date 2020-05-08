@@ -5,7 +5,12 @@
 namespace Renderer
 {
 	namespace DX12
-	{		
+	{
+		ResourceRegistry::ResourceRegistry(const bool neverPurgePsoAndSignature) :
+			shouldPurgePsoAndSignature{ !neverPurgePsoAndSignature }
+		{
+		}
+
 		bool ResourceRegistry::IsHandleUnknown(const ResourceHandle::t_hash handle) const
 		{
 			const auto handleType{  ResourceHandle::GetResourceType(handle) };
@@ -155,8 +160,11 @@ namespace Renderer
 		void ResourceRegistry::PurgeUnreferencedEntities()
 		{
 			registryResource.PurgeUnreferencedEntities();
-			registryPso.PurgeUnreferencedEntities();
-			registrySignature.PurgeUnreferencedEntities();
+			if(shouldPurgePsoAndSignature)
+			{
+				registryPso.PurgeUnreferencedEntities();
+				registrySignature.PurgeUnreferencedEntities();				
+			}
 						
 			handlesToRetire.remove_if([ &rorch = *this](const size_t &handle)
 			{

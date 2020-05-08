@@ -26,8 +26,11 @@ namespace Renderer
 			private: HandleFactory handleProvider;
 
 			private: std::forward_list<ResourceHandle::t_hash> handlesToRetire;
-			
 
+			private: bool shouldPurgePsoAndSignature;
+
+			
+			public: explicit ResourceRegistry(bool neverPurgePsoAndSignature = true);
 
 			public: bool IsHandleUnknown(ResourceHandle::t_hash handle)	const;
 
