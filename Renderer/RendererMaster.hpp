@@ -2,7 +2,8 @@
 #include "Shared/Types/Containers/QueueConcurrent.hpp"
 #include <future>
 #include "FrameWorker.hpp"
-
+#include <condition_variable>
+#include <mutex>
 
 namespace Renderer
 {
@@ -20,11 +21,15 @@ namespace Renderer
 
 			private: std::future<int> activeFrameHandle;
 
-			private: unsigned char maxScheduledFrames;
+			private: bool becameIdle;
 
+			private: std::condition_variable idleConditionVariable;
+
+			private: std::mutex idleMutex;
+
+					
 			
-			
-			public: RendererMaster(QueueConcurrent<FrameWorker> &outputQueue, unsigned char maxScheduledFrames);
+			public: RendererMaster(QueueConcurrent<FrameWorker> &outputQueue);
 
 				private: int Update();
 
@@ -49,7 +54,9 @@ namespace Renderer
 
 			public: void ScheduleFrameWorker(FrameWorker &&frame);
 			
-			public: bool HasNoCapacityForFrames() const;
+			public: size_t GetScheduledWorkerCount() const;
+
+			public: void WaitForIdle();
 
 			
 			

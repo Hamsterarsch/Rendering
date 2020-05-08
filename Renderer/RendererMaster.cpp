@@ -5,10 +5,10 @@ namespace Renderer
 {
 	namespace DX12
 	{
-		RendererMaster::RendererMaster(QueueConcurrent<FrameWorker> &outputQueue, unsigned char maxScheduledFrames) :
+		RendererMaster::RendererMaster(QueueConcurrent<FrameWorker> &outputQueue) :
 			outputQueue{ &outputQueue },
 			shouldUpdateRendering{ true },
-			maxScheduledFrames{ maxScheduledFrames }
+			becameIdle{ false }
 		{
 			updaterHandle = std::async(std::launch::async, &RendererMaster::Update, this);
 			
@@ -38,7 +38,19 @@ namespace Renderer
 			}
 
 				void RendererMaster::Idle()
-				{					
+				{
+					{
+						std::lock_guard<std::mutex> lock{ idleMutex };
+						becameIdle = true;
+					}	
+								
+					idleConditionVariable.notify_all();
+
+					{
+						std::lock_guard<std::mutex> lock{ idleMutex };
+						becameIdle = false;
+					}	
+			
 				}
 
 				void RendererMaster::ExecuteNextFrame()
@@ -52,6 +64,7 @@ namespace Renderer
 					}
 
 					frame.WaitForCompletion();
+					frame.ExecuteCommandPostGpuWork();
 					outputQueue->Push(std::move(frame));
 								
 				}
@@ -94,21 +107,25 @@ namespace Renderer
 
 		void RendererMaster::ScheduleFrameWorker(FrameWorker &&frame)
 		{
-			if(this->HasNoCapacityForFrames())
-			{
-				return;
-			}
-			
 			inputQueue.Push(std::move(frame));
 			
 		}
+
+
 		
-			bool RendererMaster::HasNoCapacityForFrames() const
-			{
-				return inputQueue.Size() >= maxScheduledFrames;
-				
-			}
+		size_t RendererMaster::GetScheduledWorkerCount() const
+		{
+			return inputQueue.Size();
 			
+		}
+
+		void RendererMaster::WaitForIdle()
+		{
+			std::unique_lock<std::mutex> lock{ idleMutex };
+			idleConditionVariable.wait(lock, [&freshlyIdle = becameIdle](){ return freshlyIdle; });			
+			
+		}
+
 		
 	}
 	

@@ -1,3 +1,10 @@
+cbuffer globals : register(b0)
+{
+	float4x4 view;
+	float4x4 projection;
+	float time;
+};
+
 struct BoundingBox
 {
 	float3 center;
@@ -16,7 +23,7 @@ struct VolumeTileGridData
 	
 	
 };
-VolumeTileGridData gridData : register(b0);
+VolumeTileGridData gridData : register(b1);
 
 float3 FindIntersectionWithZPlane(float planeZ, float3 linevec)
 {

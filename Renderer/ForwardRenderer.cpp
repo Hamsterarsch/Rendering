@@ -22,6 +22,7 @@
 #include <fstream>
 
 #include "Interface/Resources/SerializationContainer.hpp"
+#include "Commands/CommandInitVolumeTileGrid.hpp"
 
 
 #if _DEBUG
@@ -85,50 +86,14 @@ namespace Renderer
 			globalsToDispatch.projection = Math::Matrix::MakeProjection(fov, gridData.screenDimensions.x, gridData.screenDimensions.y, gridData.nearDistance, gridData.farDistance);
 			gridData.inverseProjection = globalsToDispatch.projection.Inverse();
 
-
-			//init volume tiles
 			{
+				
 				VolumeTileGrid gbb(Math::VectorUint2{128,128}, 90.f, gridData);
-							
-				auto gridWriteBufferHandle = HandleWrapper
-				{
-					this,
-					registry.Register
-					(					
-						resourceFactory->MakeBufferWithData(gbb.GetData(), gbb.SizeInBytes(), D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS)						
-					)
-				};				
-				auto constantsBuffer = ForwardRenderer::MakeBuffer(&gridData, sizeof gridData);
-				
-				
-				auto alloc = Facade::MakeCmdAllocator(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT);
-				auto list = alloc->AllocateList();
-				auto glist = list->AsGraphicsList();
 
-				
 				SerializeContainer s{};
 				SerializeRootSignature(0,0,1,0, &s);
 				auto rootHandle{ MakeRootSignature(s.GetData()) };
-				glist->SetComputeRootSignature(registry.GetSignature(rootHandle));
-				glist->SetComputeRootConstantBufferView(0, registry.GetResourceGpuAddress(constantsBuffer));
 
-				DescriptorMemory descriptorMemory{resources.get(), 1'000'000, 2048};
-				descriptorMemory.RecordListBinding(list.get());
-				auto descriptorAllocator{ descriptorMemory.GetDescriptorAllocator(1, 0) };
-								
-				descriptorAllocator.OpenNewTable();
-				descriptorAllocator.CreateUavBuffer
-				(
-					registry.GetResource(gridWriteBufferHandle), 
-					registry.GetSignatureUavOffset(rootHandle, 1),
-					0,
-					gbb.GetTileCount(),
-					gbb.GetTileStride()
-				);
-				const auto tableStart{ descriptorAllocator.GetCurrentTableStartForView() };								
-				glist->SetComputeRootDescriptorTable(2, tableStart);
-
-				
 				std::ifstream shaderFile{Filesystem::Conversions::MakeExeRelative(L"../Content/Shaders/ComputeVolumeTileGridBB.cs"), std::ios_base::in | std::ios_base::ate};
 				SerializeContainer cs{};
 				{					
@@ -144,45 +109,17 @@ namespace Renderer
 				}
 
 				Blob csBlob{cs.GetData(), cs.GetSize()};
-				auto compPso{ MakePso(csBlob, rootHandle) };				
-				glist->SetPipelineState(registry.GetPso(compPso));
-
+				auto compPso{ MakePso(csBlob, rootHandle) };			
 				
-				glist->Dispatch
-				(
-					std::ceil(gridData.outGridDimensions.x / 4.f),
-					std::ceil(gridData.outGridDimensions.y / 4.f),
-					std::ceil(gridData.outGridDimensions.z / 4.f)
-				);
+				commandsToDispatch.push_back( std::make_unique<CommandInitVolumeTileGrid>(rootHandle, compPso, *this, registry, descriptors, std::move(gbb), gridData) );
 
+				renderThread.ScheduleFrameWorker( MakeFrameWorkerFromCommands(false, false, false) );
+				renderThread.WaitForIdle();
+				auto worker{ framesToDestruct.Pop() };
+				static_cast<CommandInitVolumeTileGrid *>(worker.IndexCommand(0).get())->WriteTileData(gbb);
 				
-				auto *resource = registry.GetResource(gridWriteBufferHandle);
-				list->RecordBarrierTransition(resource, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_COPY_SOURCE);
-
-				auto readbackBuffer = resourceFactory->MakeCommittedBuffer(gbb.SizeInBytes(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_HEAP_TYPE_READBACK, D3D12_HEAP_FLAG_NONE);
-				list->RecordCopyResource(readbackBuffer.Get(), resource);
-
-				
-				auto r = glist->Close();
-				commonQueue->SubmitCommandList(list.get());
-
-				
-				auto f{ Facade::MakeFence(resources.get()) };
-				auto event = CreateEvent(nullptr, false, false, nullptr);
-				f->SetEventOnValue(1, event);
-				commonQueue->Signal(1, f.get());
-
-				WaitForSingleObject(event, INFINITE);
-
-				void *boundingBoxData;
-				auto res = readbackBuffer->Map(0, nullptr, &boundingBoxData);
-
-				memcpy(gbb.GetData(), boundingBoxData, gbb.SizeInBytes());
-
-				D3D12_RANGE range{0,0};
-				readbackBuffer->Unmap(0, &range);
-								
 			}
+			
 			
 		}
 			   
@@ -206,7 +143,7 @@ namespace Renderer
 		
 		bool ForwardRenderer::IsBusy() const
 		{
-			return renderThread.HasNoCapacityForFrames();
+			return renderThread.GetScheduledWorkerCount() >= maxScheduledFrames;
 			
 		}
 
@@ -214,7 +151,7 @@ namespace Renderer
 
 		void ForwardRenderer::DispatchFrame()
 		{			
-			if(renderThread.HasNoCapacityForFrames())
+			if(IsBusy())
 			{
 				AbortDispatch();
 				return;
