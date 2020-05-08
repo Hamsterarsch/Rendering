@@ -30,6 +30,7 @@ namespace Renderer
 {
 	namespace DX12
 	{
+		class DescriptorMemory;
 		using namespace RHA::DX12;
 		
 		//takes in commands and batches them for gpu submission. renders everything to non swap chain targets
@@ -38,6 +39,8 @@ namespace Renderer
 			private: DeviceResources *resources;
 
 			private: Queue *queue;
+
+			DescriptorMemory *descriptors;
 
 			private: UniquePtr<CmdAllocator> allocator;
 
@@ -71,6 +74,7 @@ namespace Renderer
 			(
 				DeviceResources *resources,
 				Queue *queue,
+				DescriptorMemory &descriptors,
 				ResourceRegistry &masterRegistry,
 				const RenderSurface &outputSurface,
 				HandleWrapper &&globalBuffer,
@@ -113,6 +117,10 @@ namespace Renderer
 			public: void WaitForCompletion();
 
 				private: void PresentIfAllowed();
+
+			public: UniquePtr<class RenderCommand> &IndexCommand(size_t index) { return commands.at(index); }
+
+			public: void ExecuteCommandPostGpuWork();
 
 													
 		};

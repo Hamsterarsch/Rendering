@@ -7,6 +7,7 @@
 #include "Resources/ResourceRegistry.hpp"
 #include "Commands/RenderCommand.hpp"
 #include "Shared/Exception/CreationFailedException.hpp"
+#include "Resources/Descriptor/DescriptorMemory.hpp"
 
 
 namespace Renderer
@@ -17,6 +18,7 @@ namespace Renderer
 		(
 			DeviceResources *resources, 
 			Queue *queue,
+			DescriptorMemory &descriptors,
 			ResourceRegistry &masterRegistry,
 			const RenderSurface &outputSurface,
 			HandleWrapper &&globalBufferHandle,
@@ -24,6 +26,7 @@ namespace Renderer
 		) :
 			resources{ resources },
 			queue{ queue },
+			descriptors{ &descriptors },
 			registryMaster{ &masterRegistry },
 			registryCopy{ masterRegistry },
 			outputSurface{ outputSurface },
@@ -45,6 +48,7 @@ namespace Renderer
 		FrameWorker::FrameWorker(FrameWorker &&other) noexcept :
 			resources{ std::move(other.resources) },
 			queue{ std::move(other.queue) },
+			descriptors{ std::move(other.descriptors) },
 			allocator{ std::move(other.allocator) },
 			list{ std::move(other.list) },
 			fence{ std::move(other.fence) },
@@ -54,7 +58,8 @@ namespace Renderer
 			registryCopy{ std::move(other.registryCopy) },
 			outputSurface{ std::move(other.outputSurface) },
 			commandsRecordedToList{ std::move(other.commandsRecordedToList) },
-			globalBufferHandle{ std::move(other.globalBufferHandle) }
+			globalBufferHandle{ std::move(other.globalBufferHandle) },
+			isAllowedToPresent{ std::move(other.isAllowedToPresent) }
 		{	
 			other.registryMaster = nullptr;			
 
@@ -65,7 +70,8 @@ namespace Renderer
 		FrameWorker &FrameWorker::operator=(FrameWorker &&rhs) noexcept
 		{
 			resources = std::move(rhs.resources);						
-			queue = std::move(rhs.queue);						
+			queue = std::move(rhs.queue);
+			descriptors = std::move(rhs.descriptors);
 			allocator = std::move(rhs.allocator);
 			list = std::move(rhs.list);
 			fence = std::move(rhs.fence);			
@@ -79,6 +85,7 @@ namespace Renderer
 			outputSurface = std::move(rhs.outputSurface);
 			commandsRecordedToList = std::move(rhs.commandsRecordedToList);
 			globalBufferHandle = std::move(rhs.globalBufferHandle);
+			isAllowedToPresent = std::move(rhs.isAllowedToPresent);
 			
 			return *this;
 			
@@ -135,7 +142,8 @@ namespace Renderer
 			{
 				list = allocator->AllocateList();
 
-				outputSurface.RecordSurfacePreparations(*list);									
+				outputSurface.RecordSurfacePreparations(*list);
+				descriptors->RecordListBinding(list.get());
 				RecordCommands();
 				outputSurface.RecordPresentPreparations(*list);
 								
@@ -157,11 +165,11 @@ namespace Renderer
 			void FrameWorker::RecordCommands()
 			{
 				commandsRecordedToList = 0;
-			
+							
 				for(auto &&cmd : commands)
-				{				
+				{
 					cmd->RecordFixedCommandState(list.get(), registryCopy, globalBufferHandle);
-					
+										
 					cmd->Record(list.get(), registryCopy);
 					++commandsRecordedToList;			
 									
@@ -193,6 +201,7 @@ namespace Renderer
 				{
 					list->StartRecording(allocator.get());						
 					outputSurface.RecordBindSurfaces(*list);
+					descriptors->RecordListBinding(list.get());
 					
 				}
 
@@ -209,12 +218,12 @@ namespace Renderer
 		void FrameWorker::WaitForCompletion()
 		{
 			WaitForSingleObject(event, INFINITE);
-
+			
 			auto c = allocator->Reset();//todo error handling
 			PresentIfAllowed();
 			
 		}
-
+			   
 			void FrameWorker::PresentIfAllowed()
 			{
 				if(isAllowedToPresent)
@@ -223,6 +232,16 @@ namespace Renderer
 				}
 			
 			}
+
+
+		void FrameWorker::ExecuteCommandPostGpuWork()
+		{
+			for(auto &&cmd : commands)
+			{
+				cmd->ExecutePostGpuWork();
+			}
+			
+		}
 
 		
 	}

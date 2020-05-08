@@ -225,7 +225,7 @@ namespace Renderer
 			lastDispatchTime = currentTime;
 			globalsToDispatch.time += dispatchDelta;
 					   			
-			renderThread.ScheduleFrameWorker( MakeFrameWorkerFromCommands() );
+			renderThread.ScheduleFrameWorker( MakeFrameWorkerFromCommands(true, true, true) );
 
 			for(; framesToDestruct.Size() > 0; )
 			{
@@ -243,18 +243,24 @@ namespace Renderer
 			
 			}
 
-			FrameWorker ForwardRenderer::MakeFrameWorkerFromCommands()
+			FrameWorker ForwardRenderer::MakeFrameWorkerFromCommands(bool shouldUseColorSurface, bool shouldUseDepthSurface, bool shouldPresentSurface)
 			{					
 				HandleWrapper globalBuffer{ this, MakeBuffer(&globalsToDispatch, sizeof globalsToDispatch) };
-									
-				FrameWorker renderer{ resources.get(), commonQueue.get(), registry, RenderSurface{ outputSurface.get(), depthSurface.get() }, std::move(globalBuffer) };			
+
+				const RenderSurface renderSurface
+				{
+					shouldUseColorSurface ? outputSurface.get() : nullptr,
+					shouldUseDepthSurface ? depthSurface.get() : nullptr
+				};
+			
+				FrameWorker worker{ resources.get(), commonQueue.get(), descriptors, registry, renderSurface, std::move(globalBuffer), shouldPresentSurface };			
 				for(auto &&cmd : commandsToDispatch)
 				{
-					renderer.AddCommand(std::move(cmd));
+					worker.AddCommand(std::move(cmd));
 				}
 				commandsToDispatch.clear();
 
-				return renderer;
+				return worker;
 			
 			}
 
