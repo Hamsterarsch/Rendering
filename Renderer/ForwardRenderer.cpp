@@ -311,6 +311,14 @@ namespace Renderer
 			
 		}
 
+
+		
+		DxPtr<ID3D12Resource> ForwardRenderer::MakeReadbackBuffer(const size_t sizeInBytes)
+		{			
+			return bufferFactory->MakeCommittedBuffer(sizeInBytes, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_HEAP_TYPE_READBACK, D3D12_HEAP_FLAG_NONE);
+			
+		}
+
 		
 
 		void ForwardRenderer::CompileVertexShader(const char *shader, size_t length, SerializationHook *serializer) const

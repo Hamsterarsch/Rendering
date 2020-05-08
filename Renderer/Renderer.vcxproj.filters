@@ -128,6 +128,9 @@
     <ClInclude Include="Resources\RenderSurface.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
+    <ClInclude Include="Resources\MaintainsInternalRenderResources.hpp">
+      <Filter>Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />

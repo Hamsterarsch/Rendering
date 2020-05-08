@@ -14,7 +14,7 @@ namespace Renderer
 	class SerializationHook;
 
 
-	class RENDERER_DLLSPEC Renderer : public MaintainsRenderResources
+	class RENDERER_DLLSPEC Renderer : public virtual MaintainsRenderResources
 	{
 		DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(Renderer)
 		

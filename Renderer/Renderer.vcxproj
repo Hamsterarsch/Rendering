@@ -190,6 +190,7 @@
     <ClInclude Include="Resources\DynamicHeapSet.hpp" />
     <ClInclude Include="Resources\GlobalBufferData.hpp" />
     <ClInclude Include="Resources\HandleFactory.hpp" />
+    <ClInclude Include="Resources\MaintainsInternalRenderResources.hpp" />
     <ClInclude Include="Resources\Pso\PsoFactory.hpp" />
     <ClInclude Include="Resources\Pso\VertexLayoutProvider.hpp" />
     <ClInclude Include="Resources\RenderSurface.hpp" />

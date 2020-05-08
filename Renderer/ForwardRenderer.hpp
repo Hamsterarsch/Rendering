@@ -10,6 +10,7 @@
 #include "RendererMaster.hpp"
 #include "Resources/ResourceRegistry.hpp"
 #include <forward_list>
+#include "Resources/MaintainsInternalRenderResources.hpp"
 
 /*
 namespace RHA
@@ -38,7 +39,7 @@ namespace Renderer
 		class ResourceFactory;
 		class FrameWorker;
 		
-		class ForwardRenderer final : public Renderer
+		class ForwardRenderer final : public Renderer, public MaintainsInternalRenderResources
 		{	
 			private: long long lastDispatchTime;
 
@@ -109,6 +110,8 @@ namespace Renderer
 			
 
 			public: virtual size_t MakeUavBuffer(const void *data, size_t sizeInBytes) override;
+
+			public: virtual DxPtr<ID3D12Resource> MakeReadbackBuffer(size_t sizeInBytes) override;
 
 			
 			public: virtual void CompileVertexShader(const char *shader, size_t length, SerializationHook *serializer) const override;
