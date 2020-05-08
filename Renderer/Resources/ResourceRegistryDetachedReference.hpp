@@ -1,36 +1,38 @@
 #pragma once
 #include <unordered_map>
-#include "Resources/ResourceRegistryReadOnly.hpp"
-#include "ResourceRegistryUsingReferences.hpp"
+#include "Resources/HasQueriableResources.hpp"
+#include "UsesReferences.hpp"
 
 
 namespace Renderer
 {
 	namespace DX12
 	{		
-		class ResourceRegistryDetachedReference : public ResourceRegistryReadOnly, public ResourceRegistryUsingReferences
+		class ResourceRegistryDetachedReference : public HasQueriableResources, public UsesReferences
 		{
 			private: union Bucket
 			{
 				ID3D12RootSignature *signature;
 				ID3D12PipelineState *pipeline;
-				D3D12_GPU_VIRTUAL_ADDRESS resourceGPUAddress;
+				ID3D12Resource *resource;
 			};
 
 			private: std::unordered_map<ResourceHandle::t_hash, Bucket> resources;
 
-			private: ResourceRegistryReadOnly *referencedRegistry;
+			private: HasQueriableResources *referencedRegistry;
 
 
 
-			public:	explicit ResourceRegistryDetachedReference(ResourceRegistryReadOnly &referencedRegistry);
+			public:	explicit ResourceRegistryDetachedReference(HasQueriableResources &referencedRegistry);
+
 			
+			public: virtual ID3D12Resource *GetResource(ResourceHandle::t_hash handle) override;
 
 			public: virtual ID3D12PipelineState *GetPso(ResourceHandle::t_hash handle) override;
 
 			public: virtual ID3D12RootSignature *GetSignature(ResourceHandle::t_hash handle) override;
 
-			public: virtual D3D12_GPU_VIRTUAL_ADDRESS GetResourceGPUVirtualAddress(ResourceHandle::t_hash handle) override;
+			public: virtual D3D12_GPU_VIRTUAL_ADDRESS GetResourceGpuAddress(ResourceHandle::t_hash handle) override;
 
 
 			public: virtual void AddReference(ResourceHandle::t_hash handle) override;
@@ -42,7 +44,7 @@ namespace Renderer
 
 			public: void AddSignature(ResourceHandle::t_hash handle, ID3D12RootSignature *signature);
 
-			public: void AddResourceGPUVirtualAddress(ResourceHandle::t_hash handle, D3D12_GPU_VIRTUAL_ADDRESS address);
+			public: void AddResource(ResourceHandle::t_hash handle, ID3D12Resource *resource);
 
 			public: void Empty();
 			

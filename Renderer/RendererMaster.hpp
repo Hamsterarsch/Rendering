@@ -1,8 +1,9 @@
 #pragma once
 #include "Shared/Types/Containers/QueueConcurrent.hpp"
 #include <future>
-#include "FrameRenderer.hpp"
-
+#include "FrameWorker.hpp"
+#include <condition_variable>
+#include <mutex>
 
 namespace Renderer
 {
@@ -10,9 +11,9 @@ namespace Renderer
 	{
 		class RendererMaster
 		{
-			private: QueueConcurrent<FrameRenderer> inputQueue;
+			private: QueueConcurrent<FrameWorker> inputQueue;
 
-			private: QueueConcurrent<FrameRenderer> *outputQueue;
+			private: QueueConcurrent<FrameWorker> *outputQueue;
 
 			private: std::future<int> updaterHandle;
 
@@ -20,11 +21,15 @@ namespace Renderer
 
 			private: std::future<int> activeFrameHandle;
 
-			private: unsigned char maxScheduledFrames;
+			private: bool becameIdle;
 
+			private: std::condition_variable idleConditionVariable;
+
+			private: std::mutex idleMutex;
+
+					
 			
-			
-			public: RendererMaster(QueueConcurrent<FrameRenderer> &outputQueue, unsigned char maxScheduledFrames);
+			public: RendererMaster(QueueConcurrent<FrameWorker> &outputQueue);
 
 				private: int Update();
 
@@ -47,9 +52,11 @@ namespace Renderer
 
 				private: bool UpdaterThreadHasFinished() const;
 
-			public: void ScheduleFrame(FrameRenderer &&frame);
+			public: void ScheduleFrameWorker(FrameWorker &&frame);
 			
-			public: bool HasNoCapacityForFrames() const;
+			public: size_t GetScheduledWorkerCount() const;
+
+			public: void WaitForIdle();
 
 			
 			

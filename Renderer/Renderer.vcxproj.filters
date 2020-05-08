@@ -29,10 +29,6 @@
     <ClInclude Include="Resources\SerialFactory.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Resources\ResourceRegistry.hpp">
-      <Filter>Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="FrameRenderer.hpp" />
     <ClInclude Include="Resources\ResourceFactoryDeallocatable.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
@@ -75,9 +71,6 @@
     <ClInclude Include="Resources\RootSignature\RootSignatureData.hpp">
       <Filter>Resources\RootSignature</Filter>
     </ClInclude>
-    <ClInclude Include="Interface\RenderCommand.hpp">
-      <Filter>Interface</Filter>
-    </ClInclude>
     <ClInclude Include="Resources\GlobalBufferData.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
@@ -88,13 +81,54 @@
       <Filter>Interface\Resources</Filter>
     </ClInclude>
     <ClInclude Include="RendererMaster.hpp" />
-    <ClInclude Include="Resources\ResourceRegistryReadOnly.hpp">
-      <Filter>Resources</Filter>
-    </ClInclude>
     <ClInclude Include="Resources\ResourceRegistryDetachedReference.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Resources\ResourceRegistryUsingReferences.hpp">
+    <ClInclude Include="Lighting\LightGrid\VolumeTileGrid.hpp">
+      <Filter>Lighting\LightGrid</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderRelevantTypes\VolumeTileGridData.hpp">
+      <Filter>ShaderRelevantTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="ForwardRenderer.hpp" />
+    <ClInclude Include="Interface\Resources\SerializationHook.hpp">
+      <Filter>Interface\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\Resources\SerializationContainer.hpp">
+      <Filter>Interface\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\UsesReferences.hpp">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\HasQueriableResources.hpp">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\Registry.hpp">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\ResourceRegistry.hpp">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\Resources\MaintainsRenderResources.hpp">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameWorker.hpp" />
+    <ClInclude Include="Commands\RenderCommand.hpp">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\RenderCommandCompute.hpp">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\RenderCommandGraphics.hpp">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\CommandInitVolumeTileGrid.hpp">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\RenderSurface.hpp">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\MaintainsInternalRenderResources.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
   </ItemGroup>
@@ -118,10 +152,6 @@
     <ClCompile Include="Resources\SerialFactory.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Resources\ResourceRegistry.cpp">
-      <Filter>Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="FrameRenderer.cpp" />
     <ClCompile Include="Resources\ResourceFactoryDeallocatable.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
@@ -162,6 +192,26 @@
     <ClCompile Include="Resources\ResourceRegistryDetachedReference.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
+    <ClCompile Include="Lighting\LightGrid\VolumeTileGrid.cpp">
+      <Filter>Lighting\LightGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="ForwardRenderer.cpp" />
+    <ClCompile Include="Resources\SerializationContainer.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\SerializationHook.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\Registry.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\ResourceRegistry.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameWorker.cpp" />
+    <ClCompile Include="Resources\RenderSurface.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">
@@ -187,6 +237,15 @@
     </Filter>
     <Filter Include="Commands">
       <UniqueIdentifier>{b526f4d7-e40e-4611-9c77-f5e6f623ac51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lighting">
+      <UniqueIdentifier>{b0a0db8e-7e66-4b16-bfda-3131e48028b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lighting\LightGrid">
+      <UniqueIdentifier>{ce76d3ed-a52c-438b-9da7-01cacaabf5f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ShaderRelevantTypes">
+      <UniqueIdentifier>{4a9d49ad-d017-48e6-b89a-1860419f8e9e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

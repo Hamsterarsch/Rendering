@@ -1,12 +1,12 @@
 #pragma once
-#include "RenderCommand.hpp"
+#include "Commands/RenderCommandGraphics.hpp"
 
 
 namespace Renderer
 {
 	namespace DX12
 	{
-		class RenderMeshCommand : public RenderCommand
+		class RenderMeshCommand : public RenderCommandGraphics
 		{			
 			private: size_t meshHandle;
 			
@@ -37,9 +37,9 @@ namespace Renderer
 			
 			public: RenderMeshCommand(size_t signatureHandle, size_t psoHandle, size_t meshHandle, size_t byteOffsetToIndexData, size_t indicesSizeInBytes, size_t transformBufferHandle, size_t instanceCount);
 						
-			public: virtual void ExecuteOperationOnResourceReferences(ResourceRegistryUsingReferences *registry, void(ResourceRegistryUsingReferences:: *operation)(size_t)) override;
+			public: virtual void ExecuteOperationOnResourceReferences(UsesReferences *registry, void(UsesReferences:: *operation)(size_t)) override;
 
-			public: virtual void Record(RHA::DX12::CmdList *list, ResourceRegistryReadOnly &registry) override;
+			public: virtual void Record(RHA::DX12::CmdList *list, HasQueriableResources &registry) override;
 						
 		};
 		

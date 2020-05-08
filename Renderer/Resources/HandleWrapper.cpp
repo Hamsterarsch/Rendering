@@ -1,5 +1,5 @@
 #include "Resources/HandleWrapper.hpp"
-#include "Renderer.hpp"
+#include "Resources/MaintainsRenderResources.hpp"
 
 
 
@@ -8,15 +8,15 @@ namespace Renderer
 	namespace DX12
 	{
 		HandleWrapper::HandleWrapper() :
-			origin{ nullptr },
+			retirementTarget{ nullptr },
 			handle{ 0 }
 		{
 		}
 
 
 		
-		HandleWrapper::HandleWrapper(Renderer *origin, const size_t handle) :
-			origin{ origin },
+		HandleWrapper::HandleWrapper(MaintainsRenderResources *origin, const size_t handle) :
+			retirementTarget{ origin },
 			handle{ handle }
 		{
 		}
@@ -24,7 +24,7 @@ namespace Renderer
 
 		
 		HandleWrapper::HandleWrapper(HandleWrapper &&other) noexcept :
-			origin{ other.origin },
+			retirementTarget{ other.retirementTarget },
 			handle{ other.handle }
 		{
 			other.Invalidate();
@@ -34,7 +34,7 @@ namespace Renderer
 			void HandleWrapper::Invalidate()
 			{
 				handle = 0;
-				origin = nullptr;
+				retirementTarget = nullptr;
 			
 			}
 
@@ -42,7 +42,7 @@ namespace Renderer
 		
 		HandleWrapper &HandleWrapper::operator=(HandleWrapper &&rhs) noexcept
 		{
-			origin = rhs.origin;			
+			retirementTarget = rhs.retirementTarget;			
 			handle = rhs.handle;
 
 			rhs.Invalidate();
@@ -62,7 +62,7 @@ namespace Renderer
 			{
 				if(IsValid())
 				{
-					origin->RetireHandle(handle);
+					retirementTarget->RetireHandle(handle);
 					Invalidate();
 				}
 			
@@ -70,7 +70,7 @@ namespace Renderer
 
 				bool HandleWrapper::IsValid() const
 				{
-					return origin != nullptr && handle > 0;
+					return retirementTarget != nullptr && handle > 0;
 			
 				}
 

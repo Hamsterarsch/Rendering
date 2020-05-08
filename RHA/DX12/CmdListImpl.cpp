@@ -74,6 +74,14 @@ namespace RHA
 
 
 		
+		void CmdListImpl::RecordSetComputeSignature(ID3D12RootSignature *signature)
+		{
+			glist->SetComputeRootSignature(signature);
+						
+		}
+
+		
+
 		void CmdListImpl::RecordCopyResource(ID3D12Resource *destination, ID3D12Resource *source)
 		{
 			glist->CopyResource(destination, source);
@@ -93,6 +101,20 @@ namespace RHA
 			
 		}
 
+
+		
+		void CmdListImpl::RecordDispatch
+		(
+			const unsigned groupCountX, 
+			const unsigned groupCountY, 
+			const unsigned groupCountZ
+		)		
+		{
+			glist->Dispatch(groupCountX, groupCountY, groupCountZ);
+			
+		}
+
+		
 
 		void CmdListImpl::RecordBarrierAliasing(ID3D12Resource *resourceBefore, ID3D12Resource *resourceAfter)
 		{
@@ -119,6 +141,35 @@ namespace RHA
 			
 		}
 
+		
+
+		void CmdListImpl::RecordSetGraphicsSignatureCbv(const unsigned parameterIndex, const D3D12_GPU_VIRTUAL_ADDRESS bufferAddress)
+		{
+			glist->SetGraphicsRootConstantBufferView(parameterIndex, bufferAddress);
+			
+		}
+
+
+		
+		void CmdListImpl::RecordSetComputeSignatureCbv(const unsigned parameterIndex, const D3D12_GPU_VIRTUAL_ADDRESS bufferAddress)
+		{
+			glist->SetComputeRootConstantBufferView(parameterIndex, bufferAddress);
+			
+		}
+
+
+		
+		void CmdListImpl::RecordSetComputeSignatureTable
+		(
+			const unsigned parameterIndex,
+			const D3D12_GPU_DESCRIPTOR_HANDLE startHandle
+		)
+		{
+			glist->SetComputeRootDescriptorTable(parameterIndex, startHandle);
+			
+		}
+
+		
 
 		void CmdListImpl::RecordSetRenderTargets
 		(
@@ -133,6 +184,14 @@ namespace RHA
 		}
 
 
+				
+		void CmdListImpl::RecordClearRtv(D3D12_CPU_DESCRIPTOR_HANDLE descriptor, const float(&color)[4])
+		{
+			glist->ClearRenderTargetView(descriptor, color, 0, nullptr);
+			
+		}
+
+		
 
 		void CmdListImpl::RecordClearDsv
 		(
@@ -160,8 +219,24 @@ namespace RHA
 			
 			}
 
+		
+
+		void CmdListImpl::RecordSetViewports(const D3D12_VIEWPORT *const viewports, const size_t numViewports)
+		{
+			glist->RSSetViewports(numViewports, viewports);
+			
+		}
 
 		
+
+		void CmdListImpl::RecordSetScissorRects(const D3D12_RECT *const rects, const size_t numRects)
+		{
+			glist->RSSetScissorRects(numRects, rects);
+			
+		}
+
+		
+
 		void CmdListImpl::StopRecording()
 		{
 			const auto result{ glist->Close() };			

@@ -144,29 +144,22 @@ namespace RHA
 
 		
 		
-		void WindowSurfaceImpl::RecordPipelineBindings(ID3D12GraphicsCommandList *list, const D3D12_CPU_DESCRIPTOR_HANDLE *depthDescriptor)
+		void WindowSurfaceImpl::RecordPipelineBindings(CmdList &list, const D3D12_CPU_DESCRIPTOR_HANDLE *depthDescriptor)
 		{
 			auto rtv{ viewHeap.GetHandleCpu(currentBackbufferIndex) };
-			list->OMSetRenderTargets(1, &rtv, false, depthDescriptor);
-			
-			list->RSSetViewports(1, &defaultViewport);
-			list->RSSetScissorRects(1, &defaultRect);
-			
+			list.RecordSetRenderTargets(1, &rtv, false, depthDescriptor);
+
+			list.RecordSetViewports(&defaultViewport, 1);
+			list.RecordSetScissorRects(&defaultRect, 1);
+						
 		}
 
 
 				
-		void WindowSurfaceImpl::RecordPreparationForRendering(ID3D12GraphicsCommandList *list)
+		void WindowSurfaceImpl::RecordPreparationForRendering(CmdList &list)
 		{
-			D3D12_RESOURCE_BARRIER toOutputTarget{};
-			toOutputTarget.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-			toOutputTarget.Transition.StateBefore = D3D12_RESOURCE_STATE_COMMON;
-			toOutputTarget.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-			toOutputTarget.Transition.pResource = GetBackbuffer();
-			list->ResourceBarrier(1, &toOutputTarget);
-
-			auto rtv{ viewHeap.GetHandleCpu(currentBackbufferIndex) };
-			list->ClearRenderTargetView(rtv, clearColor, 0, nullptr);
+			list.RecordBarrierTransition(GetBackbuffer(), D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_RENDER_TARGET);
+			list.RecordClearRtv(viewHeap.GetHandleCpu(currentBackbufferIndex), clearColor);
 			
 		}
 			
@@ -178,15 +171,9 @@ namespace RHA
 
 		
 		
-		void WindowSurfaceImpl::RecordPreparationForPresenting(ID3D12GraphicsCommandList *list)
-		{
-			D3D12_RESOURCE_BARRIER toPresentable{};
-			toPresentable.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-			toPresentable.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-			toPresentable.Transition.StateAfter = D3D12_RESOURCE_STATE_COMMON;
-			toPresentable.Transition.pResource = GetBackbuffer();
-
-			list->ResourceBarrier(1, &toPresentable);
+		void WindowSurfaceImpl::RecordPreparationForPresenting(CmdList &list)
+		{			
+			list.RecordBarrierTransition(GetBackbuffer(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COMMON);			
 			
 		}
 

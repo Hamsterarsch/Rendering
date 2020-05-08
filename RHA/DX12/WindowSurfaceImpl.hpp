@@ -63,13 +63,13 @@ namespace RHA
 																	   			
 			public: virtual void Present() override;
 
-			public: virtual void RecordPipelineBindings(ID3D12GraphicsCommandList *list, const D3D12_CPU_DESCRIPTOR_HANDLE *depthDescriptor) override;
+			public: virtual void RecordPipelineBindings(CmdList &list, const D3D12_CPU_DESCRIPTOR_HANDLE *depthDescriptor) override;
 
 				private: ID3D12Resource *GetBackbuffer();
 
-			public: virtual void RecordPreparationForRendering(ID3D12GraphicsCommandList *list) override;
+			public: virtual void RecordPreparationForRendering(CmdList &list) override;
 
-			public: virtual void RecordPreparationForPresenting(ID3D12GraphicsCommandList *list) override;
+			public: virtual void RecordPreparationForPresenting(CmdList &list) override;
 
 		};
 

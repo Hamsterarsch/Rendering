@@ -1,223 +1,221 @@
 #include "Resources/ResourceRegistry.hpp"
-#include "Shared/Exception/Exception.hpp"
+
 
 
 namespace Renderer
 {
 	namespace DX12
 	{
-		ID3D12PipelineState *ResourceRegistry::GetPso(const ResourceHandle::t_hash handle) 
+		ResourceRegistry::ResourceRegistry(const bool neverPurgePsoAndSignature) :
+			shouldPurgePsoAndSignature{ !neverPurgePsoAndSignature }
 		{
-			return pipelineStates.at(handle).Get();
-			
 		}
 
-
-		
-		ID3D12RootSignature *ResourceRegistry::GetSignature(ResourceHandle::t_hash handle) 
+		bool ResourceRegistry::IsHandleUnknown(const ResourceHandle::t_hash handle) const
 		{
-			return rootSignatures.at(handle).signature.Get();
-						
-		}
-
-
-		
-		D3D12_GPU_VIRTUAL_ADDRESS ResourceRegistry::GetResourceGPUVirtualAddress(const ResourceHandle::t_hash handle) 
-		{
-			const auto allocation{ resourceAllocations.find(handle) };
-
-			if(allocation == resourceAllocations.end())
+			const auto handleType{  ResourceHandle::GetResourceType(handle) };
+			if(handleType == ResourceHandle::t_resourceTypes::Pso)
 			{
-				throw Exception::Exception{ "A resource with this handle does not exist in this dx12 resource registry" };
+				return registryPso.IsHandleUnknown(handle);
 			}
+
+			if(handleType == ResourceHandle::t_resourceTypes::Signature)
+			{
+				return registrySignature.IsHandleUnknown(handle);
+			}
+
+			return registryResource.IsHandleUnknown(handle);
 			
-			return allocation->second.resource->GetGPUVirtualAddress();
+		}
+
+		
+
+		ResourceHandle::t_hash ResourceRegistry::Register(ResourceAllocation &&allocation)
+		{
+			const auto handle{ handleProvider.MakeHandle(allocation.GetType()) };
+			Register(handle, std::move(allocation));
+			return handle;
+			
+		}
+			   		
+			void ResourceRegistry::Register(const ResourceHandle::t_hash handle, ResourceAllocation &&allocation)
+			{
+				registryResource.Register(handle, std::move(allocation));
+				
+			}
+
+
+		
+		ResourceHandle::t_hash ResourceRegistry::Register(RootSignatureData &&signature)
+		{			
+			const auto handle{ handleProvider.MakeHandle(ResourceHandle::t_resourceTypes::Signature) };
+			Register(handle, std::move(signature));
+			return handle;
 			
 		}
 
 
 		
+		void ResourceRegistry::Register(const ResourceHandle::t_hash handle, RootSignatureData &&signature)
+		{
+			registrySignature.Register(handle, std::move(signature));
+			
+		}
+
+
+		
+		ResourceHandle::t_hash ResourceRegistry::Register(DxPtr<ID3D12PipelineState> &&pipeline)
+		{					
+			const auto handle{ handleProvider.MakeHandle(ResourceHandle::t_resourceTypes::Pso) };
+			Register(handle, std::move(pipeline));
+			return handle;
+			
+		}
+
+
+		
+		void ResourceRegistry::Register(const ResourceHandle::t_hash handle, DxPtr<ID3D12PipelineState> &&pipeline)
+		{
+			registryPso.Register(handle, std::move(pipeline));
+			
+		}
+
+		
+
 		ID3D12Resource *ResourceRegistry::GetResource(const ResourceHandle::t_hash handle)
 		{
-			return resourceAllocations.at(handle).resource.Get();
+			return registryResource.Get(handle);
 			
 		}
 
-		
 
-		void ResourceRegistry::RegisterPso
-		(
-			const ResourceHandle::t_hash handle,
-			const DxPtr<ID3D12PipelineState> &pipelineState
-		)
+		
+		D3D12_GPU_VIRTUAL_ADDRESS ResourceRegistry::GetResourceGpuAddress(const ResourceHandle::t_hash handle)
 		{
-			pipelineStates.insert( {handle, pipelineState} );
-			AddReference(handle);
+			return registryResource.Get(handle)->GetGPUVirtualAddress();
 			
 		}
 
-			void ResourceRegistry::AddReference(const ResourceHandle::t_hash handle)
-			{
-				auto &referenceCount{ resourceReferences[handle] };
-				if(referenceCount == 0)
-				{
-					unreferencedResources.erase(handle);
-				}
-				++referenceCount;
-				
-			}
-
-
 		
-		void ResourceRegistry::RegisterSignature(const ResourceHandle::t_hash handle, RootSignatureData &&signatureData)
+
+		ID3D12PipelineState *ResourceRegistry::GetPso(const ResourceHandle::t_hash handle)
 		{
-			rootSignatures.insert( {handle, std::move(signatureData)} );
-			AddReference(handle);
+			return registryPso.Get(handle);
 			
 		}
 
 
-		
-		void ResourceRegistry::RegisterResource(size_t handle, ResourceAllocation &&allocation)
+
+		ID3D12RootSignature *ResourceRegistry::GetSignature(const ResourceHandle::t_hash handle)
 		{
-			resourceAllocations.insert(  { handle, std::move(allocation) } );
-			unreferencedResources.emplace(handle);
-			
-		}
-		
-
-		
-		void ResourceRegistry::RemoveReference(const ResourceHandle::t_hash handle)
-		{
-			auto referenceData{ resourceReferences.find(handle) };
-			--referenceData->second;
-			
-			if(ThereAreNoReferencesIn(referenceData))
-			{
-				unreferencedResources.emplace(handle);
-				resourceReferences.erase(referenceData);
-			}
-			
-		}
-
-			bool ResourceRegistry::ThereAreNoReferencesIn(const decltype(resourceReferences)::const_iterator &referenceBucket)
-			{
-				return referenceBucket->second <= 0;
-			
-			}
-				
-
-
-		void ResourceRegistry::PurgeUnreferencedResources()
-		{
-			for(auto &&unreferencedHandle : unreferencedResources)
-			{				
-				RemoveEntity(unreferencedHandle);				
-			}
-
-			unreferencedResources.clear();
-			
-		}
-		
-			void ResourceRegistry::RemoveEntity(const ResourceHandle::t_hash hash)
-			{
-				const ResourceHandle handle{ hash };
-			
-				switch(handle.GetResourceType())
-				{
-				case ResourceTypes::Mesh: 
-				case ResourceTypes::Texture: 
-				case ResourceTypes::Buffer:
-					{
-					resourceAllocations.erase(handle.hash);
-					}
-					break;
-				case ResourceTypes::Pso:
-					{
-					pipelineStates.erase(handle.hash);
-					}
-					break;
-				case ResourceTypes::Signature:
-					{
-					rootSignatures.erase(handle.hash);
-					}
-					break;
-				default: throw Exception::Exception{ "No removal handling for this resource type in dx12 resource registry" };
-				}
-				
-			}
-
-
-		
-		bool ResourceRegistry::HandleIsInvalid(const ResourceHandle::t_hash handle)
-		{
-			if(handle == 0)
-			{
-				return true;
-			}
-			
-			auto foundReferenceData{ resourceReferences.find(handle) };
-						
-			if(foundReferenceData == resourceReferences.end())
-			{
-				auto foundUnreferenced{ unreferencedResources.count(handle) };
-				if(foundUnreferenced)
-				{
-					return false;
-				}				
-				return true;
-			}
-
-			if(ThereAreNoReferencesIn(foundReferenceData))
-			{
-				throw;
-			}
-									
-			return false;			
-			
-		}
-
-
-		
-		bool ResourceRegistry::IsHandleUnknown(const ResourceHandle::t_hash handle)
-		{
-			return !(resourceReferences.find(handle) != resourceReferences.end() || unreferencedResources.find(handle) != unreferencedResources.end());
+			return registrySignature.Get(handle).signature.Get();
 			
 		}
 
 
 
-		
-		size_t ResourceRegistry::GetSignatureCbvOffset(const ResourceHandle::t_hash handle, const size_t cbvOrdinal) const
+		size_t ResourceRegistry::GetSignatureCbvOffset(const ResourceHandle::t_hash handle, const size_t cbvOrdinal) 
 		{
 			return GetSignatureOffset(handle, cbvOrdinal, &TableLayout::GetCbvOffset);
 			
 		}
-
+			   
 			size_t ResourceRegistry::GetSignatureOffset
 			(
-				const ResourceHandle::t_hash handle,
+				const ResourceHandle::t_hash handle, 
 				const size_t ordinal,
-				size_t (TableLayout:: *const getter)(unsigned short) const
-			) const
+				size_t( TableLayout:: *const getter)(unsigned short) const
+			) 
 			{
-				return (rootSignatures.at(handle).layout.*getter)(ordinal);
+				return (registrySignature.Get(handle).layout.*getter)(ordinal);
 			
 			}
 
 
-		
-		size_t ResourceRegistry::GetSignatureSrvOffset(const ResourceHandle::t_hash handle, size_t srvOrdinal) const
+
+		size_t ResourceRegistry::GetSignatureSrvOffset(const ResourceHandle::t_hash handle, const size_t srvOrdinal) 
 		{
 			return GetSignatureOffset(handle, srvOrdinal, &TableLayout::GetSrvOffset);
 			
 		}
 
 
-		
-		size_t ResourceRegistry::GetSignatureUavOffset(const ResourceHandle::t_hash handle, const size_t uavOrdinal) const
+
+		size_t ResourceRegistry::GetSignatureUavOffset(const ResourceHandle::t_hash handle, const size_t uavOrdinal) 
 		{
 			return GetSignatureOffset(handle, uavOrdinal, &TableLayout::GetUavOffset);
+			
+		}
+
+
+		
+		void ResourceRegistry::RetireHandle(const ResourceHandle::t_hash handle)
+		{
+			handlesToRetire.push_front(handle);
+			
+		}
+
+
+		
+		void ResourceRegistry::PurgeUnreferencedEntities()
+		{
+			registryResource.PurgeUnreferencedEntities();
+			if(shouldPurgePsoAndSignature)
+			{
+				registryPso.PurgeUnreferencedEntities();
+				registrySignature.PurgeUnreferencedEntities();				
+			}
+						
+			handlesToRetire.remove_if([ &rorch = *this](const size_t &handle)
+			{
+				if(rorch.IsHandleUnknown(handle))
+				{
+					rorch.handleProvider.RetireHandle(ResourceHandle{ handle });
+					return true;					
+				}
+				return false;
+				
+			});			
+			
+		}
+
+
+		
+		void ResourceRegistry::AddReference(const ResourceHandle::t_hash handle)
+		{
+			ExecuteReferenceOperationOnCorrectRegistry(handle, &UsesReferences::AddReference);
+			
+		}
+
+			void ResourceRegistry::ExecuteReferenceOperationOnCorrectRegistry
+			(
+				const ResourceHandle::t_hash handle,
+				void (UsesReferences::* const operation)(ResourceHandle::t_hash)
+			)
+			{
+				const auto handleType{  ResourceHandle::GetResourceType(handle) };
+				if(handleType == ResourceHandle::t_resourceTypes::Pso)
+				{
+					(registryPso.*operation)(handle);
+					return;
+					
+				}
+
+				if(handleType == ResourceHandle::t_resourceTypes::Signature)
+				{
+					(registrySignature.*operation)(handle);
+					return;
+					
+				}
+
+				(registryResource.*operation)(handle);
+			
+			}
+
+
+		void ResourceRegistry::RemoveReference(const ResourceHandle::t_hash handle)
+		{
+			ExecuteReferenceOperationOnCorrectRegistry(handle, &UsesReferences::RemoveReference);
 			
 		}
 

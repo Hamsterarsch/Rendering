@@ -4,13 +4,14 @@
 
 namespace Renderer
 {
+	class MaintainsRenderResources;
+		
 	namespace DX12
 	{
-		class Renderer;
 		
 		class RENDERER_DLLSPEC HandleWrapper
 		{
-			private: Renderer *origin;
+			private: MaintainsRenderResources *retirementTarget;
 			
 			private: size_t handle;
 					 
@@ -18,7 +19,7 @@ namespace Renderer
 
 			public: HandleWrapper();
 			
-			public: HandleWrapper(Renderer *origin, size_t handle);
+			public: HandleWrapper(MaintainsRenderResources *retirementTarget, size_t handle);
 
 			public: HandleWrapper(const HandleWrapper &) = delete;
 

@@ -1,21 +1,19 @@
 #pragma once
 #include "DX12/HeapAllocation.hpp"
 #include "DxPtrTypes.hpp"
+#include "Resources/ResourceHandle.hpp"
 
 struct ID3D12Resource;
 
 namespace Renderer
-{
-	enum class ResourceTypes : unsigned char;
-	
+{	
 	namespace DX12
-	{
-		
+	{		
 		class ResourceAllocation
 		{
 			private: class ResourceFactory *owner;
 
-			private: ResourceTypes type;
+			private: ResourceHandle::t_resourceTypes type;
 			
 
 			public: DxPtr<ID3D12Resource> resource;
@@ -31,6 +29,8 @@ namespace Renderer
 			public: ResourceAllocation(ResourceAllocation &&other) noexcept;
 
 			public: ResourceAllocation &operator=(ResourceAllocation &&other) noexcept;
+
+			public: ResourceHandle::t_resourceTypes GetType() const { return type; }
 			
 								
 			ResourceAllocation(const ResourceAllocation &other) = delete;

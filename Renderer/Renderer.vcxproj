@@ -94,12 +94,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>RENDERER_DLLCOMPILE;WIN32;_DEBUG;RENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)Math\Interface;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>RHA.lib;d3d12.lib;Shared.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>RHA.lib;d3d12.lib;Shared.lib;Math.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -110,12 +111,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>RENDERER_DLLCOMPILE;_DEBUG;RENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)Math\Interface;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>RHA.lib;d3d12.lib;Shared.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>RHA.lib;d3d12.lib;Shared.lib;Math.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -128,6 +130,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>RENDERER_DLLCOMPILE;WIN32;NDEBUG;RENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)Math\Interface;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -135,7 +138,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>RHA.lib;d3d12.lib;Shared.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>RHA.lib;d3d12.lib;Shared.lib;Math.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -148,6 +151,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>RENDERER_DLLCOMPILE;NDEBUG;RENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)Math\Interface;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -155,21 +159,29 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>RHA.lib;d3d12.lib;Shared.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>RHA.lib;d3d12.lib;Shared.lib;Math.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Commands\CommandInitVolumeTileGrid.hpp" />
+    <ClInclude Include="Commands\RenderCommand.hpp" />
+    <ClInclude Include="Commands\RenderCommandCompute.hpp" />
+    <ClInclude Include="Commands\RenderCommandGraphics.hpp" />
     <ClInclude Include="Commands\RenderMeshCommand.hpp" />
-    <ClInclude Include="FrameRenderer.hpp" />
-    <ClInclude Include="Interface\RenderCommand.hpp" />
+    <ClInclude Include="ForwardRenderer.hpp" />
+    <ClInclude Include="FrameWorker.hpp" />
     <ClInclude Include="Interface\Renderer.hpp" />
     <ClInclude Include="Interface\RendererExportHelper.hpp" />
     <ClInclude Include="Interface\Resources\HandleWrapper.hpp" />
     <ClInclude Include="Interface\Resources\Pso\PipelineTypes.hpp" />
     <ClInclude Include="Interface\Resources\Pso\ShaderList.hpp" />
     <ClInclude Include="Interface\Resources\Pso\VertexLayoutTypes.hpp" />
+    <ClInclude Include="Interface\Resources\MaintainsRenderResources.hpp" />
     <ClInclude Include="Interface\Resources\ResourceHandle.hpp" />
     <ClInclude Include="Interface\Resources\ResourceTypes.hpp" />
+    <ClInclude Include="Interface\Resources\SerializationContainer.hpp" />
+    <ClInclude Include="Interface\Resources\SerializationHook.hpp" />
+    <ClInclude Include="Lighting\LightGrid\VolumeTileGrid.hpp" />
     <ClInclude Include="RendererMaster.hpp" />
     <ClInclude Include="Resources\Descriptor\DescriptorAllocator.hpp" />
     <ClInclude Include="Resources\Descriptor\DescriptorChunk.hpp" />
@@ -178,27 +190,33 @@
     <ClInclude Include="Resources\DynamicHeapSet.hpp" />
     <ClInclude Include="Resources\GlobalBufferData.hpp" />
     <ClInclude Include="Resources\HandleFactory.hpp" />
+    <ClInclude Include="Resources\MaintainsInternalRenderResources.hpp" />
     <ClInclude Include="Resources\Pso\PsoFactory.hpp" />
     <ClInclude Include="Resources\Pso\VertexLayoutProvider.hpp" />
+    <ClInclude Include="Resources\RenderSurface.hpp" />
     <ClInclude Include="Resources\ResourceAllocation.hpp" />
     <ClInclude Include="Resources\ResourceFactory.hpp" />
     <ClInclude Include="Resources\ResourceFactoryDeallocatable.hpp" />
     <ClInclude Include="Resources\ResourceMemory.hpp" />
     <ClInclude Include="Resources\ResourceRegistry.hpp" />
+    <ClInclude Include="Resources\Registry.hpp" />
     <ClInclude Include="Resources\ResourceRegistryDetachedReference.hpp" />
-    <ClInclude Include="Resources\ResourceRegistryReadOnly.hpp" />
-    <ClInclude Include="Resources\ResourceRegistryUsingReferences.hpp" />
+    <ClInclude Include="Resources\HasQueriableResources.hpp" />
+    <ClInclude Include="Resources\UsesReferences.hpp" />
     <ClInclude Include="Resources\RootSignature\RootSignatureData.hpp" />
     <ClInclude Include="Resources\RootSignature\RootSignatureFactory.hpp" />
     <ClInclude Include="Resources\RootSignature\TableLayout.hpp" />
     <ClInclude Include="Resources\SerialFactory.hpp" />
+    <ClInclude Include="ShaderRelevantTypes\VolumeTileGridData.hpp" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Commands\RenderMeshCommand.cpp" />
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="FrameRenderer.cpp" />
+    <ClCompile Include="ForwardRenderer.cpp" />
+    <ClCompile Include="FrameWorker.cpp" />
     <ClCompile Include="Interface\Renderer.cpp" />
+    <ClCompile Include="Lighting\LightGrid\VolumeTileGrid.cpp" />
     <ClCompile Include="RendererMaster.cpp" />
     <ClCompile Include="Resources\Descriptor\DescriptorAllocator.cpp" />
     <ClCompile Include="Resources\Descriptor\DescriptorChunkRegistry.cpp" />
@@ -208,18 +226,25 @@
     <ClCompile Include="Resources\HandleWrapper.cpp" />
     <ClCompile Include="Resources\Pso\PsoFactory.cpp" />
     <ClCompile Include="Resources\Pso\VertexLayoutProvider.cpp" />
+    <ClCompile Include="Resources\RenderSurface.cpp" />
     <ClCompile Include="Resources\ResourceAllocation.cpp" />
     <ClCompile Include="Resources\ResourceFactory.cpp" />
     <ClCompile Include="Resources\ResourceFactoryDeallocatable.cpp" />
     <ClCompile Include="Resources\ResourceHandle.cpp" />
     <ClCompile Include="Resources\ResourceMemory.cpp" />
     <ClCompile Include="Resources\ResourceRegistry.cpp" />
+    <ClCompile Include="Resources\Registry.cpp" />
     <ClCompile Include="Resources\ResourceRegistryDetachedReference.cpp" />
     <ClCompile Include="Resources\RootSignature\RootSignatureFactory.cpp" />
     <ClCompile Include="Resources\RootSignature\TableLayout.cpp" />
     <ClCompile Include="Resources\SerialFactory.cpp" />
+    <ClCompile Include="Resources\SerializationContainer.cpp" />
+    <ClCompile Include="Resources\SerializationHook.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Math\Math.vcxproj">
+      <Project>{e536bb69-e6c1-4054-b952-b77c05ac37c5}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\RHA\RHA.vcxproj">
       <Project>{97a0d12f-7f29-4965-a2b9-6a056d0ed565}</Project>
     </ProjectReference>

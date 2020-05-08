@@ -20,7 +20,7 @@ namespace Renderer
 			const size_t transformBufferHandle, 
 			const size_t instanceCount
 			) :
-			RenderCommand{ signatureHandle, psoHandle },
+			RenderCommandGraphics{ signatureHandle, psoHandle },
 			meshHandle{ meshHandle },
 			byteOffsetToIndexData{ byteOffsetToIndexData },
 			indicesSizeInBytes{ indicesSizeInBytes },
@@ -31,8 +31,8 @@ namespace Renderer
 
 		void RenderMeshCommand::ExecuteOperationOnResourceReferences
 		(
-			ResourceRegistryUsingReferences *registry,
-			void(ResourceRegistryUsingReferences:: *operation)(size_t)
+			UsesReferences *registry,
+			void(UsesReferences:: *operation)(size_t)
 		)
 		{			
 			(registry->*operation)(meshHandle);
@@ -47,10 +47,10 @@ namespace Renderer
 		void RenderMeshCommand::Record
 		(
 			RHA::DX12::CmdList *list, 
-			ResourceRegistryReadOnly &registry
+			HasQueriableResources &registry
 		)
 		{	
-			views.vertexView.BufferLocation = registry.GetResourceGPUVirtualAddress(meshHandle);
+			views.vertexView.BufferLocation = registry.GetResourceGpuAddress(meshHandle);
 			views.vertexView.SizeInBytes = byteOffsetToIndexData;
 			views.vertexView.StrideInBytes = vertexStride;
 
@@ -67,7 +67,7 @@ namespace Renderer
 
 			if(transformBufferHandle > 0)
 			{
-				g->SetGraphicsRootConstantBufferView(1, registry.GetResourceGPUVirtualAddress(transformBufferHandle));				
+				g->SetGraphicsRootConstantBufferView(1, registry.GetResourceGpuAddress(transformBufferHandle));				
 			}
 			
 			g->DrawIndexedInstanced(indicesSizeInBytes / sizeof(unsigned), instanceCount, 0, 0, 0);
