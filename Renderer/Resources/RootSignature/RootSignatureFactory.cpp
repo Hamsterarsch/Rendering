@@ -28,18 +28,18 @@ namespace Renderer
 
 			std::vector<D3D12_ROOT_PARAMETER1> parameters{};
 
-			D3D12_ROOT_PARAMETER1 generalDataParameter{};
-			generalDataParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-			generalDataParameter.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
-			generalDataParameter.Descriptor.Flags = D3D12_ROOT_DESCRIPTOR_FLAG_DATA_STATIC_WHILE_SET_AT_EXECUTE;			
-			parameters.emplace_back(generalDataParameter);
+			D3D12_ROOT_PARAMETER1 parameterForGlobalConstantData{};
+			parameterForGlobalConstantData.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+			parameterForGlobalConstantData.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+			parameterForGlobalConstantData.Descriptor.Flags = D3D12_ROOT_DESCRIPTOR_FLAG_DATA_STATIC_WHILE_SET_AT_EXECUTE;			
+			parameters.emplace_back(parameterForGlobalConstantData);
 
-			D3D12_ROOT_PARAMETER1 extraDataParameter{};
-			extraDataParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-			extraDataParameter.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
-			extraDataParameter.Descriptor.Flags = D3D12_ROOT_DESCRIPTOR_FLAG_DATA_STATIC_WHILE_SET_AT_EXECUTE;
-			extraDataParameter.Descriptor.ShaderRegister = 1;
-			parameters.emplace_back(extraDataParameter);
+			D3D12_ROOT_PARAMETER1 parameterForOptionalConstantData{};
+			parameterForOptionalConstantData.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+			parameterForOptionalConstantData.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+			parameterForOptionalConstantData.Descriptor.Flags = D3D12_ROOT_DESCRIPTOR_FLAG_DATA_STATIC_WHILE_SET_AT_EXECUTE;
+			parameterForOptionalConstantData.Descriptor.ShaderRegister = 1;
+			parameters.emplace_back(parameterForOptionalConstantData);
 			
 			std::vector<D3D12_DESCRIPTOR_RANGE1> ranges{};
 			offsetInDescriptorTable = 0;
