@@ -1,6 +1,7 @@
 #include "DX12/ShaderFactoryImpl.hpp"
 #include <d3dcompiler.h>
 #include "Shared/Exception/CreationFailedException.hpp"
+#include "IncludeHandler.hpp"
 
 
 namespace RHA
@@ -42,24 +43,32 @@ namespace RHA
 
 
 		
-		DxPtr<ID3DBlob> ShaderFactoryImpl::MakeVertexShader(const wchar_t *filepath, const char *entrypoint) const
+		void ShaderFactoryImpl::AddIncludeDirectory(const char *directory)
+		{
+			includeHandler.AddIncludeDirectory(directory);
+			
+		}
+
+		
+
+		DxPtr<ID3DBlob> ShaderFactoryImpl::MakeVertexShader(const wchar_t *filepath, const char *entrypoint) 
 		{			
 			return DoCompileFromFile(filepath, entrypoint, "vs");
 			
 		}
 
-			DxPtr<ID3DBlob> ShaderFactoryImpl::DoCompileFromFile(const wchar_t *filepath, const char *entrypoint, const char *shaderTypePrefix) const
+			DxPtr<ID3DBlob> ShaderFactoryImpl::DoCompileFromFile(const wchar_t *filepath, const char *entrypoint, const char *shaderTypePrefix) 
 			{
-				static constexpr auto NO_DEFINES{ nullptr }, NO_INCLUDES{ nullptr };
+				static constexpr auto NO_DEFINES{ nullptr };
 				DxPtr<ID3DBlob> shaderBlob{ nullptr }, errorBlob{ nullptr };
-			
+								
 				const auto result
 				{
 					D3DCompileFromFile
 					(
 						filepath,
 						NO_DEFINES,
-						NO_INCLUDES,
+						&includeHandler,
 						entrypoint,
 						(shaderTypePrefix + shaderModelSpec).data(),
 						MakeCompileFlags(),
@@ -103,7 +112,7 @@ namespace RHA
 
 
 		
-		DxPtr<ID3DBlob> ShaderFactoryImpl::MakeVertexShader(const char *shader, size_t shaderLength, const char *entrypoint) const
+		DxPtr<ID3DBlob> ShaderFactoryImpl::MakeVertexShader(const char *shader, size_t shaderLength, const char *entrypoint)
 		{
 			return DoCompile(shader, shaderLength, entrypoint, "vs");
 			
@@ -115,12 +124,11 @@ namespace RHA
 				size_t shaderLength, 
 				const char *entrypoint,
 				const char *shaderTypePrefix
-			)
-			const
+			)			
 			{
-				static constexpr auto UNNAMED{ nullptr }, NO_DEFINES{ nullptr }, NO_INCLUDES{ nullptr };
+				static constexpr auto UNNAMED{ nullptr }, NO_DEFINES{ nullptr };
 				DxPtr<ID3DBlob> shaderBlob{ nullptr }, errorBlob{ nullptr };
-
+							
 				const auto result
 				{
 					D3DCompile
@@ -129,7 +137,7 @@ namespace RHA
 						shaderLength,
 						UNNAMED,
 						NO_DEFINES,
-						NO_INCLUDES,
+						&includeHandler,
 						entrypoint,
 						(shaderTypePrefix + shaderModelSpec).data(),
 						MakeCompileFlags(),
@@ -162,7 +170,7 @@ namespace RHA
 
 
 		
-		DxPtr<ID3DBlob> ShaderFactoryImpl::MakePixelShader(const wchar_t *filepath, const char *entrypoint) const
+		DxPtr<ID3DBlob> ShaderFactoryImpl::MakePixelShader(const wchar_t *filepath, const char *entrypoint) 
 		{			
 			return DoCompileFromFile(filepath, entrypoint, "ps");
 						
@@ -175,8 +183,7 @@ namespace RHA
 			const char *shader, 
 			const size_t shaderLength,
 			const char *entrypoint
-		)
-		const
+		)		
 		{
 			return DoCompile(shader, shaderLength, entrypoint, "ps");
 			
@@ -189,7 +196,7 @@ namespace RHA
 			const char *shader,
 			const size_t shaderLength,
 			const char *entrypoint
-		) const
+		) 
 		{
 			return DoCompile(shader, shaderLength, entrypoint, "cs");
 			

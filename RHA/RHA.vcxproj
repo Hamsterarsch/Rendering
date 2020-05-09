@@ -160,6 +160,7 @@
     <ClInclude Include="DX12\DepthSurfaceImpl.hpp" />
     <ClInclude Include="DX12\FenceImpl.hpp" />
     <ClInclude Include="DX12\HeapImpl.hpp" />
+    <ClInclude Include="DX12\IncludeHandler.hpp" />
     <ClInclude Include="DX12\QueueImpl.hpp" />
     <ClInclude Include="DX12\DescriptorHeapImpl.hpp" />
     <ClInclude Include="DX12\DeviceResourcesImpl.hpp" />
@@ -196,6 +197,7 @@
     <ClCompile Include="DX12\DeviceResourcesImpl.cpp" />
     <ClCompile Include="DX12\FenceImpl.cpp" />
     <ClCompile Include="DX12\HeapImpl.cpp" />
+    <ClCompile Include="DX12\IncludeHandler.cpp" />
     <ClCompile Include="DX12\QueueImpl.cpp" />
     <ClCompile Include="DX12\ShaderFactoryImpl.cpp" />
     <ClCompile Include="DX12\UploadHeapImpl.cpp" />

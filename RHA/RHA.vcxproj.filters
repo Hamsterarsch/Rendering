@@ -38,6 +38,9 @@
     <ClCompile Include="DX12\DepthSurfaceImpl.cpp">
       <Filter>DX12</Filter>
     </ClCompile>
+    <ClCompile Include="DX12\IncludeHandler.cpp">
+      <Filter>DX12</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h" />
@@ -130,6 +133,9 @@
     </ClInclude>
     <ClInclude Include="Interface\Utility\Alignment.hpp">
       <Filter>Interface\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\IncludeHandler.hpp">
+      <Filter>DX12</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
