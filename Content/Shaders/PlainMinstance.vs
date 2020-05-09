@@ -1,9 +1,4 @@
-cbuffer globals : register(b0)
-{
-	float4x4 view;
-	float4x4 projection;
-	float time;
-};
+#include "Types/GlobalBufferData.hlsl"
 
 cbuffer instance : register(b1)
 {
