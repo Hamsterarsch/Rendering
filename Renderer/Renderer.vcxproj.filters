@@ -71,9 +71,6 @@
     <ClInclude Include="Resources\RootSignature\RootSignatureData.hpp">
       <Filter>Resources\RootSignature</Filter>
     </ClInclude>
-    <ClInclude Include="Resources\GlobalBufferData.hpp">
-      <Filter>Resources</Filter>
-    </ClInclude>
     <ClInclude Include="Commands\RenderMeshCommand.hpp">
       <Filter>Commands</Filter>
     </ClInclude>
@@ -130,6 +127,9 @@
     </ClInclude>
     <ClInclude Include="Resources\MaintainsInternalRenderResources.hpp">
       <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderRelevantTypes\GlobalBufferData.hpp">
+      <Filter>ShaderRelevantTypes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

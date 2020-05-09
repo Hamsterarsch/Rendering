@@ -4,7 +4,6 @@
 #include "Resources/Pso/PsoFactory.hpp"
 #include "Resources/RootSignature/RootSignatureFactory.hpp"
 #include "Resources/Pso/VertexLayoutProvider.hpp"
-#include "Resources/GlobalBufferData.hpp"
 #include "Shared/Types/Containers/QueueConcurrent.hpp"
 #include "DX12/ShaderFactory.hpp"
 #include "RendererMaster.hpp"
@@ -12,6 +11,7 @@
 #include <forward_list>
 #include "Resources/MaintainsInternalRenderResources.hpp"
 #include "Resources/Descriptor/DescriptorMemory.hpp"
+#include "ShaderRelevantTypes/GlobalBufferData.hpp"
 
 /*
 namespace RHA

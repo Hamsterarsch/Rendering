@@ -188,7 +188,6 @@
     <ClInclude Include="Resources\Descriptor\DescriptorChunkRegistry.hpp" />
     <ClInclude Include="Resources\Descriptor\DescriptorMemory.hpp" />
     <ClInclude Include="Resources\DynamicHeapSet.hpp" />
-    <ClInclude Include="Resources\GlobalBufferData.hpp" />
     <ClInclude Include="Resources\HandleFactory.hpp" />
     <ClInclude Include="Resources\MaintainsInternalRenderResources.hpp" />
     <ClInclude Include="Resources\Pso\PsoFactory.hpp" />
@@ -207,6 +206,7 @@
     <ClInclude Include="Resources\RootSignature\RootSignatureFactory.hpp" />
     <ClInclude Include="Resources\RootSignature\TableLayout.hpp" />
     <ClInclude Include="Resources\SerialFactory.hpp" />
+    <ClInclude Include="ShaderRelevantTypes\GlobalBufferData.hpp" />
     <ClInclude Include="ShaderRelevantTypes\VolumeTileGridData.hpp" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
