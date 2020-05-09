@@ -1,9 +1,6 @@
-cbuffer globals : register(b0)
-{
-	float4x4 view;
-	float4x4 projection;
-	float time;
-};
+#include "Types/GlobalBufferData.hlsl"
+#include "Types/VolumeTileGridData.hlsl"
+
 
 struct BoundingBox
 {
@@ -12,17 +9,6 @@ struct BoundingBox
 };
 RWStructuredBuffer<BoundingBox> outBox : register(u0);
 
-struct VolumeTileGridData
-{
-	float4x4 inverseProjection;	
-	uint3 gridDimensions;
-	float fovTermForDepthCompute;
-	uint2 screenDimensions;
-	float nearDistance;
-	float farDistance;
-	
-	
-};
 VolumeTileGridData gridData : register(b1);
 
 float3 FindIntersectionWithZPlane(float planeZ, float3 linevec)

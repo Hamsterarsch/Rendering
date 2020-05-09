@@ -73,7 +73,8 @@ namespace Renderer
 			},
 			descriptors{resources.get(), 1'000'000, 2048}
 		{			
-			outputSurface->EnableVerticalSync();	
+			outputSurface->EnableVerticalSync();
+			shaderFactory->AddIncludeDirectory(Filesystem::Conversions::MakeExeRelative("../Content/Shaders/Includes").c_str());
 
 
 			VolumeTileGridData gridData;
