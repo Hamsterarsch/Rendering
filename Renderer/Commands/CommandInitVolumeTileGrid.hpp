@@ -50,6 +50,8 @@ namespace Renderer
 			public: void ExecutePostGpuWork() override;
 					
 			public: void WriteTileData(VolumeTileGrid &output);
+
+			public: size_t GetGridDataBufferHandle() { return gridDataBuffer; }
 						
 		};
 
