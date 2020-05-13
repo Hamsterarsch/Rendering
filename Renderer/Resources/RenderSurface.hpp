@@ -19,8 +19,17 @@ namespace Renderer
 
 			private: RHA::DX12::DepthSurface *surfaceDepth;
 
+			private: D3D12_VIEWPORT defaultViewport;
 
-			public: RenderSurface(RHA::DX12::WindowSurface *colorSurface, RHA::DX12::DepthSurface *depthSurface);
+			private: D3D12_RECT defaultRect;
+
+			private: bool depthSurfaceShouldBeClearedOnPrepare;
+
+
+					 			
+			public: RenderSurface();
+			
+			public: RenderSurface(RHA::DX12::WindowSurface *colorSurface, RHA::DX12::DepthSurface *depthSurface, size_t screenWidth, size_t screenHeight);
 
 			public: void RecordSurfacePreparations(RHA::DX12::CmdList &list);
 
@@ -39,6 +48,8 @@ namespace Renderer
 			public: void RecordPresentPreparations(RHA::DX12::CmdList &list);
 
 			public: void Present();
+
+			public: void ShouldClearDepthSurface(bool value);
 			
 		};
 
