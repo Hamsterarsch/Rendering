@@ -8,6 +8,8 @@
 #include "Commands/RenderCommand.hpp"
 #include "Shared/Exception/CreationFailedException.hpp"
 #include "Resources/Descriptor/DescriptorMemory.hpp"
+#include "Commands/CommandPrepareSurfaceForRendering.hpp"
+#include "Commands/CommandPrepareSurfaceForPresent.h"
 
 
 namespace Renderer
@@ -20,19 +22,19 @@ namespace Renderer
 			Queue *queue,
 			DescriptorMemory &descriptors,
 			ResourceRegistry &masterRegistry,
-			const RenderSurface &outputSurface,
+			const RenderSurface &surfaceToPresent,
 			HandleWrapper &&globalBufferHandle,
-			bool shouldPresentOnComplete
+			bool shouldPrepareSurface
 		) :
 			resources{ resources },
 			queue{ queue },
 			descriptors{ &descriptors },
 			registryMaster{ &masterRegistry },
 			registryCopy{ masterRegistry },
-			outputSurface{ outputSurface },
+			surfaceToPresent{ surfaceToPresent },
 			commandsRecordedToList{ 0 },
 			globalBufferHandle{ std::move(globalBufferHandle) },
-			isAllowedToPresent{ shouldPresentOnComplete }
+			shouldPrepareSurface{ shouldPrepareSurface }			
 		{
 			allocator = Facade::MakeCmdAllocator(resources, D3D12_COMMAND_LIST_TYPE_DIRECT);
 			fence = Facade::MakeFence(resources);
@@ -40,6 +42,11 @@ namespace Renderer
 
 			masterRegistry.AddReference(this->globalBufferHandle);
 			registryCopy.AddReference(this->globalBufferHandle);
+
+			if(shouldPrepareSurface)
+			{
+				AddCommand(std::make_unique<CommandPrepareSurfaceForRendering>(surfaceToPresent));
+			}
 						
 		}
 
@@ -56,10 +63,9 @@ namespace Renderer
 			commands{ std::move(other.commands) },
 			registryMaster{ std::move(other.registryMaster) },
 			registryCopy{ std::move(other.registryCopy) },
-			outputSurface{ std::move(other.outputSurface) },
+			surfaceToPresent{ std::move(other.surfaceToPresent) },
 			commandsRecordedToList{ std::move(other.commandsRecordedToList) },
-			globalBufferHandle{ std::move(other.globalBufferHandle) },
-			isAllowedToPresent{ std::move(other.isAllowedToPresent) }
+			globalBufferHandle{ std::move(other.globalBufferHandle) }			
 		{	
 			other.registryMaster = nullptr;			
 
@@ -69,6 +75,8 @@ namespace Renderer
 		
 		FrameWorker &FrameWorker::operator=(FrameWorker &&rhs) noexcept
 		{
+			UnregisterResources();
+			
 			resources = std::move(rhs.resources);						
 			queue = std::move(rhs.queue);
 			descriptors = std::move(rhs.descriptors);
@@ -82,11 +90,10 @@ namespace Renderer
 			rhs.registryMaster = nullptr;
 
 			registryCopy = std::move(rhs.registryCopy);			
-			outputSurface = std::move(rhs.outputSurface);
+			surfaceToPresent = std::move(rhs.surfaceToPresent);
 			commandsRecordedToList = std::move(rhs.commandsRecordedToList);
 			globalBufferHandle = std::move(rhs.globalBufferHandle);
-			isAllowedToPresent = std::move(rhs.isAllowedToPresent);
-			
+						
 			return *this;
 			
 		}
@@ -135,18 +142,21 @@ namespace Renderer
 		}
 
 
-		
+
 		int FrameWorker::ExecuteCommands()
 		{
 			try
 			{
 				list = allocator->AllocateList();
-
-				outputSurface.RecordSurfacePreparations(*list);
 				descriptors->RecordListBinding(list.get());
+
+				if(shouldPrepareSurface)
+				{					
+					AddCommand(std::make_unique<CommandPrepareSurfaceForPresent>(surfaceToPresent));					
+				}
+				
 				RecordCommands();
-				outputSurface.RecordPresentPreparations(*list);
-								
+												
 				list->StopRecording();
 				queue->SubmitCommandList(list.get());
 				
@@ -165,7 +175,7 @@ namespace Renderer
 			void FrameWorker::RecordCommands()
 			{
 				commandsRecordedToList = 0;
-							
+							   			
 				for(auto &&cmd : commands)
 				{
 					cmd->RecordFixedCommandState(list.get(), registryCopy, globalBufferHandle);
@@ -179,7 +189,7 @@ namespace Renderer
 						ResetCurrentList();					
 					}
 				}
-			
+											
 			}
 
 				bool FrameWorker::ListCapacityIsReached() const
@@ -200,7 +210,9 @@ namespace Renderer
 				void FrameWorker::ResetCurrentList()
 				{
 					list->StartRecording(allocator.get());						
-					outputSurface.RecordBindSurfaces(*list);
+
+
+					//surfaceToPresent.RecordBindSurfaces(*list);
 					descriptors->RecordListBinding(list.get());
 					
 				}
@@ -226,12 +238,23 @@ namespace Renderer
 			   
 			void FrameWorker::PresentIfAllowed()
 			{
-				if(isAllowedToPresent)
-				{
-					outputSurface.Present();
-				}
+				surfaceToPresent.Present();				
 			
 			}
+
+		UniquePtr<RenderCommand> FrameWorker::ExtractCommand(size_t index)
+		{
+			commands.at(0).swap
+			(
+				commands.at(commands.size()-1)
+			);
+
+			auto out{ std::move(commands.at(commands.size()-1)) };
+			commands.pop_back();
+
+			return out;
+			
+		}
 
 
 		void FrameWorker::ExecuteCommandPostGpuWork()
