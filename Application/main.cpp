@@ -3,22 +3,29 @@
 #include "Shared/Filesystem/Conversions.hpp"
 #include <fstream>
 #include <string>
+#include <filesystem>
 
 
 int main()
 {
 	try
 	{
-		Windows::App app{};				
+		Windows::App app{};
 		
 	}
 	catch(Exception::Exception &e)
-	{
-		auto seconds{ std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()) };
+	{				
+		const auto directory{ Filesystem::Conversions::MakeExeRelative(L"Logs/") };
+		std::filesystem::create_directory(directory);
+		
+		const auto seconds{ std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()) };
+		const auto filepath{ directory+L"Log_"+std::to_wstring(seconds.count())+L".txt" };		
+		std::ofstream logFile{filepath.c_str()};
 				
-		std::fstream logFile{Filesystem::Conversions::MakeExeRelative((L"Logs/Log_" + std::to_wstring(seconds.count())).data()), std::ios_base::out};
-		logFile << e.what();
-		logFile.close();
+		if(logFile.is_open())
+		{
+			logFile << e.what();			
+		}		
 		
 		return -1;		
 	}
