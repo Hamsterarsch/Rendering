@@ -18,10 +18,10 @@ namespace Windows
 
 		
 		public: App();
+				
+			private: void Initialize();
 
-		private: void Initialize();
-
-		private: void Update();
+			private: void Update();
 
 	};
 
