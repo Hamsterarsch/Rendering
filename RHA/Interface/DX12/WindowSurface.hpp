@@ -15,9 +15,9 @@ namespace RHA
 			DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(WindowSurface)
 
 
-			public: virtual inline float GetWidth() const = 0;
+			public: virtual inline size_t GetWidth() const = 0;
 			
-			public: virtual inline float GetHeight() const = 0;
+			public: virtual inline size_t GetHeight() const = 0;
 
 			public: virtual inline void EnableVerticalSync() = 0;
 
