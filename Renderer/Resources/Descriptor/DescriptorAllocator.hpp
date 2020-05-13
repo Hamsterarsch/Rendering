@@ -58,12 +58,14 @@ namespace Renderer
 			public: D3D12_GPU_DESCRIPTOR_HANDLE GetCurrentTableStartForSampler() const;
 			
 			public: void CreateDefaultedSrv(ID3D12Resource *resource, size_t tableOffset);
+
+				private: static size_t GetTargetDescriptorIndex(const ChunkData &forChunkData, size_t offsetFromTableStartToDescriptor);
 								
 				private: void CheckIfValidOpenTable() const;
 
 				private: D3D12_CPU_DESCRIPTOR_HANDLE GetViewHandleCpu(size_t index) const;
 
-				private: void UpdateAfterTableIndexForView(size_t newDescriptorIndex);
+				private: void UpdateAfterTableIndex(const ChunkData &forChunkData, size_t offsetFromTableStartToDescriptor);
 			
 						 		
 			public: void CreateCbv(ID3D12Resource *resource, size_t tableOffset, size_t bufferSizeInBytes);

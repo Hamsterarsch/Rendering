@@ -65,7 +65,7 @@ namespace Renderer
 		
 		D3D12_GPU_DESCRIPTOR_HANDLE DescriptorAllocator::GetCurrentTableStartForView() const
 		{
-			return parent->GetViewHandleGpu(view.offsetToTableStart);
+			return parent->GetViewHandleGpu(view.chunk.startIndex + view.offsetToTableStart);
 			
 		}
 
@@ -73,7 +73,7 @@ namespace Renderer
 		
 		D3D12_GPU_DESCRIPTOR_HANDLE DescriptorAllocator::GetCurrentTableStartForSampler() const
 		{
-			return parent->GetSamplerHandleGpu(sampler.offsetToTableStart);
+			return parent->GetSamplerHandleGpu(sampler.chunk.startIndex + sampler.offsetToTableStart);
 			
 		}
 		
@@ -86,11 +86,15 @@ namespace Renderer
 		)
 		{
 			CheckIfValidOpenTable();
-
-			const auto descriptorIndex{ view.offsetToTableStart + tableOffset };
-			resources->GetDevice()->CreateShaderResourceView(resource, nullptr, GetViewHandleCpu(descriptorIndex));
+						
+			resources->GetDevice()->CreateShaderResourceView
+			(
+				resource, 
+				nullptr, 
+				GetViewHandleCpu( GetTargetDescriptorIndex(view, tableOffset) )
+			);
 			
-			UpdateAfterTableIndexForView(descriptorIndex);
+			UpdateAfterTableIndex(view, tableOffset);
 						
 		}
 
@@ -102,6 +106,16 @@ namespace Renderer
 				}
 			
 			}
+		
+			size_t DescriptorAllocator::GetTargetDescriptorIndex
+			(
+				const ChunkData &forChunkData,				
+				const size_t offsetFromTableStartToDescriptor
+			)
+			{
+				return forChunkData.chunk.startIndex + forChunkData.offsetToTableStart + offsetFromTableStartToDescriptor;
+			
+			}
 
 			D3D12_CPU_DESCRIPTOR_HANDLE DescriptorAllocator::GetViewHandleCpu(const size_t index) const
 			{
@@ -109,9 +123,9 @@ namespace Renderer
 			
 			}
 
-			void DescriptorAllocator::UpdateAfterTableIndexForView(const size_t newDescriptorIndex)
-			{
-				view.offsetToAfterTable = max(view.offsetToAfterTable, newDescriptorIndex +1 );
+			void DescriptorAllocator::UpdateAfterTableIndex(const ChunkData &forChunkData, const size_t offsetFromTableStartToDescriptor)
+			{			
+				view.offsetToAfterTable = max(forChunkData.offsetToAfterTable, forChunkData.offsetToTableStart + offsetFromTableStartToDescriptor +1 );
 
 			}
 
@@ -125,12 +139,15 @@ namespace Renderer
 		)
 		{
 			CheckIfValidOpenTable();
-			
-			const auto descriptorIndex{ view.offsetToTableStart + tableOffset };
+						
 			D3D12_CONSTANT_BUFFER_VIEW_DESC desc{ resource->GetGPUVirtualAddress(), bufferSizeInBytes };
-			resources->GetDevice()->CreateConstantBufferView(&desc, GetViewHandleCpu(descriptorIndex));
+			resources->GetDevice()->CreateConstantBufferView
+			(
+				&desc,
+				GetViewHandleCpu( GetTargetDescriptorIndex(view, tableOffset) ) 
+			);
 			
-			UpdateAfterTableIndexForView(descriptorIndex);
+			UpdateAfterTableIndex(view, tableOffset);
 			
 		}
 
@@ -139,11 +156,14 @@ namespace Renderer
 		void DescriptorAllocator::CreateSampler(const D3D12_SAMPLER_DESC& desc, size_t tableOffset)
 		{
 			CheckIfValidOpenTable();
+						
+			resources->GetDevice()->CreateSampler
+			(
+				&desc,
+				parent->GetSamplerHandleCpu( GetTargetDescriptorIndex(sampler, tableOffset) )
+			);
 
-			const auto descriptorIndex{ sampler.offsetToTableStart + tableOffset };
-			resources->GetDevice()->CreateSampler(&desc, parent->GetSamplerHandleCpu(descriptorIndex));
-
-			sampler.offsetToAfterTable = max(sampler.offsetToAfterTable, descriptorIndex +1);
+			UpdateAfterTableIndex(sampler, tableOffset);
 			
 		}
 
@@ -160,10 +180,15 @@ namespace Renderer
 			uavDesc.Buffer.NumElements = numElements;
 			uavDesc.Buffer.StructureByteStride = strideInBytes;
 						
-			const auto descriptorIndex{ view.offsetToTableStart + tableOffset };
-			resources->GetDevice()->CreateUnorderedAccessView(resource, nullptr, &uavDesc, parent->GetViewHandleCpu(descriptorIndex));
+			resources->GetDevice()->CreateUnorderedAccessView
+			(
+				resource,
+				nullptr,
+				&uavDesc,
+				parent->GetViewHandleCpu( GetTargetDescriptorIndex(view, tableOffset) )
+			);
 
-			UpdateAfterTableIndexForView(descriptorIndex);
+			UpdateAfterTableIndex(view, tableOffset);
 			
 		}
 

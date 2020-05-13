@@ -131,6 +131,12 @@
     <ClInclude Include="ShaderRelevantTypes\GlobalBufferData.hpp">
       <Filter>ShaderRelevantTypes</Filter>
     </ClInclude>
+    <ClInclude Include="Resources\Pso\DepthStencilFactory.hpp">
+      <Filter>Resources\Pso</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\Pso\DepthStencilFactoryDefault.hpp">
+      <Filter>Resources\Pso</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
