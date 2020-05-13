@@ -42,6 +42,8 @@ namespace Renderer
 		
 		HandleWrapper &HandleWrapper::operator=(HandleWrapper &&rhs) noexcept
 		{
+			Reset();
+			
 			retirementTarget = rhs.retirementTarget;			
 			handle = rhs.handle;
 
