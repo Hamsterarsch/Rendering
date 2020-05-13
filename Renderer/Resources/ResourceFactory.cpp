@@ -2,8 +2,7 @@
 #include "Shared/Exception/CreationFailedException.hpp"
 #include "Resources/ResourceTypes.hpp"
 #include "Resources/ResourceFactory.hpp"
-
-
+#include "Utility/Alignment.hpp"
 
 
 namespace Renderer
@@ -40,7 +39,7 @@ namespace Renderer
 
 			CopyDataToUploadBuffer(data, sizeInBytes);
 
-			ResourceAllocation outAlloc{ MakePlacedBufferResource(sizeInBytes, flags) };
+			ResourceAllocation outAlloc{ MakePlacedBufferResource(RHA::Utility::IncreaseValueToAlignment(sizeInBytes, 256), flags) };
 			
 			ClearCmdList();						
 			list->RecordBarrierAliasing(nullptr, outAlloc.resource.Get());			
