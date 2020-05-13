@@ -222,6 +222,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Commands\CommandFlagActiveVolumeTiles.cpp" />
     <ClCompile Include="Commands\CommandInitVolumeTileGrid.cpp" />
     <ClCompile Include="Commands\RenderCommand.cpp" />
     <ClCompile Include="Commands\RenderMeshCommand.cpp" />

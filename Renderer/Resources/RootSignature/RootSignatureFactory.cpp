@@ -113,8 +113,9 @@ namespace Renderer
 				{
 					D3D12_DESCRIPTOR_RANGE1 rangeDesc{};
 					rangeDesc.Flags = D3D12_DESCRIPTOR_RANGE_FLAG_DATA_VOLATILE | D3D12_DESCRIPTOR_RANGE_FLAG_DESCRIPTORS_VOLATILE;
-					rangeDesc.OffsetInDescriptorsFromTableStart = offsetInDescriptorTable;
-					rangeDesc.BaseShaderRegister = 0;
+					rangeDesc.OffsetInDescriptorsFromTableStart = offsetInDescriptorTable;										
+					rangeDesc.BaseShaderRegister = type == D3D12_DESCRIPTOR_RANGE_TYPE_UAV ? 1 : 0; //todo: in pixel shader register u0 is reserved for output
+					rangeDesc.BaseShaderRegister = type == D3D12_DESCRIPTOR_RANGE_TYPE_CBV ? 2 : rangeDesc.BaseShaderRegister;
 					rangeDesc.NumDescriptors = descriptorAmount;
 					rangeDesc.RangeType = type;
 

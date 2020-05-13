@@ -131,6 +131,9 @@
     <ClInclude Include="ShaderRelevantTypes\GlobalBufferData.hpp">
       <Filter>ShaderRelevantTypes</Filter>
     </ClInclude>
+    <ClInclude Include="Commands\CommandFlagActiveVolumeTiles.hpp">
+      <Filter>Commands</Filter>
+    </ClInclude>
     <ClInclude Include="Resources\Pso\DepthStencilFactory.hpp">
       <Filter>Resources\Pso</Filter>
     </ClInclude>
@@ -231,6 +234,9 @@
       <Filter>Resources</Filter>
     </ClCompile>
     <ClCompile Include="Commands\CommandInitVolumeTileGrid.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\CommandFlagActiveVolumeTiles.cpp">
       <Filter>Commands</Filter>
     </ClCompile>
     <ClCompile Include="Commands\RenderCommand.cpp">
