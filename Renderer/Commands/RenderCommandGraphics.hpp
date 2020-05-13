@@ -14,8 +14,16 @@ namespace Renderer
 			
 			public:	void RecordFixedCommandState(RHA::DX12::CmdList *list, HasQueriableResources &registry, size_t globalBufferHandle) const final override
 			{
-				list->RecordSetPipelineState(registry.GetPso(GetPsoHandle()));
-				list->RecordSetGraphicsSignature(registry.GetSignature(GetSignatureHandle()));
+				if(PsoIsValid())
+				{
+					list->RecordSetPipelineState(registry.GetPso(GetPsoHandle()));					
+				}
+
+				if(SignatureIsValid())
+				{				
+					list->RecordSetGraphicsSignature(registry.GetSignature(GetSignatureHandle()));
+				}
+				
 				list->RecordSetGraphicsSignatureCbv(GetGlobalBufferSlot(), registry.GetResourceGpuAddress(globalBufferHandle));
 			
 			}

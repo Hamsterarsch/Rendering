@@ -137,6 +137,18 @@
     <ClInclude Include="Resources\Pso\DepthStencilFactoryDefault.hpp">
       <Filter>Resources\Pso</Filter>
     </ClInclude>
+    <ClInclude Include="Commands\CommandClearDepthSurface.hpp">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\CommandPrepareSurfaceForPresent.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\CommandBindSurface.hpp">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\CommandPrepareSurfaceForRendering.hpp">
+      <Filter>Commands</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -219,6 +231,9 @@
       <Filter>Resources</Filter>
     </ClCompile>
     <ClCompile Include="Commands\CommandInitVolumeTileGrid.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\RenderCommand.cpp">
       <Filter>Commands</Filter>
     </ClCompile>
   </ItemGroup>

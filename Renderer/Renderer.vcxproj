@@ -163,7 +163,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Commands\CommandClearDepthSurface.hpp" />
+    <ClInclude Include="Commands\CommandFlagActiveVolumeTiles.hpp" />
     <ClInclude Include="Commands\CommandInitVolumeTileGrid.hpp" />
+    <ClInclude Include="Commands\CommandPrepareSurfaceForPresent.h" />
+    <ClInclude Include="Commands\CommandBindSurface.hpp" />
+    <ClInclude Include="Commands\CommandPrepareSurfaceForRendering.hpp" />
     <ClInclude Include="Commands\RenderCommand.hpp" />
     <ClInclude Include="Commands\RenderCommandCompute.hpp" />
     <ClInclude Include="Commands\RenderCommandGraphics.hpp" />
@@ -190,6 +195,8 @@
     <ClInclude Include="Resources\DynamicHeapSet.hpp" />
     <ClInclude Include="Resources\HandleFactory.hpp" />
     <ClInclude Include="Resources\MaintainsInternalRenderResources.hpp" />
+    <ClInclude Include="Resources\Pso\DepthStencilFactory.hpp" />
+    <ClInclude Include="Resources\Pso\DepthStencilFactoryDefault.hpp" />
     <ClInclude Include="Resources\Pso\PsoFactory.hpp" />
     <ClInclude Include="Resources\Pso\VertexLayoutProvider.hpp" />
     <ClInclude Include="Resources\RenderSurface.hpp" />
@@ -212,6 +219,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Commands\CommandInitVolumeTileGrid.cpp" />
+    <ClCompile Include="Commands\RenderCommand.cpp" />
     <ClCompile Include="Commands\RenderMeshCommand.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="ForwardRenderer.cpp" />
