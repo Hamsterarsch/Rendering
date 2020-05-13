@@ -8,7 +8,7 @@ namespace Renderer
 {
 	namespace DX12
 	{
-		class RenderCommandCompute: public RenderCommand
+		class RenderCommandCompute : public RenderCommand
 		{
 			public: RenderCommandCompute(size_t signatureHandle, size_t psoHandle) : RenderCommand{ signatureHandle, psoHandle } {}
 			
