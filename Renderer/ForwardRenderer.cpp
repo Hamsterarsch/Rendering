@@ -24,6 +24,12 @@
 #include "Interface/Resources/SerializationContainer.hpp"
 #include "Commands/CommandInitVolumeTileGrid.hpp"
 
+#include "Interface/Resources/SerializationContainer.hpp"
+#include "Commands/CommandFlagActiveVolumeTiles.hpp"
+#include "Utility/Alignment.hpp"
+#include "Commands/CommandClearDepthSurface.hpp"
+#include "Commands/CommandPrepareSurfaceForRendering.hpp"
+#include "Commands/CommandPrepareSurfaceForPresent.h"
 
 #if _DEBUG
 	constexpr bool enableDebugLayers = true;
@@ -46,16 +52,12 @@ namespace Renderer
 			:
 			lastDispatchTime{ 0 },
 			maxScheduledFrames{ 2 },
-			resources{ Facade::MakeDeviceResources(D3D_FEATURE_LEVEL_11_0, enableDebugLayers) },
+			resources{ Facade::MakeDeviceResources(D3D_FEATURE_LEVEL_12_0, enableDebugLayers) },
 			commonQueue{ Facade::MakeQueue(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT) },
 			outputSurface{ Facade::MakeWindowSurface(resources.get(), commonQueue.get(), outputWindow) },
 			depthSurface{ Facade::MakeDepthSurface(resources.get(), outputSurface->GetResourceTemplate()->GetDesc()) },
 			closeFence{ Facade::MakeFence(resources.get()) },
 			closeEvent{ CreateEvent(nullptr, false, false, nullptr) },
-			psoFactory{ resources.get() },
-			signatureFactory{ resources.get() },
-			shaderFactory{ Facade::MakeShaderFactory(5, 0) },
-			renderThread{ framesToDestruct },
 			bufferFactory
 			{
 				std::make_unique<ResourceFactoryDeallocatable>
@@ -71,12 +73,18 @@ namespace Renderer
 					)
 				)
 			},
+			psoFactory{ resources.get(), dsFactory },
+			signatureFactory{ resources.get() },
+			shaderFactory{ Facade::MakeShaderFactory(5, 1) },
+			renderThread{ framesToDestruct },
 			descriptors{resources.get(), 1'000'000, 2048}
 		{			
 			outputSurface->EnableVerticalSync();
 			shaderFactory->AddIncludeDirectory(Filesystem::Conversions::MakeExeRelative("../Content/Shaders/Includes").c_str());
 
-
+			dsFactory.SetDepthComparisonFunction(D3D12_COMPARISON_FUNC_LESS_EQUAL);
+			dsFactory.SaveCurrentStateAsDefault();
+			
 			VolumeTileGridData gridData;
 			gridData.screenDimensions.x = outputSurface->GetWidth();
 			gridData.screenDimensions.y = outputSurface->GetHeight();
@@ -89,11 +97,11 @@ namespace Renderer
 
 			{
 				
-				VolumeTileGrid gbb(Math::VectorUint2{128,128}, 90.f, gridData);
+				volumeTileGrid = VolumeTileGrid{ Math::VectorUint2{128,128}, 90.f, gridData };
 
 				SerializeContainer s{};
 				SerializeRootSignature(0,0,1,0, &s);
-				auto rootHandle{ MakeRootSignature(s.GetData()) };
+				uav1Signature = HandleWrapper{ this, MakeRootSignature(s.GetData()) };
 
 				std::ifstream shaderFile{Filesystem::Conversions::MakeExeRelative(L"../Content/Shaders/ComputeVolumeTileGridBB.cs"), std::ios_base::in | std::ios_base::ate};
 				SerializeContainer cs{};
@@ -110,16 +118,83 @@ namespace Renderer
 				}
 
 				Blob csBlob{cs.GetData(), cs.GetSize()};
-				auto compPso{ MakePso(csBlob, rootHandle) };			
-				
-				commandsToDispatch.push_back( std::make_unique<CommandInitVolumeTileGrid>(rootHandle, compPso, *this, registry, descriptors, std::move(gbb), gridData) );
+				auto compPso{ MakePso(csBlob, uav1Signature) };			
 
-				renderThread.ScheduleFrameWorker( MakeFrameWorkerFromCommands(false, false, false) );
+				
+				globalBuffer = HandleWrapper{ this, MakeBuffer(&globalsToDispatch, sizeof globalsToDispatch) };
+				FrameWorker worker{ resources.get(), commonQueue.get(), descriptors, registry, {}, std::move(globalBuffer), false };
+				worker.AddCommand(std::make_unique<CommandInitVolumeTileGrid>(uav1Signature, compPso, *this, registry, descriptors, std::move(volumeTileGrid), gridData));
+							   				
+				renderThread.ScheduleFrameWorker( std::move(worker) );
 				renderThread.WaitForIdle();
-				auto worker{ framesToDestruct.Pop() };
-				static_cast<CommandInitVolumeTileGrid *>(worker.IndexCommand(0).get())->WriteTileData(gbb);
+				worker = framesToDestruct.Pop();
+				
+				initGridCmd.reset( static_cast<CommandInitVolumeTileGrid *>(worker.ExtractCommand(0).release()) );
+				initGridCmd->WriteTileData(volumeTileGrid);											
 				
 			}
+
+
+
+		//_-----------------------
+			SerializeContainer root{};
+			SerializeRootSignature(0,0,0,0, &root);
+			defaultSignature = HandleWrapper{ this, MakeRootSignature(root.GetData()) };
+
+			SerializeContainer root2{};
+			SerializeRootSignature(1,0,1,0, &root2);
+			assignTilesSignature = HandleWrapper{ this, MakeRootSignature(root2.GetData()) };
+			
+			SerializeContainer vsm{};
+			{
+				std::ifstream shaderFile{ Filesystem::Conversions::MakeExeRelative(L"../Content/Shaders/PlainMinstance.vs"), std::ios_base::in | std::ios_base::ate };
+				
+				const auto charCount{ shaderFile.tellg() };
+				shaderFile.seekg(0);
+
+				auto pshader{ std::make_unique<char[]>(charCount) };
+				shaderFile.read( pshader.get(), charCount);
+											
+				CompileVertexShader(pshader.get(), charCount, &vsm);
+							
+			}
+
+			SerializeContainer ps{};
+			{
+				std::ifstream shaderFile{ Filesystem::Conversions::MakeExeRelative(L"../Content/Shaders/MarkActiveVolumeTiles.ps"), std::ios_base::in | std::ios_base::ate };
+				
+				const auto charCount{ shaderFile.tellg() };
+				shaderFile.seekg(0);
+
+				auto pshader{ std::make_unique<char[]>(charCount) };
+				shaderFile.read( pshader.get(), charCount);
+											
+				CompilePixelShader(pshader.get(), charCount, &ps);
+							
+			}
+			
+			{
+				ShaderList shaderList{};
+				shaderList.vs.data = vsm.GetData();
+				shaderList.vs.sizeInBytes = vsm.GetSize();
+
+				depthOnlyPso = HandleWrapper{ this, MakePso(PipelineTypes::Opaque, VertexLayoutTypes::PositionOnly, shaderList, defaultSignature) };
+			}
+
+			{
+				ShaderList shaderList{};
+				shaderList.vs.data = vsm.GetData();
+				shaderList.vs.sizeInBytes = vsm.GetSize();
+				
+				shaderList.ps.data = ps.GetData();
+				shaderList.ps.sizeInBytes = ps.GetSize();
+
+				
+				assignTilesPso = HandleWrapper{ this, MakePso(PipelineTypes::Opaque, VertexLayoutTypes::PositionOnly, shaderList, assignTilesSignature) };
+				
+				
+			}
+		//-----------------------
 			
 			
 		}
@@ -162,51 +237,101 @@ namespace Renderer
 			const auto dispatchDelta{ currentTime - lastDispatchTime };
 			lastDispatchTime = currentTime;
 			globalsToDispatch.time += dispatchDelta;
-					   			
-			renderThread.ScheduleFrameWorker( MakeFrameWorkerFromCommands(true, true, true) );
+			globalBuffer = HandleWrapper{ this, MakeBuffer(&globalsToDispatch, sizeof globalsToDispatch) };
 
-			for(; framesToDestruct.Size() > 0; )
+			
+			//depth pre pass for opaque
+				//gather all commands that use opaque pso
+				//
+			renderThread.WaitForIdle();
+			framesToDestruct.Empty();
+				
+
+			RenderSurface renderSurface
 			{
-				auto frame{ framesToDestruct.Pop() };
-				frame.UnregisterResources();				
+				outputSurface.get(),
+				depthSurface.get(),
+				outputSurface->GetWidth(),
+				outputSurface->GetHeight()
+			};
+
+			RenderSurface depthOnlySurface
+			{
+				nullptr,
+				depthSurface.get(),
+				outputSurface->GetWidth(),
+				outputSurface->GetHeight()
+			};
+
+			{
+				FrameWorker worker{ resources.get(), commonQueue.get(), descriptors, registry, renderSurface, std::move(globalBuffer), false };
+				worker.AddCommand(std::make_unique<CommandPrepareSurfaceForRendering>(depthOnlySurface));
+				
+				//depth only pass of opaques
+				//depth clear cmd				
+				for(auto &&cmd : opaqueMeshCommands)
+				{
+					worker.AddCommand(std::make_unique<RenderMeshCommand>(defaultSignature, depthOnlyPso, *cmd));
+				}
+
+
+				//flag tiles (uses depth pre pass)
+				auto flagTilesCmd{ std::make_unique<CommandFlagActiveVolumeTiles>
+				( 
+					assignTilesSignature, assignTilesPso, initGridCmd->GetGridDataBufferHandle(), volumeTileGrid.GetTileCount(), *this, registry, descriptors 
+				)};
+			
+				for(auto &&cmd : opaqueMeshCommands)
+				{
+					flagTilesCmd->AddRenderMeshCommand(*cmd);
+				}
+									
+				worker.AddCommand(std::move(flagTilesCmd));
+
+
+				//UniquePtr<CommandFlagActiveVolumeTiles> avtcmd{ static_cast<CommandFlagActiveVolumeTiles *>(wrkr.ExtractCommand(0).release()) };
+				//avtcmd->ExecuteOperationOnResourceReferences(&registry, &UsesReferences::RemoveReference);
+
+				renderSurface.ShouldClearDepthSurface(false);
+				worker.AddCommand(std::make_unique<CommandPrepareSurfaceForRendering>(renderSurface));
+			
+				for(auto &&cmd : commandsToDispatch)
+				{
+					worker.AddCommand(std::move(cmd));
+				}
+				for(auto &&cmd : opaqueMeshCommands)
+				{
+					worker.AddCommand(std::move(cmd));
+				}
+				commandsToDispatch.clear();
+				opaqueMeshCommands.clear();
+
+				worker.AddCommand(std::make_unique<CommandPrepareSurfaceForPresent>(renderSurface));
+				
+				const auto framesToRelease{ framesToDestruct.Size() };
+				renderThread.ScheduleFrameWorker(std::move(worker));
+
+				for(size_t releasedFrames{ 0 }; releasedFrames < framesToRelease; ++releasedFrames)
+				{
+					auto frame{ framesToDestruct.Pop() };				
+				}			
+				registry.PurgeUnreferencedEntities();						
 			}
-			
-			registry.PurgeUnreferencedEntities();
-			
+
 		}
 
 			void ForwardRenderer::AbortDispatch()
 			{
 				commandsToDispatch.clear();
+				opaqueMeshCommands.clear();
 			
 			}
-
-			FrameWorker ForwardRenderer::MakeFrameWorkerFromCommands(bool shouldUseColorSurface, bool shouldUseDepthSurface, bool shouldPresentSurface)
-			{					
-				HandleWrapper globalBuffer{ this, MakeBuffer(&globalsToDispatch, sizeof globalsToDispatch) };
-
-				const RenderSurface renderSurface
-				{
-					shouldUseColorSurface ? outputSurface.get() : nullptr,
-					shouldUseDepthSurface ? depthSurface.get() : nullptr
-				};
-			
-				FrameWorker worker{ resources.get(), commonQueue.get(), descriptors, registry, renderSurface, std::move(globalBuffer), shouldPresentSurface };			
-				for(auto &&cmd : commandsToDispatch)
-				{
-					worker.AddCommand(std::move(cmd));
-				}
-				commandsToDispatch.clear();
-
-				return worker;
-			
-			}
-
 		
 
 		void ForwardRenderer::RenderMesh(size_t signatureHandle, size_t psoHandle, size_t meshHandle, size_t sizeInBytes, size_t byteOffsetToIndices, size_t transformBufferHandle, size_t instanceCount)
 		{
-			commandsToDispatch.emplace_back
+			//todo branch between translucent/opaque based on pso class
+			opaqueMeshCommands.emplace_back
 			(
 				std::make_unique<RenderMeshCommand>(signatureHandle, psoHandle, meshHandle, byteOffsetToIndices, sizeInBytes - byteOffsetToIndices, transformBufferHandle, instanceCount)
 			);			
@@ -275,7 +400,7 @@ namespace Renderer
 		
 		DxPtr<ID3D12Resource> ForwardRenderer::MakeReadbackBuffer(const size_t sizeInBytes)
 		{			
-			return bufferFactory->MakeCommittedBuffer(sizeInBytes, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_HEAP_TYPE_READBACK, D3D12_HEAP_FLAG_NONE);
+			return bufferFactory->MakeCommittedBuffer(RHA::Utility::IncreaseValueToAlignment(sizeInBytes, 256), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_HEAP_TYPE_READBACK, D3D12_HEAP_FLAG_NONE);
 			
 		}
 

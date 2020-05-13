@@ -12,6 +12,8 @@
 #include "Resources/MaintainsInternalRenderResources.hpp"
 #include "Resources/Descriptor/DescriptorMemory.hpp"
 #include "ShaderRelevantTypes/GlobalBufferData.hpp"
+#include "Lighting/LightGrid/VolumeTileGrid.hpp"
+#include "Resources/Pso/DepthStencilFactoryDefault.hpp"
 
 /*
 namespace RHA
@@ -39,6 +41,8 @@ namespace Renderer
 	{
 		class ResourceFactory;
 		class FrameWorker;
+		class RenderMeshCommand;
+		class CommandInitVolumeTileGrid;
 		
 		class ForwardRenderer final : public Renderer, public MaintainsInternalRenderResources
 		{	
@@ -57,9 +61,15 @@ namespace Renderer
 			private: UniquePtr<RHA::DX12::Fence> closeFence;
 
 			private: HANDLE closeEvent;
-					 
+
+					 			
+			private: UniquePtr<ResourceFactory> bufferFactory;
+			
+			private: ResourceRegistry registry;
 
 			private: VertexLayoutProvider vertexLayoutProvider;
+			
+			private: DepthStencilFactoryDefault dsFactory;
 			
 			private: PsoFactory psoFactory;
 			
@@ -73,16 +83,24 @@ namespace Renderer
 						
 			private: std::list<UniquePtr<RenderCommand>> commandsToDispatch;
 
+			private: std::list<UniquePtr<RenderMeshCommand>> opaqueMeshCommands;
+
+			private: HandleWrapper globalBuffer;
+
 			private: GlobalBufferData globalsToDispatch;
 
 			private: RendererMaster renderThread;
-
-			private: UniquePtr<ResourceFactory> bufferFactory;
-
-			private: ResourceRegistry registry;
-
+					 
 			private: DescriptorMemory descriptors;
+
+			private: HandleWrapper depthOnlyPso, defaultSignature, uav1Signature, assignTilesPso, assignTilesSignature;
+
+			private: UniquePtr<CommandInitVolumeTileGrid> initGridCmd;
+
+			private: VolumeTileGrid volumeTileGrid;
+
 					
+					 			
 			
 			public: ForwardRenderer(HWND outputWindow);
 												 
@@ -96,8 +114,7 @@ namespace Renderer
 			public: virtual void DispatchFrame() override;
 								
 				private: void AbortDispatch();
-
-				private: FrameWorker MakeFrameWorkerFromCommands(bool shouldUseColorSurface, bool shouldUseDepthSurface, bool shouldPresentSurface);
+						 		
 
 			public: virtual void RenderMesh(size_t signatureHandle, size_t psoHandle, size_t meshHandle, size_t sizeInBytes, size_t byteOffsetToIndices, size_t transformBufferHandle = 0, size_t instanceCount = 1) override;
 
