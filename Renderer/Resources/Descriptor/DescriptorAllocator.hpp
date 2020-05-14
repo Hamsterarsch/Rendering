@@ -59,13 +59,17 @@ namespace Renderer
 			
 			public: void CreateDefaultedSrv(ID3D12Resource *resource, size_t tableOffset);
 
-				private: static size_t GetTargetDescriptorIndex(const ChunkData &forChunkData, size_t offsetFromTableStartToDescriptor);
-								
-				private: void CheckIfValidOpenTable() const;
+				private: void CreateSrvInternal(ID3D12Resource *resource, size_t tableOffset, const D3D12_SHADER_RESOURCE_VIEW_DESC *desc);
+			
+					private: static size_t GetTargetDescriptorIndex(const ChunkData &forChunkData, size_t offsetFromTableStartToDescriptor);
+									
+					private: void CheckIfValidOpenTable() const;
 
-				private: D3D12_CPU_DESCRIPTOR_HANDLE GetViewHandleCpu(size_t index) const;
+					private: D3D12_CPU_DESCRIPTOR_HANDLE GetViewHandleCpu(size_t index) const;
 
-				private: void UpdateAfterTableIndex(const ChunkData &forChunkData, size_t offsetFromTableStartToDescriptor);
+					private: void UpdateAfterTableIndex(const ChunkData &forChunkData, size_t offsetFromTableStartToDescriptor);
+
+			public: void CreateSrvBuffer(ID3D12Resource *resource, size_t tableOffset, size_t firstIndex, size_t numElements, size_t strideInBytes);
 			
 						 		
 			public: void CreateCbv(ID3D12Resource *resource, size_t tableOffset, size_t bufferSizeInBytes);
@@ -73,6 +77,10 @@ namespace Renderer
 			public: void CreateSampler(const D3D12_SAMPLER_DESC &desc, size_t tableOffset);
 
 			public: void CreateUavBuffer(ID3D12Resource *resource, size_t tableOffset, size_t firstIndex, size_t numElements, size_t strideInBytes);
+
+				private: void CreateUavBufferInternal(ID3D12Resource *resource, ID3D12Resource *counter, size_t tableOffset, size_t firstIndex, size_t numElements, size_t strideInBytes);
+
+			public: void CreateUavBufferWithCounter(ID3D12Resource *resource, ID3D12Resource *counter, size_t tableOffset, size_t firstIndex, size_t numElements, size_t strideInBytes);
 				
 		};
 

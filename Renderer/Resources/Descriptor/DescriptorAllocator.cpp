@@ -2,100 +2,106 @@
 #include "DX12/DeviceResources.hpp"
 #include "Resources/Descriptor/DescriptorMemory.hpp"
 #include "Shared/Exception/Exception.hpp"
+#include "Shared/Exception/CreationFailedException.hpp"
+#include "Utility/Alignment.hpp"
 
-namespace Renderer
+namespace Renderer::DX12
 {
-	namespace DX12
+	DescriptorAllocator::DescriptorAllocator
+	(
+		DeviceResources *resources,
+		DescriptorMemory *parent,
+		const DescriptorChunk &viewChunk,
+		const DescriptorChunk &samplerChunk
+	) :
+		view{ viewChunk, -1, 0 },
+		sampler{ samplerChunk, -1, 0 },
+		resources{ resources },
+		parent{ parent }
 	{
-		DescriptorAllocator::DescriptorAllocator
-		(
-			DeviceResources *resources,
-			DescriptorMemory *parent,
-			const DescriptorChunk &viewChunk,
-			const DescriptorChunk &samplerChunk
-		) :
-			view{ viewChunk, -1, 0 },
-			sampler{ samplerChunk, -1, 0 },
-			resources{ resources },
-			parent{ parent }
+	}
+	
+	DescriptorAllocator::DescriptorAllocator(DescriptorAllocator &&Other) noexcept :
+		view{ std::move(Other.view) },
+		sampler{ std::move(Other.sampler) },
+		resources{ std::move(Other.resources) },
+		parent{ std::move(Other.parent) }
+	{			
+		Other.view.chunk.capacity = Other.view.chunk.startIndex = 0;					
+		Other.sampler.chunk.capacity = Other.sampler.chunk.startIndex = 0;						
+		Other.resources = nullptr;
+								
+	}
+
+	DescriptorAllocator::~DescriptorAllocator() noexcept
+	{
+		if(parent == nullptr)
 		{
+			return;
 		}
 		
-		DescriptorAllocator::DescriptorAllocator(DescriptorAllocator &&Other) noexcept :
-			view{ std::move(Other.view) },
-			sampler{ std::move(Other.sampler) },
-			resources{ std::move(Other.resources) },
-			parent{ std::move(Other.parent) }
-		{			
-			Other.view.chunk.capacity = Other.view.chunk.startIndex = 0;					
-			Other.sampler.chunk.capacity = Other.sampler.chunk.startIndex = 0;						
-			Other.resources = nullptr;
-									
+		if(view.chunk.capacity > 0)
+		{
+			parent->RetireViewDescriptorChunk(view.chunk);
 		}
 
-		DescriptorAllocator::~DescriptorAllocator() noexcept
+		if(sampler.chunk.capacity > 0)
 		{
-			if(parent == nullptr)
-			{
-				return;
-			}
+			parent->RetireSamplerDescriptorChunk(sampler.chunk);
+		}
+					
+	}
+
+	
+	
+	void DescriptorAllocator::OpenNewTable()
+	{			
+		view.offsetToTableStart = view.offsetToAfterTable;
+		sampler.offsetToTableStart = sampler.offsetToAfterTable;
+					
+	}
+
+
+	
+	D3D12_GPU_DESCRIPTOR_HANDLE DescriptorAllocator::GetCurrentTableStartForView() const
+	{
+		return parent->GetViewHandleGpu(view.chunk.startIndex + view.offsetToTableStart);
+		
+	}
+
+	
+	
+	D3D12_GPU_DESCRIPTOR_HANDLE DescriptorAllocator::GetCurrentTableStartForSampler() const
+	{
+		return parent->GetSamplerHandleGpu(sampler.chunk.startIndex + sampler.offsetToTableStart);
+		
+	}
+	
+
 			
-			if(view.chunk.capacity > 0)
-			{
-				parent->RetireViewDescriptorChunk(view.chunk);
-			}
+	void DescriptorAllocator::CreateDefaultedSrv
+	(
+		ID3D12Resource *resource,
+		const size_t tableOffset
+	)
+	{
+		CreateSrvInternal(resource, tableOffset, nullptr);
+					
+	}
 
-			if(sampler.chunk.capacity > 0)
-			{
-				parent->RetireSamplerDescriptorChunk(sampler.chunk);
-			}
-						
-		}
-
-		
-		
-		void DescriptorAllocator::OpenNewTable()
-		{			
-			view.offsetToTableStart = view.offsetToAfterTable;
-			sampler.offsetToTableStart = sampler.offsetToAfterTable;
-						
-		}
-
-
-		
-		D3D12_GPU_DESCRIPTOR_HANDLE DescriptorAllocator::GetCurrentTableStartForView() const
-		{
-			return parent->GetViewHandleGpu(view.chunk.startIndex + view.offsetToTableStart);
-			
-		}
-
-		
-		
-		D3D12_GPU_DESCRIPTOR_HANDLE DescriptorAllocator::GetCurrentTableStartForSampler() const
-		{
-			return parent->GetSamplerHandleGpu(sampler.chunk.startIndex + sampler.offsetToTableStart);
-			
-		}
-		
-
-				
-		void DescriptorAllocator::CreateDefaultedSrv
-		(
-			ID3D12Resource *resource,
-			const size_t tableOffset
-		)
+		void DescriptorAllocator::CreateSrvInternal(ID3D12Resource *resource, const size_t tableOffset, const D3D12_SHADER_RESOURCE_VIEW_DESC *desc)
 		{
 			CheckIfValidOpenTable();
-						
+				
 			resources->GetDevice()->CreateShaderResourceView
 			(
 				resource, 
-				nullptr, 
+				desc, 
 				GetViewHandleCpu( GetTargetDescriptorIndex(view, tableOffset) )
 			);
 			
 			UpdateAfterTableIndex(view, tableOffset);
-						
+		
 		}
 
 			void DescriptorAllocator::CheckIfValidOpenTable() const
@@ -106,7 +112,7 @@ namespace Renderer
 				}
 			
 			}
-		
+	
 			size_t DescriptorAllocator::GetTargetDescriptorIndex
 			(
 				const ChunkData &forChunkData,				
@@ -129,48 +135,79 @@ namespace Renderer
 
 			}
 
+
+	
+	void DescriptorAllocator::CreateSrvBuffer(ID3D12Resource* resource, size_t tableOffset, size_t firstIndex, size_t numElements, size_t strideInBytes)
+	{
+		D3D12_SHADER_RESOURCE_VIEW_DESC desc{};
+		desc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+
+		desc.Buffer.FirstElement = firstIndex;
+		desc.Buffer.NumElements = numElements;
+		desc.Buffer.StructureByteStride = strideInBytes;
 		
+		desc.Format = DXGI_FORMAT_UNKNOWN;
+		desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+
+		CreateSrvInternal(resource, tableOffset, &desc);
 		
-		void DescriptorAllocator::CreateCbv
+	}
+	
+
+
+	void DescriptorAllocator::CreateCbv
+	(
+		ID3D12Resource *resource,
+		const size_t tableOffset,
+		const size_t bufferSizeInBytes
+	)
+	{
+		CheckIfValidOpenTable();
+					
+		D3D12_CONSTANT_BUFFER_VIEW_DESC desc{ resource->GetGPUVirtualAddress(), bufferSizeInBytes };
+		resources->GetDevice()->CreateConstantBufferView
 		(
-			ID3D12Resource *resource,
-			const size_t tableOffset,
-			const size_t bufferSizeInBytes
-		)
-		{
-			CheckIfValidOpenTable();
-						
-			D3D12_CONSTANT_BUFFER_VIEW_DESC desc{ resource->GetGPUVirtualAddress(), bufferSizeInBytes };
-			resources->GetDevice()->CreateConstantBufferView
-			(
-				&desc,
-				GetViewHandleCpu( GetTargetDescriptorIndex(view, tableOffset) ) 
-			);
-			
-			UpdateAfterTableIndex(view, tableOffset);
-			
-		}
-
+			&desc,
+			GetViewHandleCpu( GetTargetDescriptorIndex(view, tableOffset) ) 
+		);
 		
+		UpdateAfterTableIndex(view, tableOffset);
 		
-		void DescriptorAllocator::CreateSampler(const D3D12_SAMPLER_DESC& desc, size_t tableOffset)
-		{
-			CheckIfValidOpenTable();
-						
-			resources->GetDevice()->CreateSampler
-			(
-				&desc,
-				parent->GetSamplerHandleCpu( GetTargetDescriptorIndex(sampler, tableOffset) )
-			);
+	}
 
-			UpdateAfterTableIndex(sampler, tableOffset);
-			
-		}
+	
+	
+	void DescriptorAllocator::CreateSampler(const D3D12_SAMPLER_DESC& desc, size_t tableOffset)
+	{
+		CheckIfValidOpenTable();
+					
+		resources->GetDevice()->CreateSampler
+		(
+			&desc,
+			parent->GetSamplerHandleCpu( GetTargetDescriptorIndex(sampler, tableOffset) )
+		);
 
-
-
+		UpdateAfterTableIndex(sampler, tableOffset);
 		
-		void DescriptorAllocator::CreateUavBuffer(ID3D12Resource *resource, const size_t tableOffset, const size_t firstIndex, const size_t numElements, const size_t strideInBytes)
+	}
+
+
+
+	
+	void DescriptorAllocator::CreateUavBuffer
+	(
+		ID3D12Resource *resource,
+		const size_t tableOffset,
+		const size_t firstIndex,
+		const size_t numElements,
+		const size_t strideInBytes
+	)
+	{
+		CreateUavBufferInternal(resource, nullptr, tableOffset, firstIndex, numElements, strideInBytes);
+		
+	}
+
+		void DescriptorAllocator::CreateUavBufferInternal(ID3D12Resource *resource, ID3D12Resource *counter, size_t tableOffset, size_t firstIndex, size_t numElements, size_t strideInBytes)
 		{
 			CheckIfValidOpenTable();
 
@@ -179,19 +216,45 @@ namespace Renderer
 			uavDesc.Buffer.FirstElement = firstIndex;
 			uavDesc.Buffer.NumElements = numElements;
 			uavDesc.Buffer.StructureByteStride = strideInBytes;
-						
+
+			if(counter != nullptr)
+			{
+				/*
+				uavDesc.Buffer.FirstElement = uavDesc.Buffer.FirstElement == 0 ? 1 : uavDesc.Buffer.FirstElement;
+				uavDesc.Buffer.CounterOffsetInBytes = (uavDesc.Buffer.FirstElement-1) * uavDesc.Buffer.StructureByteStride;
+				
+				if(uavDesc.Buffer.StructureByteStride < 4)
+				{
+					throw Exception::CreationFailed{"Could not create UAV with counter for buffer because structure byte stride must at least be 4"};	
+				}			*/	
+
+				
+			}
 			resources->GetDevice()->CreateUnorderedAccessView
 			(
 				resource,
-				nullptr,
+				counter,
 				&uavDesc,
 				parent->GetViewHandleCpu( GetTargetDescriptorIndex(view, tableOffset) )
 			);
 
 			UpdateAfterTableIndex(view, tableOffset);
-			
+		
 		}
 
+
+	
+	void DescriptorAllocator::CreateUavBufferWithCounter
+	(
+		ID3D12Resource *resource,
+		ID3D12Resource *counter,
+		const size_t tableOffset,
+		const size_t firstIndex,
+		const size_t numElements,
+		const size_t strideInBytes
+	)
+	{
+		CreateUavBufferInternal(resource, counter, tableOffset, firstIndex, numElements, strideInBytes);
 		
 	}
 
