@@ -30,6 +30,7 @@
 #include "Commands/CommandClearDepthSurface.hpp"
 #include "Commands/CommandPrepareSurfaceForRendering.hpp"
 #include "Commands/CommandPrepareSurfaceForPresent.h"
+#include "Commands/CommandBuildActiveTileList.hpp"
 
 #if _DEBUG
 	constexpr bool enableDebugLayers = true;
@@ -137,11 +138,15 @@ namespace Renderer::DX12
 		SerializeRootSignature(0,0,0,0, &root);
 		defaultSignature = HandleWrapper{ this, MakeRootSignature(root.GetData()) };
 
-		SerializeContainer root2{};
-		SerializeRootSignature(1,0,1,0, &root2);
-		assignTilesSignature = HandleWrapper{ this, MakeRootSignature(root2.GetData()) };
+		root.Reset();
+		SerializeRootSignature(1,0,1,0, &root);
+		markActiveTilesSignature = HandleWrapper{ this, MakeRootSignature(root.GetData()) };
+
+		root.Reset();
+		SerializeRootSignature(0, 1, 1, 0, &root);
+		buildTileListSignature = HandleWrapper{ this, MakeRootSignature(root.GetData()) };		
 		
-		SerializeContainer vsm{};
+		SerializeContainer vs{};
 		{
 			std::ifstream shaderFile{ Filesystem::Conversions::MakeExeRelative(L"../Content/Shaders/PlainMinstance.vs"), std::ios_base::in | std::ios_base::ate };
 			
@@ -151,7 +156,7 @@ namespace Renderer::DX12
 			auto pshader{ std::make_unique<char[]>(charCount) };
 			shaderFile.read( pshader.get(), charCount);
 										
-			CompileVertexShader(pshader.get(), charCount, &vsm);
+			CompileVertexShader(pshader.get(), charCount, &vs);
 						
 		}
 
@@ -171,25 +176,37 @@ namespace Renderer::DX12
 		
 		{
 			ShaderList shaderList{};
-			shaderList.vs.data = vsm.GetData();
-			shaderList.vs.sizeInBytes = vsm.GetSize();
+			shaderList.vs.data = vs.GetData();
+			shaderList.vs.sizeInBytes = vs.GetSize();
 
 			depthOnlyPso = HandleWrapper{ this, MakePso(PipelineTypes::Opaque, VertexLayoutTypes::PositionOnly, shaderList, defaultSignature) };
 		}
 
 		{
 			ShaderList shaderList{};
-			shaderList.vs.data = vsm.GetData();
-			shaderList.vs.sizeInBytes = vsm.GetSize();
+			shaderList.vs.data = vs.GetData();
+			shaderList.vs.sizeInBytes = vs.GetSize();
 			
 			shaderList.ps.data = ps.GetData();
 			shaderList.ps.sizeInBytes = ps.GetSize();
-
 			
-			assignTilesPso = HandleWrapper{ this, MakePso(PipelineTypes::Opaque, VertexLayoutTypes::PositionOnly, shaderList, assignTilesSignature) };
-			
-			
+			markActiveTilesPso = HandleWrapper{ this, MakePso(PipelineTypes::Opaque, VertexLayoutTypes::PositionOnly, shaderList, markActiveTilesSignature) };			
 		}
+
+		//build tile list
+		{
+			SerializeContainer cs{};
+			std::ifstream shaderFile{ Filesystem::Conversions::MakeExeRelative(L"../Content/Shaders/BuildActiveTileList.cs"), std::ios_base::in | std::ios_base::ate };
+			
+			const auto charCount{ shaderFile.tellg() };
+			shaderFile.seekg(0);
+
+			auto pshader{ std::make_unique<char[]>(charCount) };
+			shaderFile.read( pshader.get(), charCount);
+										
+			CompileComputeShader(pshader.get(), charCount, &cs);
+			buildTileListPso = HandleWrapper{ this, MakePso({ cs.GetData(), cs.GetSize()}, buildTileListSignature) };
+		}				
 	//-----------------------
 		
 		
@@ -258,7 +275,7 @@ namespace Renderer::DX12
 			outputSurface->GetWidth(),
 			outputSurface->GetHeight()
 		};
-
+		
 		{
 			FrameWorker worker{ resources.get(), commonQueue.get(), descriptors, registry, renderSurface, std::move(globalBuffer), false };
 			worker.AddCommand(std::make_unique<CommandPrepareSurfaceForRendering>(depthOnlySurface));
@@ -274,13 +291,14 @@ namespace Renderer::DX12
 			//flag tiles (uses depth pre pass)
 			auto flagTilesCmd{ std::make_unique<CommandFlagActiveVolumeTiles>
 			( 
-				assignTilesSignature, assignTilesPso, initGridCmd->GetGridDataBufferHandle(), volumeTileGrid.GetTileCount(), *this, registry, descriptors 
+				markActiveTilesSignature, markActiveTilesPso, initGridCmd->GetGridDataBufferHandle(), volumeTileGrid.GetTileCount(), *this, registry, descriptors 
 			)};
 		
 			for(auto &&cmd : opaqueMeshCommands)
 			{
 				flagTilesCmd->AddRenderMeshCommand(*cmd);
 			}
+			auto flagBufferHandle{ flagTilesCmd->GetFlagBufferHandle() };
 								
 			worker.AddCommand(std::move(flagTilesCmd));
 
@@ -288,6 +306,12 @@ namespace Renderer::DX12
 			//UniquePtr<CommandFlagActiveVolumeTiles> avtcmd{ static_cast<CommandFlagActiveVolumeTiles *>(wrkr.ExtractCommand(0).release()) };
 			//avtcmd->ExecuteOperationOnResourceReferences(&registry, &UsesReferences::RemoveReference);
 
+			//build tile list
+			worker.AddCommand(std::make_unique<CommandBuildActiveTileList>
+			(
+				buildTileListSignature, buildTileListPso, flagBufferHandle, volumeTileGrid.GetTileCount(), *this, registry, descriptors 
+			));
+			
 			renderSurface.ShouldClearDepthSurface(false);
 			worker.AddCommand(std::make_unique<CommandPrepareSurfaceForRendering>(renderSurface));
 		

@@ -90,7 +90,7 @@ namespace Renderer::DX12
 				 
 		private: DescriptorMemory descriptors;
 
-		private: HandleWrapper depthOnlyPso, defaultSignature, uav1Signature, assignTilesPso, assignTilesSignature;
+		private: HandleWrapper depthOnlyPso, defaultSignature, uav1Signature, markActiveTilesPso, markActiveTilesSignature, buildTileListPso, buildTileListSignature;
 
 		private: UniquePtr<CommandInitVolumeTileGrid> initGridCmd;
 
