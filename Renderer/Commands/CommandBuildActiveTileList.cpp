@@ -1,4 +1,3 @@
-#pragma once
 #include "Commands/CommandBuildActiveTileList.hpp"
 #include "Resources/MaintainsInternalRenderResources.hpp"
 #include "Resources/Descriptor/DescriptorMemory.hpp"
