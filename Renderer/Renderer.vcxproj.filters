@@ -152,6 +152,9 @@
     <ClInclude Include="Commands\CommandPrepareSurfaceForRendering.hpp">
       <Filter>Commands</Filter>
     </ClInclude>
+    <ClInclude Include="Commands\CommandBuildActiveTileList.hpp">
+      <Filter>Commands</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -240,6 +243,9 @@
       <Filter>Commands</Filter>
     </ClCompile>
     <ClCompile Include="Commands\RenderCommand.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\CommandBuildActiveTileList.cpp">
       <Filter>Commands</Filter>
     </ClCompile>
   </ItemGroup>

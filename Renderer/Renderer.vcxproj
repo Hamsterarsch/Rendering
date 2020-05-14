@@ -167,6 +167,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Commands\CommandBuildActiveTileList.hpp" />
     <ClInclude Include="Commands\CommandClearDepthSurface.hpp" />
     <ClInclude Include="Commands\CommandFlagActiveVolumeTiles.hpp" />
     <ClInclude Include="Commands\CommandInitVolumeTileGrid.hpp" />
@@ -222,6 +223,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Commands\CommandBuildActiveTileList.cpp" />
     <ClCompile Include="Commands\CommandFlagActiveVolumeTiles.cpp" />
     <ClCompile Include="Commands\CommandInitVolumeTileGrid.cpp" />
     <ClCompile Include="Commands\RenderCommand.cpp" />
