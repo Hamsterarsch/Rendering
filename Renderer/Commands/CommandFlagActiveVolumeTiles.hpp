@@ -17,11 +17,7 @@ namespace Renderer
 		class CommandFlagActiveVolumeTiles final : public RenderCommandGraphics
 		{
 			private: size_t tileFlagsSizeInBytes;
-
-			private: DxPtr<ID3D12Resource> readbackBuffer;
-
-			private: std::vector<unsigned> tileData;
-			
+						
 			private: HandleWrapper flagBufferHandle;
 			
 			private: size_t  volumeTileDataBuffer;
@@ -45,14 +41,15 @@ namespace Renderer
 			CommandFlagActiveVolumeTiles(const CommandFlagActiveVolumeTiles &) = delete;
 
 			CommandFlagActiveVolumeTiles &operator=(const CommandFlagActiveVolumeTiles &) = delete;
-			
-			public: void ExecutePostGpuWork() override;
+
 			
 			public: void ExecuteOperationOnResourceReferences( UsesReferences* registry, void( UsesReferences::* operation)(size_t)) override;
 			
 			public: void Record(RHA::DX12::CmdList* list, HasQueriableResources& registry) override;
 
 			public: void AddRenderMeshCommand(const RenderMeshCommand &command);
+
+			public: size_t GetFlagBufferHandle() const { return flagBufferHandle; }
 											
 		};
 
