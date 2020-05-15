@@ -142,6 +142,9 @@ namespace Windows
 			}
 
 			renderer->SetCamera(0, 0, -11, 0, 0, 0);
+			renderer->MakeLight(0,0,0,0,0,0);
+			renderer->MakeLight(8,0,0,0,0,0);
+			
 		
 		}
 
