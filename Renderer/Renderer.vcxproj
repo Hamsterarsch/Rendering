@@ -169,6 +169,7 @@
   <ItemGroup>
     <ClInclude Include="Commands\CommandBuildActiveTileList.hpp" />
     <ClInclude Include="Commands\CommandClearDepthSurface.hpp" />
+    <ClInclude Include="Commands\CommandFactory.hpp" />
     <ClInclude Include="Commands\CommandFlagActiveVolumeTiles.hpp" />
     <ClInclude Include="Commands\CommandInitVolumeTileGrid.hpp" />
     <ClInclude Include="Commands\CommandPrepareSurfaceForPresent.h" />
