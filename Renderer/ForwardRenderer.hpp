@@ -98,6 +98,7 @@ namespace Renderer::DX12
 		private: VolumeTileGrid volumeTileGrid;
 
 		private: CommandFactory cmdFactory;
+				 		
 								 			
 		
 		public: ForwardRenderer(HWND outputWindow);
@@ -118,7 +119,9 @@ namespace Renderer::DX12
 
 		public: virtual void SetCamera(float x, float y, float z, float pitch, float yaw, float roll) override;
 							
-		
+
+		public: virtual size_t MakeLight(float x, float y, float z, float pitch, float yaw, float roll) override;
+				
 		
 		public: virtual size_t MakeBuffer(const void *data, size_t sizeInBytes) override;
 

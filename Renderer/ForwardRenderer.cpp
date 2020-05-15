@@ -31,6 +31,7 @@
 #include "Commands/CommandPrepareSurfaceForRendering.hpp"
 #include "Commands/CommandPrepareSurfaceForPresent.h"
 #include "Commands/CommandBuildActiveTileList.hpp"
+#include "ShaderRelevantTypes/Light.hpp"
 
 #if _DEBUG
 	constexpr bool enableDebugLayers = true;
@@ -262,8 +263,7 @@ namespace Renderer::DX12
 
 		
 		//depth pre pass for opaque
-			//gather all commands that use opaque pso
-			//
+			//gather all commands that use opaque pso			
 		renderThread.WaitForIdle();
 		framesToDestruct.Empty();
 			
@@ -374,8 +374,26 @@ namespace Renderer::DX12
 		
 	}
 
-	
 
+	
+	size_t ForwardRenderer::MakeLight(const float x, const float y, const float z, const float pitch, const float yaw, const float roll)
+	{
+		Light light{};
+		light.worldPos = {x, y, z};
+
+		auto v = Math::Matrix::MakeRotation(pitch, yaw, roll).Transform({0,0,1,1});
+		light.worldForwardVector.x = v.x;
+		light.worldForwardVector.y= v.y;
+		light.worldForwardVector.z = v.z;
+		
+		light.color = {1,1,1};
+		light.radius = 7;
+
+		return registry.Register(std::move(light));
+				
+	}
+
+		
 	size_t ForwardRenderer::MakeBuffer(const void *data, const size_t sizeInBytes)
 	{			
 		return registry.Register
