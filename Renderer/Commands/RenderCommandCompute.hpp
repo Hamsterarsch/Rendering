@@ -8,14 +8,21 @@ namespace Renderer
 {
 	namespace DX12
 	{
-		class RenderCommandCompute: public RenderCommand
+		class RenderCommandCompute : public RenderCommand
 		{
 			public: RenderCommandCompute(size_t signatureHandle, size_t psoHandle) : RenderCommand{ signatureHandle, psoHandle } {}
 			
 			public:	void RecordFixedCommandState(RHA::DX12::CmdList *list, HasQueriableResources &registry, size_t globalBufferHandle) const final override
 			{
-				list->RecordSetPipelineState(registry.GetPso(GetPsoHandle()));
-				list->RecordSetComputeSignature(registry.GetSignature(GetSignatureHandle()));
+				if(PsoIsValid())
+				{
+					list->RecordSetPipelineState(registry.GetPso(GetPsoHandle()));					
+				}
+
+				if(SignatureIsValid())
+				{
+					list->RecordSetComputeSignature(registry.GetSignature(GetSignatureHandle()));					
+				}
 				list->RecordSetComputeSignatureCbv(GetGlobalBufferSlot(), registry.GetResourceGpuAddress(globalBufferHandle));
 			
 			}

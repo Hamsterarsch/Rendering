@@ -38,7 +38,9 @@ namespace Renderer
 
 			public: bool IsValid() const;
 			
-			public: inline operator size_t() const { return handle; } 
+			public: operator size_t() const { return handle; }
+
+			public: size_t Get() const { return handle; }
 			
 		};
 	

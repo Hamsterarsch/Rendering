@@ -19,13 +19,28 @@ namespace Renderer
 			const size_t indicesSizeInBytes, 
 			const size_t transformBufferHandle, 
 			const size_t instanceCount
-			) :
+		) :
 			RenderCommandGraphics{ signatureHandle, psoHandle },
 			meshHandle{ meshHandle },
 			byteOffsetToIndexData{ byteOffsetToIndexData },
 			indicesSizeInBytes{ indicesSizeInBytes },
 			transformBufferHandle{ transformBufferHandle },
 			instanceCount{ instanceCount }		
+		{
+		}
+
+		RenderMeshCommand::RenderMeshCommand
+		(
+			const size_t signatureHandle, 
+			const size_t psoHandle,
+			const RenderMeshCommand &baseCommand
+		) :
+			RenderCommandGraphics{ signatureHandle, psoHandle },
+			meshHandle{ baseCommand.meshHandle },
+			byteOffsetToIndexData{ baseCommand.byteOffsetToIndexData },
+			indicesSizeInBytes{ baseCommand.indicesSizeInBytes },
+			transformBufferHandle{ baseCommand.transformBufferHandle },
+			instanceCount{ baseCommand.instanceCount }		
 		{
 		}
 

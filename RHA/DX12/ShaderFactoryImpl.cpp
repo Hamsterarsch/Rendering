@@ -154,7 +154,7 @@ namespace RHA
 
 				void ShaderFactoryImpl::CheckCompilation(const HRESULT result, const DxPtr<ID3DBlob> &errorBlob)
 				{
-					if (FAILED(result))
+					if (errorBlob)
 					{
 						std::string error{ "Could not compile hlsl shader" };
 						if(errorBlob)
@@ -162,8 +162,12 @@ namespace RHA
 							error += ". \nError: ";
 							error += reinterpret_cast<char *>(errorBlob->GetBufferPointer());						
 						}
+
+						if(FAILED(result))
+						{
+							throw Exception::CreationFailed{ error.data() };							
+						}
 						
-						throw Exception::CreationFailed{ error.data() };
 					}
 			
 				}

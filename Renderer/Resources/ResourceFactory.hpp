@@ -69,7 +69,7 @@ namespace Renderer
 
 					private: bool UploadBufferCanNotFitAllocation(size_t allocationSizeInBytes) const;
 			
-				private: ResourceAllocation MakePlacedBufferResource(size_t sizeInBytes, D3D12_RESOURCE_FLAGS flags);
+				private: ResourceAllocation MakePlacedBufferResource(size_t sizeInBytes, D3D12_RESOURCE_FLAGS resourceFlags, D3D12_RESOURCE_STATES resourceState);
 
 					private: static D3D12_RESOURCE_DESC MakeBufferDesc(size_t sizeInBytes, D3D12_RESOURCE_FLAGS flags);
 

@@ -46,7 +46,7 @@ namespace Windows
 				Update();
 			}
 		}
-
+		
 	}
 
 	struct vertex
@@ -145,6 +145,8 @@ namespace Windows
 		
 		}
 
+	
+	   	
 		void App::Update()
 		{			
 			if(renderer->IsBusy())

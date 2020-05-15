@@ -36,6 +36,8 @@ namespace Renderer
 
 			
 			public: RenderMeshCommand(size_t signatureHandle, size_t psoHandle, size_t meshHandle, size_t byteOffsetToIndexData, size_t indicesSizeInBytes, size_t transformBufferHandle, size_t instanceCount);
+
+			public: RenderMeshCommand(size_t signatureHandle, size_t psoHandle, const RenderMeshCommand &baseCommand);
 						
 			public: virtual void ExecuteOperationOnResourceReferences(UsesReferences *registry, void(UsesReferences:: *operation)(size_t)) override;
 

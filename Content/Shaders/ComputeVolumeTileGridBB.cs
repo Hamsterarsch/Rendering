@@ -1,10 +1,9 @@
-#include "Types/GlobalBufferData.hlsl"
 #include "Types/VolumeTileGridData.hlsl"
 #include "Types/BoundingBox.hlsl"
 
 
-VolumeTileGridData gridData : register(b1);
-RWStructuredBuffer<BoundingBox> outBox : register(u0);
+ConstantBuffer<VolumeTileGridData> gridData : register(b1);
+RWStructuredBuffer<BoundingBox> outBox : register(u1);
 
 
 float3 FindIntersectionWithZPlane(float planeZ, float3 linevec)

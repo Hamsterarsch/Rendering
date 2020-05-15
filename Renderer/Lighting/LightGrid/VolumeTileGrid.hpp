@@ -17,6 +17,8 @@ namespace Renderer
 			
 
 
+		public: VolumeTileGrid() = default;
+		
 		public: VolumeTileGrid(const Math::VectorUint2 &approximateTileDimensions, Math::Angle verticalFov, VolumeTileGridData &gridData);
 
 

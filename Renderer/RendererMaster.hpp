@@ -15,27 +15,25 @@ namespace Renderer
 
 			private: QueueConcurrent<FrameWorker> *outputQueue;
 
-			private: std::future<int> updaterHandle;
+			private: struct UpdaterInfo
+			{
+				int result;
+				std::exception exception;
+			};
+			
+			private: std::future<UpdaterInfo> updaterHandle;
 
-			private: bool shouldUpdateRendering;
-
-			private: std::future<int> activeFrameHandle;
-
-			private: bool becameIdle;
-
-			private: std::condition_variable idleConditionVariable;
-
-			private: std::mutex idleMutex;
+			private: bool shouldProcessWorkers;
+			
+			private: std::future<int> activeWorkerHandle;
 
 					
 			
 			public: RendererMaster(QueueConcurrent<FrameWorker> &outputQueue);
 
-				private: int Update();
+			private: UpdaterInfo Update();
 
-					private: void Idle();
-			
-					private: void ExecuteNextFrame();
+					private: void ProcessNextWorker();
 
 			public: RendererMaster(const RendererMaster &) = delete;
 
@@ -53,7 +51,7 @@ namespace Renderer
 				private: bool UpdaterThreadHasFinished() const;
 
 			public: void ScheduleFrameWorker(FrameWorker &&frame);
-			
+								
 			public: size_t GetScheduledWorkerCount() const;
 
 			public: void WaitForIdle();

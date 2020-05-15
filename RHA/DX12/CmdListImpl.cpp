@@ -151,6 +151,14 @@ namespace RHA
 
 
 		
+		void CmdListImpl::RecordSetGraphicsSignatureTable(const unsigned parameterIndex, const D3D12_GPU_DESCRIPTOR_HANDLE startAddress)
+		{
+			glist->SetGraphicsRootDescriptorTable(parameterIndex, startAddress);
+			
+		}
+
+		
+
 		void CmdListImpl::RecordSetComputeSignatureCbv(const unsigned parameterIndex, const D3D12_GPU_VIRTUAL_ADDRESS bufferAddress)
 		{
 			glist->SetComputeRootConstantBufferView(parameterIndex, bufferAddress);

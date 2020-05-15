@@ -95,6 +95,7 @@
       <PreprocessorDefinitions>RENDERER_DLLCOMPILE;WIN32;_DEBUG;RENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Math\Interface;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -112,6 +113,7 @@
       <PreprocessorDefinitions>RENDERER_DLLCOMPILE;_DEBUG;RENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Math\Interface;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -131,6 +133,7 @@
       <PreprocessorDefinitions>RENDERER_DLLCOMPILE;WIN32;NDEBUG;RENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Math\Interface;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -152,6 +155,7 @@
       <PreprocessorDefinitions>RENDERER_DLLCOMPILE;NDEBUG;RENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Math\Interface;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -163,7 +167,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Commands\CommandBuildActiveTileList.hpp" />
+    <ClInclude Include="Commands\CommandClearDepthSurface.hpp" />
+    <ClInclude Include="Commands\CommandFactory.hpp" />
+    <ClInclude Include="Commands\CommandFlagActiveVolumeTiles.hpp" />
     <ClInclude Include="Commands\CommandInitVolumeTileGrid.hpp" />
+    <ClInclude Include="Commands\CommandPrepareSurfaceForPresent.h" />
+    <ClInclude Include="Commands\CommandBindSurface.hpp" />
+    <ClInclude Include="Commands\CommandPrepareSurfaceForRendering.hpp" />
     <ClInclude Include="Commands\RenderCommand.hpp" />
     <ClInclude Include="Commands\RenderCommandCompute.hpp" />
     <ClInclude Include="Commands\RenderCommandGraphics.hpp" />
@@ -190,6 +201,8 @@
     <ClInclude Include="Resources\DynamicHeapSet.hpp" />
     <ClInclude Include="Resources\HandleFactory.hpp" />
     <ClInclude Include="Resources\MaintainsInternalRenderResources.hpp" />
+    <ClInclude Include="Resources\Pso\DepthStencilFactory.hpp" />
+    <ClInclude Include="Resources\Pso\DepthStencilFactoryDefault.hpp" />
     <ClInclude Include="Resources\Pso\PsoFactory.hpp" />
     <ClInclude Include="Resources\Pso\VertexLayoutProvider.hpp" />
     <ClInclude Include="Resources\RenderSurface.hpp" />
@@ -211,7 +224,10 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Commands\CommandBuildActiveTileList.cpp" />
+    <ClCompile Include="Commands\CommandFlagActiveVolumeTiles.cpp" />
     <ClCompile Include="Commands\CommandInitVolumeTileGrid.cpp" />
+    <ClCompile Include="Commands\RenderCommand.cpp" />
     <ClCompile Include="Commands\RenderMeshCommand.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="ForwardRenderer.cpp" />

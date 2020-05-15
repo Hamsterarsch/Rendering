@@ -1,0 +1,23 @@
+#include "Types/GlobalBufferData.hlsl"
+#include "Types/VolumeTileGridData.hlsl"
+#include "FlattenVolumeTileGridIndex.hlsl"
+
+ConstantBuffer<VolumeTileGridData> gridData : register(b2);
+RWBuffer<uint> volumeTileFlags : register(u1);
+
+
+float4 main(float4 pos : SV_POSITION) : SV_TARGET
+{	
+	float3 viewPos = mul(gridData.inverseProjection, pos).xyz;
+		
+	uint3 Index = uint3
+	(
+		pos.xy / (gridData.screenDimensions / gridData.gridDimensions.xy),
+		log(1+gridData.fovTermForDepthCompute) / log(viewPos.z / gridData.nearDistance)
+	);	
+	
+	volumeTileFlags[FlattenVolumeTileGridIndex(Index, gridData.gridDimensions.xy)] = true;
+	
+	return float4(0,0,0,0);
+
+}

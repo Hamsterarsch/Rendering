@@ -30,6 +30,7 @@ namespace Renderer
 {
 	namespace DX12
 	{
+		class CommandBindSurface;
 		class DescriptorMemory;
 		using namespace RHA::DX12;
 		
@@ -56,7 +57,7 @@ namespace Renderer
 
 			private: ResourceRegistryDetachedReference registryCopy;
 			
-			private: RenderSurface outputSurface;
+			private: RenderSurface surfaceToPresent;
 
 			private: size_t commandsRecordedToList;
 			
@@ -66,19 +67,19 @@ namespace Renderer
 
 			private: HandleWrapper globalBufferHandle;
 
-			private: bool isAllowedToPresent;
-					 
-			
+			private: bool shouldPrepareSurface;
 
+
+			
 			public: FrameWorker
 			(
 				DeviceResources *resources,
 				Queue *queue,
 				DescriptorMemory &descriptors,
 				ResourceRegistry &masterRegistry,
-				const RenderSurface &outputSurface,
+				const RenderSurface &surfaceToPresent,
 				HandleWrapper &&globalBuffer,
-				bool shouldPresentOnComplete = true
+				bool shouldPrepareSurface = true
 			);
 
 			public: FrameWorker(FrameWorker &&other) noexcept;
@@ -101,7 +102,7 @@ namespace Renderer
 			public: inline bool IsInvalid() const { return resources == nullptr; }
 
 			public: void AddCommand(UniquePtr<RenderCommand> &&command);
-
+			
 			public: int ExecuteCommands();
 			
 				private: void RecordCommands();
@@ -118,7 +119,7 @@ namespace Renderer
 
 				private: void PresentIfAllowed();
 
-			public: UniquePtr<class RenderCommand> &IndexCommand(size_t index) { return commands.at(index); }
+			public: UniquePtr<class RenderCommand> ExtractCommand(size_t index);
 
 			public: void ExecuteCommandPostGpuWork();
 

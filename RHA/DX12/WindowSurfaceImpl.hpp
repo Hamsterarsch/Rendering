@@ -51,9 +51,9 @@ namespace RHA
 			public: virtual ~WindowSurfaceImpl() override;
 			
 
-			public: virtual inline float GetWidth() const override { return defaultViewport.Width; }
+			public: virtual inline size_t  GetWidth() const override { return defaultViewport.Width; }
 
-			public: virtual inline float GetHeight() const override { return defaultViewport.Height; }
+			public: virtual inline size_t GetHeight() const override { return defaultViewport.Height; }
 
 			public: virtual inline void EnableVerticalSync() override { targetedVerticalBlank = 1; }
 

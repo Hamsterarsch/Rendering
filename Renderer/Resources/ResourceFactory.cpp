@@ -2,8 +2,7 @@
 #include "Shared/Exception/CreationFailedException.hpp"
 #include "Resources/ResourceTypes.hpp"
 #include "Resources/ResourceFactory.hpp"
-
-
+#include "Utility/Alignment.hpp"
 
 
 namespace Renderer
@@ -38,14 +37,23 @@ namespace Renderer
 			WaitForSingleObject(event, INFINITE);
 			fence->Signal(0);
 
-			CopyDataToUploadBuffer(data, sizeInBytes);
+			auto creationState{ desiredState };
+			if(data != nullptr)
+			{							
+				CopyDataToUploadBuffer(data, sizeInBytes);
+				creationState = D3D12_RESOURCE_STATE_COPY_DEST;
+			}
 
-			ResourceAllocation outAlloc{ MakePlacedBufferResource(sizeInBytes, flags) };
+			ResourceAllocation outAlloc{ MakePlacedBufferResource(RHA::Utility::IncreaseValueToAlignment(sizeInBytes, 256), flags, creationState) };
 			
 			ClearCmdList();						
-			list->RecordBarrierAliasing(nullptr, outAlloc.resource.Get());			
-			list->RecordCopyBufferRegion(outAlloc.resource.Get(), 0, uploadBuffer->GetResource().Get(), 0, sizeInBytes);
-			list->RecordBarrierTransition(outAlloc.resource.Get(), D3D12_RESOURCE_STATE_COPY_DEST, desiredState);
+			list->RecordBarrierAliasing(nullptr, outAlloc.resource.Get());
+
+			if(data != nullptr)
+			{
+				list->RecordCopyBufferRegion(outAlloc.resource.Get(), 0, uploadBuffer->GetResource().Get(), 0, sizeInBytes);
+				list->RecordBarrierTransition(outAlloc.resource.Get(), D3D12_RESOURCE_STATE_COPY_DEST, desiredState);				
+			}
 			list->StopRecording();
 			
 			SubmitListAndFenceSynchronization(list.get());		
@@ -71,12 +79,12 @@ namespace Renderer
 					
 				}
 
-			ResourceAllocation ResourceFactory::MakePlacedBufferResource(const size_t sizeInBytes, const D3D12_RESOURCE_FLAGS flags)
+			ResourceAllocation ResourceFactory::MakePlacedBufferResource(const size_t sizeInBytes, const D3D12_RESOURCE_FLAGS resourceFlags, const D3D12_RESOURCE_STATES resourceState)
 			{
 				ResourceAllocation outAlloc{ this, ResourceTypes::Buffer };
 				outAlloc.allocation = memory->Allocate(sizeInBytes);
 							
-				const auto desc{ MakeBufferDesc(sizeInBytes, flags) };
+				const auto desc{ MakeBufferDesc(sizeInBytes, resourceFlags) };
 				constexpr decltype(nullptr) BUFFER_CLEAR_VALUE{ nullptr };
 				const auto result
 				{		
@@ -85,7 +93,7 @@ namespace Renderer
 						outAlloc.allocation.heap, 
 						outAlloc.allocation.offsetToAllocation,
 						&desc,
-						D3D12_RESOURCE_STATE_COPY_DEST,
+						resourceState,
 						BUFFER_CLEAR_VALUE,
 						IID_PPV_ARGS(&outAlloc.resource)
 					)

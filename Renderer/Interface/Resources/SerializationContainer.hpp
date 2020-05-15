@@ -20,6 +20,8 @@ namespace Renderer
 		public: const unsigned char *GetData() const { return saved.get(); }
 
 		public: size_t GetSize() const { return size; }
+
+		public: void Reset() { size = 0; currentWriteOffset = 0; saved.reset(); }
 		
 		
 	};
