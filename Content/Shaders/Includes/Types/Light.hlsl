@@ -1,8 +1,8 @@
 struct Light
 {
-	float3 viewPos;
+	float3 worldPos;
 	float radius;
-	float3 forwardVector;
+	float3 worldForwardVector;
 	float innerBlendRadians;
 	float3 color;
 	float outerBlendRadians;	

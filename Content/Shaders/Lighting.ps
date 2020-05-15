@@ -1,3 +1,4 @@
+#include "Types/GlobalBufferData.hlsl"
 #include "Types/Light.hlsl"
 #include "Types/LightingV2P.hlsl"
 
@@ -11,12 +12,12 @@ Buffer<LightIndexListInfo> offsetsToRelevantLightChunks : register(t2);
 
 float4 main(LightingV2P IN) : SV_TARGET
 {
-	float3 viewPos = mul(gridData.inverseProjection, IN.pos).xyz;
+	float3 fragmentWorldPos = mul(inverseViewProjection, IN.pos).xyz;
 		
 	uint3 Index = uint3
 	(
 		pos.xy / (gridData.screenDimensions / gridData.gridDimensions.xy),
-		log(1+gridData.fovTermForDepthCompute) / log(viewPos.z / gridData.nearDistance)
+		log(1+gridData.fovTermForDepthCompute) / log(fragmentWorldPos.z / gridData.nearDistance)
 	);	
 
 	uint tileIndex = FlattenVolumeTileGridIndex(Index, gridData.gridDimensions.xy);
@@ -28,7 +29,7 @@ float4 main(LightingV2P IN) : SV_TARGET
 		//simple dot based accentuation
 	
 		Light light = lights[ relevantLightIndices[indexChunk.offset+iteratedLights] ];
-		float3 lightToFragment = normalize(viewPos.xyz - light.viewPos);
+		float3 lightToFragment = normalize(fragmentWorldPos.xyz - light.worldPos);
 		
 		float lightAccentuation = saturate(dot(IN.normal, -lightToFragment))
 		
