@@ -36,11 +36,11 @@ namespace Renderer
 			(
 				size_t signatureHandle, 
 				size_t psoHandle,
+				VolumeTileGrid &&tileGrid, 
+				const VolumeTileGridData &gridData,
 				MaintainsInternalRenderResources &factory, 
 				ResourceRegistry &registry, 
-				DescriptorMemory &descMem, 
-				VolumeTileGrid &&tileGrid, 
-				const VolumeTileGridData &gridData
+				DescriptorMemory &descMem
 			);					
 
 			public:	void ExecuteOperationOnResourceReferences(UsesReferences *registry,	void(UsesReferences:: *operation)(size_t)) override;
