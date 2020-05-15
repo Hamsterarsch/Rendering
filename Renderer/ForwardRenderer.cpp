@@ -74,7 +74,8 @@ namespace Renderer::DX12
 		signatureFactory{ resources.get() },
 		shaderFactory{ Facade::MakeShaderFactory(5, 1) },
 		renderThread{ framesToDestruct },
-		descriptors{resources.get(), 1'000'000, 2048}
+		descriptors{resources.get(), 1'000'000, 2048},
+		cmdFactory{ *this, registry, descriptors }
 	{			
 		outputSurface->EnableVerticalSync();
 		shaderFactory->AddIncludeDirectory(Filesystem::Conversions::MakeExeRelative("../Content/Shaders/Includes").c_str());
@@ -120,7 +121,14 @@ namespace Renderer::DX12
 			
 			globalBuffer = HandleWrapper{ this, MakeBuffer(&globalsToDispatch, sizeof globalsToDispatch) };
 			FrameWorker worker{ resources.get(), commonQueue.get(), descriptors, registry, {}, std::move(globalBuffer), false };
-			worker.AddCommand(std::make_unique<CommandInitVolumeTileGrid>(uav1Signature, compPso, *this, registry, descriptors, std::move(volumeTileGrid), gridData));
+
+			worker.AddCommand(cmdFactory.MakeCommand<CommandInitVolumeTileGrid>
+			(
+					uav1Signature.Get(),
+					compPso,
+					std::move(volumeTileGrid),	
+					gridData
+			));
 						   				
 			renderThread.ScheduleFrameWorker( std::move(worker) );
 			renderThread.WaitForIdle();
@@ -278,20 +286,20 @@ namespace Renderer::DX12
 		
 		{
 			FrameWorker worker{ resources.get(), commonQueue.get(), descriptors, registry, renderSurface, std::move(globalBuffer), false };
-			worker.AddCommand(std::make_unique<CommandPrepareSurfaceForRendering>(depthOnlySurface));
+			worker.AddCommand(cmdFactory.MakeCommand<CommandPrepareSurfaceForRendering>(depthOnlySurface));
 			
 			//depth only pass of opaques
 			//depth clear cmd				
 			for(auto &&cmd : opaqueMeshCommands)
 			{
-				worker.AddCommand(std::make_unique<RenderMeshCommand>(defaultSignature, depthOnlyPso, *cmd));
+				worker.AddCommand(cmdFactory.MakeCommand<RenderMeshCommand>(defaultSignature.Get(), depthOnlyPso.Get(), *cmd));
 			}
 
 
 			//flag tiles (uses depth pre pass)
-			auto flagTilesCmd{ std::make_unique<CommandFlagActiveVolumeTiles>
-			( 
-				markActiveTilesSignature, markActiveTilesPso, initGridCmd->GetGridDataBufferHandle(), volumeTileGrid.GetTileCount(), *this, registry, descriptors 
+			auto flagTilesCmd{cmdFactory.MakeCommand<CommandFlagActiveVolumeTiles>
+			(
+				markActiveTilesSignature.Get(), markActiveTilesPso.Get(), initGridCmd->GetGridDataBufferHandle(), volumeTileGrid.GetTileCount()
 			)};
 		
 			for(auto &&cmd : opaqueMeshCommands)
@@ -301,15 +309,14 @@ namespace Renderer::DX12
 			auto flagBufferHandle{ flagTilesCmd->GetFlagBufferHandle() };
 								
 			worker.AddCommand(std::move(flagTilesCmd));
-
-
+			
 			//UniquePtr<CommandFlagActiveVolumeTiles> avtcmd{ static_cast<CommandFlagActiveVolumeTiles *>(wrkr.ExtractCommand(0).release()) };
 			//avtcmd->ExecuteOperationOnResourceReferences(&registry, &UsesReferences::RemoveReference);
 
 			//build tile list
-			worker.AddCommand(std::make_unique<CommandBuildActiveTileList>
+			worker.AddCommand(cmdFactory.MakeCommand<CommandBuildActiveTileList>
 			(
-				buildTileListSignature, buildTileListPso, flagBufferHandle, volumeTileGrid.GetTileCount(), *this, registry, descriptors 
+				buildTileListSignature.Get(), buildTileListPso.Get(), flagBufferHandle, volumeTileGrid.GetTileCount()
 			));
 			
 			renderSurface.ShouldClearDepthSurface(false);

@@ -13,6 +13,7 @@
 #include "ShaderRelevantTypes/GlobalBufferData.hpp"
 #include "Lighting/LightGrid/VolumeTileGrid.hpp"
 #include "Resources/Pso/DepthStencilFactoryDefault.hpp"
+#include "Commands/CommandFactory.hpp"
 
 /*
 namespace RHA
@@ -96,6 +97,7 @@ namespace Renderer::DX12
 
 		private: VolumeTileGrid volumeTileGrid;
 
+		private: CommandFactory cmdFactory;
 								 			
 		
 		public: ForwardRenderer(HWND outputWindow);
