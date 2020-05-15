@@ -18,8 +18,7 @@ namespace Renderer::DX12
 		RenderCommandCompute{ signatureHandle, psoHandle },
 		tileFlagBufferHandle{ tileFlagBufferHandle },
 		tileCountBuffer{ &factory, factory.MakeBuffer(&volumeTileCount, sizeof(volumeTileCount)) },
-		activeTileListBuffer{ &factory, factory.MakeUavBuffer(nullptr, sizeof(unsigned)*volumeTileCount) },
-		counter{ &factory, factory.MakeUavBuffer(nullptr, 4) },
+		activeTileListBuffer{ &factory, factory.MakeUavBuffer(nullptr, sizeof(unsigned)*(volumeTileCount+1)) },
 		descAlloc{ descMem.GetDescriptorAllocator(2, 0) },
 		groupsToDispatch{ static_cast<size_t>(std::ceil(volumeTileCount / 32.f)) }
 	{
@@ -33,13 +32,12 @@ namespace Renderer::DX12
 			sizeof(unsigned)
 		);
 
-		descAlloc.CreateUavBufferWithCounter
+		descAlloc.CreateUavBuffer
 		(
 			registry.GetResource(activeTileListBuffer),
-			registry.GetResource(counter),
 			registry.GetSignatureUavOffset(GetSignatureHandle(), 1),
 			0,
-			volumeTileCount,
+			volumeTileCount+1,
 			sizeof(unsigned)
 		);
 
@@ -50,7 +48,6 @@ namespace Renderer::DX12
 		(registry->*operation)(tileFlagBufferHandle);
 		(registry->*operation)(tileCountBuffer);
 		(registry->*operation)(activeTileListBuffer);
-		(registry->*operation)(counter);
 			
 	}
 

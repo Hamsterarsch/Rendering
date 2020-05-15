@@ -19,8 +19,6 @@ namespace Renderer::DX12
 		private: HandleWrapper tileCountBuffer;
 
 		private: HandleWrapper activeTileListBuffer;
-
-		private: HandleWrapper counter;
 		
 		private: DescriptorAllocator descAlloc;
 
