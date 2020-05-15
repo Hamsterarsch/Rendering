@@ -158,6 +158,12 @@
     <ClInclude Include="Commands\CommandFactory.hpp">
       <Filter>Commands</Filter>
     </ClInclude>
+    <ClInclude Include="ShaderRelevantTypes\Light.hpp">
+      <Filter>ShaderRelevantTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Lighting\LightContainer.hpp">
+      <Filter>Lighting</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -250,6 +256,9 @@
     </ClCompile>
     <ClCompile Include="Commands\CommandBuildActiveTileList.cpp">
       <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Lighting\LightContainer.cpp">
+      <Filter>Lighting</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

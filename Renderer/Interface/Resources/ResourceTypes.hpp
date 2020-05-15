@@ -10,7 +10,8 @@ namespace Renderer
 		Texture,
 		Pso,
 		Buffer,
-		Signature
+		Signature,
+		Light
 		
 	};
 
