@@ -58,7 +58,7 @@ namespace Renderer
 			public: virtual ID3D12RootSignature *GetSignature(ResourceHandle::t_hash handle) override;
 
 			public: Light &GetLight(ResourceHandle::t_hash handle);
-
+					
 			
 			public: size_t GetSignatureCbvOffset(ResourceHandle::t_hash handle, size_t cbvOrdinal);
 
@@ -78,6 +78,13 @@ namespace Renderer
 			private: void ExecuteReferenceOperationOnCorrectRegistry(ResourceHandle::t_hash handle, void (UsesReferences::*operation)(ResourceHandle::t_hash));
 			
 			public: virtual void RemoveReference(ResourceHandle::t_hash handle) override;
+
+
+			public: const void *GetLightsData() const;
+
+			public: size_t GetLigthsDataSizeInBytes() const;
+
+			public: size_t GetLightCount() const;
 			
 		};
 

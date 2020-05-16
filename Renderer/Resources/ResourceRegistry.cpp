@@ -250,5 +250,29 @@ namespace Renderer::DX12
 		
 	}
 
+
+
+	const void *ResourceRegistry::GetLightsData() const
+	{
+		return registryLight.GetData();
+
+	}
+
+
+
+	size_t ResourceRegistry::GetLigthsDataSizeInBytes() const
+	{
+		return registryLight.SizeInBytes();
+
+	}
+
+
+
+	size_t ResourceRegistry::GetLightCount() const
+	{
+		return registryLight.Size();
+
+	}
+
 	
 }
