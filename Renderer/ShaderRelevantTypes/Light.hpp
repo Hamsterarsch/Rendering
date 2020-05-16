@@ -19,6 +19,14 @@ namespace Renderer
 		public: float outerBlendRadians;		
 
 	};
+
+	struct LightIndexListInfo
+	{
+		public: unsigned offset;
+
+		public: unsigned size;
+		
+	};
 	
 	
 }
