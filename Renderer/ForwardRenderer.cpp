@@ -31,6 +31,7 @@
 #include "Commands/CommandPrepareSurfaceForRendering.hpp"
 #include "Commands/CommandPrepareSurfaceForPresent.h"
 #include "Commands/CommandBuildActiveTileList.hpp"
+#include "Commands/CommandAssignLightsToTiles.hpp"
 #include "ShaderRelevantTypes/Light.hpp"
 
 #if _DEBUG
@@ -154,6 +155,10 @@ namespace Renderer::DX12
 		root.Reset();
 		SerializeRootSignature(0, 1, 1, 0, &root);
 		buildTileListSignature = HandleWrapper{ this, MakeRootSignature(root.GetData()) };		
+
+		root.Reset();
+		SerializeRootSignature(0, 3, 2, 0, &root);
+		assignLightsSignature = HandleWrapper{ this, MakeRootSignature(root.GetData()) };
 		
 		SerializeContainer vs{};
 		{
@@ -215,7 +220,23 @@ namespace Renderer::DX12
 										
 			CompileComputeShader(pshader.get(), charCount, &cs);
 			buildTileListPso = HandleWrapper{ this, MakePso({ cs.GetData(), cs.GetSize()}, buildTileListSignature) };
-		}				
+		}			
+
+		//assign lights
+		{
+			SerializeContainer cs{};
+			std::ifstream shaderFile{ Filesystem::Conversions::MakeExeRelative(L"../Content/Shaders/AssignLightsToTiles.cs"), std::ios_base::in | std::ios_base::ate };
+			
+			const auto charCount{ shaderFile.tellg() };
+			shaderFile.seekg(0);
+
+			auto pshader{ std::make_unique<char[]>(charCount) };
+			shaderFile.read( pshader.get(), charCount);
+										
+			CompileComputeShader(pshader.get(), charCount, &cs);
+			assignLightsPso = HandleWrapper{ this, MakePso({ cs.GetData(), cs.GetSize()}, assignLightsSignature) };
+		}			
+
 	//-----------------------
 		
 		
@@ -314,10 +335,29 @@ namespace Renderer::DX12
 			//avtcmd->ExecuteOperationOnResourceReferences(&registry, &UsesReferences::RemoveReference);
 
 			//build tile list
-			worker.AddCommand(cmdFactory.MakeCommand<CommandBuildActiveTileList>
+			auto buildActiveTileListCmd{ cmdFactory.MakeCommand<CommandBuildActiveTileList>
 			(
 				buildTileListSignature.Get(), buildTileListPso.Get(), flagBufferHandle, volumeTileGrid.GetTileCount()
+			)};
+			auto activeTileListHandle{ buildActiveTileListCmd->GetActiveTileListHandle() };
+			worker.AddCommand(std::move(buildActiveTileListCmd));
+
+			//make light buffer
+			lightsBuffer = HandleWrapper{ this, MakeBuffer(registry.GetLightsData(), registry.GetLigthsDataSizeInBytes())};
+
+			//assign lights
+			worker.AddCommand(cmdFactory.MakeCommand<CommandAssignLightsToTiles>
+			(
+				assignLightsSignature.Get(),
+				assignLightsPso.Get(),
+				activeTileListHandle,
+				lightsBuffer.Get(),
+				initGridCmd->GetGridAABBBufferHandle(),
+				initGridCmd->GetGridDataBufferHandle(),
+				registry.GetLightCount(),
+				volumeTileGrid.GetTileCount()
 			));
+			
 			
 			renderSurface.ShouldClearDepthSurface(false);
 			worker.AddCommand(std::make_unique<CommandPrepareSurfaceForRendering>(renderSurface));
