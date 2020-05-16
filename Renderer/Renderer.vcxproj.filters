@@ -161,6 +161,9 @@
     <ClInclude Include="ShaderRelevantTypes\Light.hpp">
       <Filter>ShaderRelevantTypes</Filter>
     </ClInclude>
+    <ClInclude Include="Commands\CommandAssignLightsToTiles.hpp">
+      <Filter>Commands</Filter>
+    </ClInclude>
     <ClInclude Include="Lighting\LightContainer.hpp">
       <Filter>Lighting</Filter>
     </ClInclude>
@@ -259,6 +262,9 @@
     </ClCompile>
     <ClCompile Include="Lighting\LightContainer.cpp">
       <Filter>Lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\CommandAssignLightsToTiles.cpp">
+      <Filter>Commands</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
