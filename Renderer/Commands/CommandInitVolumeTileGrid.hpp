@@ -52,6 +52,8 @@ namespace Renderer
 			public: void WriteTileData(VolumeTileGrid &output);
 
 			public: size_t GetGridDataBufferHandle() { return gridDataBuffer; }
+
+			public: size_t GetGridAABBBufferHandle() { return gridOutputBuffer; }
 						
 		};
 

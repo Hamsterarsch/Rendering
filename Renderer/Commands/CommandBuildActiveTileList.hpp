@@ -37,9 +37,11 @@ namespace Renderer::DX12
 			DescriptorMemory &descMem	
 		);
 
-		void ExecuteOperationOnResourceReferences(UsesReferences *registry, void( UsesReferences:: *operation)(size_t)) override;
+		public: void ExecuteOperationOnResourceReferences(UsesReferences *registry, void( UsesReferences:: *operation)(size_t)) override;
 				
-		void Record(RHA::DX12::CmdList *list, HasQueriableResources &registry) override;
+		public: void Record(RHA::DX12::CmdList *list, HasQueriableResources &registry) override;
+
+		public: size_t GetActiveTileListHandle() const { return activeTileListBuffer; }
 
 		
 	};
