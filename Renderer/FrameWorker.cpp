@@ -34,7 +34,8 @@ namespace Renderer
 			surfaceToPresent{ surfaceToPresent },
 			commandsRecordedToList{ 0 },
 			globalBufferHandle{ std::move(globalBufferHandle) },
-			shouldPrepareSurface{ shouldPrepareSurface }			
+			shouldPrepareSurface{ shouldPrepareSurface },
+			lightingTable{ descriptors.GetDescriptorAllocator(4, 0) }
 		{
 			allocator = Facade::MakeCmdAllocator(resources, D3D12_COMMAND_LIST_TYPE_DIRECT);
 			fence = Facade::MakeFence(resources);

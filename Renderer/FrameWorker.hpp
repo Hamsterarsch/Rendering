@@ -69,6 +69,7 @@ namespace Renderer
 
 			private: bool shouldPrepareSurface;
 
+			private: DescriptorAllocator lightingTable;
 
 			
 			public: FrameWorker
@@ -122,6 +123,8 @@ namespace Renderer
 			public: UniquePtr<class RenderCommand> ExtractCommand(size_t index);
 
 			public: void ExecuteCommandPostGpuWork();
+
+			public: DescriptorAllocator &GetLightingTable() { return lightingTable; }
 
 													
 		};

@@ -358,6 +358,9 @@ namespace Renderer::DX12
 				volumeTileGrid.GetTileCount()
 			));
 			
+			worker.GetLightingTable().CreateCbv()
+
+
 			
 			renderSurface.ShouldClearDepthSurface(false);
 			worker.AddCommand(std::make_unique<CommandPrepareSurfaceForRendering>(renderSurface));
