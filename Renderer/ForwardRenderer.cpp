@@ -311,9 +311,9 @@ namespace Renderer::DX12
 			
 			//depth only pass of opaques
 			//depth clear cmd				
-			for(auto &&cmd : opaqueMeshCommands)
+			for(auto &&args : opaqueMeshArguments)
 			{
-				worker.AddCommand(cmdFactory.MakeCommand<RenderMeshCommand>(defaultSignature.Get(), depthOnlyPso.Get(), *cmd));
+				worker.AddCommand(cmdFactory.MakeCommand<RenderMeshCommand>(defaultSignature.Get(), depthOnlyPso.Get(), args));
 			}
 
 
@@ -323,7 +323,7 @@ namespace Renderer::DX12
 				markActiveTilesSignature.Get(), markActiveTilesPso.Get(), initGridCmd->GetGridDataBufferHandle(), volumeTileGrid.GetTileCount()
 			)};
 		
-			for(auto &&cmd : opaqueMeshCommands)
+			for(auto &&cmd : opaqueMeshArguments)
 			{
 				flagTilesCmd->AddRenderMeshCommand(*cmd);
 			}
@@ -366,12 +366,12 @@ namespace Renderer::DX12
 			{
 				worker.AddCommand(std::move(cmd));
 			}
-			for(auto &&cmd : opaqueMeshCommands)
+			for(auto &&cmd : opaqueMeshArguments)
 			{
 				worker.AddCommand(std::move(cmd));
 			}
 			commandsToDispatch.clear();
-			opaqueMeshCommands.clear();
+			opaqueMeshArguments.clear();
 
 			worker.AddCommand(std::make_unique<CommandPrepareSurfaceForPresent>(renderSurface));
 			
@@ -390,7 +390,7 @@ namespace Renderer::DX12
 		void ForwardRenderer::AbortDispatch()
 		{
 			commandsToDispatch.clear();
-			opaqueMeshCommands.clear();
+			opaqueMeshArguments.clear();
 		
 		}
 	
@@ -398,9 +398,9 @@ namespace Renderer::DX12
 	void ForwardRenderer::RenderMesh(size_t signatureHandle, size_t psoHandle, size_t meshHandle, size_t sizeInBytes, size_t byteOffsetToIndices, size_t transformBufferHandle, size_t instanceCount)
 	{
 		//todo branch between translucent/opaque based on pso class
-		opaqueMeshCommands.emplace_back
+		opaqueMeshArguments.emplace_back
 		(
-			std::make_unique<RenderMeshCommand>(signatureHandle, psoHandle, meshHandle, byteOffsetToIndices, sizeInBytes - byteOffsetToIndices, transformBufferHandle, instanceCount)
+			RenderMeshArguments{ signatureHandle, psoHandle,  transformBufferHandle, instanceCount, meshHandle, byteOffsetToIndices, sizeInBytes - byteOffsetToIndices }
 		);			
 
 	}

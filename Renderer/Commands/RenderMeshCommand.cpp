@@ -8,41 +8,68 @@ namespace Renderer
 {
 	namespace DX12
 	{
+		RenderMeshCommand::RenderMeshCommand(const RenderMeshArguments &arguments) :
+			RenderCommandGraphics{ arguments.signature, arguments.pso },
+			meshHandle{ arguments.mesh },
+			byteOffsetToIndexData{ arguments.byteOffsetToIndexData },
+			indicesSizeInBytes{ arguments.indicesSizeInBytes },
+			transformBufferHandle{ arguments.instanceTransforms },
+			instanceCount{ arguments.instanceCount },
+			gridDataBuffer{ 0 },
+			lightBuffer{ 0 },
+			relevantLightsList{ 0 },
+			offsetsToRelevantLightsList{ 0 }
+		{
+		}
+
 
 
 		RenderMeshCommand::RenderMeshCommand
 		(
-			const size_t signatureHandle, 
-			const size_t psoHandle, 
-			const size_t meshHandle, 
-			const size_t byteOffsetToIndexData, 
-			const size_t indicesSizeInBytes, 
-			const size_t transformBufferHandle, 
-			const size_t instanceCount
-		) :
-			RenderCommandGraphics{ signatureHandle, psoHandle },
-			meshHandle{ meshHandle },
-			byteOffsetToIndexData{ byteOffsetToIndexData },
-			indicesSizeInBytes{ indicesSizeInBytes },
-			transformBufferHandle{ transformBufferHandle },
-			instanceCount{ instanceCount }		
+			const size_t signature,
+			const size_t pso,
+			const RenderMeshArguments &arguments
+		)	:
+			RenderCommandGraphics{ signature, pso},
+			meshHandle{ arguments.mesh },
+			byteOffsetToIndexData{ arguments.byteOffsetToIndexData },
+			indicesSizeInBytes{ arguments.indicesSizeInBytes },
+			transformBufferHandle{ arguments.instanceTransforms },
+			instanceCount{ arguments.instanceCount },
+			gridDataBuffer{ 0 },
+			lightBuffer{ 0 },
+			relevantLightsList{ 0 },
+			offsetsToRelevantLightsList{ 0 }
 		{
 		}
 
+
+
 		RenderMeshCommand::RenderMeshCommand
 		(
-			const size_t signatureHandle, 
-			const size_t psoHandle,
-			const RenderMeshCommand &baseCommand
-		) :
-			RenderCommandGraphics{ signatureHandle, psoHandle },
-			meshHandle{ baseCommand.meshHandle },
-			byteOffsetToIndexData{ baseCommand.byteOffsetToIndexData },
-			indicesSizeInBytes{ baseCommand.indicesSizeInBytes },
-			transformBufferHandle{ baseCommand.transformBufferHandle },
-			instanceCount{ baseCommand.instanceCount }		
+			const size_t signature,
+			const size_t pso,
+			const size_t gridDataBuffer,
+			const size_t lightsBuffer, 
+			const size_t relevantLightsList,
+			const size_t offsetToRelevantLightsList,
+			const RenderMeshArguments &arguments,
+			DescriptorAllocator &filledDescAlloc
+		)	:
+			RenderCommandGraphics{ signature, pso },
+			meshHandle{ arguments.mesh },
+			byteOffsetToIndexData{ arguments.byteOffsetToIndexData },
+			indicesSizeInBytes{ arguments.indicesSizeInBytes },
+			transformBufferHandle{ arguments.instanceTransforms },
+			instanceCount{ arguments.instanceCount },
+			gridDataBuffer{ gridDataBuffer },
+			lightBuffer{ lightsBuffer },
+			relevantLightsList{ relevantLightsList },
+			offsetsToRelevantLightsList{ offsetToRelevantLightsList },
+			descAlloc{ &filledDescAlloc }
 		{
 		}
+
 
 		void RenderMeshCommand::ExecuteOperationOnResourceReferences
 		(
@@ -51,11 +78,12 @@ namespace Renderer
 		)
 		{			
 			(registry->*operation)(meshHandle);
+			(registry->*operation)(transformBufferHandle);							
 
-			if(transformBufferHandle > 0)
-			{
-				(registry->*operation)(transformBufferHandle);				
-			}
+			(registry->*operation)(gridDataBuffer);
+			(registry->*operation)(lightBuffer);
+			(registry->*operation)(relevantLightsList);
+			(registry->*operation)(offsetsToRelevantLightsList);
 			
 		}
 
@@ -84,6 +112,8 @@ namespace Renderer
 			{
 				g->SetGraphicsRootConstantBufferView(1, registry.GetResourceGpuAddress(transformBufferHandle));				
 			}
+
+			list->RecordSetGraphicsSignatureTable(2, descAlloc->GetCurrentTableStartForView());
 			
 			g->DrawIndexedInstanced(indicesSizeInBytes / sizeof(unsigned), instanceCount, 0, 0, 0);
 			

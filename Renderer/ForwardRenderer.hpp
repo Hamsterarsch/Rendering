@@ -81,7 +81,7 @@ namespace Renderer::DX12
 					
 		private: std::list<UniquePtr<RenderCommand>> commandsToDispatch;
 
-		private: std::list<UniquePtr<RenderMeshCommand>> opaqueMeshCommands;
+		private: std::list<RenderMeshArguments> opaqueMeshArguments;
 
 		private: HandleWrapper globalBuffer;
 
