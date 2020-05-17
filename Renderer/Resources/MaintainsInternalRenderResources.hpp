@@ -9,6 +9,8 @@ namespace Renderer
 		DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(MaintainsInternalRenderResources)
 
 
+		public: virtual size_t MakeBuffer(const void *data, size_t sizeInBytes, D3D12_RESOURCE_STATES state) = 0;
+
 		public: virtual size_t MakeUavBuffer(const void *data, size_t sizeInBytes) = 0;
 
 		public: virtual DxPtr<ID3D12Resource> MakeReadbackBuffer(size_t sizeInBytes) = 0;

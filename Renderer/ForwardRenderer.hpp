@@ -132,6 +132,8 @@ namespace Renderer::DX12
 		public: virtual void RemakeBuffer(const void *data, size_t sizeInBytes, size_t handle) override;
 		
 
+		public: virtual size_t MakeBuffer(const void *data, size_t sizeInBytes, D3D12_RESOURCE_STATES state) override;
+
 		public: virtual size_t MakeUavBuffer(const void *data, size_t sizeInBytes) override;
 
 		public: virtual DxPtr<ID3D12Resource> MakeReadbackBuffer(size_t sizeInBytes) override;

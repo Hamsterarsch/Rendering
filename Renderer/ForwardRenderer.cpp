@@ -472,6 +472,16 @@ namespace Renderer::DX12
 
 
 	
+	size_t ForwardRenderer::MakeBuffer(const void *data, const size_t sizeInBytes, const D3D12_RESOURCE_STATES state)
+	{
+		return registry.Register
+		(					
+			bufferFactory->MakeBufferWithData(data, sizeInBytes, state)						
+		);	
+	}
+
+
+
 	size_t ForwardRenderer::MakeUavBuffer(const void *data, const size_t sizeInBytes)
 	{						
 		return registry.Register
