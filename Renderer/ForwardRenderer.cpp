@@ -193,7 +193,7 @@ namespace Renderer::DX12
 			shaderList.vs.data = vs.GetData();
 			shaderList.vs.sizeInBytes = vs.GetSize();
 
-			depthOnlyPso = HandleWrapper{ this, MakePso(PipelineTypes::Opaque, VertexLayoutTypes::PositionOnly, shaderList, defaultSignature) };
+			depthOnlyPso = HandleWrapper{ this, MakePso(PipelineTypes::Opaque, VertexLayoutTypes::Position, shaderList, defaultSignature) };
 		}
 
 		{
@@ -204,7 +204,7 @@ namespace Renderer::DX12
 			shaderList.ps.data = ps.GetData();
 			shaderList.ps.sizeInBytes = ps.GetSize();
 			
-			markActiveTilesPso = HandleWrapper{ this, MakePso(PipelineTypes::Opaque, VertexLayoutTypes::PositionOnly, shaderList, markActiveTilesSignature) };			
+			markActiveTilesPso = HandleWrapper{ this, MakePso(PipelineTypes::Opaque, VertexLayoutTypes::Position, shaderList, markActiveTilesSignature) };			
 		}
 
 		//build tile list
