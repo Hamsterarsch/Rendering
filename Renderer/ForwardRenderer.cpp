@@ -343,7 +343,7 @@ namespace Renderer::DX12
 			worker.AddCommand(std::move(buildActiveTileListCmd));
 
 			//make light buffer
-			lightsBuffer = HandleWrapper{ this, MakeBuffer(registry.GetLightsData(), registry.GetLigthsDataSizeInBytes())};
+			lightsBuffer = HandleWrapper{ this, MakeBuffer(registry.GetLightsData(), registry.GetLigthsDataSizeInBytes(), D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE)};
 
 			//assign lights
 			worker.AddCommand(cmdFactory.MakeCommand<CommandAssignLightsToTiles>
