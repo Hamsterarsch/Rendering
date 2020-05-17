@@ -219,6 +219,11 @@ namespace Renderer::DX12
 			void (UsesReferences:: *const operation)(ResourceHandle::t_hash)
 		)
 		{
+			if(handle == 0)
+			{
+				return;
+			}
+
 			const auto handleType{  ResourceHandle::GetResourceType(handle) };
 			if(handleType == ResourceHandle::t_resourceTypes::Pso)
 			{
