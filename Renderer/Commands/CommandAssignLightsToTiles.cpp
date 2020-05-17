@@ -105,6 +105,9 @@ namespace Renderer::DX12
 
 		list->RecordDispatch(dispatchSize, 1, 1);
 
+		list->RecordBarrierTransition(registry.GetResource(relevantLightIndices), D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+		list->RecordBarrierTransition(registry.GetResource(offsetsToRelevantLightChunks), D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+
 	}
 
 	
