@@ -2,11 +2,29 @@
 #include "DX12/DeviceResources.hpp"
 #include "Resources/Descriptor/DescriptorMemory.hpp"
 #include "Shared/Exception/Exception.hpp"
-#include "Shared/Exception/CreationFailedException.hpp"
-#include "Utility/Alignment.hpp"
+
 
 namespace Renderer::DX12
 {
+	DescriptorAllocator::ChunkData::ChunkData() :
+		offsetToTableStart{ -1 },
+		offsetToAfterTable{ 0 }
+	{
+	}
+
+	DescriptorAllocator::ChunkData::ChunkData(const DescriptorChunk& chunk, int offsetToTableStart, size_t offsetToAfterTable) :
+		chunk{ chunk },
+		offsetToTableStart{ -1 },
+		offsetToAfterTable{ 0 }
+	{
+	}
+
+	DescriptorAllocator::DescriptorAllocator() :
+		resources{ nullptr },
+		parent{ nullptr }
+	{
+	}
+
 	DescriptorAllocator::DescriptorAllocator
 	(
 		DeviceResources *resources,
@@ -21,39 +39,66 @@ namespace Renderer::DX12
 	{
 	}
 	
-	DescriptorAllocator::DescriptorAllocator(DescriptorAllocator &&Other) noexcept :
-		view{ std::move(Other.view) },
-		sampler{ std::move(Other.sampler) },
-		resources{ std::move(Other.resources) },
-		parent{ std::move(Other.parent) }
+	DescriptorAllocator::DescriptorAllocator(DescriptorAllocator &&other) noexcept : DescriptorAllocator{}
 	{			
-		Other.view.chunk.capacity = Other.view.chunk.startIndex = 0;					
-		Other.sampler.chunk.capacity = Other.sampler.chunk.startIndex = 0;						
-		Other.resources = nullptr;
+		*this = std::move(other);
 								
 	}
 
-	DescriptorAllocator::~DescriptorAllocator() noexcept
+
+	
+	DescriptorAllocator &DescriptorAllocator::operator=(DescriptorAllocator &&rhs) noexcept
 	{
-		if(parent == nullptr)
+		if(this == &rhs)
 		{
-			return;
-		}
-		
-		if(view.chunk.capacity > 0)
-		{
-			parent->RetireViewDescriptorChunk(view.chunk);
+			return *this;
+			
 		}
 
-		if(sampler.chunk.capacity > 0)
+		Free();
+		
+		view = std::move(rhs.view);
+		sampler = std::move(rhs.sampler);
+		resources = std::move(rhs.resources);
+		parent = std::move(rhs.parent);
+		
+		return *this;
+		
+	}
+	
+		void DescriptorAllocator::Free()
 		{
-			parent->RetireSamplerDescriptorChunk(sampler.chunk);
+			if(parent == nullptr)
+			{
+				return;
+			}
+			
+			if(view.chunk.capacity > 0)
+			{
+				parent->RetireViewDescriptorChunk(view.chunk);
+			}
+
+			if(sampler.chunk.capacity > 0)
+			{
+				parent->RetireSamplerDescriptorChunk(sampler.chunk);
+			}
+		
+			parent = nullptr;
+			resources = nullptr;
+			sampler = view = ChunkData{ {}, -1, 0 };
+		
 		}
+
+	
+	
+	DescriptorAllocator::~DescriptorAllocator() noexcept
+	{
+		Free();					
 					
 	}
 
-	
-	
+
+
 	void DescriptorAllocator::OpenNewTable()
 	{			
 		view.offsetToTableStart = view.offsetToAfterTable;
@@ -137,7 +182,14 @@ namespace Renderer::DX12
 
 
 	
-	void DescriptorAllocator::CreateSrvBuffer(ID3D12Resource* resource, size_t tableOffset, size_t firstIndex, size_t numElements, size_t strideInBytes)
+	void DescriptorAllocator::CreateSrvBuffer
+	(
+		ID3D12Resource *resource,
+		const size_t tableOffset,
+		const size_t firstIndex,
+		const size_t numElements,
+		const size_t strideInBytes
+	)
 	{
 		D3D12_SHADER_RESOURCE_VIEW_DESC desc{};
 		desc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
@@ -152,8 +204,31 @@ namespace Renderer::DX12
 		CreateSrvInternal(resource, tableOffset, &desc);
 		
 	}
-	
 
+
+	
+	void DescriptorAllocator::CreateSrvBufferFormatted
+	(
+		ID3D12Resource *resource,
+		const size_t tableOffset,
+		const size_t firstIndex,
+		const size_t numElements,
+		const DXGI_FORMAT format)
+	{
+		D3D12_SHADER_RESOURCE_VIEW_DESC desc{};				
+		desc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+
+		desc.Buffer.FirstElement = firstIndex;
+		desc.Buffer.NumElements = numElements;
+				
+		desc.Format = format;
+		desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		
+		CreateSrvInternal(resource, tableOffset, &desc);
+		
+	}
+
+	
 
 	void DescriptorAllocator::CreateCbv
 	(
