@@ -4,3 +4,6 @@ Debug/
 Release/
 *.user*
 Application/My Inspector Results - Application/
+Application/DebugOptimized/
+Application/x64/DebugOptimized/
+DebugOptimized/
