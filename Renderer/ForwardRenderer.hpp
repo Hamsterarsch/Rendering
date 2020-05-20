@@ -4,9 +4,7 @@
 #include "Resources/Pso/PsoFactory.hpp"
 #include "Resources/RootSignature/RootSignatureFactory.hpp"
 #include "Resources/Pso/VertexLayoutProvider.hpp"
-#include "Shared/Types/Containers/QueueConcurrent.hpp"
 #include "DX12/ShaderFactory.hpp"
-#include "RendererMaster.hpp"
 #include "Resources/ResourceRegistry.hpp"
 #include "Resources/MaintainsInternalRenderResources.hpp"
 #include "Resources/Descriptor/DescriptorMemory.hpp"
@@ -14,8 +12,11 @@
 #include "Lighting/LightGrid/VolumeTileGrid.hpp"
 #include "Resources/Pso/DepthStencilFactoryDefault.hpp"
 #include "Commands/CommandFactory.hpp"
+#include "Commands/CommandProcessorImpl.hpp"
+#include "Resources/HandleWrapper.hpp"
+#include "Commands/RenderMeshCommand.hpp"
 
-/*
+
 namespace RHA
 {
 	namespace DX12
@@ -31,16 +32,14 @@ namespace RHA
 	}
 }
 
-struct ID3D12RootSignature;
-struct ID3D12PipelineState;
-struct ID3D12Resource;*/
+
+namespace Renderer::DX12::Commands{ class InitVolumeTileGridCommand; }
 
 namespace Renderer::DX12
 {
 	class ResourceFactory;
-	class FrameWorker;
-	class RenderMeshCommand;
-	class CommandInitVolumeTileGrid;
+	
+
 	
 	class ForwardRenderer final : public Renderer, public MaintainsInternalRenderResources
 	{	
@@ -75,29 +74,28 @@ namespace Renderer::DX12
 		
 		private: UniquePtr<ShaderFactory> shaderFactory;
 		
-		private: QueueConcurrent<FrameWorker> framesToDestruct;
 
-		private: std::future<int> activeFrameHandle;
-					
-		private: std::list<UniquePtr<RenderCommand>> commandsToDispatch;
-
-		private: std::list<UniquePtr<RenderMeshCommand>> opaqueMeshCommands;
 
 		private: HandleWrapper globalBuffer;
 
 		private: GlobalBufferData globalsToDispatch;
 
-		private: RendererMaster renderThread;
-				 
 		private: DescriptorMemory descriptors;
 
 		private: HandleWrapper depthOnlyPso, defaultSignature, uav1Signature, markActiveTilesPso, markActiveTilesSignature, buildTileListPso, buildTileListSignature;
 
-		private: UniquePtr<CommandInitVolumeTileGrid> initGridCmd;
+		private: HandleWrapper assignLightsSignature, assignLightsPso, lightsBuffer;
 
 		private: VolumeTileGrid volumeTileGrid;
 
 		private: CommandFactory cmdFactory;
+
+		private: Commands::CommandProcessorImpl commandProcessor;
+
+		private: UniquePtr<Commands::InitVolumeTileGridCommand> initGridCmd;
+
+		private: std::vector<Commands::RenderMeshArguments> opaqueMeshArguments;
+				 		
 								 			
 		
 		public: ForwardRenderer(HWND outputWindow);
@@ -118,7 +116,9 @@ namespace Renderer::DX12
 
 		public: virtual void SetCamera(float x, float y, float z, float pitch, float yaw, float roll) override;
 							
-		
+
+		public: virtual size_t MakeLight(const float (& position)[3], const float (& rotation)[3], const float(& color)[3], float radius) override;
+				
 		
 		public: virtual size_t MakeBuffer(const void *data, size_t sizeInBytes) override;
 
@@ -126,6 +126,8 @@ namespace Renderer::DX12
 					 			
 		public: virtual void RemakeBuffer(const void *data, size_t sizeInBytes, size_t handle) override;
 		
+
+		public: virtual size_t MakeBuffer(const void *data, size_t sizeInBytes, D3D12_RESOURCE_STATES state) override;
 
 		public: virtual size_t MakeUavBuffer(const void *data, size_t sizeInBytes) override;
 

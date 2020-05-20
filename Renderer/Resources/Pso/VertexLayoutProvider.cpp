@@ -1,98 +1,66 @@
 #include "Resources/Pso/VertexLayoutProvider.hpp"
 
 
-namespace Renderer
+namespace Renderer::DX12
 {
-	namespace DX12
+	VertexLayoutProvider::VertexLayoutProvider()
 	{
-		VertexLayoutProvider::VertexLayoutProvider()
+		D3D12_INPUT_ELEMENT_DESC descPosition
 		{
-			{
-				LayoutData layout;
-				layout.elements.emplace_back
-				(
-					D3D12_INPUT_ELEMENT_DESC
-					{
-					"POSITION",
-					0,
-					DXGI_FORMAT_R32G32B32_FLOAT,
-					0,
-					0,
-					D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-					0
-					}
-				);
-				
-				AddLayout(VertexLayoutTypes::PositionOnly, std::move(layout));
-			}
-
-			{
-				LayoutData layout;
-				layout.elements.emplace_back
-				(
-					D3D12_INPUT_ELEMENT_DESC
-					{
-					"POSITION",
-					0,
-					DXGI_FORMAT_R32G32B32_FLOAT,
-					0,
-					0,
-					D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-					0
-					}
-				);
-
-				layout.elements.emplace_back
-				(
-					D3D12_INPUT_ELEMENT_DESC
-					{
-					"NORMAL",
-					0,
-					DXGI_FORMAT_R32G32B32_FLOAT,
-					0,
-					0,
-					D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-					0
-					}
-				);
-
-				layout.elements.emplace_back
-				(
-					D3D12_INPUT_ELEMENT_DESC
-					{
-					"TEXCOORD",
-					0,
-					DXGI_FORMAT_R32G32_FLOAT,
-					0,
-					0,
-					D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
-					0
-					}
-				);
-									
-				AddLayout(VertexLayoutTypes::Standard, std::move(layout));
-			}
-				
-		}
+			"POSITION",
+			0,
+			DXGI_FORMAT_R32G32B32_FLOAT,
+			0,
+			0,
+			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
+			0
+		};
+						
+		AddLayout(VertexLayoutTypes::Position, {{descPosition}});
 
 
-		
-		D3D12_INPUT_LAYOUT_DESC VertexLayoutProvider::GetLayoutDesc(const VertexLayoutTypes layoutType) const
+		D3D12_INPUT_ELEMENT_DESC descNormal
 		{
-			const auto &layout{ layouts.at(layoutType) };
-			return { layout.elements.data(), layout.elements.size() };
-				
-		}
-
-
+			"NORMAL",
+			0,
+			DXGI_FORMAT_R32G32B32_FLOAT,
+			0,
+			12,
+			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
+			0
+		};
 		
+		AddLayout(VertexLayoutTypes::PositionNormal, {{descPosition, descNormal}});
+
+
+		D3D12_INPUT_ELEMENT_DESC descTexcoord
+		{
+			"TEXCOORD",
+			0,
+			DXGI_FORMAT_R32G32_FLOAT,
+			0,
+			24,
+			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
+			0
+		};
+
+		AddLayout(VertexLayoutTypes::PositionNormalTexcoord, {{descPosition, descNormal, descTexcoord}});
+			
+	}
+
 		void VertexLayoutProvider::AddLayout(const VertexLayoutTypes type, LayoutData &&layout)
 		{
 			layouts.insert( { type, std::move(layout) } );
 				
 		}
 
-		
+
+	
+	D3D12_INPUT_LAYOUT_DESC VertexLayoutProvider::GetLayoutDesc(const VertexLayoutTypes layoutType) const
+	{
+		const auto &layout{ layouts.at(layoutType) };
+		return { layout.elements.data(), static_cast<UINT>(layout.elements.size()) };
+			
 	}
 
 	

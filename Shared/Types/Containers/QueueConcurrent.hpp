@@ -12,8 +12,25 @@ class QueueConcurrent
 	private: mutable std::mutex mutex;
 
 	private: mutable std::condition_variable condVarEmpty, condVarPush;
+
+	private: bool releaseWaiters{ false };
 			 			 	
 
+
+	public: ~QueueConcurrent();
+
+	public: void ReleaseWaitingThreads();
+
+	public: QueueConcurrent() = default;
+
+	public: QueueConcurrent(QueueConcurrent &&Other) = delete;
+
+	public: QueueConcurrent &operator=(QueueConcurrent &&rhs) = delete;
+
+	public: QueueConcurrent(const QueueConcurrent &Other) = delete;
+
+	public: QueueConcurrent &operator=(const QueueConcurrent &rhs) = delete;
+	
 	
 	public: void Push(const T &item);
 	
@@ -35,12 +52,38 @@ class QueueConcurrent
 				
 };
 
+
+
+template <class T>
+QueueConcurrent<T>::~QueueConcurrent()
+{
+	ReleaseWaitingThreads();
+	
+}
+
+	template <class T>
+	void QueueConcurrent<T>::ReleaseWaitingThreads() 
+	{
+		if(releaseWaiters)
+		{
+			return;
+		}
+	
+		releaseWaiters = true;
+		condVarPush.notify_all();
+		condVarEmpty.notify_all();
+	
+	}
+
+
+
 template <class T>
 void QueueConcurrent<T>::Push(const T &item)
 {
-	std::lock_guard lock{ mutex };
-
-	queue.push(item);
+	{
+		std::lock_guard lock{ mutex };
+		queue.push(item);
+	}
 	condVarPush.notify_all();
 	
 }
@@ -50,9 +93,11 @@ void QueueConcurrent<T>::Push(const T &item)
 template <class T>
 void QueueConcurrent<T>::Push(T &&item)
 {
-	std::lock_guard lock{ mutex };
-
-	queue.push(std::move(item));
+	{
+		std::lock_guard lock{ mutex };
+		queue.push(std::move(item));
+	}
+	
 	condVarPush.notify_all();
 	
 }
@@ -62,13 +107,14 @@ void QueueConcurrent<T>::Push(T &&item)
 template <class T>
 T QueueConcurrent<T>::Pop()
 {
-	std::lock_guard lock{ mutex };
+	std::unique_lock lock{ mutex };
 
 	T item{ std::move(queue.front()) };
 	queue.pop();
 
 	if(queue.empty())
 	{
+		lock.unlock();
 		condVarEmpty.notify_all();
 	}
 	
@@ -81,11 +127,13 @@ T QueueConcurrent<T>::Pop()
 template <class T>
 void QueueConcurrent<T>::Empty()
 {
-	std::lock_guard lock{ mutex };
-
-	while(!queue.empty())
 	{
-		queue.pop();
+		std::lock_guard lock{ mutex };
+
+		while(!queue.empty())
+		{
+			queue.pop();
+		}
 	}
 	condVarEmpty.notify_all();
 
@@ -120,7 +168,13 @@ template <class T>
 void QueueConcurrent<T>::WaitForEmpty() const
 {
 	std::unique_lock lock{ mutex };
-	condVarEmpty.wait(lock, [&q=queue](){ return q.empty(); });
+
+	if(queue.empty() || releaseWaiters)
+	{
+		return;
+	}
+	
+	condVarEmpty.wait(lock, [&q=queue, &b=releaseWaiters](){ return q.empty() || b; });
 	
 }
 
@@ -130,7 +184,13 @@ template <class T>
 void QueueConcurrent<T>::WaitForItems() const
 {
 	std::unique_lock lock{ mutex };
-	condVarPush.wait(lock, [&q=queue](){ return !q.empty(); });
+
+	if(!queue.empty() || releaseWaiters)
+	{
+		return;
+	}
+	
+	condVarPush.wait(lock, [&q=queue, &b = releaseWaiters](){ return !q.empty() || b; });
 	
 }
 

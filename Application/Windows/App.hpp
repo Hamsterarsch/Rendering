@@ -11,9 +11,9 @@ namespace Windows
 
 		private: UniquePtr<Renderer::Renderer> renderer;
 
-		private: size_t meshHandle, psoHandle, rootHandle, meshSize, meshBytesToIndices;
+		private: size_t meshHandle, rootHandle, meshSize, meshBytesToIndices;
 
-		private: size_t minstancePsoHandle;
+		private: size_t psoOpaqueShadedWithInstanceSupport;
 		
 
 		

@@ -11,9 +11,9 @@ namespace Renderer
 		
 		class RENDERER_DLLSPEC HandleWrapper
 		{
-			private: MaintainsRenderResources *retirementTarget;
-			
 			private: size_t handle;
+			
+			private: MaintainsRenderResources *retirementTarget;
 					 
 
 
@@ -27,16 +27,16 @@ namespace Renderer
 
 			public: HandleWrapper(HandleWrapper &&other) noexcept;
 
+			public: HandleWrapper &operator=(HandleWrapper &&rhs) noexcept;
+			
+			public: void Reset();
+			
+			public: bool IsValid() const;
+			
 				private: void Invalidate();
 			
-			public: HandleWrapper &operator=(HandleWrapper &&rhs) noexcept;
-
-			
 			public: ~HandleWrapper();
-								
-			public: void Reset();
 
-			public: bool IsValid() const;
 			
 			public: operator size_t() const { return handle; }
 

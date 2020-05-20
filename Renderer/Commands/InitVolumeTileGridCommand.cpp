@@ -1,12 +1,12 @@
-#include "Commands/CommandInitVolumeTileGrid.hpp"
+#include "Commands/InitVolumeTileGridCommand.hpp"
 #include "Resources/Descriptor/DescriptorMemory.hpp"
 #include "Resources/MaintainsInternalRenderResources.hpp"
 #include "Resources/ResourceRegistry.hpp"
 
 
-namespace Renderer::DX12
+namespace Renderer::DX12::Commands
 {	
-	CommandInitVolumeTileGrid::CommandInitVolumeTileGrid
+	InitVolumeTileGridCommand::InitVolumeTileGridCommand
 	(
 		const size_t signatureHandle, 
 		const size_t psoHandle,
@@ -42,31 +42,33 @@ namespace Renderer::DX12
 	
 	
 	
-	void CommandInitVolumeTileGrid::ExecuteOperationOnResourceReferences(UsesReferences *registry, void(UsesReferences:: *const operation)(size_t))
+	void InitVolumeTileGridCommand::ExecuteOperationOnResourceReferences(UsesReferences &registry, void(UsesReferences:: *const operation)(size_t))
 	{
-		(registry->*operation)(gridOutputBuffer);
-		(registry->*operation)(gridDataBuffer);
+		RenderCommandCompute::ExecuteOperationOnResourceReferences(registry, operation);
+		
+		(registry.*operation)(gridOutputBuffer);
+		(registry.*operation)(gridDataBuffer);
 		
 	}
-	
-	
-	
-	void CommandInitVolumeTileGrid::Record(RHA::DX12::CmdList *list, HasQueriableResources &registry)
+
+	void InitVolumeTileGridCommand::Execute(CommandProcessor &context)
 	{
-		list->RecordSetComputeSignatureCbv(GRID_DATA_INDEX, registry.GetResourceGpuAddress(gridDataBuffer));								
-		list->RecordSetComputeSignatureTable(TABLE_INDEX, descAlloc.GetCurrentTableStartForView());
+		RenderCommandCompute::Execute(context);
+
+		{
+			auto &list{ context.GetList() };
+			auto &registry{ context.GetRegistry() };
+			
+			list.RecordSetComputeSignatureCbv(GRID_DATA_INDEX, registry.GetResourceGpuAddress(gridDataBuffer));								
+			list.RecordSetComputeSignatureTable(TABLE_INDEX, descAlloc.GetCurrentTableStartForView());
 	
-		list->RecordDispatch(dispatchSize.x, dispatchSize.y, dispatchSize.z);
-						
-		list->RecordBarrierTransition(registry.GetResource(gridOutputBuffer), D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_COPY_SOURCE);								
-		list->RecordCopyResource(readbackBuffer.Get(), registry.GetResource(gridOutputBuffer));
-		
-	}
-	
-	
-	
-	void CommandInitVolumeTileGrid::ExecutePostGpuWork()
-	{
+			list.RecordDispatch(dispatchSize.x, dispatchSize.y, dispatchSize.z);
+							
+			list.RecordBarrierTransition(registry.GetResource(gridOutputBuffer), D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_COPY_SOURCE);								
+			list.RecordCopyResource(readbackBuffer.Get(), registry.GetResource(gridOutputBuffer));
+		}
+		context.SubmitAndWaitForGpuWork();
+
 		void *readbackData;
 		auto mapResult{ readbackBuffer->Map(0, nullptr, &readbackData) };
 	
@@ -76,10 +78,10 @@ namespace Renderer::DX12
 		readbackBuffer->Unmap(0, &range);
 		
 	}
+
 	
 	
-	
-	void CommandInitVolumeTileGrid::WriteTileData(VolumeTileGrid &output)
+	void InitVolumeTileGridCommand::WriteTileData(VolumeTileGrid &output)
 	{
 		output = std::move(grid);
 		

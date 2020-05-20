@@ -1,9 +1,8 @@
 #pragma once
-#include "Shared/PtrTypes.hpp"
-#include "Resources/MaintainsRenderResources.hpp"
 #include <forward_list>
 #include "Resources/HandleFactory.hpp"
 #include "Resources/Registry.hpp"
+#include "Lighting/LightContainer.hpp"
 
 
 namespace Renderer
@@ -22,6 +21,8 @@ namespace Renderer
 			private: HandleMapPso registryPso;
 
 			private: HandleMapSignature registrySignature;
+
+			private: LightContainer registryLight;
 
 			private: HandleFactory handleProvider;
 
@@ -46,6 +47,8 @@ namespace Renderer
 			
 			public: void Register(ResourceHandle::t_hash handle, DxPtr<ID3D12PipelineState> &&pipeline);
 
+			public: ResourceHandle::t_hash Register(Light &&info);
+					
 			public: virtual ID3D12Resource *GetResource(ResourceHandle::t_hash handle) override;
 
 			public: virtual D3D12_GPU_VIRTUAL_ADDRESS GetResourceGpuAddress(ResourceHandle::t_hash handle) override;
@@ -54,6 +57,8 @@ namespace Renderer
 
 			public: virtual ID3D12RootSignature *GetSignature(ResourceHandle::t_hash handle) override;
 
+			public: Light &GetLight(ResourceHandle::t_hash handle);
+					
 			
 			public: size_t GetSignatureCbvOffset(ResourceHandle::t_hash handle, size_t cbvOrdinal);
 
@@ -73,8 +78,18 @@ namespace Renderer
 			private: void ExecuteReferenceOperationOnCorrectRegistry(ResourceHandle::t_hash handle, void (UsesReferences::*operation)(ResourceHandle::t_hash));
 			
 			public: virtual void RemoveReference(ResourceHandle::t_hash handle) override;
+
+
+			public: const void *GetLightsData() const;
+
+			public: size_t GetLigthsDataSizeInBytes() const;
+
+			public: size_t GetLightCount() const;
 			
 		};
+
 		
 	}
+
+	
 }

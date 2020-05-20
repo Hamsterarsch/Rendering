@@ -59,89 +59,65 @@ namespace Windows
 		{
 			struct
 			{
-				vertex vertices[4]{ {-0.75, -0.75, 0 }, {0.75, -0.75, 0}, {0.75, 0.75, 0}, { -0.75, 0.75, 0} };
+				vertex vertexData[8]{ {-0.75, -0.75, 0 }, {0,0,-1}, {0.75, -0.75, 0}, {0,0,-1}, {0.75, 0.75, 0}, {0,0,-1}, { -0.75, 0.75, 0}, {0,0,-1} };
 				unsigned indices[6]{ 0,1,2, 2,3,0 };
 			} meshdata;
 			meshSize = sizeof meshdata;
-			meshBytesToIndices = sizeof meshdata.vertices;
+			meshBytesToIndices = sizeof meshdata.vertexData;
 
 			meshHandle = renderer->MakeBuffer(&meshdata, sizeof(meshdata));
 						
 
-			std::ifstream shaderFile{Filesystem::Conversions::MakeExeRelative(L"../Content/Shaders/Plain.vs"), std::ios_base::in | std::ios_base::ate};
-			Renderer::SerializeContainer vs{};
-			{
-			const auto charCount{ shaderFile.tellg() };
-			shaderFile.seekg(0);
-
-			auto shader{ std::make_unique<char[]>(charCount) };
-			shaderFile.read( shader.get(), charCount);
-						
-			renderer->CompileVertexShader(shader.get(), charCount, &vs);
-			
-			shaderFile.close();
-			}
-
-			Renderer::SerializeContainer ps{};
-			{
-			shaderFile.open(Filesystem::Conversions::MakeExeRelative(L"../Content/Shaders/Plain.ps"), std::ios_base::in | std::ios_base::ate);
-				
-			const auto psCharCount{ shaderFile.tellg() };
-			shaderFile.seekg(0);
-
-			auto pshader{ std::make_unique<char[]>(psCharCount) };
-			shaderFile.read( pshader.get(), psCharCount);
-						
-			renderer->CompilePixelShader(pshader.get(), psCharCount, &ps);
-
-			shaderFile.close();
-			}
-			
 			Renderer::SerializeContainer root{};
-			renderer->SerializeRootSignature(0,0,0,0, &root);
-
+			renderer->SerializeRootSignature(1, 3, 0, 0, &root);
 			rootHandle = renderer->MakeRootSignature(root.GetData());
 
+			Renderer::SerializeContainer ps{};
 			{
-			Renderer::ShaderList shaderList{};
-			shaderList.vs.data = vs.GetData();
-			shaderList.vs.sizeInBytes = vs.GetSize();
+				std::ifstream shaderFile{Filesystem::Conversions::MakeExeRelative(L"../Content/Shaders/Lighting.ps"), std::ios_base::in | std::ios_base::ate };
+				
+				const auto charCount{ shaderFile.tellg() };
+				shaderFile.seekg(0);
 
-			shaderList.ps.data = ps.GetData();
-			shaderList.ps.sizeInBytes = ps.GetSize();
-
-			psoHandle = renderer->MakePso(Renderer::PipelineTypes::Opaque, Renderer::VertexLayoutTypes::PositionOnly, shaderList, rootHandle);
+				auto pshader{ std::make_unique<char[]>(charCount) };
+				shaderFile.read( pshader.get(), charCount);
+							
+				renderer->CompilePixelShader(pshader.get(), charCount, &ps);
+								
 			}
 
 
-			Renderer::SerializeContainer vsm{};
+			Renderer::SerializeContainer vs{};
 			{
-			shaderFile.open(Filesystem::Conversions::MakeExeRelative(L"../Content/Shaders/PlainMinstance.vs"), std::ios_base::in | std::ios_base::ate);
-				
-			const auto charCount{ shaderFile.tellg() };
-			shaderFile.seekg(0);
+				std::ifstream shaderFile{Filesystem::Conversions::MakeExeRelative(L"../Content/Shaders/LightingInstanced.vs"), std::ios_base::in | std::ios_base::ate };
+					
+				const auto charCount{ shaderFile.tellg() };
+				shaderFile.seekg(0);
 
-			auto pshader{ std::make_unique<char[]>(charCount) };
-			shaderFile.read( pshader.get(), charCount);
-						
-			Renderer::SerializeContainer ps{};
-			renderer->CompileVertexShader(pshader.get(), charCount, &vsm);
-
-			shaderFile.close();
+				auto pshader{ std::make_unique<char[]>(charCount) };
+				shaderFile.read( pshader.get(), charCount);
+							
+				renderer->CompileVertexShader(pshader.get(), charCount, &vs);
+								
 			}
 			
+
 			{
 				Renderer::ShaderList shaderList{};
-				shaderList.vs.data = vsm.GetData();
-				shaderList.vs.sizeInBytes = vsm.GetSize();
+				shaderList.vs.data = vs.GetData();
+				shaderList.vs.sizeInBytes = vs.GetSize();
 
 				shaderList.ps.data = ps.GetData();
 				shaderList.ps.sizeInBytes = ps.GetSize();
 
-				minstancePsoHandle = renderer->MakePso(Renderer::PipelineTypes::Opaque, Renderer::VertexLayoutTypes::PositionOnly, shaderList, rootHandle);
+				psoOpaqueShadedWithInstanceSupport = renderer->MakePso(Renderer::PipelineTypes::Opaque, Renderer::VertexLayoutTypes::PositionNormal, shaderList, rootHandle);
 			}
 
+
 			renderer->SetCamera(0, 0, -11, 0, 0, 0);
+			
+			renderer->MakeLight({0, 0, -1}, {0, 0, 0}, {1, 4, 4}, 3);
+			renderer->MakeLight({4, 0, -2}, {0, 0, 0}, {6, 0, 0},  5);			
 		
 		}
 
@@ -156,7 +132,9 @@ namespace Windows
 			}
 			
 			const auto currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count() / 1000.f;
-			const auto rot = rotate(glm::identity<glm::mat4>(), glm::radians(currentTime * 7), {0,0,1});
+			auto rot = rotate(glm::identity<glm::mat4>(), glm::radians(currentTime * 7), {0,0,1});
+			rot = rotate( rot, glm::radians(13.f), {0, 1, 0});			
+			rot = scale(rot, {2, 2, 2});
 			std::vector<glm::mat4> transformData
 			{
 				rot,
@@ -169,7 +147,7 @@ namespace Windows
 				throw;
 			}
 
-			if(renderer->ResourceMustBeRemade(psoHandle))
+			if(renderer->ResourceMustBeRemade(psoOpaqueShadedWithInstanceSupport))
 			{
 				throw;
 			}
@@ -179,7 +157,7 @@ namespace Windows
 				throw;
 			}
 
-			renderer->RenderMesh(rootHandle, minstancePsoHandle, meshHandle, meshSize, meshBytesToIndices, transformBufferHandle, 2);			
+			renderer->RenderMesh(rootHandle, psoOpaqueShadedWithInstanceSupport, meshHandle, meshSize, meshBytesToIndices, transformBufferHandle, 2);			
 			renderer->DispatchFrame();
 			
 		}

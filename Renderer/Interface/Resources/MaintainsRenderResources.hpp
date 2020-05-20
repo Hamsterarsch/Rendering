@@ -12,6 +12,9 @@ namespace Renderer
 		DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(MaintainsRenderResources)
 
 		
+		public: virtual size_t MakeLight(const float (& position)[3], const float (& rotation)[3], const float(& color)[3], float radius) = 0;
+		
+		
 		public: virtual size_t MakeBuffer(const void *data, size_t sizeInBytes) = 0;
 
 		public: virtual void RemakeBuffer(const void *data, size_t sizeInBytes, size_t handle) = 0;
@@ -21,7 +24,8 @@ namespace Renderer
 		public: virtual size_t MakePso(PipelineTypes pipelineType, VertexLayoutTypes vertexLayout, const ShaderList &shaders, size_t signatureHandle) = 0;
 					
 		public: virtual size_t MakePso(const Blob &csBlob, size_t signatureHandle) = 0;
-					
+
+		
 		public: virtual bool ResourceMustBeRemade(size_t handle) = 0;
 					
 		public: virtual void RetireHandle(size_t handle) = 0;

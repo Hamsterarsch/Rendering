@@ -1,5 +1,6 @@
 #include "Types/VolumeTileGridData.hlsl"
 #include "Types/BoundingBox.hlsl"
+#include "FlattenVolumeTileGridIndex.hlsl"
 
 
 ConstantBuffer<VolumeTileGridData> gridData : register(b1);
@@ -16,12 +17,7 @@ float3 FindIntersectionWithZPlane(float planeZ, float3 linevec)
 [numthreads(4, 4, 4)]
 void main(uint3 dispatchID : SV_DispatchThreadID)
 {
-	if
-	(
-		dispatchID.x >= gridData.gridDimensions.x 
-		|| dispatchID.y >= gridData.gridDimensions.y 
-		|| dispatchID.z >= gridData.gridDimensions.z
-	)
+	if(any(dispatchID >= gridData.gridDimensions))
 	{
 		return;
 		
@@ -49,11 +45,8 @@ void main(uint3 dispatchID : SV_DispatchThreadID)
 	BoundingBox bb;
 	bb.halfExtents = abs(bbMax-bbMin)/2;
 	bb.center = (bbMin+bbMax)*.5;
-	
-	const uint index =  dispatchID.x 
-						+ dispatchID.y*gridData.gridDimensions.x 						
-						+ dispatchID.z*gridData.gridDimensions.x*gridData.gridDimensions.y;
-	outBox[index] = bb;
+		
+	outBox[FlattenVolumeTileGridIndex(dispatchID, gridData.gridDimensions.xy)] = bb;
 	
 }
 	
