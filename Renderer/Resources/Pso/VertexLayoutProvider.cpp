@@ -25,7 +25,7 @@ namespace Renderer::DX12
 			0,
 			DXGI_FORMAT_R32G32B32_FLOAT,
 			0,
-			0,
+			12,
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
 			0
 		};
@@ -39,7 +39,7 @@ namespace Renderer::DX12
 			0,
 			DXGI_FORMAT_R32G32_FLOAT,
 			0,
-			0,
+			24,
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
 			0
 		};
@@ -59,7 +59,7 @@ namespace Renderer::DX12
 	D3D12_INPUT_LAYOUT_DESC VertexLayoutProvider::GetLayoutDesc(const VertexLayoutTypes layoutType) const
 	{
 		const auto &layout{ layouts.at(layoutType) };
-		return { layout.elements.data(), layout.elements.size() };
+		return { layout.elements.data(), static_cast<UINT>(layout.elements.size()) };
 			
 	}
 
