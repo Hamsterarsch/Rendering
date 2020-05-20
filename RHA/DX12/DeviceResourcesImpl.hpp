@@ -14,9 +14,9 @@ namespace RHA::DX12
 		
 
 		
-		public: DeviceResourcesImpl(D3D_FEATURE_LEVEL minimumFeatureLevel, bool shouldEnableDebugLayers);
+		public: DeviceResourcesImpl(D3D_FEATURE_LEVEL minimumFeatureLevel, bool shouldEnableDebugLayers, bool shouldEnableGpuValidation);
 		
-			private: static void EnableDebugLayers();
+			private: static void EnableDebugLayers(bool shouldEnableGpuValidation);
 
 				private: static void CheckDebugControllerCreation(HRESULT result);
 

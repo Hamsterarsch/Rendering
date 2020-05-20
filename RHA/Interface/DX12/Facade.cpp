@@ -17,10 +17,11 @@ namespace RHA
 		UniquePtr<DeviceResources> Facade::MakeDeviceResources
 		(
 			const D3D_FEATURE_LEVEL minimumFeatureLevel, 
-			const bool shouldEnableDebugLayers
+			const bool shouldEnableDebugLayers,
+			const bool shouldEnableGpuValidation
 		)
 		{
-			return std::make_unique<DeviceResourcesImpl>(minimumFeatureLevel, shouldEnableDebugLayers);
+			return std::make_unique<DeviceResourcesImpl>(minimumFeatureLevel, shouldEnableDebugLayers, shouldEnableGpuValidation);
 			
 		}
 

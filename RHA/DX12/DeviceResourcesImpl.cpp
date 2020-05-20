@@ -4,12 +4,12 @@
 
 namespace RHA::DX12
 {
-	DeviceResourcesImpl::DeviceResourcesImpl(const D3D_FEATURE_LEVEL minimumFeatureLevel, const bool shouldEnableDebugLayers) :
+	DeviceResourcesImpl::DeviceResourcesImpl(const D3D_FEATURE_LEVEL minimumFeatureLevel, const bool shouldEnableDebugLayers, const bool shouldEnableGpuValidation) :
 		minimumFeatureLevel{ minimumFeatureLevel }
 	{
 		if(shouldEnableDebugLayers)
 		{
-			EnableDebugLayers();
+			EnableDebugLayers(shouldEnableGpuValidation);
 		}
 		
 		const auto result
@@ -22,7 +22,7 @@ namespace RHA::DX12
 				   
 	}
 
-		void DeviceResourcesImpl::EnableDebugLayers()
+		void DeviceResourcesImpl::EnableDebugLayers(const bool shouldEnableGpuValidation)
 		{
 			DxPtr<ID3D12Debug> debugController;
 			DxPtr<ID3D12Debug1> debugController1;
@@ -31,12 +31,15 @@ namespace RHA::DX12
 				D3D12GetDebugInterface(IID_PPV_ARGS(&debugController))
 			};
 			CheckDebugControllerCreation(result);
-
-			result = debugController->QueryInterface(IID_PPV_ARGS(&debugController1));
-			CheckDebugControllerCreation(result);
-
 			debugController->EnableDebugLayer();
-			debugController1->SetEnableGPUBasedValidation(true);
+
+			if(shouldEnableGpuValidation)
+			{
+				result = debugController->QueryInterface(IID_PPV_ARGS(&debugController1));
+				CheckDebugControllerCreation(result);
+
+				debugController1->SetEnableGPUBasedValidation(true);				
+			}
 		
 		}
 
