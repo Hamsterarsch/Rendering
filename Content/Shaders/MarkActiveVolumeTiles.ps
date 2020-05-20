@@ -8,12 +8,12 @@ RWBuffer<uint> volumeTileFlags : register(u1);
 
 float4 main(float4 pos : SV_POSITION) : SV_TARGET
 {	
-	float3 viewPos = mul(gridData.inverseProjection, pos).xyz;
+	float4 viewPos = mul(gridData.inverseProjection, pos);
 		
 	uint3 Index = uint3
 	(
-		pos.xy / (gridData.screenDimensions / gridData.gridDimensions.xy),
-		log(1+gridData.fovTermForDepthCompute) / log(viewPos.z / gridData.nearDistance)
+		pos.xy / (gridData.screenDimensions / float2(gridData.gridDimensions.xy)),
+		log(viewPos.z / gridData.nearDistance) / log(1+gridData.fovTermForDepthCompute)
 	);	
 	
 	volumeTileFlags[FlattenVolumeTileGridIndex(Index, gridData.gridDimensions.xy)] = true;

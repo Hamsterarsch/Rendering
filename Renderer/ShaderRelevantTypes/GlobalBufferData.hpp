@@ -10,14 +10,17 @@ namespace Renderer
 		
 		Math::Matrix projection;
 
-		Math::Matrix inverseViewProjection;
+		Math::Matrix inverseView;
+
+		Math::Matrix inverseProjection;
 		
 		float time;
 
 		GlobalBufferData() :			
 			view{},
 			projection{},
-			inverseViewProjection{},
+			inverseView{},
+			inverseProjection{},
 			time{ 0 }
 		{			
 		}
