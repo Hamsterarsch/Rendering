@@ -59,7 +59,7 @@ namespace Windows
 		{
 			struct
 			{
-				vertex vertexData[8]{ {-0.75, -0.75, 0 }, {0,0,1}, {0.75, -0.75, 0}, {0,0,1}, {0.75, 0.75, 0}, {0,0,1}, { -0.75, 0.75, 0}, {0,0,1} };
+				vertex vertexData[8]{ {-0.75, -0.75, 0 }, {0,0,-1}, {0.75, -0.75, 0}, {0,0,-1}, {0.75, 0.75, 0}, {0,0,-1}, { -0.75, 0.75, 0}, {0,0,-1} };
 				unsigned indices[6]{ 0,1,2, 2,3,0 };
 			} meshdata;
 			meshSize = sizeof meshdata;
@@ -82,7 +82,6 @@ namespace Windows
 				auto pshader{ std::make_unique<char[]>(charCount) };
 				shaderFile.read( pshader.get(), charCount);
 							
-				Renderer::SerializeContainer ps{};
 				renderer->CompilePixelShader(pshader.get(), charCount, &ps);
 								
 			}
@@ -98,7 +97,6 @@ namespace Windows
 				auto pshader{ std::make_unique<char[]>(charCount) };
 				shaderFile.read( pshader.get(), charCount);
 							
-				Renderer::SerializeContainer ps{};
 				renderer->CompileVertexShader(pshader.get(), charCount, &vs);
 								
 			}
@@ -117,9 +115,9 @@ namespace Windows
 
 
 			renderer->SetCamera(0, 0, -11, 0, 0, 0);
-			renderer->MakeLight(0,0,0,0,0,0);
-			renderer->MakeLight(8,0,0,0,0,0);
-			renderer->MakeLight(-11, 0, 0, 0, 0, 0);
+			
+			renderer->MakeLight({0, 0, -1}, {0, 0, 0}, {1, 4, 4}, 3);
+			renderer->MakeLight({4, 0, -2}, {0, 0, 0}, {6, 0, 0},  5);			
 		
 		}
 
@@ -134,7 +132,9 @@ namespace Windows
 			}
 			
 			const auto currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count() / 1000.f;
-			const auto rot = rotate(glm::identity<glm::mat4>(), glm::radians(currentTime * 7), {0,0,1});
+			auto rot = rotate(glm::identity<glm::mat4>(), glm::radians(currentTime * 7), {0,0,1});
+			rot = rotate( rot, glm::radians(13.f), {0, 1, 0});			
+			rot = scale(rot, {2, 2, 2});
 			std::vector<glm::mat4> transformData
 			{
 				rot,
@@ -147,7 +147,7 @@ namespace Windows
 				throw;
 			}
 
-			if(renderer->ResourceMustBeRemade(psoHandle))
+			if(renderer->ResourceMustBeRemade(psoOpaqueShadedWithInstanceSupport))
 			{
 				throw;
 			}
