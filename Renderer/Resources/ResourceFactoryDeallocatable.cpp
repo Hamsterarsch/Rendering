@@ -27,7 +27,7 @@ namespace Renderer
 				DeallocateBuffer(allocation);
 				break;
 			default:
-				throw Exception::Exception{ "Resource type missing handling in dx12 resource factory deallocation" };				
+				ThrowIfDebug(Exception::Exception{ "Resource type missing handling in dx12 resource factory deallocation" });				
 			}
 			
 		}
@@ -42,9 +42,10 @@ namespace Renderer
 				void ResourceFactoryDeallocatable::CheckAndReleaseResourceRefs(DxPtr<ID3D12Resource> &resource)
 				{
 					const auto cutReferences{ resource.Reset() };
+					
 					if(cutReferences > 0)
 					{
-						throw Exception::Exception{ "Deallocated a resource allocation whose resource is still referenced" };//todo: this could be done in debugging only
+						ThrowIfDebug(Exception::Exception{ "Deallocated a resource allocation whose resource is still referenced" });//todo: this could be done in debugging only
 					}
 			
 				}
