@@ -12,7 +12,7 @@ namespace Renderer
 		DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(MaintainsRenderResources)
 
 		
-		public: virtual size_t MakeLight(float x, float y, float z, float pitch, float yaw, float roll) = 0;
+		public: virtual size_t MakeLight(const float (& position)[3], const float (& rotation)[3], const float(& color)[3], float radius) = 0;
 		
 		
 		public: virtual size_t MakeBuffer(const void *data, size_t sizeInBytes) = 0;
