@@ -1,38 +1,26 @@
 #pragma once
-#include "Commands/RenderCommand.hpp"
+#include "Commands/BindPsoAndSignatureCommand.hpp"
 
 #include "DX12/CmdList.hpp"
 #include "Resources/HasQueriableResources.hpp"
 
-namespace Renderer
-{
-	namespace DX12
+namespace Renderer::DX12::Commands
+{	
+	class RenderCommandGraphics : public BindPsoAndSignatureCommand
 	{
-		class RenderCommandGraphics : public RenderCommand
+		public: RenderCommandGraphics(size_t signatureHandle, size_t psoHandle) : BindPsoAndSignatureCommand{ signatureHandle, psoHandle } {}
+		
+		public:	void RecordSignatureBinding(CommandProcessor &context) const final override 
 		{
-			public: RenderCommandGraphics(size_t signatureHandle, size_t psoHandle) : RenderCommand{ signatureHandle, psoHandle } {}
-			
-			public:	void RecordFixedCommandState(RHA::DX12::CmdList *list, HasQueriableResources &registry, size_t globalBufferHandle) const final override
-			{
-				if(PsoIsValid())
-				{
-					list->RecordSetPipelineState(registry.GetPso(GetPsoHandle()));					
-				}
-
-				if(SignatureIsValid())
-				{				
-					list->RecordSetGraphicsSignature(registry.GetSignature(GetSignatureHandle()));
-				}
-				
-				list->RecordSetGraphicsSignatureCbv(GetGlobalBufferSlot(), registry.GetResourceGpuAddress(globalBufferHandle));
-			
-			}
-			
-			
-		};
-		
-		
-	}
+			if(SignatureIsValid())
+			{				
+				context.GetList().RecordSetGraphicsSignature(context.GetRegistry().GetSignature(GetSignatureHandle()));
+				context.NotifyCommandContextAbout(CommandContextEvents::GraphicsSignatureChanged);				
+			}			
+					
+		}
+						
+	};
 	
 	
 }

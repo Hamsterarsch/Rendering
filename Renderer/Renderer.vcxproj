@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="DebugOptimized|Win32">
+      <Configuration>DebugOptimized</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="DebugOptimized|x64">
+      <Configuration>DebugOptimized</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
@@ -32,6 +40,12 @@
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugOptimized|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
@@ -40,6 +54,12 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugOptimized|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
@@ -60,10 +80,16 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugOptimized|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugOptimized|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -74,7 +100,15 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(ProjectDir);$(ProjectDir)Interface;$(SolutionDir);$(SolutionDir)RHA\Interface;$(IncludePath)</IncludePath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugOptimized|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir);$(ProjectDir)Interface;$(SolutionDir);$(SolutionDir)RHA\Interface;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir);$(ProjectDir)Interface;$(SolutionDir);$(SolutionDir)RHA\Interface;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugOptimized|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(ProjectDir);$(ProjectDir)Interface;$(SolutionDir);$(SolutionDir)RHA\Interface;$(IncludePath)</IncludePath>
   </PropertyGroup>
@@ -104,6 +138,24 @@
       <AdditionalDependencies>RHA.lib;d3d12.lib;Shared.lib;Math.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugOptimized|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>RENDERER_DLLCOMPILE;_ITERATOR_DEBUG_LEVEL=0;DEBUG_OPTIMIZED;DEBUG_OPTIMIZEDWIN32;_DEBUG;RENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)Math\Interface;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>RHA.lib;d3d12.lib;Shared.lib;Math.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -111,6 +163,24 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>RENDERER_DLLCOMPILE;_DEBUG;RENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)Math\Interface;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>RHA.lib;d3d12.lib;Shared.lib;Math.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugOptimized|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>RENDERER_DLLCOMPILE;_ITERATOR_DEBUG_LEVEL=0;DEBUG_OPTIMIZED;DEBUG_OPTIMIZED_DEBUG;RENDERER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Math\Interface;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -167,21 +237,29 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Commands\CommandAssignLightsToTiles.hpp" />
-    <ClInclude Include="Commands\CommandBuildActiveTileList.hpp" />
-    <ClInclude Include="Commands\CommandClearDepthSurface.hpp" />
+    <ClInclude Include="Commands\ClearDepthSurfaceCommand.hpp" />
+    <ClInclude Include="Commands\CommandProcessor.hpp" />
+    <ClInclude Include="Commands\CommandProcessorImpl.hpp" />
+    <ClInclude Include="Commands\BindDescriptorsContextCommand.hpp" />
+    <ClInclude Include="Commands\GlobalBufferContextCommand.hpp" />
+    <ClInclude Include="Commands\LightingContextCommand.hpp" />
+    <ClInclude Include="Commands\LightingSetup\AssignLightsToTilesCommand.hpp" />
+    <ClInclude Include="Commands\LightingSetup\BuildActiveTileListCommand.hpp" />
+    <ClInclude Include="Commands\LightingSetup\FlagActiveVolumeTilesCommand.hpp" />
+    <ClInclude Include="Commands\LightingSetup\GenerateActiveTileListCommand.hpp" />
+    <ClInclude Include="Commands\Command.hpp" />
+    <ClInclude Include="Commands\CompositeRecordCommand.hpp" />
     <ClInclude Include="Commands\CommandFactory.hpp" />
-    <ClInclude Include="Commands\CommandFlagActiveVolumeTiles.hpp" />
-    <ClInclude Include="Commands\CommandInitVolumeTileGrid.hpp" />
-    <ClInclude Include="Commands\CommandPrepareSurfaceForPresent.h" />
-    <ClInclude Include="Commands\CommandBindSurface.hpp" />
-    <ClInclude Include="Commands\CommandPrepareSurfaceForRendering.hpp" />
-    <ClInclude Include="Commands\RenderCommand.hpp" />
+    <ClInclude Include="Commands\InitVolumeTileGridCommand.hpp" />
+    <ClInclude Include="Commands\PrepareSurfaceForPresentCommand.h" />
+    <ClInclude Include="Commands\BindSurfaceCommand.hpp" />
+    <ClInclude Include="Commands\PrepareSurfaceForRenderingCommand.hpp" />
+    <ClInclude Include="Commands\BindPsoAndSignatureCommand.hpp" />
+    <ClInclude Include="Commands\PresentSurfaceCommand.hpp" />
     <ClInclude Include="Commands\RenderCommandCompute.hpp" />
     <ClInclude Include="Commands\RenderCommandGraphics.hpp" />
     <ClInclude Include="Commands\RenderMeshCommand.hpp" />
     <ClInclude Include="ForwardRenderer.hpp" />
-    <ClInclude Include="FrameWorker.hpp" />
     <ClInclude Include="Interface\Renderer.hpp" />
     <ClInclude Include="Interface\RendererExportHelper.hpp" />
     <ClInclude Include="Interface\Resources\HandleWrapper.hpp" />
@@ -195,7 +273,6 @@
     <ClInclude Include="Interface\Resources\SerializationHook.hpp" />
     <ClInclude Include="Lighting\LightContainer.hpp" />
     <ClInclude Include="Lighting\LightGrid\VolumeTileGrid.hpp" />
-    <ClInclude Include="RendererMaster.hpp" />
     <ClInclude Include="Resources\Descriptor\DescriptorAllocator.hpp" />
     <ClInclude Include="Resources\Descriptor\DescriptorChunk.hpp" />
     <ClInclude Include="Resources\Descriptor\DescriptorChunkRegistry.hpp" />
@@ -227,19 +304,22 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Commands\CommandAssignLightsToTiles.cpp" />
-    <ClCompile Include="Commands\CommandBuildActiveTileList.cpp" />
-    <ClCompile Include="Commands\CommandFlagActiveVolumeTiles.cpp" />
-    <ClCompile Include="Commands\CommandInitVolumeTileGrid.cpp" />
-    <ClCompile Include="Commands\RenderCommand.cpp" />
+    <ClCompile Include="Commands\InitVolumeTileGridCommand.cpp" />
+    <ClCompile Include="Commands\CommandProcessorImpl.cpp" />
+    <ClCompile Include="Commands\BindDescriptorsContextCommand.cpp" />
+    <ClCompile Include="Commands\LightingContextCommand.cpp" />
+    <ClCompile Include="Commands\LightingSetup\AssignLightsToTilesCommand.cpp" />
+    <ClCompile Include="Commands\LightingSetup\BuildActiveTileListCommand.cpp" />
+    <ClCompile Include="Commands\LightingSetup\FlagActiveVolumeTilesCommand.cpp" />
+    <ClCompile Include="Commands\LightingSetup\GenerateActiveTileListCommand.cpp" />
+    <ClCompile Include="Commands\BindPsoAndSignatureCommand.cpp" />
+    <ClCompile Include="Commands\PresentSurfaceCommand.cpp" />
     <ClCompile Include="Commands\RenderMeshCommand.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="ForwardRenderer.cpp" />
-    <ClCompile Include="FrameWorker.cpp" />
     <ClCompile Include="Interface\Renderer.cpp" />
     <ClCompile Include="Lighting\LightContainer.cpp" />
     <ClCompile Include="Lighting\LightGrid\VolumeTileGrid.cpp" />
-    <ClCompile Include="RendererMaster.cpp" />
     <ClCompile Include="Resources\Descriptor\DescriptorAllocator.cpp" />
     <ClCompile Include="Resources\Descriptor\DescriptorChunkRegistry.cpp" />
     <ClCompile Include="Resources\Descriptor\DescriptorMemory.cpp" />

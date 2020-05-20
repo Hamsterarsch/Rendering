@@ -77,7 +77,6 @@
     <ClInclude Include="Interface\Resources\HandleWrapper.hpp">
       <Filter>Interface\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="RendererMaster.hpp" />
     <ClInclude Include="Resources\ResourceRegistryDetachedReference.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
@@ -109,17 +108,10 @@
     <ClInclude Include="Interface\Resources\MaintainsRenderResources.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
-    <ClInclude Include="FrameWorker.hpp" />
-    <ClInclude Include="Commands\RenderCommand.hpp">
-      <Filter>Commands</Filter>
-    </ClInclude>
     <ClInclude Include="Commands\RenderCommandCompute.hpp">
       <Filter>Commands</Filter>
     </ClInclude>
     <ClInclude Include="Commands\RenderCommandGraphics.hpp">
-      <Filter>Commands</Filter>
-    </ClInclude>
-    <ClInclude Include="Commands\CommandInitVolumeTileGrid.hpp">
       <Filter>Commands</Filter>
     </ClInclude>
     <ClInclude Include="Resources\RenderSurface.hpp">
@@ -131,29 +123,11 @@
     <ClInclude Include="ShaderRelevantTypes\GlobalBufferData.hpp">
       <Filter>ShaderRelevantTypes</Filter>
     </ClInclude>
-    <ClInclude Include="Commands\CommandFlagActiveVolumeTiles.hpp">
-      <Filter>Commands</Filter>
-    </ClInclude>
     <ClInclude Include="Resources\Pso\DepthStencilFactory.hpp">
       <Filter>Resources\Pso</Filter>
     </ClInclude>
     <ClInclude Include="Resources\Pso\DepthStencilFactoryDefault.hpp">
       <Filter>Resources\Pso</Filter>
-    </ClInclude>
-    <ClInclude Include="Commands\CommandClearDepthSurface.hpp">
-      <Filter>Commands</Filter>
-    </ClInclude>
-    <ClInclude Include="Commands\CommandPrepareSurfaceForPresent.h">
-      <Filter>Commands</Filter>
-    </ClInclude>
-    <ClInclude Include="Commands\CommandBindSurface.hpp">
-      <Filter>Commands</Filter>
-    </ClInclude>
-    <ClInclude Include="Commands\CommandPrepareSurfaceForRendering.hpp">
-      <Filter>Commands</Filter>
-    </ClInclude>
-    <ClInclude Include="Commands\CommandBuildActiveTileList.hpp">
-      <Filter>Commands</Filter>
     </ClInclude>
     <ClInclude Include="Commands\CommandFactory.hpp">
       <Filter>Commands</Filter>
@@ -161,11 +135,62 @@
     <ClInclude Include="ShaderRelevantTypes\Light.hpp">
       <Filter>ShaderRelevantTypes</Filter>
     </ClInclude>
-    <ClInclude Include="Commands\CommandAssignLightsToTiles.hpp">
-      <Filter>Commands</Filter>
-    </ClInclude>
     <ClInclude Include="Lighting\LightContainer.hpp">
       <Filter>Lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\CompositeRecordCommand.hpp">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\LightingSetup\AssignLightsToTilesCommand.hpp">
+      <Filter>Commands\LightingSetup</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\LightingSetup\FlagActiveVolumeTilesCommand.hpp">
+      <Filter>Commands\LightingSetup</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\LightingSetup\BuildActiveTileListCommand.hpp">
+      <Filter>Commands\LightingSetup</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\LightingSetup\GenerateActiveTileListCommand.hpp">
+      <Filter>Commands\LightingSetup</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\CommandProcessor.hpp">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\CommandProcessorImpl.hpp">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\Command.hpp">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\BindPsoAndSignatureCommand.hpp">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\PrepareSurfaceForRenderingCommand.hpp">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\GlobalBufferContextCommand.hpp">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\BindDescriptorsContextCommand.hpp">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\LightingContextCommand.hpp">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\PresentSurfaceCommand.hpp">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\BindSurfaceCommand.hpp">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\ClearDepthSurfaceCommand.hpp">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\InitVolumeTileGridCommand.hpp">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\PrepareSurfaceForPresentCommand.h">
+      <Filter>Commands</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -224,7 +249,6 @@
     <ClCompile Include="Resources\ResourceHandle.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
-    <ClCompile Include="RendererMaster.cpp" />
     <ClCompile Include="Resources\ResourceRegistryDetachedReference.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
@@ -244,26 +268,40 @@
     <ClCompile Include="Resources\ResourceRegistry.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
-    <ClCompile Include="FrameWorker.cpp" />
     <ClCompile Include="Resources\RenderSurface.cpp">
       <Filter>Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="Commands\CommandInitVolumeTileGrid.cpp">
-      <Filter>Commands</Filter>
-    </ClCompile>
-    <ClCompile Include="Commands\CommandFlagActiveVolumeTiles.cpp">
-      <Filter>Commands</Filter>
-    </ClCompile>
-    <ClCompile Include="Commands\RenderCommand.cpp">
-      <Filter>Commands</Filter>
-    </ClCompile>
-    <ClCompile Include="Commands\CommandBuildActiveTileList.cpp">
-      <Filter>Commands</Filter>
     </ClCompile>
     <ClCompile Include="Lighting\LightContainer.cpp">
       <Filter>Lighting</Filter>
     </ClCompile>
-    <ClCompile Include="Commands\CommandAssignLightsToTiles.cpp">
+    <ClCompile Include="Commands\LightingSetup\AssignLightsToTilesCommand.cpp">
+      <Filter>Commands\LightingSetup</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\LightingSetup\FlagActiveVolumeTilesCommand.cpp">
+      <Filter>Commands\LightingSetup</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\LightingSetup\BuildActiveTileListCommand.cpp">
+      <Filter>Commands\LightingSetup</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\LightingSetup\GenerateActiveTileListCommand.cpp">
+      <Filter>Commands\LightingSetup</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\CommandProcessorImpl.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\BindPsoAndSignatureCommand.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\BindDescriptorsContextCommand.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\LightingContextCommand.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\PresentSurfaceCommand.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\InitVolumeTileGridCommand.cpp">
       <Filter>Commands</Filter>
     </ClCompile>
   </ItemGroup>
@@ -300,6 +338,9 @@
     </Filter>
     <Filter Include="ShaderRelevantTypes">
       <UniqueIdentifier>{4a9d49ad-d017-48e6-b89a-1860419f8e9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Commands\LightingSetup">
+      <UniqueIdentifier>{6c107102-58b6-486d-8174-b457996d0fe7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
