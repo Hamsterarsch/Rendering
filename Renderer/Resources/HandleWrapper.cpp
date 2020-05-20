@@ -1,62 +1,55 @@
 #include "Resources/HandleWrapper.hpp"
 #include "Resources/MaintainsRenderResources.hpp"
+#include <utility>
 
 
-
-namespace Renderer
+namespace Renderer::DX12
 {
-	namespace DX12
+	HandleWrapper::HandleWrapper() :
+		handle{ 0 },
+		retirementTarget{ nullptr }
 	{
-		HandleWrapper::HandleWrapper() :
-			retirementTarget{ nullptr },
-			handle{ 0 }
-		{
-		}
+	}
 
 
+	
+	HandleWrapper::HandleWrapper(MaintainsRenderResources *retirementTarget, const size_t handle) :
+		handle{ handle },
+		retirementTarget{ retirementTarget }
+	{
+	}
+
+
+	
+	HandleWrapper::HandleWrapper(HandleWrapper &&other) noexcept :
+		HandleWrapper{}
+	{
+		*this = std::move(other);
 		
-		HandleWrapper::HandleWrapper(MaintainsRenderResources *origin, const size_t handle) :
-			retirementTarget{ origin },
-			handle{ handle }
+	}
+
+
+	
+	HandleWrapper &HandleWrapper::operator=(HandleWrapper &&rhs) noexcept
+	{
+		if(this == &rhs)
 		{
-		}
-
-
-		
-		HandleWrapper::HandleWrapper(HandleWrapper &&other) noexcept :
-			retirementTarget{ other.retirementTarget },
-			handle{ other.handle }
-		{
-			other.Invalidate();
-			
-		}
-
-			void HandleWrapper::Invalidate()
-			{
-				handle = 0;
-				retirementTarget = nullptr;
-			
-			}
-
-
-		
-		HandleWrapper &HandleWrapper::operator=(HandleWrapper &&rhs) noexcept
-		{
-			Reset();
-			
-			retirementTarget = rhs.retirementTarget;			
-			handle = rhs.handle;
-
-			rhs.Invalidate();
 			return *this;
-			
 		}
-
-
 		
+		Reset();
+		
+		retirementTarget = rhs.retirementTarget;			
+		handle = rhs.handle;
+
+		rhs.Invalidate();
+		return *this;
+		
+	}
+	   	
 		HandleWrapper::~HandleWrapper()
 		{
-			Reset();
+			Reset();				
 			
 		}
 
@@ -75,9 +68,13 @@ namespace Renderer
 					return retirementTarget != nullptr && handle > 0;
 			
 				}
-
 		
-	}
-	
+				void HandleWrapper::Invalidate()
+				{
+					handle = 0;
+					retirementTarget = nullptr;
+				
+				}
+
 	
 }
