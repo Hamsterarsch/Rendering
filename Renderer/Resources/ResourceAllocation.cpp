@@ -1,59 +1,71 @@
 #include "Resources/ResourceAllocation.hpp"
 #include "Resources/ResourceFactory.hpp"
 
-namespace Renderer
+namespace Renderer::DX12
 {
-	namespace DX12
+	ResourceAllocation::ResourceAllocation(ResourceFactory *owner, ResourceTypes type) :
+		owner{ owner },
+		type{ type },
+		resource{ nullptr },
+		allocation{}
 	{
-		ResourceAllocation::ResourceAllocation(ResourceFactory *owner, ResourceTypes type) :
-			owner{ owner },
-			type{ type },
-			resource{ nullptr },
-			allocation{}
-		{
-		}
+	}
 
 
-
+	
+	ResourceAllocation::~ResourceAllocation()
+	{
+		Free();
 		
-		ResourceAllocation::~ResourceAllocation()
+	}
+	
+		void ResourceAllocation::Free()
 		{
-			if(resource != nullptr)
+			if(IsValid())
 			{
 				owner->Deallocate(*this, type);
-			}
-			
-		}
-
-
+			}	
 		
-		ResourceAllocation::ResourceAllocation(ResourceAllocation &&other) noexcept :
-			owner{ std::move(other.owner) },
-			type{ std::move(other.type) },
-			resource{ std::move(other.resource) },
-			allocation{ std::move(other.allocation) }
-		{
-			other.owner = nullptr;
-			
 		}
+		
+			bool ResourceAllocation::IsValid() const
+			{
+				return resource != nullptr;
+		
+			}
 
-		ResourceAllocation& ResourceAllocation::operator=(ResourceAllocation &&other) noexcept
+	
+
+	ResourceAllocation::ResourceAllocation(ResourceAllocation &&other) noexcept :
+		ResourceAllocation(nullptr, ResourceTypes::Buffer)
+	{
+		*this = std::move(other);
+		
+	}
+
+
+	
+	ResourceAllocation &ResourceAllocation::operator=(ResourceAllocation &&other) noexcept
+	{
+		if(this == &other)
 		{
-			owner = std::move(other.owner);
-			other.owner = nullptr;
-			
-			type = std::move(other.type);
-
-			resource = std::move(other.resource);
-			
-			allocation = std::move(other.allocation);
-			
 			return *this;
 			
 		}
 
+		Free();
+		
+		owner = std::move(other.owner);
+		other.owner = nullptr;
+		
+		type = std::move(other.type);
+		resource = std::move(other.resource);			
+		allocation = std::move(other.allocation);
+		
+		return *this;
 		
 	}
+
 	
 	
 }
