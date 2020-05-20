@@ -26,14 +26,14 @@ namespace Renderer::DX12
 		{}
 
 		public: template<class T, class ...Args>
-		auto MakeCommand(Args ...args) -> std::remove_reference_t<decltype( T(std::forward<Args>(args)..., *factory, *registry, *descriptorMemory), std::declval<UniquePtr<T>>())>
+		auto MakeCommand(Args &&... args) -> std::remove_reference_t<decltype( T(std::forward<Args>(args)..., *factory, *registry, *descriptorMemory), std::declval<UniquePtr<T>>())>
 		{			
 			return std::make_unique<T>(std::forward<Args>(args)..., *factory, *registry, *descriptorMemory);
 		
 		}
 
 		public: template<class T, class ...Args>
-		auto MakeCommand(Args ...args) -> std::remove_reference_t<decltype( T(std::forward<Args>(args)...), std::declval<UniquePtr<T>>())>
+		auto MakeCommand(Args &&... args) -> std::remove_reference_t<decltype( T(std::forward<Args>(args)...), std::declval<UniquePtr<T>>())>
 		{
 			return std::make_unique<T>(std::forward<Args>(args)...);
 			
