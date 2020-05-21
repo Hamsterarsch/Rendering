@@ -45,7 +45,7 @@ namespace Renderer
 					
 					if(cutReferences > 0)
 					{
-						ThrowIfDebug(Exception::Exception{ "Deallocated a resource allocation whose resource is still referenced" });//todo: this could be done in debugging only
+						ThrowIfDebug(Exception::Exception{ "Deallocated a resource allocation whose resource is still referenced" });
 					}
 			
 				}
