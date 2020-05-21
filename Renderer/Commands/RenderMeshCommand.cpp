@@ -89,7 +89,7 @@ namespace Renderer::DX12::Commands
 
 	void RenderMeshCommand::Execute
 	(
-		CommandProcessor &context
+		DX12CommandProcessor &context
 	)
 	{
 		RenderCommandGraphics::Execute(context);

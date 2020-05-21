@@ -1,15 +1,13 @@
 #pragma once
-#include "Commands/Command.hpp"
-
-
-#include "DX12/CmdList.hpp"
+#include "Commands/DX12Command.hpp"
 #include "Resources/ResourceRegistry.hpp"
+
 
 namespace Renderer::DX12::Commands
 {
 
 	
-	class BindPsoAndSignatureCommand : public Command
+	class BindPsoAndSignatureCommand : public DX12Command
 	{
 		private: size_t signature;
 
@@ -22,17 +20,17 @@ namespace Renderer::DX12::Commands
 		public: BindPsoAndSignatureCommand(size_t signatureHandle, size_t psoHandle);
 
 		
-		void ExecuteOperationOnResourceReferences(UsesReferences &registry, void( UsesReferences::* operation)(size_t))	override;
+		void ExecuteOperationOnResourceReferences(UsesReferences &registry, void(UsesReferences::* operation)(size_t))	override;
 		
-		public:	void Execute(CommandProcessor &context) override;
+		public:	void Execute(DX12CommandProcessor &context) override;
 
-			private: void RecordPsoBinding(CommandProcessor &context) const;
+			private: void RecordPsoBinding(DX12CommandProcessor &context) const;
 					
 				private: bool PsoIsValid() const;
 
 		protected: bool SignatureIsValid() const;
 
-		protected: virtual void RecordSignatureBinding(CommandProcessor &context) const = 0;
+		protected: virtual void RecordSignatureBinding(DX12CommandProcessor &context) const = 0;
 				
 		protected: size_t GetSignatureHandle() const { return signature; }
 				   

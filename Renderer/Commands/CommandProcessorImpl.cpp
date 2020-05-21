@@ -1,5 +1,5 @@
 #include "Commands/CommandProcessorImpl.hpp"
-#include "Commands/Command.hpp"
+#include "Commands/DX12Command.hpp"
 #include "Resources/ResourceRegistry.hpp"
 #include "DX12/Facade.hpp"
 
@@ -197,7 +197,7 @@ namespace Renderer::DX12::Commands
 
 
 	
-	void CommandProcessorImpl::SubmitCommand(UniquePtr<Command> &&command)
+	void CommandProcessorImpl::SubmitCommand(UniquePtr<DX12Command> &&command)
 	{
 		command->ExecuteOperationOnResourceReferences(*registry, &UsesReferences::AddReference);
 		queuedCommands.Push({std::move(command)});
@@ -206,7 +206,7 @@ namespace Renderer::DX12::Commands
 
 	
 	
-	intptr_t CommandProcessorImpl::SubmitExtractableCommand(UniquePtr<Command> &&command)
+	intptr_t CommandProcessorImpl::SubmitExtractableCommand(UniquePtr<DX12Command> &&command)
 	{
 		const auto key{ reinterpret_cast<intptr_t>(command.get()) };
 
@@ -219,7 +219,7 @@ namespace Renderer::DX12::Commands
 
 
 	
-	void CommandProcessorImpl::SubmitContextCommand(UniquePtr<Command> &&command)
+	void CommandProcessorImpl::SubmitContextCommand(UniquePtr<DX12Command> &&command)
 	{
 		command->ExecuteOperationOnResourceReferences(*registry, &UsesReferences::AddReference);
 		queuedCommands.Push({std::move(command), true});
@@ -241,7 +241,7 @@ namespace Renderer::DX12::Commands
 
 
 	
-	UniquePtr<Command> CommandProcessorImpl::ExtractCommand(const intptr_t handle)
+	UniquePtr<DX12Command> CommandProcessorImpl::ExtractCommand(const intptr_t handle)
 	{
 		PropagateExceptions();
 		

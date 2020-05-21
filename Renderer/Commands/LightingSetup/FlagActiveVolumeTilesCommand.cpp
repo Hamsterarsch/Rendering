@@ -62,7 +62,7 @@ namespace Renderer::DX12::Commands
 
 
 	
-	void FlagActiveVolumeTilesCommand::Execute(CommandProcessor &context)
+	void FlagActiveVolumeTilesCommand::Execute(DX12CommandProcessor &context)
 	{
 		RenderCommandGraphics::Execute(context);
 		

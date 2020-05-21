@@ -1,12 +1,12 @@
 #pragma once
-#include "Commands/Command.hpp"
+#include "Commands/DX12Command.hpp"
 
 
 namespace Renderer::DX12 { class DescriptorMemory; }
 
 namespace Renderer::DX12::Commands
 {
-	class BindDescriptorsContextCommand : public Command
+	class BindDescriptorsContextCommand : public DX12Command
 	{
 		private: DescriptorMemory *descriptorMemory;
 
@@ -16,7 +16,7 @@ namespace Renderer::DX12::Commands
 		
 		public: virtual void ExecuteOperationOnResourceReferences(UsesReferences &registry, void(UsesReferences:: *operation)(size_t)) override {}
 		
-		void virtual Execute(CommandProcessor &context) override;
+		void virtual Execute(DX12CommandProcessor &context) override;
 				
 	};
 

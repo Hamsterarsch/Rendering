@@ -238,7 +238,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Commands\ClearDepthSurfaceCommand.hpp" />
-    <ClInclude Include="Commands\CommandProcessor.hpp" />
+    <ClInclude Include="Commands\DX12CommandProcessor.hpp" />
     <ClInclude Include="Commands\CommandProcessorImpl.hpp" />
     <ClInclude Include="Commands\BindDescriptorsContextCommand.hpp" />
     <ClInclude Include="Commands\GlobalBufferContextCommand.hpp" />
@@ -247,7 +247,7 @@
     <ClInclude Include="Commands\LightingSetup\BuildActiveTileListCommand.hpp" />
     <ClInclude Include="Commands\LightingSetup\FlagActiveVolumeTilesCommand.hpp" />
     <ClInclude Include="Commands\LightingSetup\GenerateActiveTileListCommand.hpp" />
-    <ClInclude Include="Commands\Command.hpp" />
+    <ClInclude Include="Commands\DX12Command.hpp" />
     <ClInclude Include="Commands\CompositeRecordCommand.hpp" />
     <ClInclude Include="Commands\CommandFactory.hpp" />
     <ClInclude Include="Commands\InitVolumeTileGridCommand.hpp" />
@@ -260,6 +260,8 @@
     <ClInclude Include="Commands\RenderCommandGraphics.hpp" />
     <ClInclude Include="Commands\RenderMeshCommand.hpp" />
     <ClInclude Include="ForwardRenderer.hpp" />
+    <ClInclude Include="Interface\Commands\Command.hpp" />
+    <ClInclude Include="Interface\Commands\CommandProcessor.hpp" />
     <ClInclude Include="Interface\Renderer.hpp" />
     <ClInclude Include="Interface\RendererExportHelper.hpp" />
     <ClInclude Include="Interface\Resources\HandleWrapper.hpp" />

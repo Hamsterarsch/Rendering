@@ -51,7 +51,7 @@ namespace Renderer::DX12::Commands
 		
 	}
 
-	void InitVolumeTileGridCommand::Execute(CommandProcessor &context)
+	void InitVolumeTileGridCommand::Execute(DX12CommandProcessor &context)
 	{
 		RenderCommandCompute::Execute(context);
 

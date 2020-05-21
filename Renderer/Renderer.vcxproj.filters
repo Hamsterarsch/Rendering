@@ -153,13 +153,7 @@
     <ClInclude Include="Commands\LightingSetup\GenerateActiveTileListCommand.hpp">
       <Filter>Commands\LightingSetup</Filter>
     </ClInclude>
-    <ClInclude Include="Commands\CommandProcessor.hpp">
-      <Filter>Commands</Filter>
-    </ClInclude>
     <ClInclude Include="Commands\CommandProcessorImpl.hpp">
-      <Filter>Commands</Filter>
-    </ClInclude>
-    <ClInclude Include="Commands\Command.hpp">
       <Filter>Commands</Filter>
     </ClInclude>
     <ClInclude Include="Commands\BindPsoAndSignatureCommand.hpp">
@@ -190,6 +184,18 @@
       <Filter>Commands</Filter>
     </ClInclude>
     <ClInclude Include="Commands\PrepareSurfaceForPresentCommand.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\Commands\Command.hpp">
+      <Filter>Interface\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\Commands\CommandProcessor.hpp">
+      <Filter>Interface\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\DX12Command.hpp">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\DX12CommandProcessor.hpp">
       <Filter>Commands</Filter>
     </ClInclude>
   </ItemGroup>
@@ -341,6 +347,9 @@
     </Filter>
     <Filter Include="Commands\LightingSetup">
       <UniqueIdentifier>{6c107102-58b6-486d-8174-b457996d0fe7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interface\Commands">
+      <UniqueIdentifier>{03444547-e59a-4d6e-bb79-1dc5f2aace09}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

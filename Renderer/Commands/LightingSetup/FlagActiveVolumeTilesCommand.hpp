@@ -50,7 +50,7 @@ namespace Renderer::DX12::Commands
 		
 		public: void ExecuteOperationOnResourceReferences( UsesReferences &registry, void( UsesReferences::* operation)(size_t)) override;
 		
-		public: void Execute(CommandProcessor &context) override;
+		public: void Execute(DX12CommandProcessor &context) override;
 
 		public: void AddRenderMeshCommand(const RenderMeshArguments &command);
 

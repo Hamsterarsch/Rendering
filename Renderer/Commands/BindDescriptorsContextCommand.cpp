@@ -9,7 +9,7 @@ namespace Renderer::DX12::Commands
 	}
 	
 
-	void BindDescriptorsContextCommand::Execute(CommandProcessor &context)
+	void BindDescriptorsContextCommand::Execute(DX12CommandProcessor &context)
 	{
 		if(context.ShouldExecuteContextCommandFor(CommandContextEvents::CommandListChanged))
 		{

@@ -1,11 +1,11 @@
 #pragma once
-#include "Commands/Command.hpp"
+#include "Commands/DX12Command.hpp"
 #include "Resources/RenderSurface.hpp"
 
 
 namespace Renderer::DX12::Commands
 {
-	class PresentSurfaceCommand : public Command
+	class PresentSurfaceCommand : public DX12Command
 	{
 		public: RenderSurface surface;
 
@@ -15,7 +15,7 @@ namespace Renderer::DX12::Commands
 		
 		public: void ExecuteOperationOnResourceReferences(UsesReferences &registry, void( UsesReferences:: *operation)(size_t)) override;
 
-		public: void Execute(CommandProcessor &context) override;
+		public: void Execute(DX12CommandProcessor &context) override;
 		
 	};
 	

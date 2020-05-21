@@ -14,7 +14,7 @@ namespace Renderer::DX12::Commands
 
 
 	
-	void PresentSurfaceCommand::Execute(CommandProcessor &context)
+	void PresentSurfaceCommand::Execute(DX12CommandProcessor &context)
 	{
 		context.SubmitAndWaitForGpuWork();
 		surface.Present();

@@ -78,7 +78,7 @@ namespace Renderer::DX12::Commands
 
 
 	
-	void LightingContextCommand::Execute(CommandProcessor &context)
+	void LightingContextCommand::Execute(DX12CommandProcessor &context)
 	{
 		gbCommand.Execute(context);
 
