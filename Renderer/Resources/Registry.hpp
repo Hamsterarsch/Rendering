@@ -6,6 +6,7 @@
 #include "Resources/ResourceHandle.hpp"
 #include "Resources/RootSignature/RootSignatureData.hpp"
 #include "Resources/ResourceAllocation.hpp"
+#include "Shared/Exception/Exception.hpp"
 
 
 namespace Renderer
@@ -46,7 +47,7 @@ namespace Renderer
 			{
 				if(entities.find(handle) != entities.end())
 				{
-					throw;//todo
+					ThrowIfDebug(Exception::Exception{ "Registry: tried to register a handle that was already registered" });
 				}
 				
 				entities.insert( {handle, std::move(entity)} );
