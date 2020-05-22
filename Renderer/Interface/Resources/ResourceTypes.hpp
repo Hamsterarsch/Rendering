@@ -11,7 +11,8 @@ namespace Renderer
 		Pso,
 		Buffer,
 		Signature,
-		Light
+		Light,
+		WindowSurface
 		
 	};
 
