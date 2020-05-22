@@ -4,6 +4,9 @@
 #include "Resources/ResourceHandle.hpp"
 
 
+namespace RHA::DX12{ class WindowSurface; }
+
+
 namespace Renderer
 {
 	struct ResourceHandle;
@@ -21,8 +24,10 @@ namespace Renderer
 
 			public: virtual ID3D12RootSignature *GetSignature(ResourceHandle::t_hash handle) = 0; 
 
-			public: virtual D3D12_GPU_VIRTUAL_ADDRESS GetResourceGpuAddress(ResourceHandle::t_hash handle) = 0;
+			public: virtual RHA::DX12::WindowSurface *GetSurface(ResourceHandle::t_hash handle) = 0;
 			
+			public: virtual D3D12_GPU_VIRTUAL_ADDRESS GetResourceGpuAddress(ResourceHandle::t_hash handle) = 0;
+								
 		};
 
 		

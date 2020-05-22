@@ -93,7 +93,18 @@ namespace Renderer::DX12
 		
 	}
 
+
 	
+	ResourceHandle::t_hash ResourceRegistry::Register(UniquePtr<RHA::DX12::WindowSurface> &&surface)
+	{
+		const auto handle{ handleProvider.MakeHandle(ResourceHandle::t_resourceTypes::WindowSurface) };
+		registryWindowSurface.Register(handle, std::move(surface));
+
+		return handle;
+		
+	}
+
+
 
 	ID3D12Resource *ResourceRegistry::GetResource(const ResourceHandle::t_hash handle)
 	{
@@ -130,6 +141,14 @@ namespace Renderer::DX12
 	Light &ResourceRegistry::GetLight(const ResourceHandle::t_hash handle)
 	{
 		return registryLight.Get(handle);
+		
+	}
+
+
+	
+	RHA::DX12::WindowSurface *ResourceRegistry::GetSurface(const ResourceHandle::t_hash handle)
+	{
+		return registryWindowSurface.Get(handle);
 		
 	}
 
@@ -185,7 +204,8 @@ namespace Renderer::DX12
 	
 	void ResourceRegistry::PurgeUnreferencedEntities()
 	{
-		registryResource.PurgeUnreferencedEntities();		
+		registryResource.PurgeUnreferencedEntities();
+		registryWindowSurface.PurgeUnreferencedEntities();
 		if(shouldPurgePsoAndSignature)
 		{
 			registryPso.PurgeUnreferencedEntities();
@@ -235,6 +255,13 @@ namespace Renderer::DX12
 			if(handleType == ResourceHandle::t_resourceTypes::Signature)
 			{
 				(registrySignature.*operation)(handle);
+				return;
+				
+			}
+
+			if(handleType == ResourceHandle::t_resourceTypes::WindowSurface)
+			{
+				(registryWindowSurface.*operation)(handle);
 				return;
 				
 			}
