@@ -1,4 +1,5 @@
 #pragma once
+#include "RendererExportHelper.hpp"
 #include "Shared/InterfaceHelpers.hpp"
 #include "Commands/CommandProcessor.hpp"
 
@@ -8,7 +9,7 @@ namespace Renderer{ class UsesReferences; }
 
 namespace Renderer::Commands
 {
-	class Command
+	class RENDERER_DLLSPEC Command
 	{
 		DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(Command)
 
