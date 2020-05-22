@@ -38,8 +38,7 @@ namespace App::Rendering
 
 		underlyingRenderer->DestroyUnreferencedResources();
 		underlyingRenderer->DestroyExecutedCommands();
-		//underlyingRenderer->WaitForCommands();
-		
+				
 	}
 	
 			void RendererMediator::SubmitCommand(UniquePtr<Renderer::Commands::Command> &&command)
