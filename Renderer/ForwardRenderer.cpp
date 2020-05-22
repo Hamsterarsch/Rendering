@@ -37,10 +37,11 @@
 #include "Commands/LightingSetup/BuildActiveTileListCommand.hpp"
 #include "Commands/LightingSetup/AssignLightsToTilesCommand.hpp"
 #include "Commands/LightingContextCommand.hpp"
-#include "Commands/PresentSurfaceCommand.hpp"
+#include "Commands/PresentSurfaceCommandOld.hpp"
 #include "Commands/LightingSetup/GenerateActiveTileListCommand.hpp"
 
 #include <chrono>
+#include "Commands/DX12CommandFactory.hpp"
 
 #if DEBUG_OPTIMIZED
 	constexpr bool enableDebugLayers = true;
@@ -65,8 +66,6 @@ namespace Renderer::DX12
 		maxScheduledFrames{ 2 },
 		resources{ Facade::MakeDeviceResources(D3D_FEATURE_LEVEL_12_0, enableDebugLayers, enableGpuValidation) },
 		commonQueue{ Facade::MakeQueue(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT) },
-		outputSurface{ Facade::MakeWindowSurface(resources.get(), commonQueue.get(), outputWindow) },
-		depthSurface{ Facade::MakeDepthSurface(resources.get(), outputSurface->GetResourceTemplate()->GetDesc()) },
 		closeFence{ Facade::MakeFence(resources.get()) },
 		closeEvent{ CreateEvent(nullptr, false, false, nullptr) },
 		bufferFactory
@@ -91,14 +90,14 @@ namespace Renderer::DX12
 		cmdFactory{ *this, registry, descriptors },
 		commandProcessor{ *resources, *commonQueue, registry }
 	{			
-		outputSurface->EnableVerticalSync();
 		shaderFactory->AddIncludeDirectory(Filesystem::Conversions::MakeExeRelative("../Content/Shaders/Includes").c_str());
 						
 		dsFactory.SetDepthComparisonFunction(D3D12_COMPARISON_FUNC_LESS_EQUAL);
 		dsFactory.SaveCurrentStateAsDefault();
 
 		commandProcessor.SubmitContextCommand(std::make_unique<Commands::BindDescriptorsContextCommand>(descriptors));
-		
+
+		/*
 		VolumeTileGridData gridData;
 		gridData.screenDimensions.x = outputSurface->GetWidth();
 		gridData.screenDimensions.y = outputSurface->GetHeight();
@@ -258,7 +257,7 @@ namespace Renderer::DX12
 		}			
 
 	//-----------------------
-		
+		*/
 		
 	}
 		   
@@ -275,6 +274,7 @@ namespace Renderer::DX12
 			closeFence->GetFence()->SetEventOnCompletion(1, closeEvent);
 			closeFence->Signal(1, commonQueue.get());
 			WaitForSingleObject(closeEvent, INFINITE);
+			closeFence->Signal(0);
 		
 		}
 
@@ -295,7 +295,7 @@ namespace Renderer::DX12
 			AbortDispatch();
 			return;
 		}
-		
+		/*
 		const auto currentTime{ std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count() / 1000.f };
 		const auto dispatchDelta{ currentTime - lastDispatchTime };
 		lastDispatchTime = currentTime;
@@ -402,12 +402,12 @@ namespace Renderer::DX12
 
 		//schedule presentation todo: take care of sync
 		commandProcessor.SubmitCommand(cmdFactory.MakeCommand<Commands::PrepareSurfaceForPresentCommand>(renderSurface));
-		commandProcessor.SubmitCommand(cmdFactory.MakeCommand<Commands::PresentSurfaceCommand>(renderSurface));
+		commandProcessor.SubmitCommand(cmdFactory.MakeCommand<Commands::PresentSurfaceCommandOld>(renderSurface));
 
 
 		registry.PurgeUnreferencedEntities();
 		commandProcessor.FreeExecutedCommands();
-
+		*/
 	}
 
 		void ForwardRenderer::AbortDispatch()
@@ -657,8 +657,55 @@ namespace Renderer::DX12
 
 	
 	void ForwardRenderer::RetireHandle(const size_t handle)
-	{
+	{		
 		registry.RetireHandle(handle);
+		
+	}
+
+
+		
+	ResourceHandle::t_hash ForwardRenderer::MakeWindowsWindowSurface(HWND windowHandle)
+	{		
+		return registry.Register(RHA::DX12::Facade::MakeWindowSurface(resources.get(), commonQueue.get(), windowHandle));
+		
+	}
+
+
+	
+	UniquePtr<::Renderer::Commands::CommandFactory> ForwardRenderer::MakeCommandFactory()
+	{
+		return MakeUnique<Commands::DX12CommandFactory>(registry);
+		
+	}
+
+
+	
+	void ForwardRenderer::SubmitCommand(UniquePtr<::Renderer::Commands::Command> &&command)
+	{
+		commandProcessor.SubmitCommand(UniquePtr<Commands::DX12Command>{static_cast<Commands::DX12Command *>(command.release())});
+		
+	}
+
+
+
+	void ForwardRenderer::DestroyUnreferencedResources()
+	{
+		registry.PurgeUnreferencedEntities();
+		
+		
+	}
+
+
+	
+	void ForwardRenderer::DestroyExecutedCommands()
+	{
+		commandProcessor.FreeExecutedCommands();
+		
+	}
+
+	void ForwardRenderer::WaitForCommands()
+	{
+		commandProcessor.WaitForIdle();
 		
 	}
 
