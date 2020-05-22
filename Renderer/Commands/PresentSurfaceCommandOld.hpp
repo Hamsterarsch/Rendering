@@ -5,13 +5,13 @@
 
 namespace Renderer::DX12::Commands
 {
-	class PresentSurfaceCommand : public DX12Command
+	class PresentSurfaceCommandOld : public DX12Command
 	{
 		public: RenderSurface surface;
 
 		
 
-		public: PresentSurfaceCommand(const RenderSurface &surface);
+		public: PresentSurfaceCommandOld(const RenderSurface &surface);
 		
 		public: void ExecuteOperationOnResourceReferences(UsesReferences &registry, void( UsesReferences:: *operation)(size_t)) override;
 

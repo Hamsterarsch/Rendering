@@ -129,9 +129,6 @@
     <ClInclude Include="Resources\Pso\DepthStencilFactoryDefault.hpp">
       <Filter>Resources\Pso</Filter>
     </ClInclude>
-    <ClInclude Include="Commands\CommandFactory.hpp">
-      <Filter>Commands</Filter>
-    </ClInclude>
     <ClInclude Include="ShaderRelevantTypes\Light.hpp">
       <Filter>ShaderRelevantTypes</Filter>
     </ClInclude>
@@ -171,9 +168,6 @@
     <ClInclude Include="Commands\LightingContextCommand.hpp">
       <Filter>Commands</Filter>
     </ClInclude>
-    <ClInclude Include="Commands\PresentSurfaceCommand.hpp">
-      <Filter>Commands</Filter>
-    </ClInclude>
     <ClInclude Include="Commands\BindSurfaceCommand.hpp">
       <Filter>Commands</Filter>
     </ClInclude>
@@ -197,6 +191,24 @@
     </ClInclude>
     <ClInclude Include="Commands\DX12CommandProcessor.hpp">
       <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\CommandHelper.hpp">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\Surface\PrepareSurfaceForRenderingCommand.hpp">
+      <Filter>Commands\Surface</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\DX12CommandFactory.hpp">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\Commands\CommandFactory.hpp">
+      <Filter>Interface\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\PresentSurfaceCommandOld.hpp">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\Surface\PresentSurfaceCommand.hpp">
+      <Filter>Commands\Surface</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -304,10 +316,13 @@
     <ClCompile Include="Commands\LightingContextCommand.cpp">
       <Filter>Commands</Filter>
     </ClCompile>
-    <ClCompile Include="Commands\PresentSurfaceCommand.cpp">
+    <ClCompile Include="Commands\InitVolumeTileGridCommand.cpp">
       <Filter>Commands</Filter>
     </ClCompile>
-    <ClCompile Include="Commands\InitVolumeTileGridCommand.cpp">
+    <ClCompile Include="Commands\DX12CommandFactory.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\PresentSurfaceCommandOld.cpp">
       <Filter>Commands</Filter>
     </ClCompile>
   </ItemGroup>
@@ -350,6 +365,9 @@
     </Filter>
     <Filter Include="Interface\Commands">
       <UniqueIdentifier>{03444547-e59a-4d6e-bb79-1dc5f2aace09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Commands\Surface">
+      <UniqueIdentifier>{c903f83d-8590-4ac6-8033-d1e7fb5ac6ad}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
