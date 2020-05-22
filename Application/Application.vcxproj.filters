@@ -11,6 +11,12 @@
     <ClCompile Include="Windows\App.cpp">
       <Filter>Windows</Filter>
     </ClCompile>
+    <ClCompile Include="Rendering\SceneRenderer.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\RendererMediator.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window\Windows\Window.hpp">
@@ -21,6 +27,12 @@
     </ClInclude>
     <ClInclude Include="Windows\App.hpp">
       <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\SceneRenderer.hpp">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\RendererMediator.hpp">
+      <Filter>Rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -35,6 +47,9 @@
     </Filter>
     <Filter Include="Windows">
       <UniqueIdentifier>{fce20fdc-064e-4f2e-b5f3-c66a2c77d552}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rendering">
+      <UniqueIdentifier>{87365d01-48ca-4b61-8fc0-7c0523c44914}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
