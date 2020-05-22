@@ -13,7 +13,7 @@ int main()
 		Windows::App app{};
 		
 	}
-	catch(Exception::Exception &e)
+	catch(std::exception &e)
 	{				
 		const auto directory{ Filesystem::Conversions::MakeExeRelative(L"Logs/") };
 		std::filesystem::create_directory(directory);
