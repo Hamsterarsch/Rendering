@@ -25,6 +25,9 @@
     <ClInclude Include="Exception\OutOfMemoryException.hpp">
       <Filter>Exception</Filter>
     </ClInclude>
+    <ClInclude Include="Hashing\CRC32.hpp">
+      <Filter>Hashing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Exception">
@@ -38,6 +41,9 @@
     </Filter>
     <Filter Include="Filesystem">
       <UniqueIdentifier>{84527f3e-230a-43ef-a1d9-59c5b2bb3aa5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Hashing">
+      <UniqueIdentifier>{6c6c347b-0cd0-41f7-81f8-f357713f1224}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

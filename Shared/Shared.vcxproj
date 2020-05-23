@@ -225,6 +225,7 @@
     <ClInclude Include="Exception\OutOfMemoryException.hpp" />
     <ClInclude Include="Exception\OutOfRangeException.hpp" />
     <ClInclude Include="Filesystem\Conversions.hpp" />
+    <ClInclude Include="Hashing\CRC32.hpp" />
     <ClInclude Include="InterfaceHelpers.hpp" />
     <ClInclude Include="PtrTypes.hpp" />
     <ClInclude Include="targetver.h" />

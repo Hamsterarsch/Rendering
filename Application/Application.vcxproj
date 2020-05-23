@@ -243,6 +243,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="LimitedReflection.hpp" />
     <ClInclude Include="Rendering\RendererMediator.hpp" />
     <ClInclude Include="Rendering\SceneRenderer.hpp" />
     <ClInclude Include="Types\Dimensions2D.hpp" />
