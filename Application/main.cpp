@@ -6,10 +6,14 @@
 #include <filesystem>
 
 
+#include "AssetSystem/Interface/AssetSystem.hpp"
+
 int main()
 {
 	try
 	{
+		auto p = AssetSystem::GetAssetSystem();
+		
 		Windows::App app{};
 		
 	}

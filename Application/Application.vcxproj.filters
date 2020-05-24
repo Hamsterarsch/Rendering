@@ -34,7 +34,6 @@
     <ClInclude Include="Rendering\RendererMediator.hpp">
       <Filter>Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="LimitedReflection.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Window">

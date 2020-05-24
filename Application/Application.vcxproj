@@ -135,7 +135,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Renderer.lib;RHA.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>AssetSystem.lib;Renderer.lib;RHA.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -154,7 +154,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Renderer.lib;RHA.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>AssetSystem.lib;Renderer.lib;RHA.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -173,7 +173,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Renderer.lib;RHA.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>AssetSystem.lib;Renderer.lib;RHA.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -192,7 +192,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Renderer.lib;RHA.lib;Math.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>AssetSystem.lib;Renderer.lib;RHA.lib;Math.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -215,7 +215,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Renderer.lib;RHA.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>AssetSystem.lib;Renderer.lib;RHA.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -238,12 +238,11 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Renderer.lib;RHA.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>AssetSystem.lib;Renderer.lib;RHA.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="LimitedReflection.hpp" />
     <ClInclude Include="Rendering\RendererMediator.hpp" />
     <ClInclude Include="Rendering\SceneRenderer.hpp" />
     <ClInclude Include="Types\Dimensions2D.hpp" />
@@ -259,6 +258,9 @@
     <ClCompile Include="Window\Windows\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AssetSystem\AssetSystem.vcxproj">
+      <Project>{560a76de-256c-4a39-b326-9c50b951ffa9}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Math\Math.vcxproj">
       <Project>{e536bb69-e6c1-4054-b952-b77c05ac37c5}</Project>
     </ProjectReference>

@@ -2,6 +2,7 @@
 #include "Renderer.hpp"
 #include <chrono>
 
+
 namespace App::Rendering
 {
 	RendererMediator::RendererMediator
@@ -18,7 +19,8 @@ namespace App::Rendering
 		lastSubmitTime{ 0 }
 	{		
 	}
-
+	
+	
 	void RendererMediator::SubmitFrame()
 	{
 		const auto currentTime{ std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count() };
@@ -28,7 +30,6 @@ namespace App::Rendering
 		{
 			return;
 		}
-
 		
 		SubmitCommand(commandFactory->PrepareSurfaceForRendering(mainWindowSurface));
 		
