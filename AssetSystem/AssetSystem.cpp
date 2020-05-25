@@ -14,7 +14,8 @@ namespace AssetSystem
 		float floating;
 
 		int subNumber;
-		float subFloat;
+
+		float subsubFloat;
 		
 		unsigned blob[3]{};
 	};
@@ -27,7 +28,9 @@ namespace AssetSystem
 		.Serialize("float", data.floating)
 		.EnterSubobject("subobj")
 			.Serialize("subNumber", data.subNumber)
-			.Serialize("subFloat", data.subFloat)
+			.EnterSubobject("sub2")
+				.Serialize("subFloat", data.subsubFloat)
+			.LeaveSubobject()
 		.LeaveSubobject()
 		.Serialize("blob", reinterpret_cast<unsigned char *>(data.blob), ARRAYSIZE(data.blob) * sizeof(std::remove_all_extents_t<decltype(data.blob)>));
 		
@@ -47,7 +50,7 @@ namespace AssetSystem
 		test.blob[1] = 665;
 		test.blob[2] = 1231231232;
 		test.subNumber = 23;
-		test.subFloat = 0.5;
+		test.subsubFloat = 0.5;
 		IO::AssetWriter writer{ path + "/test.asset" };
 
 		Serialize(&writer, test);

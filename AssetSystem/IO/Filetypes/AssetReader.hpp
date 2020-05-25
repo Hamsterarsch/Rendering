@@ -15,13 +15,38 @@ namespace AssetSystem::IO
 
 		private: std::string objectQualifiers;
 
+		private: std::ifstream::pos_type currentPropertyNameEnd;
+
 
 				
 		public: AssetReader(const std::filesystem::path &filepath);
 
-			private: void BuildPropertyMap();
-		
 			private: bool SeekEofUntilToken(char token);
+		
+			private: void BuildPropertyMap();
+
+				private: void ProcessNextProperty();
+
+					private: bool SeekNextPropertyStart();
+
+						private: bool HandleObjectPropertyEnd();
+
+					private: void ProcessProperty(std::string &&propertyName);
+
+						private: char GetPropertyToken();
+
+						private: void ProcessObjectProperty(std::string &&propertyName);
+
+							private: char GetFirstTokenInObject();
+		
+							private: void AddObjectScope(std::string &&objectName);
+
+						private: void ProcessValueProperty(std::string &&propertyName);
+
+							private: char GetNextTokenAfterValueProperty();
+
+							private: void PopCurrentObjectScope();
+		
 						
 		public: Archive &Serialize(const char *propertyName, unsigned char *data, size_t sizeInBytes) override;
 		
@@ -47,6 +72,6 @@ namespace AssetSystem::IO
 		public: Archive &LeaveSubobject() override;
 		
 	};
-	
+
 	
 }

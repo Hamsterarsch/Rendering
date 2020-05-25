@@ -11,9 +11,7 @@ namespace AssetSystem::IO
 			return;
 			
 		}
-
-		BuildPropertyMap();
-		
+				
 		//find beginning
 		if(SeekEofUntilToken('{'))
 		{
@@ -21,123 +19,10 @@ namespace AssetSystem::IO
 			
 		}
 
-		while(true)
-		{
-			//find property
-			if(SeekEofUntilToken('"'))
-			{
-				return;
+		BuildPropertyMap();
+		return;
 				
-			}
-			file.get();
-			auto propertyNameStart{ file.tellg() };
-			
-			if(SeekEofUntilToken('"'))
-			{
-				return;
-				
-			}
-			auto propertyNameEnd{ file.tellg() };
-
-			file.seekg(propertyNameStart);
-			const auto nameLength{  propertyNameEnd - propertyNameStart };
-
-			std::string name(nameLength, '\0');			
-			file.read(name.data(), nameLength);
-			file.get();		
-
-			while(file.peek() != std::ifstream::traits_type::eof())
-			{
-				if(file.peek() == '{')
-				{
-					if(!objectQualifiers.empty())
-					{
-						objectQualifiers += '.';
-					}
-					objectQualifiers += name + '.';
-
-					while(file.peek() != std::ifstream::traits_type::eof())
-					{
-						const auto c{ file.peek() };
-						if(c == '}')
-						{
-							while(!objectQualifiers.size() >= 2)
-							{
-								objectQualifiers.pop_back();
-								if(objectQualifiers.back() == '.')
-								{
-									break;
-								}
-							}
-							objectQualifiers.pop_back();
-							break;
-						}
-
-						if(c == '"')
-						{										
-							break;
-						}
-						file.get();
-						
-					}
-					break;
-				}
-
-				if(file.get() == '"')
-				{
-					propertyMap.insert( { objectQualifiers + std::move(name), 1+propertyNameEnd} );
-					while(file.peek() != std::ifstream::traits_type::eof())
-					{
-						const auto c{ file.peek() };
-						if(c == ',')
-						{
-							break;
-						}
-
-						if(c == '}')
-						{
-							if(objectQualifiers.empty())
-							{
-								return;
-							}
-							
-							while(objectQualifiers.size() >= 2)
-							{
-								objectQualifiers.pop_back();
-								if(objectQualifiers.back() == '.')
-								{
-									break;
-								}
-							}
-							objectQualifiers.pop_back();
-							break;
-						}
-
-						if(c == std::ifstream::traits_type::eof())
-						{
-							return;
-						}
-						file.get();
-						
-					}
-					
-					break;
-				}
-				
-			}
-
-
-						
-		}
-		
-		
 	}
-
-		void AssetReader::BuildPropertyMap()
-		{
-
-		
-		}
 
 		bool AssetReader::SeekEofUntilToken(const char token)
 		{			
@@ -153,6 +38,223 @@ namespace AssetSystem::IO
 			return true;
 		
 		}
+
+		void AssetReader::BuildPropertyMap()
+		{
+			ProcessNextProperty();
+		
+		}
+
+			void AssetReader::ProcessNextProperty()
+			{
+				if(!SeekNextPropertyStart())
+				{
+					return;
+					
+				}		
+				auto propertyNameStart{ file.tellg() };
+				
+				if(SeekEofUntilToken('"'))
+				{
+					return;
+					
+				}
+				currentPropertyNameEnd = file.tellg();
+
+				file.seekg(propertyNameStart);
+				const auto nameLength{  currentPropertyNameEnd - propertyNameStart };
+
+				std::string name(nameLength, '\0');			
+				file.read(name.data(), nameLength);
+				file.get();
+
+				ProcessProperty(std::move(name));
+				ProcessNextProperty();
+		
+			}
+
+				bool AssetReader::SeekNextPropertyStart()
+				{					
+					while(true)
+					{
+						if(file.peek() == std::ifstream::traits_type::eof())
+						{
+							return false;
+							
+						}
+						
+						const auto token{ file.get() };
+						if(token == '}')
+						{
+							if(objectQualifiers.empty())
+							{
+								return false;
+								
+							}
+							return HandleObjectPropertyEnd();							
+						}
+
+						if(token == '"')
+						{
+							return true;
+							
+						}						
+					}
+		
+				}
+
+					bool AssetReader::HandleObjectPropertyEnd()
+					{
+						PopCurrentObjectScope();
+
+						if(SeekEofUntilToken('"'))
+						{
+							return false;
+						}
+						file.get();
+						return true;
+		
+					}
+
+				void AssetReader::ProcessProperty(std::string &&propertyName)
+				{
+					const auto propertyToken{ GetPropertyToken() };
+					if(propertyToken == std::ifstream::traits_type::eof())
+					{
+						return;
+						
+					}
+
+					if(propertyToken == '{')
+					{
+						ProcessObjectProperty(std::move(propertyName));
+					}
+
+					if(propertyToken == '"')
+					{
+						ProcessValueProperty(std::move(propertyName));
+					}
+		
+				}
+
+					char AssetReader::GetPropertyToken()					
+					{
+						while(true)
+						{
+							const auto character{ file.get() };
+							if
+							(
+								character == std::ifstream::traits_type::eof()
+								|| character == '{'
+								|| character == '"'
+							)
+							{
+								return character;
+								
+							}														
+						}
+		
+					}
+
+					void AssetReader::ProcessObjectProperty(std::string &&propertyName)
+					{
+						const auto firstToken{ GetFirstTokenInObject() };
+						if
+						(	
+							firstToken == std::ifstream::traits_type::eof()
+							|| firstToken == '}'
+						)
+						{
+							return;
+							
+						}
+		
+						AddObjectScope(std::move(propertyName));
+						file.seekg(-1, std::ifstream::cur);
+					
+					}
+
+						char AssetReader::GetFirstTokenInObject()
+						{
+							while(true)
+							{
+								const auto character{ file.get() };
+								if
+								(
+									character == std::ifstream::traits_type::eof()
+									|| character == '}'
+									|| character == '"'
+								)
+								{
+									return character;
+									
+								}
+							}
+		
+						}
+
+						void AssetReader::AddObjectScope(std::string &&objectName)
+						{
+							objectQualifiers += std::move(objectName) + '.';
+		
+						}
+
+					void AssetReader::ProcessValueProperty(std::string&& propertyName)
+					{
+						propertyMap.insert( { objectQualifiers + std::move(propertyName), 1+currentPropertyNameEnd} );
+						const auto token{ GetNextTokenAfterValueProperty() };
+		
+						if(token == ',')
+						{
+							return;
+							
+						}
+
+						if(token == '}')
+						{
+							PopCurrentObjectScope();							
+						}
+								
+					}
+
+						char AssetReader::GetNextTokenAfterValueProperty()
+						{
+							while(true)
+							{
+								const auto character{ file.get() };
+								if
+								(
+									character == std::ifstream::traits_type::eof()
+									|| character == ','
+									|| character == '}'
+								)
+								{
+									return character;
+									
+								}
+							}
+		
+						}
+
+						void AssetReader::PopCurrentObjectScope()
+						{
+							if(objectQualifiers.empty())
+							{
+								return;
+								
+							}
+							
+							while(objectQualifiers.size() >= 2)
+							{
+								objectQualifiers.pop_back();
+								if(objectQualifiers.back() == '.')
+								{
+									break;
+								}
+							}
+							objectQualifiers.pop_back();
+		
+						}
 
 
 
@@ -249,32 +351,21 @@ namespace AssetSystem::IO
 
 
 	Archive &AssetReader::EnterSubobject(const char *propertyName)
-	{
-		if(!objectQualifiers.empty())
-		{
-			objectQualifiers += '.';
-		}
-		objectQualifiers += propertyName;
-		objectQualifiers += '.';
+	{		
+		AddObjectScope({propertyName});
 		
 		return *this;
+		
 	}
 
 
 
 	Archive &AssetReader::LeaveSubobject()
 	{
-		while(objectQualifiers.size() >= 2)
-		{
-			objectQualifiers.pop_back();
-			if(objectQualifiers.back() == '.')
-			{
-				break;
-			}
-		}
-		objectQualifiers.pop_back();
+		PopCurrentObjectScope();
 		
 		return *this;
+		
 	}
 
 	
