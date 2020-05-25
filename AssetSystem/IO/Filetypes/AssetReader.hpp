@@ -56,6 +56,10 @@ namespace AssetSystem::IO
 		
 						
 		public: Archive &Serialize(const char *propertyName, unsigned char *data, size_t numElements, size_t elementStrideInBytes) override;
+
+			private: void SkipBinaryDataToken();
+		
+			private: void ReadFileForLittleEndian(unsigned char *data, size_t numElements, size_t elementStrideInBytes);
 		
 			private: void SeekPropertyValueStart(const char *propertyName);
 		

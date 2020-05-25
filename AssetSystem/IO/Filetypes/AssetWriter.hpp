@@ -32,6 +32,8 @@ namespace AssetSystem::IO
 
 			private: void WritePropertyValue(const unsigned char *data, size_t sizeInBytes, size_t elementStrideInBytes, bool isBinary = false);
 
+				private: void WriteFromLittleEndian(const unsigned char *data, size_t numElements, size_t elementStrideInBytes);
+
 		public: Archive &Serialize(const char *propertyName, int32_t &data) override;
 
 		public: Archive &Serialize(const char *propertyName, float &data) override;

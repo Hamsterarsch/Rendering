@@ -59,7 +59,7 @@ namespace AssetSystem::IO
 		
 			}
 				
-		void AssetWriter::WritePropertyValue(const unsigned char* data, const size_t sizeInBytes, const size_t elementStrideInBytes, const bool isBinary)
+		void AssetWriter::WritePropertyValue(const unsigned char *data, const size_t sizeInBytes, const size_t elementStrideInBytes, const bool isBinary)
 		{
 			file << '"';
 		
@@ -72,16 +72,7 @@ namespace AssetSystem::IO
 				}
 				else
 				{
-					for(size_t writtenElements{ 0 }; writtenElements < sizeInBytes / elementStrideInBytes; ++writtenElements)
-					{
-						const auto *baseElement{ data + writtenElements * elementStrideInBytes };
-						for(size_t byteToWrite{ elementStrideInBytes }; byteToWrite > 0; --byteToWrite)
-						{
-							const auto *targetByte{ baseElement + byteToWrite-1 };
-							file.put(*targetByte);
-						}
-					}
-					
+					WriteFromLittleEndian(data, sizeInBytes / elementStrideInBytes, elementStrideInBytes);					
 				}							
 				file << AssetArchiveConstants::binaryEndToken;
 			}
@@ -94,6 +85,22 @@ namespace AssetSystem::IO
 			hasWrittenPropertyValue = true;
 		
 		}
+
+			void AssetWriter::WriteFromLittleEndian(const unsigned char *data, const size_t numElements, const size_t elementStrideInBytes)
+			{
+				for(size_t writtenElements{ 0 }; writtenElements < numElements; ++writtenElements)
+				{
+					const auto *baseElement{ data + writtenElements * elementStrideInBytes };
+					for(size_t byteToWrite{ elementStrideInBytes }; byteToWrite > 0; --byteToWrite)
+					{
+						const auto *targetByte{ baseElement + byteToWrite-1 };
+						file.put(*targetByte);
+					}
+				}
+			
+			}
+
+
 	
 	Archive &AssetWriter::Serialize(const char *propertyName, int32_t &data) 
 	{

@@ -317,16 +317,32 @@ namespace AssetSystem::IO
 
 
 
-	Archive &AssetReader::Serialize(const char *propertyName, unsigned char *data, size_t numElements, size_t elementStrideInBytes)
+	Archive &AssetReader::Serialize(const char *propertyName, unsigned char *data, const size_t numElements, const size_t elementStrideInBytes)
 	{
 		SeekPropertyValueStart(propertyName);
 		
-		file.seekg(AssetArchiveConstants::binaryTokenLength-1, std::ifstream::cur);
+		SkipBinaryDataToken();
 		if(IsBigEndianMachine() || elementStrideInBytes == 1)
 		{
 			file.read(reinterpret_cast<char *>(data), numElements*elementStrideInBytes);									
 		}
 		else
+		{
+			ReadFileForLittleEndian(data, numElements, elementStrideInBytes);			
+		}
+		SkipBinaryDataToken();
+		
+		return *this;
+		
+	}
+
+		void AssetReader::SkipBinaryDataToken()
+		{
+			file.seekg(AssetArchiveConstants::binaryTokenLength-1, std::ifstream::cur);
+		
+		}
+
+		void AssetReader::ReadFileForLittleEndian(unsigned char *data, const size_t numElements, const size_t elementStrideInBytes)
 		{
 			for(size_t readElements{ 0 }; readElements < numElements; ++readElements)
 			{
@@ -337,12 +353,8 @@ namespace AssetSystem::IO
 					file.read(targetByte, 1);
 				}
 			}
-			
-		}
-		file.seekg(AssetArchiveConstants::binaryTokenLength-1, std::ifstream::cur);
 		
-		return *this;
-	}
+		}
 
 		void AssetReader::SeekPropertyValueStart(const char *propertyName)
 		{
