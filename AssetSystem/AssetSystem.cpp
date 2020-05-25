@@ -4,6 +4,7 @@
 #include "AssetSystem/IO/Filetypes/AssetWriter.hpp"
 #include "Shared/Filesystem/Conversions.hpp"
 #include "IO/Filetypes/AssetReader.hpp"
+#include "IO/DiskConversions.hpp"
 
 namespace AssetSystem
 {
@@ -23,7 +24,7 @@ namespace AssetSystem
 	void Serialize(IO::Archive *archive, testData &data)
 	{		
 		(*archive)
-		.Serialize("blob", reinterpret_cast<unsigned char *>(data.blob), ARRAYSIZE(data.blob) * sizeof(std::remove_all_extents_t<decltype(data.blob)>))
+		.Serialize("blob", reinterpret_cast<unsigned char *>(data.blob), ARRAYSIZE(data.blob), sizeof(std::remove_all_extents_t<decltype(data.blob)>))
 		.Serialize("number", data.number)
 		.Serialize("text", data.text.data())
 		.EnterSubobject("subobj")
@@ -41,6 +42,7 @@ namespace AssetSystem
 		const auto path{ Filesystem::Conversions::MakeExeRelative("../../Assets/Test/") };
 		std::filesystem::create_directories(path);
 
+		auto e = IO::IsBigEndianMachine();
 
 		testData test;
 		test.number = -1123;
@@ -57,8 +59,8 @@ namespace AssetSystem
 		writer.Close();
 
 		//do not write empty objects pls
-		//add binary end tokens
 		//endian conversion
+
 		
 		testData read;
 		IO::AssetReader reader{ path + "/test.asset" };

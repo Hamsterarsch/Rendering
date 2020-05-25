@@ -1,5 +1,6 @@
 #include "AssetSystem/IO/Filetypes/AssetReader.hpp"
 #include "AssetSystem/IO/Filetypes/AssetArchiveConstants.hpp"
+#include "IO/DiskConversions.hpp"
 
 
 namespace AssetSystem::IO
@@ -316,11 +317,29 @@ namespace AssetSystem::IO
 
 
 
-	Archive &AssetReader::Serialize(const char *propertyName, unsigned char *data, size_t sizeInBytes)
+	Archive &AssetReader::Serialize(const char *propertyName, unsigned char *data, size_t numElements, size_t elementStrideInBytes)
 	{
 		SeekPropertyValueStart(propertyName);
-
-		file.read(reinterpret_cast<char *>(data), sizeInBytes);		
+		
+		file.seekg(AssetArchiveConstants::binaryTokenLength-1, std::ifstream::cur);
+		if(IsBigEndianMachine() || elementStrideInBytes == 1)
+		{
+			file.read(reinterpret_cast<char *>(data), numElements*elementStrideInBytes);									
+		}
+		else
+		{
+			for(size_t readElements{ 0 }; readElements < numElements; ++readElements)
+			{
+				auto *baseElement{ reinterpret_cast<char *>(data) + readElements * elementStrideInBytes };
+				for(size_t byteToRead{ elementStrideInBytes }; byteToRead > 0; --byteToRead)
+				{
+					auto *targetByte{ baseElement + byteToRead -1 };
+					file.read(targetByte, 1);
+				}
+			}
+			
+		}
+		file.seekg(AssetArchiveConstants::binaryTokenLength-1, std::ifstream::cur);
 		
 		return *this;
 	}
@@ -337,7 +356,7 @@ namespace AssetSystem::IO
 
 
 
-	Archive &AssetReader::Serialize(const char *propertyName, int &data)
+	Archive &AssetReader::Serialize(const char *propertyName, int32_t &data)
 	{
 		data = std::stoi(ReadPropertyValue(propertyName));
 		

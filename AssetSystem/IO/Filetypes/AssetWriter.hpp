@@ -24,15 +24,15 @@ namespace AssetSystem::IO
 
 		
 		
-		public: Archive &Serialize(const char *propertyName, unsigned char *data, size_t sizeInBytes) override;
+		public: Archive &Serialize(const char *propertyName, unsigned char *data, size_t numElements, size_t elementStrideInBytes) override;
 
 			private: void WritePropertyName(const char *propertyName);
 
 				private: void WritePropertyDelimiters();
 
-			private: void WritePropertyValue(const unsigned char *data, size_t sizeInBytes, bool isBinary = false);
+			private: void WritePropertyValue(const unsigned char *data, size_t sizeInBytes, size_t elementStrideInBytes, bool isBinary = false);
 
-		public: Archive &Serialize(const char *propertyName, int &data) override;
+		public: Archive &Serialize(const char *propertyName, int32_t &data) override;
 
 		public: Archive &Serialize(const char *propertyName, float &data) override;
 

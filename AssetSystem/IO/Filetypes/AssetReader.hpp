@@ -55,11 +55,11 @@ namespace AssetSystem::IO
 							private: void PopCurrentObjectScope();
 		
 						
-		public: Archive &Serialize(const char *propertyName, unsigned char *data, size_t sizeInBytes) override;
+		public: Archive &Serialize(const char *propertyName, unsigned char *data, size_t numElements, size_t elementStrideInBytes) override;
 		
 			private: void SeekPropertyValueStart(const char *propertyName);
 		
-		public: Archive &Serialize(const char *propertyName, int &data) override;
+		public: Archive &Serialize(const char *propertyName, int32_t &data) override;
 
 			private: std::string ReadPropertyValue(const char *propertyName);
 

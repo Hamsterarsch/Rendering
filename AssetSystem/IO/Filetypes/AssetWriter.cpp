@@ -1,6 +1,7 @@
 #include "AssetSystem/IO/Filetypes/AssetWriter.hpp"
 #include <fstream>
 #include "AssetSystem/IO/Filetypes/AssetArchiveConstants.hpp"
+#include "IO/DiskConversions.hpp"
 
 
 namespace AssetSystem::IO
@@ -33,10 +34,10 @@ namespace AssetSystem::IO
 
 
 
-	Archive &AssetWriter::Serialize(const char *propertyName, unsigned char* data, const size_t sizeInBytes)
+	Archive &AssetWriter::Serialize(const char *propertyName, unsigned char* data, const size_t numElements, const size_t elementStrideInBytes)
 	{		
 		WritePropertyName(propertyName);
-		WritePropertyValue(data, sizeInBytes, true);
+		WritePropertyValue(data, numElements * elementStrideInBytes, elementStrideInBytes, true);
 
 		return *this;
 		
@@ -58,31 +59,48 @@ namespace AssetSystem::IO
 		
 			}
 				
-		void AssetWriter::WritePropertyValue(const unsigned char* data, const size_t sizeInBytes, const bool isBinary)
+		void AssetWriter::WritePropertyValue(const unsigned char* data, const size_t sizeInBytes, const size_t elementStrideInBytes, const bool isBinary)
 		{
 			file << '"';
+		
 			if(isBinary)
 			{
 				file << AssetArchiveConstants::binaryStartToken;
-			}
-		
-			file.write(reinterpret_cast<const char *>(data), sizeInBytes);
-
-			if(isBinary)
-			{
+				if(IsBigEndianMachine() || elementStrideInBytes == 1)
+				{
+					file.write(reinterpret_cast<const char *>(data), sizeInBytes);						
+				}
+				else
+				{
+					for(size_t writtenElements{ 0 }; writtenElements < sizeInBytes / elementStrideInBytes; ++writtenElements)
+					{
+						const auto *baseElement{ data + writtenElements * elementStrideInBytes };
+						for(size_t byteToWrite{ elementStrideInBytes }; byteToWrite > 0; --byteToWrite)
+						{
+							const auto *targetByte{ baseElement + byteToWrite-1 };
+							file.put(*targetByte);
+						}
+					}
+					
+				}							
 				file << AssetArchiveConstants::binaryEndToken;
 			}
+			else
+			{
+				file.write(reinterpret_cast<const char *>(data), sizeInBytes);				
+			}
+		
 			file << '"';
 			hasWrittenPropertyValue = true;
 		
 		}
 	
-	Archive &AssetWriter::Serialize(const char *propertyName, int &data) 
+	Archive &AssetWriter::Serialize(const char *propertyName, int32_t &data) 
 	{
 		WritePropertyName(propertyName);
 						
 		const auto asString{ std::to_string(data) };
-		WritePropertyValue(reinterpret_cast<const unsigned char *>(asString.c_str()), asString.size());
+		WritePropertyValue(reinterpret_cast<const unsigned char *>(asString.c_str()), asString.size(), sizeof(std::string::value_type));
 
 		return *this;
 		
@@ -95,7 +113,7 @@ namespace AssetSystem::IO
 		WritePropertyName(propertyName);
 				
 		const auto asString{ std::to_string(data) };
-		WritePropertyValue(reinterpret_cast<const unsigned char *>(asString.c_str()), asString.size());
+		WritePropertyValue(reinterpret_cast<const unsigned char *>(asString.c_str()), asString.size(), sizeof(std::string::value_type));
 
 		return *this;
 		
