@@ -1,4 +1,5 @@
 #include "AssetSystem/IO/Filetypes/AssetReader.hpp"
+#include "AssetSystem/IO/Filetypes/AssetArchiveConstants.hpp"
 
 
 namespace AssetSystem::IO
@@ -221,7 +222,7 @@ namespace AssetSystem::IO
 						{
 							while(true)
 							{
-								const auto character{ file.get() };
+								const auto character{ GetNonBinaryDataFromFile() };
 								if
 								(
 									character == std::ifstream::traits_type::eof()
@@ -235,6 +236,63 @@ namespace AssetSystem::IO
 							}
 		
 						}
+
+							char AssetReader::GetNonBinaryDataFromFile()
+							{
+								if(FileIsAtBinaryDataStartSequence())
+								{
+									return GetFirstCharacterAfterBinary();									
+								}
+								return file.get();
+		
+							}
+
+								bool AssetReader::FileIsAtBinaryDataStartSequence()
+								{
+									const auto readToken{ file.peek() };
+									if(readToken != AssetArchiveConstants::binaryStartToken[0])
+									{
+										return false;
+										
+									}
+
+									const auto preCheckPos{ file.tellg() };
+									std::string read(AssetArchiveConstants::binaryTokenLength-1, '\0');
+									file.read(read.data(), AssetArchiveConstants::binaryTokenLength-1);
+
+									if(read != AssetArchiveConstants::binaryStartToken)
+									{
+										file.seekg(preCheckPos);
+										return false;
+										
+									}
+
+									return true;
+		
+								}
+
+								char AssetReader::GetFirstCharacterAfterBinary()
+								{
+									while(true)
+									{
+										const auto character{ file.peek() };
+										if(character != AssetArchiveConstants::binaryEndToken[0])
+										{
+											file.get();
+											continue;											
+										}
+
+										std::string read(AssetArchiveConstants::binaryTokenLength-1, '\0');
+										file.read(read.data(), AssetArchiveConstants::binaryTokenLength-1);
+
+										if(read == AssetArchiveConstants::binaryEndToken)
+										{
+											return file.get();
+											
+										}										
+									}
+		
+								}
 
 						void AssetReader::PopCurrentObjectScope()
 						{

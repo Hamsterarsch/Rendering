@@ -29,6 +29,7 @@ namespace AssetSystem::IO
 
 					private: bool SeekNextPropertyStart();
 
+
 						private: bool HandleObjectPropertyEnd();
 
 					private: void ProcessProperty(std::string &&propertyName);
@@ -44,6 +45,12 @@ namespace AssetSystem::IO
 						private: void ProcessValueProperty(std::string &&propertyName);
 
 							private: char GetNextTokenAfterValueProperty();
+
+								private: char GetNonBinaryDataFromFile();
+
+									private: bool FileIsAtBinaryDataStartSequence();
+
+									private: char GetFirstCharacterAfterBinary();
 
 							private: void PopCurrentObjectScope();
 		

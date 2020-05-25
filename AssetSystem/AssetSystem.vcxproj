@@ -181,6 +181,7 @@
     <ClInclude Include="Interface\AssetSystem.hpp" />
     <ClInclude Include="Interface\AssetSystemExportHelper.hpp" />
     <ClInclude Include="Interface\LimitedReflection.hpp" />
+    <ClInclude Include="IO\Filetypes\AssetArchiveConstants.hpp" />
     <ClInclude Include="IO\Filetypes\AssetReader.hpp" />
     <ClInclude Include="IO\Filetypes\AssetWriter.hpp" />
     <ClInclude Include="IO\Filetypes\JsonWriter.hpp" />

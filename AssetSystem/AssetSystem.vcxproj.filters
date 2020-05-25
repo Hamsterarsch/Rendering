@@ -59,5 +59,8 @@
     <ClInclude Include="IO\Filetypes\AssetReader.hpp">
       <Filter>IO\Filetypes</Filter>
     </ClInclude>
+    <ClInclude Include="IO\Filetypes\AssetArchiveConstants.hpp">
+      <Filter>IO\Filetypes</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

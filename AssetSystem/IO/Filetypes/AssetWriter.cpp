@@ -1,5 +1,6 @@
 #include "AssetSystem/IO/Filetypes/AssetWriter.hpp"
 #include <fstream>
+#include "AssetSystem/IO/Filetypes/AssetArchiveConstants.hpp"
 
 
 namespace AssetSystem::IO
@@ -35,7 +36,7 @@ namespace AssetSystem::IO
 	Archive &AssetWriter::Serialize(const char *propertyName, unsigned char* data, const size_t sizeInBytes)
 	{		
 		WritePropertyName(propertyName);
-		WritePropertyValue(data, sizeInBytes);
+		WritePropertyValue(data, sizeInBytes, true);
 
 		return *this;
 		
@@ -57,10 +58,20 @@ namespace AssetSystem::IO
 		
 			}
 				
-		void AssetWriter::WritePropertyValue(const unsigned char* data, size_t sizeInBytes)
+		void AssetWriter::WritePropertyValue(const unsigned char* data, const size_t sizeInBytes, const bool isBinary)
 		{
 			file << '"';
+			if(isBinary)
+			{
+				file << AssetArchiveConstants::binaryStartToken;
+			}
+		
 			file.write(reinterpret_cast<const char *>(data), sizeInBytes);
+
+			if(isBinary)
+			{
+				file << AssetArchiveConstants::binaryEndToken;
+			}
 			file << '"';
 			hasWrittenPropertyValue = true;
 		

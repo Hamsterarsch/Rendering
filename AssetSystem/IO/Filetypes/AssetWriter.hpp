@@ -30,7 +30,7 @@ namespace AssetSystem::IO
 
 				private: void WritePropertyDelimiters();
 
-			private: void WritePropertyValue(const unsigned char *data, size_t sizeInBytes);
+			private: void WritePropertyValue(const unsigned char *data, size_t sizeInBytes, bool isBinary = false);
 
 		public: Archive &Serialize(const char *propertyName, int &data) override;
 

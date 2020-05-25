@@ -23,16 +23,16 @@ namespace AssetSystem
 	void Serialize(IO::Archive *archive, testData &data)
 	{		
 		(*archive)
+		.Serialize("blob", reinterpret_cast<unsigned char *>(data.blob), ARRAYSIZE(data.blob) * sizeof(std::remove_all_extents_t<decltype(data.blob)>))
 		.Serialize("number", data.number)
 		.Serialize("text", data.text.data())
-		.Serialize("float", data.floating)
 		.EnterSubobject("subobj")
 			.Serialize("subNumber", data.subNumber)
 			.EnterSubobject("sub2")
 				.Serialize("subFloat", data.subsubFloat)
 			.LeaveSubobject()
 		.LeaveSubobject()
-		.Serialize("blob", reinterpret_cast<unsigned char *>(data.blob), ARRAYSIZE(data.blob) * sizeof(std::remove_all_extents_t<decltype(data.blob)>));
+		.Serialize("float", data.floating);
 		
 	}
 	
@@ -56,6 +56,10 @@ namespace AssetSystem
 		Serialize(&writer, test);
 		writer.Close();
 
+		//do not write empty objects pls
+		//add binary end tokens
+		//endian conversion
+		
 		testData read;
 		IO::AssetReader reader{ path + "/test.asset" };
 		Serialize(&reader , read);
