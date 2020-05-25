@@ -32,10 +32,9 @@ namespace AssetSystem::IO
 
 
 
-	Archive &AssetWriter::SerializeBlob(const char *propertyName, unsigned char* data, const size_t sizeInBytes)
+	Archive &AssetWriter::Serialize(const char *propertyName, unsigned char* data, const size_t sizeInBytes)
 	{		
 		WritePropertyName(propertyName);
-		WritePropertyType("bin");
 		WritePropertyValue(data, sizeInBytes);
 
 		return *this;
@@ -45,7 +44,7 @@ namespace AssetSystem::IO
 		void AssetWriter::WritePropertyName(const char *propertyName)
 		{
 			WritePropertyDelimiters();
-			file << '\t' << subobjectTabs << '"' << propertyName << '"';
+			file << '\t' << subobjectTabs << '"' << propertyName << "\": ";
 		
 		}
 
@@ -57,13 +56,7 @@ namespace AssetSystem::IO
 				}
 		
 			}
-
-		void AssetWriter::WritePropertyType(const char *token)
-		{
-			file << ":" << token << ": ";
-		
-		}
-
+				
 		void AssetWriter::WritePropertyValue(const unsigned char* data, size_t sizeInBytes)
 		{
 			file << '"';
@@ -72,18 +65,12 @@ namespace AssetSystem::IO
 			hasWrittenPropertyValue = true;
 		
 		}
-
-
-
-	Archive &AssetWriter::SerializeUint32(const char *propertyName, unsigned char *data)
+	
+	Archive &AssetWriter::Serialize(const char *propertyName, int &data) 
 	{
 		WritePropertyName(propertyName);
-		WritePropertyType("uin");
-
-		uint32_t asUint;
-		std::memcpy(&asUint, data, sizeof(uint32_t));
-		
-		const auto asString{ std::to_string(asUint) };
+						
+		const auto asString{ std::to_string(data) };
 		WritePropertyValue(reinterpret_cast<const unsigned char *>(asString.c_str()), asString.size());
 
 		return *this;
@@ -92,15 +79,11 @@ namespace AssetSystem::IO
 
 
 	
-	Archive &AssetWriter::SerializeInt32(const char *propertyName, unsigned char *data) 
+	Archive &AssetWriter::Serialize(const char *propertyName, float &data) 
 	{
 		WritePropertyName(propertyName);
-		WritePropertyType("int");
-
-		int32_t asInt;
-		std::memcpy(&asInt, data, sizeof(int32_t));
-		
-		const auto asString{ std::to_string(asInt) };
+				
+		const auto asString{ std::to_string(data) };
 		WritePropertyValue(reinterpret_cast<const unsigned char *>(asString.c_str()), asString.size());
 
 		return *this;
@@ -109,27 +92,9 @@ namespace AssetSystem::IO
 
 
 	
-	Archive &AssetWriter::SerializeFloat(const char *propertyName, unsigned char *data) 
+	Archive &AssetWriter::Serialize(const char *propertyName, char *str) 
 	{
 		WritePropertyName(propertyName);
-		WritePropertyType("flt");
-		
-		float asFloat;
-		std::memcpy(&asFloat, data, sizeof(float));
-		
-		const auto asString{ std::to_string(asFloat) };
-		WritePropertyValue(reinterpret_cast<const unsigned char *>(asString.c_str()), asString.size());
-
-		return *this;
-		
-	}
-
-
-	
-	Archive &AssetWriter::SerializeString(const char *propertyName, char *str) 
-	{
-		WritePropertyName(propertyName);
-		WritePropertyType("txt");
 				
 		file << '"';
 		file << str;
@@ -168,7 +133,6 @@ namespace AssetSystem::IO
 	Archive &AssetWriter::EnterSubobject(const char *propertyName)
 	{
 		WritePropertyName(propertyName);
-		WritePropertyType("obj");
 
 		file << "\n\t" << subobjectTabs << "{\n";
 		subobjectTabs.push_back('\t');

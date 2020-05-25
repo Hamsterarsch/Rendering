@@ -11,15 +11,13 @@ namespace AssetSystem::IO
 		DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(Archive)
 					
 		
-		public: virtual Archive &SerializeBlob(const char *propertyName, unsigned char *data, size_t sizeInBytes) = 0;
-						
-		public: virtual Archive &SerializeUint32(const char *propertyName, unsigned char *data) = 0;
+		public: virtual Archive &Serialize(const char *propertyName, unsigned char *data, size_t sizeInBytes) = 0;
 
-		public: virtual Archive &SerializeInt32(const char *propertyName, unsigned char *data) = 0;
+		public: virtual Archive &Serialize(const char *propertyName, int &data) = 0;
 
-		public: virtual Archive &SerializeFloat(const char *propertyName, unsigned char *data) = 0;
+		public: virtual Archive &Serialize(const char *propertyName, float &data) = 0;
 
-		public: virtual Archive &SerializeString(const char *propertyName, char *str) = 0;
+		public: virtual Archive &Serialize(const char *propertyName, char *str) = 0;
 		
 
 		public: virtual bool IsWriting() const = 0;

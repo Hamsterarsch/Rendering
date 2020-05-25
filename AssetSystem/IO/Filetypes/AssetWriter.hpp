@@ -24,24 +24,19 @@ namespace AssetSystem::IO
 
 		
 		
-		public: Archive &SerializeBlob(const char *propertyName, unsigned char *data, size_t sizeInBytes) override;
+		public: Archive &Serialize(const char *propertyName, unsigned char *data, size_t sizeInBytes) override;
 
 			private: void WritePropertyName(const char *propertyName);
 
 				private: void WritePropertyDelimiters();
 
-			private: void WritePropertyType(const char *token);
-
 			private: void WritePropertyValue(const unsigned char *data, size_t sizeInBytes);
-						
-								
-		public: Archive &SerializeUint32(const char *propertyName, unsigned char *data) override;
 
-		public: Archive &SerializeInt32(const char *propertyName, unsigned char *data) override;
+		public: Archive &Serialize(const char *propertyName, int &data) override;
 
-		public: Archive &SerializeFloat(const char *propertyName, unsigned char *data) override;
+		public: Archive &Serialize(const char *propertyName, float &data) override;
 
-		public: Archive &SerializeString(const char *propertyName, char *str) override;
+		public: Archive &Serialize(const char *propertyName, char *str) override;
 
 		
 		public: bool IsInvalid() const override;

@@ -12,6 +12,9 @@
     <ClCompile Include="IO\Reader.cpp">
       <Filter>IO</Filter>
     </ClCompile>
+    <ClCompile Include="IO\Filetypes\AssetReader.cpp">
+      <Filter>IO\Filetypes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">
@@ -52,6 +55,9 @@
     </ClInclude>
     <ClInclude Include="IO\Reader.hpp">
       <Filter>IO</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\Filetypes\AssetReader.hpp">
+      <Filter>IO\Filetypes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
