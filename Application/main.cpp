@@ -11,9 +11,7 @@
 int main()
 {
 	try
-	{
-		auto p = AssetSystem::GetAssetSystem();
-		
+	{		
 		Windows::App app{};
 		
 	}
