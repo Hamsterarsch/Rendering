@@ -44,7 +44,7 @@ namespace AssetSystem::IO
 
 						private: void ProcessValueProperty(std::string &&propertyName);
 
-							private: char GetNextTokenAfterValueProperty();
+							private: void SeekToTokenAfterPropertyValue();
 
 								private: char GetNonBinaryDataFromFile();
 
@@ -52,14 +52,14 @@ namespace AssetSystem::IO
 
 									private: char GetFirstCharacterAfterBinary();
 
+										private: void SkipBinaryDataToken();
+		
 							private: void PopCurrentObjectScope();
 		
 
 		public: using ArchiveBase::Serialize;
 	
 		public: Archive &Serialize(const char *propertyName, unsigned char *data, size_t numElements, size_t elementStrideInBytes) override;
-
-			private: void SkipBinaryDataToken();
 		
 			private: void ReadFileForLittleEndian(unsigned char *data, size_t numElements, size_t elementStrideInBytes);
 		
@@ -69,12 +69,14 @@ namespace AssetSystem::IO
 
 			private: std::string ReadPropertyValue(const char *propertyName);
 
-				private: size_t SeekPropertyValueStartAndLength(const char *propertyName);
+				private: size_t SeekNonBinaryPropertyValueStartAndLength(const char *propertyName);
 						 		
 		public: Archive &Serialize(const char *propertyName, float &data) override;
 		
 		public: Archive &Serialize(const char *propertyName, char *str) override;
 
+		public: size_t GetPropertySizeInBytes(const char *propertyName) override;
+		
 		
 		public: bool IsInvalid() const override;
 		

@@ -21,6 +21,12 @@
     <ClCompile Include="IO\Archive.cpp">
       <Filter>IO</Filter>
     </ClCompile>
+    <ClCompile Include="Core\AssetRegistry.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Assets\AssetSystemConfigAsset.cpp">
+      <Filter>Core\Assets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">
@@ -34,6 +40,12 @@
     </Filter>
     <Filter Include="IO\Filetypes\Test">
       <UniqueIdentifier>{bcf12557-75b7-476c-85c1-de3ed06c9087}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{46687de7-9317-4b1c-9df7-a11f0ccf74da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Assets">
+      <UniqueIdentifier>{c23c8548-31ba-4f4a-bf80-d14e8d7a2af5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -76,6 +88,12 @@
     </ClInclude>
     <ClInclude Include="IO\Filetypes\Test\AssetArchiveTests.hpp">
       <Filter>IO\Filetypes\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\AssetRegistry.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Assets\AssetSystemConfigAsset.hpp">
+      <Filter>Core\Assets</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

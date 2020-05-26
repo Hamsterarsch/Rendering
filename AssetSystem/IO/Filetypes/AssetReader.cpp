@@ -204,22 +204,11 @@ namespace AssetSystem::IO
 					void AssetReader::ProcessValueProperty(std::string&& propertyName)
 					{
 						propertyMap.insert( { objectQualifiers + std::move(propertyName), 1+currentPropertyNameEnd} );
-						const auto token{ GetNextTokenAfterValueProperty() };
+						SeekToTokenAfterPropertyValue();
 		
-						if(token == ',')
-						{
-							return;
-							
-						}
-
-						if(token == '}')
-						{
-							PopCurrentObjectScope();							
-						}
-								
 					}
 
-						char AssetReader::GetNextTokenAfterValueProperty()
+						void AssetReader::SeekToTokenAfterPropertyValue()
 						{
 							while(true)
 							{
@@ -231,7 +220,12 @@ namespace AssetSystem::IO
 									|| character == '}'
 								)
 								{
-									return character;
+									if(character == '}')
+									{
+										//this character needs to be preserved for seek next property
+										file.seekg(-1, std::ifstream::cur);
+									}									
+									return;
 									
 								}
 							}
@@ -242,11 +236,18 @@ namespace AssetSystem::IO
 							{
 								if(FileIsAtBinaryDataStartSequence())
 								{
+									SkipBinaryDataToken();
 									return GetFirstCharacterAfterBinary();									
 								}
 								return file.get();
 		
 							}
+
+								void AssetReader::SkipBinaryDataToken()
+								{
+									file.seekg(AssetArchiveConstants::binaryTokenLength-1, std::ifstream::cur);
+								
+								}
 
 								bool AssetReader::FileIsAtBinaryDataStartSequence()
 								{
@@ -260,10 +261,10 @@ namespace AssetSystem::IO
 									const auto preCheckPos{ file.tellg() };
 									std::string read(AssetArchiveConstants::binaryTokenLength-1, '\0');
 									file.read(read.data(), AssetArchiveConstants::binaryTokenLength-1);
+									file.seekg(preCheckPos);
 
 									if(read != AssetArchiveConstants::binaryStartToken)
 									{
-										file.seekg(preCheckPos);
 										return false;
 										
 									}
@@ -330,12 +331,6 @@ namespace AssetSystem::IO
 		
 	}
 
-		void AssetReader::SkipBinaryDataToken()
-		{
-			file.seekg(AssetArchiveConstants::binaryTokenLength-1, std::ifstream::cur);
-		
-		}
-
 		void AssetReader::ReadFileForLittleEndian(unsigned char *data, const size_t numElements, const size_t elementStrideInBytes)
 		{
 			for(size_t readElements{ 0 }; readElements < numElements; ++readElements)
@@ -372,7 +367,7 @@ namespace AssetSystem::IO
 
 		std::string AssetReader::ReadPropertyValue(const char *propertyName)
 		{
-			const auto valueLength{ SeekPropertyValueStartAndLength(propertyName) };
+			const auto valueLength{ SeekNonBinaryPropertyValueStartAndLength(propertyName) };
 
 			std::string value(valueLength, '\0');			
 			file.read(value.data(), valueLength);
@@ -381,9 +376,10 @@ namespace AssetSystem::IO
 		
 		}
 
-			size_t AssetReader::SeekPropertyValueStartAndLength(const char *propertyName)
+			size_t AssetReader::SeekNonBinaryPropertyValueStartAndLength(const char *propertyName)
 			{
-				SeekPropertyValueStart(propertyName);		
+				SeekPropertyValueStart(propertyName);
+						
 				const auto valueStart{ file.tellg() };
 
 				SeekEofUntilToken('"');
@@ -408,10 +404,29 @@ namespace AssetSystem::IO
 
 	Archive &AssetReader::Serialize(const char *propertyName, char *str)
 	{
-		const auto valueLength{ SeekPropertyValueStartAndLength(propertyName) };				
+		const auto valueLength{ SeekNonBinaryPropertyValueStartAndLength(propertyName) };				
 		file.read(str, valueLength);
 		
 		return *this;
+		
+	}
+
+
+	
+	size_t AssetReader::GetPropertySizeInBytes(const char *propertyName)
+	{		
+		if(FileIsAtBinaryDataStartSequence())
+		{
+			SkipBinaryDataToken();
+			const auto valueStart{ file.tellg() };
+
+			GetFirstCharacterAfterBinary();
+			const auto valueEnd{ file.tellg() };
+			
+			return valueEnd - valueStart;
+			
+		}		
+		return SeekNonBinaryPropertyValueStartAndLength(propertyName);
 		
 	}
 
