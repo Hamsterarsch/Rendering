@@ -54,7 +54,7 @@ namespace Renderer::DX12::Commands
 			
 	}
 
-	void BuildActiveTileListCommand::Execute(CommandProcessor &context)
+	void BuildActiveTileListCommand::Execute(DX12CommandProcessor &context)
 	{
 		RenderCommandCompute::Execute(context);
 

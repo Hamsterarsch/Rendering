@@ -3,7 +3,7 @@
 #include <utility>
 
 
-namespace Renderer::DX12
+namespace Renderer
 {
 	HandleWrapper::HandleWrapper() :
 		handle{ 0 },

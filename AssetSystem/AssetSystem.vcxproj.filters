@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="AssetSystem.cpp" />
+    <ClCompile Include="IO\Writer.cpp">
+      <Filter>IO</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\Filetypes\AssetWriter.cpp">
+      <Filter>IO\Filetypes</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\Reader.cpp">
+      <Filter>IO</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\Filetypes\AssetReader.cpp">
+      <Filter>IO\Filetypes</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\Filetypes\Test\AssetArchiveTests.cpp">
+      <Filter>IO\Filetypes\Test</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\Archive.cpp">
+      <Filter>IO</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\AssetRegistry.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Assets\AssetSystemConfigAsset.cpp">
+      <Filter>Core\Assets</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Interface">
+      <UniqueIdentifier>{340573c0-5bb1-4ac5-a871-8f386d08931f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO">
+      <UniqueIdentifier>{57212201-6d4c-440a-86d3-624eed4e11eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO\Filetypes">
+      <UniqueIdentifier>{9101ebd1-9c4e-4106-8736-93943b21e565}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO\Filetypes\Test">
+      <UniqueIdentifier>{bcf12557-75b7-476c-85c1-de3ed06c9087}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{46687de7-9317-4b1c-9df7-a11f0ccf74da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Assets">
+      <UniqueIdentifier>{c23c8548-31ba-4f4a-bf80-d14e8d7a2af5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Interface\AssetSystemExportHelper.hpp">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\Asset.hpp">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\LimitedReflection.hpp">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetRegistry.hpp" />
+    <ClInclude Include="Interface\AssetSystem.hpp">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\Filetypes\JsonWriter.hpp">
+      <Filter>IO\Filetypes</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\Archive.hpp">
+      <Filter>IO</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\Writer.hpp">
+      <Filter>IO</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\Filetypes\AssetWriter.hpp">
+      <Filter>IO\Filetypes</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\Reader.hpp">
+      <Filter>IO</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\Filetypes\AssetReader.hpp">
+      <Filter>IO\Filetypes</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\Filetypes\AssetArchiveConstants.hpp">
+      <Filter>IO\Filetypes</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\DiskConversions.hpp">
+      <Filter>IO</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\Filetypes\Test\AssetArchiveTests.hpp">
+      <Filter>IO\Filetypes\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\AssetRegistry.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Assets\AssetSystemConfigAsset.hpp">
+      <Filter>Core\Assets</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

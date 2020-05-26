@@ -21,7 +21,7 @@ namespace Renderer::DX12::Commands
 			
 		}
 
-		public:	void Execute(CommandProcessor &context) override
+		public:	void Execute(DX12CommandProcessor &context) override
 		{
 			BindDescriptorsContextCommand::Execute(context);
 

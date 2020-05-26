@@ -73,7 +73,7 @@ namespace Renderer::DX12::Commands
 					
 		public: virtual void ExecuteOperationOnResourceReferences(UsesReferences &registry, void(UsesReferences:: *operation)(size_t)) override;
 
-		public: virtual void Execute(CommandProcessor &context) override;
+		public: virtual void Execute(DX12CommandProcessor &context) override;
 
 	};
 	

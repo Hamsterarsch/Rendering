@@ -48,14 +48,14 @@ namespace Renderer::DX12::Commands
 
 	
 
-	void BindPsoAndSignatureCommand::Execute(CommandProcessor &context)
+	void BindPsoAndSignatureCommand::Execute(DX12CommandProcessor &context)
 	{
 		RecordPsoBinding(context);
 		RecordSignatureBinding( context);
 		
 	}
 
-		void BindPsoAndSignatureCommand::RecordPsoBinding(CommandProcessor &context) const
+		void BindPsoAndSignatureCommand::RecordPsoBinding(DX12CommandProcessor &context) const
 		{
 			if(PsoIsValid())
 			{

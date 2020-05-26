@@ -24,6 +24,8 @@ namespace Renderer
 
 			private: LightContainer registryLight;
 
+			private: HandleMapWindowSurface registryWindowSurface;
+			
 			private: HandleFactory handleProvider;
 
 			private: std::forward_list<ResourceHandle::t_hash> handlesToRetire;
@@ -48,6 +50,8 @@ namespace Renderer
 			public: void Register(ResourceHandle::t_hash handle, DxPtr<ID3D12PipelineState> &&pipeline);
 
 			public: ResourceHandle::t_hash Register(Light &&info);
+
+			public: ResourceHandle::t_hash Register(UniquePtr<RHA::DX12::WindowSurface> &&surface);
 					
 			public: virtual ID3D12Resource *GetResource(ResourceHandle::t_hash handle) override;
 
@@ -56,6 +60,8 @@ namespace Renderer
 			public: virtual ID3D12PipelineState *GetPso(ResourceHandle::t_hash handle) override;
 
 			public: virtual ID3D12RootSignature *GetSignature(ResourceHandle::t_hash handle) override;
+
+			public: virtual RHA::DX12::WindowSurface *GetSurface(ResourceHandle::t_hash handle) override;
 
 			public: Light &GetLight(ResourceHandle::t_hash handle);
 					

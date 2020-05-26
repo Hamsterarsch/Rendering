@@ -11,10 +11,11 @@
 #include "ShaderRelevantTypes/GlobalBufferData.hpp"
 #include "Lighting/LightGrid/VolumeTileGrid.hpp"
 #include "Resources/Pso/DepthStencilFactoryDefault.hpp"
-#include "Commands/CommandFactory.hpp"
+#include "Commands/CommandHelper.hpp"
 #include "Commands/CommandProcessorImpl.hpp"
 #include "Resources/HandleWrapper.hpp"
 #include "Commands/RenderMeshCommand.hpp"
+#include "Commands/CommandFactory.hpp"
 
 
 namespace RHA
@@ -50,10 +51,6 @@ namespace Renderer::DX12
 		private: UniquePtr<RHA::DX12::DeviceResources> resources;
 
 		private: UniquePtr<RHA::DX12::Queue> commonQueue;
-
-		private: UniquePtr<RHA::DX12::WindowSurface> outputSurface;
-
-		private: UniquePtr<RHA::DX12::DepthSurface> depthSurface;
 		
 		private: UniquePtr<RHA::DX12::Fence> closeFence;
 
@@ -88,15 +85,15 @@ namespace Renderer::DX12
 
 		private: VolumeTileGrid volumeTileGrid;
 
-		private: CommandFactory cmdFactory;
+		private: CommandHelper cmdFactory;
 
 		private: Commands::CommandProcessorImpl commandProcessor;
 
 		private: UniquePtr<Commands::InitVolumeTileGridCommand> initGridCmd;
 
 		private: std::vector<Commands::RenderMeshArguments> opaqueMeshArguments;
-				 		
-								 			
+
+	 			
 		
 		public: ForwardRenderer(HWND outputWindow);
 											 
@@ -158,8 +155,23 @@ namespace Renderer::DX12
 		public: virtual bool ResourceMustBeRemade(size_t handle) override;
 
 		public: virtual void RetireHandle(size_t handle) override;
-							
+
+
+		//new interface
+							   		
+		public: ResourceHandle::t_hash MakeWindowsWindowSurface(HWND windowHandle) override;
+
+		public: UniquePtr<::Renderer::Commands::CommandFactory> MakeCommandFactory() override;
+
+		public: void SubmitCommand(UniquePtr<::Renderer::Commands::Command> &&command) override;
+
+		public: void DestroyUnreferencedResources() override;
+
+		public: void DestroyExecutedCommands() override;
+
+		public: void WaitForCommands() override;
+		
 	};
-	
-	
+
+
 }

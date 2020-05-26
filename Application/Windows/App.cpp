@@ -11,14 +11,20 @@
 #include "Resources/HandleWrapper.hpp"
 #include "Resources/SerializationContainer.hpp"
 
+#include "Rendering/RendererMediator.hpp"
+
 namespace Windows
 {
 	App::App() :
 		window{ {1920, 1080}, true, L"Window", L"UniqueClassName" },
 		renderer{ Renderer::MakeRenderer(window.GetHandle()) }
 	{
-		Initialize();
+		//Initialize();
 
+		
+		::App::Rendering::RendererMediator mediator{{renderer.get(), renderer->MakeWindowsWindowSurface(window.GetHandle())}, *renderer, {mediator, {1,1}} };
+
+		
 		constexpr UINT NO_FILTER{ 0 };
 		constexpr decltype(nullptr) FOR_ALL_WINDOWS{ nullptr };
 
@@ -43,7 +49,8 @@ namespace Windows
 			}
 			else
 			{
-				Update();
+				mediator.SubmitFrame();
+				//Update();
 			}
 		}
 		
@@ -140,7 +147,7 @@ namespace Windows
 				rot,
 				translate(glm::identity<glm::mat4>(), {4, 0, 0}) * rot
 			};						
-			const Renderer::DX12::HandleWrapper transformBufferHandle{ renderer.get(), renderer->MakeBuffer(transformData.data(), sizeof glm::mat4 * transformData.size()) };
+			const Renderer::HandleWrapper transformBufferHandle{ renderer.get(), renderer->MakeBuffer(transformData.data(), sizeof glm::mat4 * transformData.size()) };
 			
 			if(renderer->ResourceMustBeRemade(meshHandle))
 			{

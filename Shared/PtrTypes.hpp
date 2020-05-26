@@ -7,3 +7,10 @@ using UniquePtr = std::unique_ptr<T, D>;
 template<class T>
 using SharedPtr = std::shared_ptr<T>;
 
+template<class T, class ...Args>
+UniquePtr<T> MakeUnique(Args &&... args)
+{
+	return std::make_unique<T>(std::forward<Args>(args)...);
+	
+}
+

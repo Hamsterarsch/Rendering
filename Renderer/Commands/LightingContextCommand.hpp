@@ -8,7 +8,7 @@ namespace Renderer::DX12{ class ResourceRegistry; }
 
 namespace Renderer::DX12::Commands
 {
-	class LightingContextCommand final : public Command
+	class LightingContextCommand final : public DX12Command
 	{
 		private: GlobalBufferContextCommand gbCommand;
 
@@ -41,7 +41,7 @@ namespace Renderer::DX12::Commands
 						
 		public: void ExecuteOperationOnResourceReferences( UsesReferences &registry, void(UsesReferences:: *operation)(size_t)) override;
 		
-		public: void Execute(CommandProcessor &context) override;
+		public: void Execute(DX12CommandProcessor &context) override;
 		
 	};
 	

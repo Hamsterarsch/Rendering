@@ -34,7 +34,7 @@ namespace Renderer::DX12::Commands
 
 
 	
-	void GenerateActiveTileListCommand::Execute(CommandProcessor &context)
+	void GenerateActiveTileListCommand::Execute(DX12CommandProcessor &context)
 	{				
 		auto &list{ context.GetList() };
 		auto &registry{ context.GetRegistry() };

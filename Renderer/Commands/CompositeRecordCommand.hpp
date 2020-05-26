@@ -1,5 +1,5 @@
 #pragma once
-#include "Commands/Command.hpp"
+#include "Commands/DX12Command.hpp"
 #include "Commands/BindPsoAndSignatureCommand.hpp"
 #include <vector>
 #include "Shared/PtrTypes.hpp"
@@ -7,7 +7,7 @@
 
 namespace Renderer::DX12::Commands
 {	
-	class CompositeRecordCommand : public Command
+	class CompositeRecordCommand : public DX12Command
 	{		
 		private: std::vector<UniquePtr<BindPsoAndSignatureCommand>> children;
 

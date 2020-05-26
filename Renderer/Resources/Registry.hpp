@@ -7,6 +7,8 @@
 #include "Resources/RootSignature/RootSignatureData.hpp"
 #include "Resources/ResourceAllocation.hpp"
 #include "Shared/Exception/Exception.hpp"
+#include "Shared/PtrTypes.hpp"
+#include "DX12/WindowSurface.hpp"
 
 
 namespace Renderer
@@ -121,6 +123,9 @@ namespace Renderer
 
 		inline RootSignatureData &HandleMapSignatureAccessor(RootSignatureData &entity) { return entity; }		
 		using HandleMapSignature = HandleMap<RootSignatureData, RootSignatureData &, &HandleMapSignatureAccessor>;
+				
+		inline RHA::DX12::WindowSurface *HandleMapWindowSurfaceAccessor(UniquePtr<RHA::DX12::WindowSurface> &entity) { return entity.get(); }		
+		using HandleMapWindowSurface = HandleMap<UniquePtr<RHA::DX12::WindowSurface>, RHA::DX12::WindowSurface *, &HandleMapWindowSurfaceAccessor>;
 
 
 	}

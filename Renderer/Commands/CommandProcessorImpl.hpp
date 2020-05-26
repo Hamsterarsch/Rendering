@@ -1,5 +1,5 @@
 #pragma once
-#include "Commands/CommandProcessor.hpp"
+#include "Commands/DX12CommandProcessor.hpp"
 #include "DX12/CmdList.hpp"
 #include "Resources/HasQueriableResources.hpp"
 #include "Shared/PtrTypes.hpp"
@@ -19,9 +19,9 @@ namespace Renderer::DX12{ class ResourceRegistry; }
 
 namespace Renderer::DX12::Commands
 {
-	class Command;
+	class DX12Command;
 	
-	class CommandProcessorImpl final : public CommandProcessor
+	class CommandProcessorImpl final : public DX12CommandProcessor
 	{		
 		private: RHA::DX12::Queue *gpuQueue;
 
@@ -37,7 +37,7 @@ namespace Renderer::DX12::Commands
 
 		private: struct Bucket
 		{
-			UniquePtr<Command> command;
+			UniquePtr<DX12Command> command;
 			
 			bool isContextCommand;
 
@@ -45,21 +45,21 @@ namespace Renderer::DX12::Commands
 
 			Bucket() : Bucket{ {}, false } {}
 
-			Bucket(UniquePtr<Command> &&command) : Bucket{ std::move(command), false } {}
+			Bucket(UniquePtr<DX12Command> &&command) : Bucket{ std::move(command), false } {}
 
-			Bucket(UniquePtr<Command> &&command, bool isContextCommand) : Bucket{ std::move(command), isContextCommand, 0 } {}
+			Bucket(UniquePtr<DX12Command> &&command, bool isContextCommand) : Bucket{ std::move(command), isContextCommand, 0 } {}
 			
-			Bucket(UniquePtr<Command> &&command, bool isContextCommand, intptr_t extractHandle) : command{ std::move(command) }, isContextCommand{ isContextCommand }, extractHandle{ extractHandle } {}
+			Bucket(UniquePtr<DX12Command> &&command, bool isContextCommand, intptr_t extractHandle) : command{ std::move(command) }, isContextCommand{ isContextCommand }, extractHandle{ extractHandle } {}
 			
 		};
 		
 		private: QueueConcurrent<Bucket> queuedCommands;
 				 		
-		private: UniquePtr<Command> currentContextCommand;
+		private: UniquePtr<DX12Command> currentContextCommand;
 
-		private: std::vector<UniquePtr<Command>> executedCommands;
+		private: std::vector<UniquePtr<DX12Command>> executedCommands;
 
-		private: std::unordered_map<intptr_t, UniquePtr<Command>> extractableCommands;
+		private: std::unordered_map<intptr_t, UniquePtr<DX12Command>> extractableCommands;
 
 		private: std::mutex mutexOutputCommands;
 
@@ -113,16 +113,16 @@ namespace Renderer::DX12::Commands
 		public: bool ShouldExecuteContextCommandFor(CommandContextEvents reason) const override;
 
 
-		public: void SubmitCommand(UniquePtr<Command> &&command);
+		public: void SubmitCommand(UniquePtr<DX12Command> &&command);
 
-		public: intptr_t SubmitExtractableCommand(UniquePtr<Command> &&command);
+		public: intptr_t SubmitExtractableCommand(UniquePtr<DX12Command> &&command);
 		
-		public: void SubmitContextCommand(UniquePtr<Command> &&command);
+		public: void SubmitContextCommand(UniquePtr<DX12Command> &&command);
 
 
 		public: void WaitForCommand(intptr_t handle);
 
-		public: UniquePtr<Command> ExtractCommand(intptr_t handle);
+		public: UniquePtr<DX12Command> ExtractCommand(intptr_t handle);
 
 		public: void FreeExecutedCommands();
 

@@ -5,7 +5,7 @@
 
 namespace Renderer::DX12::Commands
 {
-	class GenerateActiveTileListCommand final : public Command
+	class GenerateActiveTileListCommand final : public DX12Command
 	{		
 		public: size_t lightCount;		
 		
@@ -55,7 +55,7 @@ namespace Renderer::DX12::Commands
 			
 		}
 
-		public: void Execute(CommandProcessor &context) override;
+		public: void Execute(DX12CommandProcessor &context) override;
 
 		
 		public: void AddRenderMeshCommand(const RenderMeshArguments &command);

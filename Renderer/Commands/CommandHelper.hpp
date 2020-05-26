@@ -9,7 +9,7 @@ namespace Renderer::DX12
 	class ResourceRegistry;
 	class DescriptorMemory;
 	
-	class CommandFactory
+	class CommandHelper
 	{
 		private: MaintainsInternalRenderResources *factory;
 
@@ -19,7 +19,7 @@ namespace Renderer::DX12
 
 
 
-		public: CommandFactory(MaintainsInternalRenderResources &factory, ResourceRegistry &registry, DescriptorMemory &descriptorMemory) :
+		public: CommandHelper(MaintainsInternalRenderResources &factory, ResourceRegistry &registry, DescriptorMemory &descriptorMemory) :
 			factory{ &factory },
 			registry{ &registry },
 			descriptorMemory{ &descriptorMemory }

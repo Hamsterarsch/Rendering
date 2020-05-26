@@ -5,7 +5,8 @@
 #include "Shared/PtrTypes.hpp"
 #include "Resources/MaintainsRenderResources.hpp"
 
-
+#include "Resources/ResourceHandle.hpp"
+#include "Commands/CommandFactory.hpp"
 
 
 
@@ -35,7 +36,20 @@ namespace Renderer
 		public: virtual void CompileComputeShader(const char *shader, size_t length, SerializationHook *serializer) const = 0;
 					
 		public: virtual void SerializeRootSignature(unsigned cbvAmount, unsigned srvAmount, unsigned uavAmount, unsigned samplerAmount, SerializationHook *serializer) = 0;
-			
+
+
+		public: virtual ResourceHandle::t_hash MakeWindowsWindowSurface(HWND windowHandle) = 0;
+
+		public: virtual UniquePtr<::Renderer::Commands::CommandFactory> MakeCommandFactory() = 0;
+
+		public: virtual void SubmitCommand(UniquePtr<::Renderer::Commands::Command> &&command) = 0;
+		
+		public: virtual void DestroyUnreferencedResources() = 0;
+
+		public: virtual void DestroyExecutedCommands() = 0;
+
+		public: virtual void WaitForCommands() = 0;
+		
 	};
 
 

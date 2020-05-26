@@ -11,7 +11,7 @@ namespace Renderer::DX12::Commands
 		{
 			public: RenderCommandCompute(size_t signatureHandle, size_t psoHandle) : BindPsoAndSignatureCommand{ signatureHandle, psoHandle } {}
 			
-			public:	void RecordSignatureBinding(CommandProcessor &context) const final override 
+			public:	void RecordSignatureBinding(DX12CommandProcessor &context) const final override 
 			{
 				if(SignatureIsValid())
 				{				

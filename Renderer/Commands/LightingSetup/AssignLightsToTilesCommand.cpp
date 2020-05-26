@@ -101,7 +101,7 @@ namespace Renderer::DX12::Commands
 
 
 	
-	void AssignLightsToTilesCommand::Execute(CommandProcessor &context)
+	void AssignLightsToTilesCommand::Execute(DX12CommandProcessor &context)
 	{
 		RenderCommandCompute::Execute(context);
 
