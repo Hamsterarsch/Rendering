@@ -297,21 +297,15 @@ namespace AssetSystem::IO
 
 						void AssetReader::PopCurrentObjectScope()
 						{
-							if(objectQualifiers.empty())
-							{
-								return;
-								
-							}
-							
-							while(objectQualifiers.size() >= 2)
-							{
-								objectQualifiers.pop_back();
+							objectQualifiers.pop_back();
+							while(!objectQualifiers.empty())
+							{								
 								if(objectQualifiers.back() == '.')
 								{
 									break;
 								}
-							}
-							objectQualifiers.pop_back();
+								objectQualifiers.pop_back();
+							}							
 		
 						}
 

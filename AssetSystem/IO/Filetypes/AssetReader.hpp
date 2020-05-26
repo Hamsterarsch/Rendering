@@ -54,7 +54,9 @@ namespace AssetSystem::IO
 
 							private: void PopCurrentObjectScope();
 		
-						
+
+		public: using ArchiveBase::Serialize;
+	
 		public: Archive &Serialize(const char *propertyName, unsigned char *data, size_t numElements, size_t elementStrideInBytes) override;
 
 			private: void SkipBinaryDataToken();

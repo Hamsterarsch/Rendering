@@ -15,6 +15,12 @@
     <ClCompile Include="IO\Filetypes\AssetReader.cpp">
       <Filter>IO\Filetypes</Filter>
     </ClCompile>
+    <ClCompile Include="IO\Filetypes\Test\AssetArchiveTests.cpp">
+      <Filter>IO\Filetypes\Test</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\Archive.cpp">
+      <Filter>IO</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">
@@ -25,6 +31,9 @@
     </Filter>
     <Filter Include="IO\Filetypes">
       <UniqueIdentifier>{9101ebd1-9c4e-4106-8736-93943b21e565}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO\Filetypes\Test">
+      <UniqueIdentifier>{bcf12557-75b7-476c-85c1-de3ed06c9087}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -64,6 +73,9 @@
     </ClInclude>
     <ClInclude Include="IO\DiskConversions.hpp">
       <Filter>IO</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\Filetypes\Test\AssetArchiveTests.hpp">
+      <Filter>IO\Filetypes\Test</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

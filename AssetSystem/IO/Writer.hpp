@@ -4,7 +4,7 @@
 
 namespace AssetSystem::IO
 {
-	class Writer : public Archive
+	class Writer : public ArchiveBase
 	{
 		public: bool IsWriting() const final override;
 		

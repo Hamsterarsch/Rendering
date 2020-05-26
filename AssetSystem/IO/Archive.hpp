@@ -5,6 +5,7 @@
 
 namespace AssetSystem::IO
 {
+	class Archivable;
 	
 	class Archive
 	{
@@ -18,6 +19,8 @@ namespace AssetSystem::IO
 		public: virtual Archive &Serialize(const char *propertyName, float &data) = 0;
 				
 		public: virtual Archive &Serialize(const char *propertyName, char *str) = 0;
+
+		public: virtual Archive &Serialize(const char *propertyName, Archivable &archivable) = 0;
 		
 
 		public: virtual bool IsWriting() const = 0;
@@ -35,5 +38,21 @@ namespace AssetSystem::IO
 	};
 
 
+	
+	class Archivable
+	{
+		DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(Archivable)
+					
+		public: virtual Archive &Serialize(Archive &archive) = 0;
+				
+	};
+
+
+	class ArchiveBase : public Archive
+	{
+		public: Archive &Serialize(const char *propertyName, Archivable &archivable) final override;
+		
+	};
+	
 	
 }

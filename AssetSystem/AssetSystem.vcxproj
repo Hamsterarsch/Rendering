@@ -165,8 +165,10 @@
   <ItemGroup>
     <ClCompile Include="AssetSystem.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="IO\Archive.cpp" />
     <ClCompile Include="IO\Filetypes\AssetReader.cpp" />
     <ClCompile Include="IO\Filetypes\AssetWriter.cpp" />
+    <ClCompile Include="IO\Filetypes\Test\AssetArchiveTests.cpp" />
     <ClCompile Include="IO\Reader.cpp" />
     <ClCompile Include="IO\Writer.cpp" />
   </ItemGroup>
@@ -187,6 +189,7 @@
     <ClInclude Include="IO\Filetypes\AssetWriter.hpp" />
     <ClInclude Include="IO\Filetypes\JsonWriter.hpp" />
     <ClInclude Include="IO\Archive.hpp" />
+    <ClInclude Include="IO\Filetypes\Test\AssetArchiveTests.hpp" />
     <ClInclude Include="IO\Reader.hpp" />
     <ClInclude Include="IO\Writer.hpp" />
   </ItemGroup>

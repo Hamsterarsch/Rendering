@@ -22,7 +22,8 @@ namespace AssetSystem::IO
 
 		public: virtual ~AssetWriter() noexcept;
 
-		
+
+		public: using ArchiveBase::Serialize;
 		
 		public: Archive &Serialize(const char *propertyName, unsigned char *data, size_t numElements, size_t elementStrideInBytes) override;
 
