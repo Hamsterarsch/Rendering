@@ -13,6 +13,8 @@
 
 #include "Rendering/RendererMediator.hpp"
 
+
+
 namespace Windows
 {
 	App::App() :
@@ -50,7 +52,7 @@ namespace Windows
 			else
 			{
 				mediator.SubmitFrame();
-				//Update();
+				Update();
 			}
 		}
 		
@@ -132,40 +134,7 @@ namespace Windows
 	   	
 		void App::Update()
 		{			
-			if(renderer->IsBusy())
-			{
-				return;
-				
-			}
-			
-			const auto currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count() / 1000.f;
-			auto rot = rotate(glm::identity<glm::mat4>(), glm::radians(currentTime * 7), {0,0,1});
-			rot = rotate( rot, glm::radians(13.f), {0, 1, 0});			
-			rot = scale(rot, {2, 2, 2});
-			std::vector<glm::mat4> transformData
-			{
-				rot,
-				translate(glm::identity<glm::mat4>(), {4, 0, 0}) * rot
-			};						
-			const Renderer::HandleWrapper transformBufferHandle{ renderer.get(), renderer->MakeBuffer(transformData.data(), sizeof glm::mat4 * transformData.size()) };
-			
-			if(renderer->ResourceMustBeRemade(meshHandle))
-			{
-				throw;
-			}
 
-			if(renderer->ResourceMustBeRemade(psoOpaqueShadedWithInstanceSupport))
-			{
-				throw;
-			}
-
-			if(renderer->ResourceMustBeRemade(rootHandle))
-			{
-				throw;
-			}
-
-			renderer->RenderMesh(rootHandle, psoOpaqueShadedWithInstanceSupport, meshHandle, meshSize, meshBytesToIndices, transformBufferHandle, 2);			
-			renderer->DispatchFrame();
 			
 		}
 
