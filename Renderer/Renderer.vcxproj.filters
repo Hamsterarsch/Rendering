@@ -240,6 +240,9 @@
     <ClInclude Include="StateSettings\SemanticTargetsImpl.hpp">
       <Filter>StateSettings</Filter>
     </ClInclude>
+    <ClInclude Include="StateSettings\RasterizerSettingsImpl.hpp">
+      <Filter>StateSettings</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -368,6 +371,9 @@
       <Filter>StateSettings</Filter>
     </ClCompile>
     <ClCompile Include="StateSettings\SemanticTargetsImpl.cpp">
+      <Filter>StateSettings</Filter>
+    </ClCompile>
+    <ClCompile Include="StateSettings\RasterizerSettingsImpl.cpp">
       <Filter>StateSettings</Filter>
     </ClCompile>
   </ItemGroup>

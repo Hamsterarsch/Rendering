@@ -10,6 +10,8 @@
 
 #include "StateSettings/BlendSettings.hpp"
 #include "StateSettings/DepthStencilSettings.hpp"
+#include "StateSettings/VertexLayoutSettings.hpp"
+#include "StateSettings/RasterizerSettings.hpp"
 
 
 namespace Renderer
@@ -58,6 +60,10 @@ namespace Renderer
 		public: virtual BlendSettings &GetBlendSettings() = 0;
 
 		public: virtual DepthStencilSettings &GetDepthStencilSettings() = 0;
+
+		public: virtual RasterizerSettings &GetRasterizerSettings() = 0;
+
+		public: virtual VertexLayoutSettings &GetVertexLayoutSettings() = 0;
 				
 	};
 

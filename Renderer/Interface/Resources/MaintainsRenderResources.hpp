@@ -2,7 +2,6 @@
 #include "Shared/InterfaceHelpers.hpp"
 #include "Resources/Pso/PipelineTypes.hpp"
 #include "Resources/Pso/ShaderList.hpp"
-#include "Resources/Pso/VertexLayoutTypes.hpp"
 
 
 namespace Renderer
@@ -21,7 +20,7 @@ namespace Renderer
 		
 		public: virtual size_t MakeRootSignature(const void *serializedData) = 0;
 					
-		public: virtual size_t MakePso(PipelineTypes pipelineType, VertexLayoutTypes vertexLayout, const ShaderList &shaders, size_t signatureHandle) = 0;
+		public: virtual size_t MakePso(const ShaderList &shaders, size_t signatureHandle) = 0;
 					
 		public: virtual size_t MakePso(const Blob &csBlob, size_t signatureHandle) = 0;
 

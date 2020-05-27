@@ -83,7 +83,7 @@ namespace Renderer::DX12
 				)
 			)
 		},
-		psoFactory{ resources.get(), depthStencilSettings, blendSettings },
+		psoFactory{ resources.get(), depthStencilSettings, blendSettings, rasterizerSettings, vertexLayoutSettings },
 		signatureFactory{ resources.get() },
 		shaderFactory{ Facade::MakeShaderFactory(5, 1) },
 		descriptors{resources.get(), 1'000'000, 2048},
@@ -627,9 +627,9 @@ namespace Renderer::DX12
 
 
 	
-	size_t ForwardRenderer::MakePso(PipelineTypes pipelineType, VertexLayoutTypes vertexLayout, const ShaderList &shaders, size_t signatureHandle)
+	size_t ForwardRenderer::MakePso(const ShaderList &shaders, size_t signatureHandle)
 	{
-		auto pipelineState{	psoFactory.MakePso(shaders, registry.GetSignature(signatureHandle), pipelineType, vertexLayoutProvider.GetLayoutDesc(vertexLayout), D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE) };		
+		auto pipelineState{	psoFactory.MakePso(shaders, registry.GetSignature(signatureHandle), D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE) };		
 		return registry.Register(std::move(pipelineState));
 		
 	}
@@ -724,5 +724,21 @@ namespace Renderer::DX12
 		
 	}
 
+
+	
+	RasterizerSettings &ForwardRenderer::GetRasterizerSettings()
+	{
+		return rasterizerSettings;
+		
+	}
+
+
+	
+	VertexLayoutSettings &ForwardRenderer::GetVertexLayoutSettings()
+	{
+		return vertexLayoutSettings;
+		
+	}
+	
 	
 }

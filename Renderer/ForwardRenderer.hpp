@@ -3,7 +3,6 @@
 #include "Resources/ResourceAllocation.hpp"
 #include "Resources/Pso/PsoFactory.hpp"
 #include "Resources/RootSignature/RootSignatureFactory.hpp"
-#include "Resources/Pso/VertexLayoutProvider.hpp"
 #include "DX12/ShaderFactory.hpp"
 #include "Resources/ResourceRegistry.hpp"
 #include "Resources/MaintainsInternalRenderResources.hpp"
@@ -17,6 +16,8 @@
 #include "Commands/CommandFactory.hpp"
 #include "StateSettings/BlendSettingsImpl.hpp"
 #include "StateSettings/DepthStencilSettingsImpl.hpp"
+#include "StateSettings/VertexLayoutSettingsImpl.hpp"
+#include "StateSettings/RasterizerSettingsImpl.hpp"
 
 
 namespace RHA
@@ -62,11 +63,13 @@ namespace Renderer::DX12
 		
 		private: ResourceRegistry registry;
 
-		private: VertexLayoutProvider vertexLayoutProvider;
-		
 		private: BlendSettingsImpl blendSettings;
 
 		private: DepthStencilSettingsImpl depthStencilSettings;
+
+		private: VertexLayoutSettingsImpl vertexLayoutSettings;
+
+		private: RasterizerSettingsImpl rasterizerSettings;
 		
 		private: PsoFactory psoFactory;
 		
@@ -151,7 +154,7 @@ namespace Renderer::DX12
 
 			private: static size_t ExtractSamplerCountFrom(const void *data, SIZE_T signatureSize);
 		
-		public: virtual size_t MakePso(PipelineTypes pipelineType, VertexLayoutTypes vertexLayout, const ShaderList &shaders, size_t signatureHandle) override;
+		public: virtual size_t MakePso(const ShaderList &shaders, size_t signatureHandle) override;
 							
 		public: virtual size_t MakePso(const Blob &csBlob, size_t signatureHandle) override;
 
@@ -175,9 +178,13 @@ namespace Renderer::DX12
 		public: void WaitForCommands() override;
 
 		
-		BlendSettings &GetBlendSettings() override;
+		public: BlendSettings &GetBlendSettings() override;
 		
-		DepthStencilSettings &GetDepthStencilSettings() override;
+		public: DepthStencilSettings &GetDepthStencilSettings() override;
+
+		public: RasterizerSettings &GetRasterizerSettings() override;
+		
+		public: VertexLayoutSettings &GetVertexLayoutSettings() override;
 		
 	};
 

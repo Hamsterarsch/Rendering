@@ -321,6 +321,7 @@
     <ClInclude Include="StateSettings\BlendSettingsImpl.hpp" />
     <ClInclude Include="StateSettings\DepthStencilSettingsImpl.hpp" />
     <ClInclude Include="StateSettings\FormatTargetsImpl.hpp" />
+    <ClInclude Include="StateSettings\RasterizerSettingsImpl.hpp" />
     <ClInclude Include="StateSettings\SemanticTargetsImpl.hpp" />
     <ClInclude Include="StateSettings\VertexLayoutSettingsImpl.hpp" />
     <ClInclude Include="targetver.h" />
@@ -368,6 +369,7 @@
     <ClCompile Include="StateSettings\BlendSettingsImpl.cpp" />
     <ClCompile Include="StateSettings\DepthStencilSettingsImpl.cpp" />
     <ClCompile Include="StateSettings\FormatTargetsImpl.cpp" />
+    <ClCompile Include="StateSettings\RasterizerSettingsImpl.cpp" />
     <ClCompile Include="StateSettings\SemanticTargetsImpl.cpp" />
     <ClCompile Include="StateSettings\VertexLayoutSettingsImpl.cpp" />
   </ItemGroup>
