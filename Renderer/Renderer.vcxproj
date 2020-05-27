@@ -285,10 +285,12 @@
     <ClInclude Include="Interface\Resources\SerializationHook.hpp" />
     <ClInclude Include="Interface\StateSettings\BlendSettings.hpp" />
     <ClInclude Include="Interface\StateSettings\DepthStencilSettings.hpp" />
+    <ClInclude Include="Interface\StateSettings\FilterTargets.hpp" />
     <ClInclude Include="Interface\StateSettings\FormatTargets.hpp" />
     <ClInclude Include="Interface\StateSettings\RasterizerSettings.hpp" />
     <ClInclude Include="Interface\StateSettings\SemanticTargets.hpp" />
     <ClInclude Include="Interface\StateSettings\StateSettings.hpp" />
+    <ClInclude Include="Interface\StateSettings\AddressingTargets.hpp" />
     <ClInclude Include="Interface\StateSettings\VertexLayoutSettings.hpp" />
     <ClInclude Include="Lighting\LightContainer.hpp" />
     <ClInclude Include="Lighting\LightGrid\VolumeTileGrid.hpp" />
@@ -318,8 +320,10 @@
     <ClInclude Include="ShaderRelevantTypes\GlobalBufferData.hpp" />
     <ClInclude Include="ShaderRelevantTypes\Light.hpp" />
     <ClInclude Include="ShaderRelevantTypes\VolumeTileGridData.hpp" />
+    <ClInclude Include="StateSettings\AddressingTargetsImpl.hpp" />
     <ClInclude Include="StateSettings\BlendSettingsImpl.hpp" />
     <ClInclude Include="StateSettings\DepthStencilSettingsImpl.hpp" />
+    <ClInclude Include="StateSettings\FilterTargetsImpl.hpp" />
     <ClInclude Include="StateSettings\FormatTargetsImpl.hpp" />
     <ClInclude Include="StateSettings\RasterizerSettingsImpl.hpp" />
     <ClInclude Include="StateSettings\SemanticTargetsImpl.hpp" />
@@ -366,8 +370,10 @@
     <ClCompile Include="Resources\SerialFactory.cpp" />
     <ClCompile Include="Resources\SerializationContainer.cpp" />
     <ClCompile Include="Resources\SerializationHook.cpp" />
+    <ClCompile Include="StateSettings\AddressingTargetsImpl.cpp" />
     <ClCompile Include="StateSettings\BlendSettingsImpl.cpp" />
     <ClCompile Include="StateSettings\DepthStencilSettingsImpl.cpp" />
+    <ClCompile Include="StateSettings\FilterTargetsImpl.cpp" />
     <ClCompile Include="StateSettings\FormatTargetsImpl.cpp" />
     <ClCompile Include="StateSettings\RasterizerSettingsImpl.cpp" />
     <ClCompile Include="StateSettings\SemanticTargetsImpl.cpp" />

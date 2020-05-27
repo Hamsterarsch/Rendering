@@ -14,7 +14,6 @@
 #include "Rendering/RendererMediator.hpp"
 
 
-
 namespace Windows
 {
 	App::App() :
@@ -25,14 +24,14 @@ namespace Windows
 
 		
 		::App::Rendering::RendererMediator mediator{{renderer.get(), renderer->MakeWindowsWindowSurface(window.GetHandle())}, *renderer, {mediator, {1,1}} };
-		auto &blendSettings{ renderer->GetBlendSettings() };
-		auto &depthSettings{ renderer->GetDepthStencilSettings() };
 
 
 		//dearimgui render setup
+		auto &depthSettings{ renderer->GetDepthStencilSettings() };
 		depthSettings.SetEnableDepth(false);
 
 		
+		auto &blendSettings{ renderer->GetBlendSettings() };
 		blendSettings.SetEnableBlend(true);
 		
 		blendSettings.SetBlendSrcAlpha(&Renderer::BlendSettings::TargetSrc);
@@ -44,6 +43,15 @@ namespace Windows
 		blendSettings.SetBlendOpAdd(&Renderer::BlendSettings::TargetBlendOpColor);
 		blendSettings.SetBlendOpAdd(&Renderer::BlendSettings::TargetBlendOpAlpha);
 
+		auto &rasterSettings{ renderer->GetRasterizerSettings() };
+		rasterSettings.SetFrontIsCounterClockwise(false);
+
+		auto &vertexLayoutSettings{ renderer->GetVertexLayoutSettings() };
+		vertexLayoutSettings.AddLayoutElementDesc(&Renderer::SemanticTargets::TargetPosition, 0, &Renderer::FormatTargets::R32G32_Float, 0);
+		vertexLayoutSettings.AddLayoutElementDesc(&Renderer::SemanticTargets::TargetTexcoord, 0, &Renderer::FormatTargets::R32G32_Float, 8);
+		vertexLayoutSettings.AddLayoutElementDesc(&Renderer::SemanticTargets::TargetColor, 0, &Renderer::FormatTargets::R8G8B8A8_Norm, 12);//todo: check offsets
+
+		renderer->SerializeRootSignature(0,1,0,)
 		renderer->MakePso()
 		
 		constexpr UINT NO_FILTER{ 0 };

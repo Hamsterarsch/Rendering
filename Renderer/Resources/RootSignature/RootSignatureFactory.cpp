@@ -78,7 +78,7 @@ namespace Renderer
 			rootDesc.Desc_1_1.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 			rootDesc.Desc_1_1.NumParameters = parameters.size();
 			rootDesc.Desc_1_1.pParameters = parameters.data();
-
+			
 			
 			DxPtr<ID3DBlob> rootBlob, errorBlob;
 			{

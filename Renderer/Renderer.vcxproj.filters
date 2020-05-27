@@ -243,6 +243,18 @@
     <ClInclude Include="StateSettings\RasterizerSettingsImpl.hpp">
       <Filter>StateSettings</Filter>
     </ClInclude>
+    <ClInclude Include="Interface\StateSettings\AddressingTargets.hpp">
+      <Filter>Interface\StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\StateSettings\FilterTargets.hpp">
+      <Filter>Interface\StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="StateSettings\AddressingTargetsImpl.hpp">
+      <Filter>StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="StateSettings\FilterTargetsImpl.hpp">
+      <Filter>StateSettings</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -374,6 +386,12 @@
       <Filter>StateSettings</Filter>
     </ClCompile>
     <ClCompile Include="StateSettings\RasterizerSettingsImpl.cpp">
+      <Filter>StateSettings</Filter>
+    </ClCompile>
+    <ClCompile Include="StateSettings\AddressingTargetsImpl.cpp">
+      <Filter>StateSettings</Filter>
+    </ClCompile>
+    <ClCompile Include="StateSettings\FilterTargetsImpl.cpp">
       <Filter>StateSettings</Filter>
     </ClCompile>
   </ItemGroup>
