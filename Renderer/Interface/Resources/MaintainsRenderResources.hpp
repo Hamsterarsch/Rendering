@@ -2,6 +2,7 @@
 #include "Shared/InterfaceHelpers.hpp"
 #include "Resources/Pso/PipelineTypes.hpp"
 #include "Resources/Pso/ShaderList.hpp"
+#include "ResourceHandle.hpp"
 
 
 namespace Renderer
@@ -23,6 +24,8 @@ namespace Renderer
 		public: virtual size_t MakePso(const ShaderList &shaders, size_t signatureHandle) = 0;
 					
 		public: virtual size_t MakePso(const Blob &csBlob, size_t signatureHandle) = 0;
+
+		public: virtual ResourceHandle::t_hash MakeTexture(const void *data, size_t width, size_t height) = 0;
 
 		
 		public: virtual bool ResourceMustBeRemade(size_t handle) = 0;

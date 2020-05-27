@@ -68,7 +68,7 @@ namespace Renderer::DX12
 		commonQueue{ Facade::MakeQueue(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT) },
 		closeFence{ Facade::MakeFence(resources.get()) },
 		closeEvent{ CreateEvent(nullptr, false, false, nullptr) },
-		bufferFactory
+		resourceFactory
 		{
 			std::make_unique<ResourceFactoryDeallocatable>
 			(
@@ -473,7 +473,7 @@ namespace Renderer::DX12
 	{			
 		return registry.Register
 		(
-			bufferFactory->MakeBufferWithData(data, sizeInBytes, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER | D3D12_RESOURCE_STATE_INDEX_BUFFER)				
+			resourceFactory->MakeBufferWithData(data, sizeInBytes, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER | D3D12_RESOURCE_STATE_INDEX_BUFFER)				
 		);
 		
 	}
@@ -482,7 +482,7 @@ namespace Renderer::DX12
 		{
 			auto allocation
 			{
-				bufferFactory->MakeBufferWithData(data, sizeInBytes, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER | D3D12_RESOURCE_STATE_INDEX_BUFFER)
+				resourceFactory->MakeBufferWithData(data, sizeInBytes, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER | D3D12_RESOURCE_STATE_INDEX_BUFFER)
 			};
 
 		
@@ -511,7 +511,7 @@ namespace Renderer::DX12
 	{
 		return registry.Register
 		(					
-			bufferFactory->MakeBufferWithData(data, sizeInBytes, state)						
+			resourceFactory->MakeBufferWithData(data, sizeInBytes, state)						
 		);	
 	}
 
@@ -521,7 +521,7 @@ namespace Renderer::DX12
 	{						
 		return registry.Register
 		(					
-			bufferFactory->MakeBufferWithData(data, sizeInBytes, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS)						
+			resourceFactory->MakeBufferWithData(data, sizeInBytes, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS)						
 		);				
 		
 	}
@@ -530,7 +530,7 @@ namespace Renderer::DX12
 	
 	DxPtr<ID3D12Resource> ForwardRenderer::MakeReadbackBuffer(const size_t sizeInBytes)
 	{			
-		return bufferFactory->MakeCommittedBuffer(RHA::Utility::IncreaseValueToAlignment(sizeInBytes, 256), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_HEAP_TYPE_READBACK, D3D12_HEAP_FLAG_NONE);
+		return resourceFactory->MakeCommittedBuffer(RHA::Utility::IncreaseValueToAlignment(sizeInBytes, 256), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_HEAP_TYPE_READBACK, D3D12_HEAP_FLAG_NONE);
 		
 	}
 
@@ -654,6 +654,15 @@ namespace Renderer::DX12
 
 
 	
+	ResourceHandle::t_hash ForwardRenderer::MakeTexture(const void *data, const size_t width, const size_t height)
+	{
+		auto resource{ resourceFactory->MakeTextureWithData(data, width, height, D3D12_RESOURCE_STATE_COMMON) };
+		return registry.Register(std::move(resource));
+		
+	}
+
+
+
 	bool ForwardRenderer::ResourceMustBeRemade(size_t handle)
 	{
 		return registry.IsHandleUnknown(handle);

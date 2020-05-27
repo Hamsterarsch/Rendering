@@ -59,7 +59,7 @@ namespace Renderer::DX12
 		private: HANDLE closeEvent;
 
 				 			
-		private: UniquePtr<ResourceFactory> bufferFactory;
+		private: UniquePtr<ResourceFactory> resourceFactory;
 		
 		private: ResourceRegistry registry;
 
@@ -163,13 +163,16 @@ namespace Renderer::DX12
 
 			private: static size_t ExtractSamplerCountFrom(const void *data, SIZE_T signatureSize);
 		
-		public: virtual size_t MakePso(const ShaderList &shaders, size_t signatureHandle) override;
+		public: size_t MakePso(const ShaderList &shaders, size_t signatureHandle) override;
 							
-		public: virtual size_t MakePso(const Blob &csBlob, size_t signatureHandle) override;
+		public: size_t MakePso(const Blob &csBlob, size_t signatureHandle) override;
 
-		public: virtual bool ResourceMustBeRemade(size_t handle) override;
+		public: ResourceHandle::t_hash MakeTexture(const void *data, size_t width, size_t height) override;
 
-		public: virtual void RetireHandle(size_t handle) override;
+		
+		public: bool ResourceMustBeRemade(size_t handle) override;
+
+		public: void RetireHandle(size_t handle) override;
 
 
 		//new interface
@@ -194,7 +197,7 @@ namespace Renderer::DX12
 		public: RasterizerSettings &GetRasterizerSettings() override;
 		
 		public: VertexLayoutSettings &GetVertexLayoutSettings() override;
-		
+
 	};
 
 
