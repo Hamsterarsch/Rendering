@@ -210,6 +210,15 @@
     <ClInclude Include="Commands\Surface\PresentSurfaceCommand.hpp">
       <Filter>Commands\Surface</Filter>
     </ClInclude>
+    <ClInclude Include="Interface\StateSettings\StateSettings.hpp">
+      <Filter>Interface\StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\StateSettings\BlendSettings.hpp">
+      <Filter>Interface\StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="StateSettings\BlendSettingsImpl.hpp">
+      <Filter>StateSettings</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -325,6 +334,9 @@
     <ClCompile Include="Commands\PresentSurfaceCommandOld.cpp">
       <Filter>Commands</Filter>
     </ClCompile>
+    <ClCompile Include="StateSettings\BlendSettingsImpl.cpp">
+      <Filter>StateSettings</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">
@@ -368,6 +380,12 @@
     </Filter>
     <Filter Include="Commands\Surface">
       <UniqueIdentifier>{c903f83d-8590-4ac6-8033-d1e7fb5ac6ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interface\StateSettings">
+      <UniqueIdentifier>{c22f794f-5bff-484f-bd5c-dd4c6fe95217}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="StateSettings">
+      <UniqueIdentifier>{2902b0dd-1459-46e0-b961-17347c10abde}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -283,6 +283,8 @@
     <ClInclude Include="Interface\Resources\ResourceTypes.hpp" />
     <ClInclude Include="Interface\Resources\SerializationContainer.hpp" />
     <ClInclude Include="Interface\Resources\SerializationHook.hpp" />
+    <ClInclude Include="Interface\StateSettings\BlendSettings.hpp" />
+    <ClInclude Include="Interface\StateSettings\StateSettings.hpp" />
     <ClInclude Include="Lighting\LightContainer.hpp" />
     <ClInclude Include="Lighting\LightGrid\VolumeTileGrid.hpp" />
     <ClInclude Include="Resources\Descriptor\DescriptorAllocator.hpp" />
@@ -313,6 +315,7 @@
     <ClInclude Include="ShaderRelevantTypes\GlobalBufferData.hpp" />
     <ClInclude Include="ShaderRelevantTypes\Light.hpp" />
     <ClInclude Include="ShaderRelevantTypes\VolumeTileGridData.hpp" />
+    <ClInclude Include="StateSettings\BlendSettingsImpl.hpp" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
@@ -355,6 +358,7 @@
     <ClCompile Include="Resources\SerialFactory.cpp" />
     <ClCompile Include="Resources\SerializationContainer.cpp" />
     <ClCompile Include="Resources\SerializationHook.cpp" />
+    <ClCompile Include="StateSettings\BlendSettingsImpl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Math\Math.vcxproj">
