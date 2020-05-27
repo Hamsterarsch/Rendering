@@ -285,7 +285,11 @@
     <ClInclude Include="Interface\Resources\SerializationHook.hpp" />
     <ClInclude Include="Interface\StateSettings\BlendSettings.hpp" />
     <ClInclude Include="Interface\StateSettings\DepthStencilSettings.hpp" />
+    <ClInclude Include="Interface\StateSettings\FormatTargets.hpp" />
+    <ClInclude Include="Interface\StateSettings\RasterizerSettings.hpp" />
+    <ClInclude Include="Interface\StateSettings\SemanticTargets.hpp" />
     <ClInclude Include="Interface\StateSettings\StateSettings.hpp" />
+    <ClInclude Include="Interface\StateSettings\VertexLayoutSettings.hpp" />
     <ClInclude Include="Lighting\LightContainer.hpp" />
     <ClInclude Include="Lighting\LightGrid\VolumeTileGrid.hpp" />
     <ClInclude Include="Resources\Descriptor\DescriptorAllocator.hpp" />
@@ -316,6 +320,9 @@
     <ClInclude Include="ShaderRelevantTypes\VolumeTileGridData.hpp" />
     <ClInclude Include="StateSettings\BlendSettingsImpl.hpp" />
     <ClInclude Include="StateSettings\DepthStencilSettingsImpl.hpp" />
+    <ClInclude Include="StateSettings\FormatTargetsImpl.hpp" />
+    <ClInclude Include="StateSettings\SemanticTargetsImpl.hpp" />
+    <ClInclude Include="StateSettings\VertexLayoutSettingsImpl.hpp" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
@@ -360,6 +367,9 @@
     <ClCompile Include="Resources\SerializationHook.cpp" />
     <ClCompile Include="StateSettings\BlendSettingsImpl.cpp" />
     <ClCompile Include="StateSettings\DepthStencilSettingsImpl.cpp" />
+    <ClCompile Include="StateSettings\FormatTargetsImpl.cpp" />
+    <ClCompile Include="StateSettings\SemanticTargetsImpl.cpp" />
+    <ClCompile Include="StateSettings\VertexLayoutSettingsImpl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Math\Math.vcxproj">

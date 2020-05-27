@@ -219,6 +219,27 @@
     <ClInclude Include="StateSettings\DepthStencilSettingsImpl.hpp">
       <Filter>StateSettings</Filter>
     </ClInclude>
+    <ClInclude Include="Interface\StateSettings\RasterizerSettings.hpp">
+      <Filter>Interface\StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\StateSettings\VertexLayoutSettings.hpp">
+      <Filter>Interface\StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="StateSettings\FormatTargetsImpl.hpp">
+      <Filter>StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="StateSettings\VertexLayoutSettingsImpl.hpp">
+      <Filter>StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\StateSettings\FormatTargets.hpp">
+      <Filter>Interface\StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\StateSettings\SemanticTargets.hpp">
+      <Filter>Interface\StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="StateSettings\SemanticTargetsImpl.hpp">
+      <Filter>StateSettings</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -338,6 +359,15 @@
       <Filter>StateSettings</Filter>
     </ClCompile>
     <ClCompile Include="StateSettings\DepthStencilSettingsImpl.cpp">
+      <Filter>StateSettings</Filter>
+    </ClCompile>
+    <ClCompile Include="StateSettings\FormatTargetsImpl.cpp">
+      <Filter>StateSettings</Filter>
+    </ClCompile>
+    <ClCompile Include="StateSettings\VertexLayoutSettingsImpl.cpp">
+      <Filter>StateSettings</Filter>
+    </ClCompile>
+    <ClCompile Include="StateSettings\SemanticTargetsImpl.cpp">
       <Filter>StateSettings</Filter>
     </ClCompile>
   </ItemGroup>
