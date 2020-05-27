@@ -1,4 +1,5 @@
 #pragma once
+#include "Resources/HandleWrapper.hpp"
 
 
 namespace ImGui
@@ -15,10 +16,17 @@ namespace App::Rendering
 		private: RendererMediator *mediator;
 				 
 		private: ImGui::ImGuiContext *imguiContext;
+
+		private: Renderer::HandleWrapper uiSignature;
+		
+		private: Renderer::HandleWrapper uiPso;
+
+		private: Renderer::HandleWrapper uiFontTexture;
+		
+		private: Renderer::HandleWrapper uiVertexIndexBuffer;
 		
 		
-		
-		public: UiRenderer(RendererMediator &mediator, void *windowHandle);
+		public: UiRenderer(RendererMediator &mediator);
 
 		public: void SubmitFrame();
 

@@ -31,6 +31,8 @@ namespace App::Rendering
 		public: void SubmitFrame();
 
 				private: void SubmitCommand(UniquePtr<Renderer::Commands::Command> &&command);
+
+		public: inline Renderer::Renderer &Renderer() const {  return *underlyingRenderer; }
 		
 	};
 

@@ -13,6 +13,8 @@
 
 #include "Rendering/RendererMediator.hpp"
 #include "Renderer/StateSettings/SamplerSpec.hpp"
+#include "ThirdParty/imgui/imgui.h"
+#include "ThirdParty/imgui/imgui_impl_win32.h"
 
 
 namespace Windows
@@ -28,36 +30,9 @@ namespace Windows
 
 
 		//dearimgui render setup
-		auto &depthSettings{ renderer->GetDepthStencilSettings() };
-		depthSettings.SetEnableDepth(false);
+		ImGui_ImplWin32_Init(window.GetHandle());
 
 		
-		auto &blendSettings{ renderer->GetBlendSettings() };
-		blendSettings.SetEnableBlend(true);
-		
-		blendSettings.SetBlendSrcAlpha(&Renderer::BlendSettings::TargetSrc);
-		blendSettings.SetBlendInverseSrcAlpha(&Renderer::BlendSettings::TargetDst);
-		
-		blendSettings.SetBlendInverseSrcAlpha(&Renderer::BlendSettings::TargetSrcAlpha);
-		blendSettings.SetBlendZero(&Renderer::BlendSettings::TargetDstAlpha);
-
-		blendSettings.SetBlendOpAdd(&Renderer::BlendSettings::TargetBlendOpColor);
-		blendSettings.SetBlendOpAdd(&Renderer::BlendSettings::TargetBlendOpAlpha);
-
-		auto &rasterSettings{ renderer->GetRasterizerSettings() };
-		rasterSettings.SetFrontIsCounterClockwise(false);
-
-		auto &vertexLayoutSettings{ renderer->GetVertexLayoutSettings() };
-		vertexLayoutSettings.AddLayoutElementDesc(&Renderer::SemanticTargets::TargetPosition, 0, &Renderer::FormatTargets::R32G32_Float, 0);
-		vertexLayoutSettings.AddLayoutElementDesc(&Renderer::SemanticTargets::TargetTexcoord, 0, &Renderer::FormatTargets::R32G32_Float, 8);
-		vertexLayoutSettings.AddLayoutElementDesc(&Renderer::SemanticTargets::TargetColor, 0, &Renderer::FormatTargets::R8G8B8A8_Norm, 12);//todo: check offsets
-
-		Renderer::SamplerSpec samplerSpec{};
-		samplerSpec.addressU = samplerSpec.addressV = samplerSpec.addressW = &Renderer::AddressingTargets::AddressingModeWrap;
-		samplerSpec.filter = &Renderer::FilterTargets::FilterMinMagMipLinear;
-		
-		renderer->SerializeRootSignature(0,1,0,0, , &samplerSpec, 1);
-		renderer->MakePso()
 		
 		constexpr UINT NO_FILTER{ 0 };
 		constexpr decltype(nullptr) FOR_ALL_WINDOWS{ nullptr };
@@ -83,10 +58,11 @@ namespace Windows
 			}
 			else
 			{
+				Update();				
 				mediator.SubmitFrame();
-				Update();
 			}
 		}
+		ImGui_ImplWin32_Shutdown();
 		
 	}
 
@@ -166,7 +142,8 @@ namespace Windows
 	   	
 		void App::Update()
 		{			
-
+			ImGui_ImplWin32_NewFrame();
+			ImGui::NewFrame();
 			
 		}
 
