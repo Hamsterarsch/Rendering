@@ -216,7 +216,13 @@
     <ClInclude Include="Interface\StateSettings\BlendSettings.hpp">
       <Filter>Interface\StateSettings</Filter>
     </ClInclude>
+    <ClInclude Include="Interface\StateSettings\DepthStencilSettings.hpp">
+      <Filter>Interface\StateSettings</Filter>
+    </ClInclude>
     <ClInclude Include="StateSettings\BlendSettingsImpl.hpp">
+      <Filter>StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="StateSettings\DepthStencilSettingsImpl.hpp">
       <Filter>StateSettings</Filter>
     </ClInclude>
   </ItemGroup>
@@ -335,6 +341,9 @@
       <Filter>Commands</Filter>
     </ClCompile>
     <ClCompile Include="StateSettings\BlendSettingsImpl.cpp">
+      <Filter>StateSettings</Filter>
+    </ClCompile>
+    <ClCompile Include="StateSettings\DepthStencilSettingsImpl.cpp">
       <Filter>StateSettings</Filter>
     </ClCompile>
   </ItemGroup>
