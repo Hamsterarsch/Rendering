@@ -17,14 +17,17 @@ namespace Renderer
 	enum class PipelineTypes : unsigned char;
 	
 	namespace DX12
-	{
-		class DepthStencilFactory;
+	{		
+		class BlendSettingsImpl;
+		class DepthStencilSettingsImpl;
 
 		class PsoFactory
 		{
 			private: RHA::DX12::DeviceResources *resources;
 
-			private: DepthStencilFactory &dsFactory;
+			private: BlendSettingsImpl *blendSettings;
+			
+			private: DepthStencilSettingsImpl *dsSettings;
 			
 			private: static constexpr DXGI_FORMAT rtvFormat{ DXGI_FORMAT_R8G8B8A8_UNORM };
 
@@ -34,7 +37,7 @@ namespace Renderer
 
 
 
-			public:	explicit PsoFactory(RHA::DX12::DeviceResources *resources, DepthStencilFactory &dsFactory);
+			public:	PsoFactory(RHA::DX12::DeviceResources *resources, DepthStencilSettingsImpl &dsSettings, BlendSettingsImpl &blendSettings);
 
 						
 			public: DxPtr<ID3D12PipelineState> MakePso(const ShaderList &shaders, ID3D12RootSignature *signature, PipelineTypes type, const D3D12_INPUT_LAYOUT_DESC &layout, D3D12_PRIMITIVE_TOPOLOGY_TYPE topology);

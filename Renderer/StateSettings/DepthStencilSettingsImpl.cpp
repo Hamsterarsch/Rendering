@@ -5,7 +5,7 @@ namespace Renderer::DX12
 {
 	DepthStencilSettingsImpl::State::State() :
 		enableDepth{ true },
-		depthFunc{ D3D12_COMPARISON_FUNC_GREATER_EQUAL }
+		depthFunc{ D3D12_COMPARISON_FUNC_LESS_EQUAL }
 	{
 	}
 	

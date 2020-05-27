@@ -10,12 +10,13 @@
 #include "Resources/Descriptor/DescriptorMemory.hpp"
 #include "ShaderRelevantTypes/GlobalBufferData.hpp"
 #include "Lighting/LightGrid/VolumeTileGrid.hpp"
-#include "Resources/Pso/DepthStencilFactoryDefault.hpp"
 #include "Commands/CommandHelper.hpp"
 #include "Commands/CommandProcessorImpl.hpp"
 #include "Resources/HandleWrapper.hpp"
 #include "Commands/RenderMeshCommand.hpp"
 #include "Commands/CommandFactory.hpp"
+#include "StateSettings/BlendSettingsImpl.hpp"
+#include "StateSettings/DepthStencilSettingsImpl.hpp"
 
 
 namespace RHA
@@ -63,7 +64,9 @@ namespace Renderer::DX12
 
 		private: VertexLayoutProvider vertexLayoutProvider;
 		
-		private: DepthStencilFactoryDefault dsFactory;
+		private: BlendSettingsImpl blendSettings;
+
+		private: DepthStencilSettingsImpl depthStencilSettings;
 		
 		private: PsoFactory psoFactory;
 		
@@ -170,6 +173,11 @@ namespace Renderer::DX12
 		public: void DestroyExecutedCommands() override;
 
 		public: void WaitForCommands() override;
+
+		
+		BlendSettings &GetBlendSettings() override;
+		
+		DepthStencilSettings &GetDepthStencilSettings() override;
 		
 	};
 

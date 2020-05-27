@@ -2,14 +2,16 @@
 #include "Resources/Pso/PipelineTypes.hpp"
 #include "Shared/Exception/CreationFailedException.hpp"
 #include "Resources/Pso/PsoFactory.hpp"
-#include "Resources/Pso/DepthStencilFactory.hpp"
+#include "StateSettings/BlendSettingsImpl.hpp"
+#include "StateSettings/DepthStencilSettingsImpl.hpp"
 
 
 namespace Renderer::DX12
 {
-	PsoFactory::PsoFactory(RHA::DX12::DeviceResources *resources, DepthStencilFactory &dsFactory) :
+	PsoFactory::PsoFactory(RHA::DX12::DeviceResources *resources, DepthStencilSettingsImpl &dsSettings, BlendSettingsImpl &blendSettings) :
 		resources{ resources },
-		dsFactory{ dsFactory }
+		blendSettings{ &blendSettings },
+		dsSettings{ &dsSettings }		
 	{			
 	}
 	
@@ -68,15 +70,14 @@ namespace Renderer::DX12
 			{
 				D3D12_GRAPHICS_PIPELINE_STATE_DESC desc{};
 				
-				desc.DepthStencilState = dsFactory.MakeDepthStencilDesc();
-							
+				desc.DepthStencilState = dsSettings->GetDepthStencilDesc();
+				desc.BlendState.RenderTarget[0] = blendSettings->GetBlendDesc();
+									
 				desc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
 				desc.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
 				desc.RasterizerState.FrontCounterClockwise = isFrontFaceCountClockwise;
 				desc.RasterizerState.DepthClipEnable = true;
-
-				desc.BlendState.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-				
+								
 				desc.NumRenderTargets = 1;
 				desc.RTVFormats[0] = rtvFormat;
 				desc.DSVFormat = dsvFormat;

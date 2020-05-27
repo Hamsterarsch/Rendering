@@ -8,6 +8,8 @@
 #include "Resources/ResourceHandle.hpp"
 #include "Commands/CommandFactory.hpp"
 
+#include "StateSettings/BlendSettings.hpp"
+#include "StateSettings/DepthStencilSettings.hpp"
 
 
 namespace Renderer
@@ -38,8 +40,10 @@ namespace Renderer
 		public: virtual void SerializeRootSignature(unsigned cbvAmount, unsigned srvAmount, unsigned uavAmount, unsigned samplerAmount, SerializationHook *serializer) = 0;
 
 
+		
 		public: virtual ResourceHandle::t_hash MakeWindowsWindowSurface(HWND windowHandle) = 0;
 
+		
 		public: virtual UniquePtr<::Renderer::Commands::CommandFactory> MakeCommandFactory() = 0;
 
 		public: virtual void SubmitCommand(UniquePtr<::Renderer::Commands::Command> &&command) = 0;
@@ -49,7 +53,12 @@ namespace Renderer
 		public: virtual void DestroyExecutedCommands() = 0;
 
 		public: virtual void WaitForCommands() = 0;
-		
+
+
+		public: virtual BlendSettings &GetBlendSettings() = 0;
+
+		public: virtual DepthStencilSettings &GetDepthStencilSettings() = 0;
+				
 	};
 
 

@@ -83,7 +83,7 @@ namespace Renderer::DX12
 				)
 			)
 		},
-		psoFactory{ resources.get(), dsFactory },
+		psoFactory{ resources.get(), depthStencilSettings, blendSettings },
 		signatureFactory{ resources.get() },
 		shaderFactory{ Facade::MakeShaderFactory(5, 1) },
 		descriptors{resources.get(), 1'000'000, 2048},
@@ -92,9 +92,6 @@ namespace Renderer::DX12
 	{			
 		shaderFactory->AddIncludeDirectory(Filesystem::Conversions::MakeExeRelative("../Content/Shaders/Includes").c_str());
 						
-		dsFactory.SetDepthComparisonFunction(D3D12_COMPARISON_FUNC_LESS_EQUAL);
-		dsFactory.SaveCurrentStateAsDefault();
-
 		commandProcessor.SubmitContextCommand(std::make_unique<Commands::BindDescriptorsContextCommand>(descriptors));
 
 		/*
@@ -703,9 +700,27 @@ namespace Renderer::DX12
 		
 	}
 
+
+	
 	void ForwardRenderer::WaitForCommands()
 	{
 		commandProcessor.WaitForIdle();
+		
+	}
+
+
+	
+	BlendSettings &ForwardRenderer::GetBlendSettings()
+	{
+		return blendSettings;
+		
+	}
+
+
+	
+	DepthStencilSettings &ForwardRenderer::GetDepthStencilSettings()
+	{		
+		return depthStencilSettings;
 		
 	}
 
