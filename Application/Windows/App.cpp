@@ -12,6 +12,7 @@
 #include "Resources/SerializationContainer.hpp"
 
 #include "Rendering/RendererMediator.hpp"
+#include "Renderer/StateSettings/SamplerSpec.hpp"
 
 
 namespace Windows
@@ -51,7 +52,11 @@ namespace Windows
 		vertexLayoutSettings.AddLayoutElementDesc(&Renderer::SemanticTargets::TargetTexcoord, 0, &Renderer::FormatTargets::R32G32_Float, 8);
 		vertexLayoutSettings.AddLayoutElementDesc(&Renderer::SemanticTargets::TargetColor, 0, &Renderer::FormatTargets::R8G8B8A8_Norm, 12);//todo: check offsets
 
-		renderer->SerializeRootSignature(0,1,0,)
+		Renderer::SamplerSpec samplerSpec{};
+		samplerSpec.addressU = samplerSpec.addressV = samplerSpec.addressW = &Renderer::AddressingTargets::AddressingModeWrap;
+		samplerSpec.filter = &Renderer::FilterTargets::FilterMinMagMipLinear;
+		
+		renderer->SerializeRootSignature(0,1,0,0, , &samplerSpec, 1);
 		renderer->MakePso()
 		
 		constexpr UINT NO_FILTER{ 0 };

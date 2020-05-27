@@ -17,5 +17,7 @@ namespace Renderer
 							   		
 	};
 
+	using t_addressing_target = const void *(AddressingTargets:: *)() const;
+
 	
 }

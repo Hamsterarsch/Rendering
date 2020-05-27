@@ -16,6 +16,6 @@ namespace Renderer::DX12
 		public: static const AddressingTargetsImpl &Get();
 		
 	};
-	
+		
 	
 }

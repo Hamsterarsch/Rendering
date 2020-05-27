@@ -569,10 +569,12 @@ namespace Renderer::DX12
 		unsigned srvAmount, 
 		unsigned uavAmount,
 		unsigned samplerAmount, 
-		SerializationHook *serializer
+		SerializationHook *serializer,
+		const SamplerSpec *staticSamplers,
+		const unsigned numStaticSamplers
 	)
 	{
-		auto signatureBlob{ signatureFactory.SerializeRootSignature(cbvAmount, srvAmount, uavAmount, samplerAmount) };
+		auto signatureBlob{ signatureFactory.SerializeRootSignature(cbvAmount, srvAmount, uavAmount, samplerAmount, staticSamplers, numStaticSamplers) };
 		const auto signatureSize{ signatureBlob->GetBufferSize() };
 
 		auto block{ serializer->BeginBlock(sizeof signatureSize + signatureBlob->GetBufferSize() + sizeof samplerAmount) };

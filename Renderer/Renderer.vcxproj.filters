@@ -255,6 +255,9 @@
     <ClInclude Include="StateSettings\FilterTargetsImpl.hpp">
       <Filter>StateSettings</Filter>
     </ClInclude>
+    <ClInclude Include="StateSettings\SamplerSpec.hpp">
+      <Filter>Interface\StateSettings</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />

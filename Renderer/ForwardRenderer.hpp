@@ -144,7 +144,16 @@ namespace Renderer::DX12
 		public: virtual void CompileComputeShader(const char *shader, size_t length, SerializationHook *serializer) const override;
 		
 
-		public: virtual void SerializeRootSignature(unsigned cbvAmount, unsigned srvAmount, unsigned uavAmount, unsigned samplerAmount, SerializationHook *serializer) override;
+		public: virtual void SerializeRootSignature
+		(
+			unsigned cbvAmount,
+			unsigned srvAmount,
+			unsigned uavAmount,
+			unsigned samplerAmount,
+			SerializationHook *serializer,
+			const SamplerSpec *staticSamplers,
+			unsigned numStaticSamplers
+		)	override;
 
 		public: virtual size_t MakeRootSignature(const void *serializedData) override;
 							

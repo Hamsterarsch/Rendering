@@ -3,6 +3,7 @@
 #include <vector>
 #include "DxPtrTypes.hpp"
 #include "Resources/RootSignature/RootSignatureData.hpp"
+#include "StateSettings/SamplerSpec.hpp"
 
 namespace RHA
 {
@@ -30,7 +31,15 @@ namespace Renderer
 			public: explicit RootSignatureFactory(RHA::DX12::DeviceResources *resources);			
 
 			
-			public: DxPtr<ID3DBlob> SerializeRootSignature(unsigned cbvAmount, unsigned srvAmount, unsigned uavAmount, unsigned samplerAmount);
+			public: DxPtr<ID3DBlob> SerializeRootSignature
+			(
+				unsigned cbvAmount,
+				unsigned srvAmount,
+				unsigned uavAmount, 
+				unsigned samplerAmount,
+				const SamplerSpec *staticSamplers,
+				unsigned numStaticSamplers
+			);
 
 				private: void PushBackRangeIfNecessary(std::vector<D3D12_DESCRIPTOR_RANGE1> &container,  unsigned descriptorAmount, D3D12_DESCRIPTOR_RANGE_TYPE type);
 				

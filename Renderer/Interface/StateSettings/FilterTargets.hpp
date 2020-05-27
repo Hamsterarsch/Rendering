@@ -11,6 +11,8 @@ namespace Renderer
 		public: virtual const void *FilterMinMagMipLinear() const = 0;
 		
 	};
+
+	using t_filter_targets = const void *(FilterTargets:: *)() const;
 	
 	
 }

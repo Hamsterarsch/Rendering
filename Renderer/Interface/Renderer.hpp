@@ -12,7 +12,7 @@
 #include "StateSettings/DepthStencilSettings.hpp"
 #include "StateSettings/VertexLayoutSettings.hpp"
 #include "StateSettings/RasterizerSettings.hpp"
-
+#include "StateSettings/SamplerSpec.hpp"
 
 namespace Renderer
 {
@@ -39,7 +39,16 @@ namespace Renderer
 					
 		public: virtual void CompileComputeShader(const char *shader, size_t length, SerializationHook *serializer) const = 0;
 					
-		public: virtual void SerializeRootSignature(unsigned cbvAmount, unsigned srvAmount, unsigned uavAmount, unsigned samplerAmount, SerializationHook *serializer) = 0;
+		public: virtual void SerializeRootSignature
+		(
+			unsigned cbvAmount,
+			unsigned srvAmount,
+			unsigned uavAmount,
+			unsigned samplerAmount, 
+			SerializationHook *serializer,
+			const SamplerSpec *staticSamplers,
+			unsigned numStaticSamplers
+		)	= 0;
 
 
 		

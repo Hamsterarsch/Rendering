@@ -326,6 +326,7 @@
     <ClInclude Include="StateSettings\FilterTargetsImpl.hpp" />
     <ClInclude Include="StateSettings\FormatTargetsImpl.hpp" />
     <ClInclude Include="StateSettings\RasterizerSettingsImpl.hpp" />
+    <ClInclude Include="StateSettings\SamplerSpec.hpp" />
     <ClInclude Include="StateSettings\SemanticTargetsImpl.hpp" />
     <ClInclude Include="StateSettings\VertexLayoutSettingsImpl.hpp" />
     <ClInclude Include="targetver.h" />
