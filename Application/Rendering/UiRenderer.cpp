@@ -28,14 +28,14 @@ namespace App::Rendering
 
 	void UiRenderer::SubmitFrame()
 	{
-		ImGui_ImplDX12_NewFrame();
-		ImGui_ImplWin32_NewFrame();
-		ImGui::NewFrame();
+		ImGui_ImplDX12_NewFrame();//this only creates the same root signature over and over again
+		ImGui_ImplWin32_NewFrame();//reads input, current window size, etc.
+		ImGui::NewFrame();//various by frame updates, does not seem to interact with the rendering.	Imgui functions drawing ui count for the next frame after this call
 
 		//App stuff for swap chain change and transitions / clearing goes here
 
 		ImGui::Render();
-		ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), cmd list)
+		ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), cmd list)//draw data is what contains imgui state information related to rendering, because this function does the actual interaction with the gpu. maybe just work from here instead of replacing the rotten dx12 backend
 
 		//close and submit list
 		

@@ -33,7 +33,7 @@ namespace Renderer
 
 			private: static constexpr DXGI_FORMAT dsvFormat{ DXGI_FORMAT_D24_UNORM_S8_UINT };
 
-			private: static constexpr bool isFrontFaceCountClockwise{ true };
+			private: static constexpr bool isFrontFaceCountClockwise{ false };//changed for imgui tests
 
 
 

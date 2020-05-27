@@ -45,26 +45,26 @@ namespace Renderer::DX12
 		
 		public: void SetEnableBlend(bool value) override;
 
-		public: void SetBlendZero(t_targets_all target) override;
+		public: void SetBlendZero(t_targets_blend target) override;
 				
-		public: void SetBlendOne(t_targets_all target) override;
+		public: void SetBlendOne(t_targets_blend target) override;
 
-		public: void SetBlendSrcColor(t_targets_color target) override;
+		public: void SetBlendSrcColor(t_targets_blend target) override;
 
-		public: void SetBlendInverseSrcColor(t_targets_color target) override;
+		public: void SetBlendInverseSrcColor(t_targets_blend target) override;
 
-		public: void SetBlendDstColor(t_targets_color target) override;
+		public: void SetBlendDstColor(t_targets_blend target) override;
 
-		public: void SetBlendInverseDstColor(t_targets_color target) override;
+		public: void SetBlendInverseDstColor(t_targets_blend target) override;
 
 		
-		public: void SetBlendSrcAlpha(t_targets_alpha target) override;
+		public: void SetBlendSrcAlpha(t_targets_blend target) override;
 
-		public: void SetBlendInverseSrcAlpha(t_targets_alpha target) override;
+		public: void SetBlendInverseSrcAlpha(t_targets_blend target) override;
 
-		public: void SetBlendDstAlpha(t_targets_alpha target) override;
+		public: void SetBlendDstAlpha(t_targets_blend target) override;
 
-		public: void SetBlendInverseDstAlpha(t_targets_alpha target) override;
+		public: void SetBlendInverseDstAlpha(t_targets_blend target) override;
 
 		
 		public: void SetBlendOpAdd(t_targets_op target) override;				  

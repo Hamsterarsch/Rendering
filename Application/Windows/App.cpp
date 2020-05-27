@@ -25,7 +25,26 @@ namespace Windows
 
 		
 		::App::Rendering::RendererMediator mediator{{renderer.get(), renderer->MakeWindowsWindowSurface(window.GetHandle())}, *renderer, {mediator, {1,1}} };
+		auto &blendSettings{ renderer->GetBlendSettings() };
+		auto &depthSettings{ renderer->GetDepthStencilSettings() };
 
+
+		//dearimgui render setup
+		depthSettings.SetEnableDepth(false);
+
+		
+		blendSettings.SetEnableBlend(true);
+		
+		blendSettings.SetBlendSrcAlpha(&Renderer::BlendSettings::TargetSrc);
+		blendSettings.SetBlendInverseSrcAlpha(&Renderer::BlendSettings::TargetDst);
+		
+		blendSettings.SetBlendInverseSrcAlpha(&Renderer::BlendSettings::TargetSrcAlpha);
+		blendSettings.SetBlendZero(&Renderer::BlendSettings::TargetDstAlpha);
+
+		blendSettings.SetBlendOpAdd(&Renderer::BlendSettings::TargetBlendOpColor);
+		blendSettings.SetBlendOpAdd(&Renderer::BlendSettings::TargetBlendOpAlpha);
+
+		renderer->MakePso()
 		
 		constexpr UINT NO_FILTER{ 0 };
 		constexpr decltype(nullptr) FOR_ALL_WINDOWS{ nullptr };

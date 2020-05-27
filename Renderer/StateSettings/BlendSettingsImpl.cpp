@@ -95,7 +95,7 @@ namespace Renderer::DX12
 
 
 
-	void BlendSettingsImpl::SetBlendZero(const t_targets_all target)
+	void BlendSettingsImpl::SetBlendZero(const t_targets_blend target)
 	{
 		const auto value{ D3D12_BLEND_ZERO };
 		(this->*target)(reinterpret_cast<const char *>(&value));
@@ -104,7 +104,7 @@ namespace Renderer::DX12
 
 
 
-	void BlendSettingsImpl::SetBlendOne(const t_targets_all target)
+	void BlendSettingsImpl::SetBlendOne(const t_targets_blend target)
 	{
 		const auto value{ D3D12_BLEND_ONE };
 		(this->*target)(reinterpret_cast<const char *>(&value));
@@ -113,7 +113,7 @@ namespace Renderer::DX12
 
 
 
-	void BlendSettingsImpl::SetBlendSrcColor(const t_targets_color target)
+	void BlendSettingsImpl::SetBlendSrcColor(const t_targets_blend target)
 	{
 		const auto value{ D3D12_BLEND_SRC_COLOR };
 		(this->*target)(reinterpret_cast<const char *>(&value));
@@ -122,7 +122,7 @@ namespace Renderer::DX12
 
 
 
-	void BlendSettingsImpl::SetBlendInverseSrcColor(const t_targets_color target)
+	void BlendSettingsImpl::SetBlendInverseSrcColor(const t_targets_blend target)
 	{
 		const auto value{ D3D12_BLEND_INV_SRC_COLOR };
 		(this->*target)(reinterpret_cast<const char *>(&value));
@@ -131,7 +131,7 @@ namespace Renderer::DX12
 
 
 
-	void BlendSettingsImpl::SetBlendDstColor(const t_targets_color target)
+	void BlendSettingsImpl::SetBlendDstColor(const t_targets_blend target)
 	{
 		const auto value{ D3D12_BLEND_DEST_COLOR };
 		(this->*target)(reinterpret_cast<const char *>(&value));
@@ -140,7 +140,7 @@ namespace Renderer::DX12
 
 
 
-	void BlendSettingsImpl::SetBlendInverseDstColor(const t_targets_color target)
+	void BlendSettingsImpl::SetBlendInverseDstColor(const t_targets_blend target)
 	{
 		const auto value{ D3D12_BLEND_INV_DEST_COLOR };
 		(this->*target)(reinterpret_cast<const char *>(&value));
@@ -150,7 +150,7 @@ namespace Renderer::DX12
 
 
 
-	void BlendSettingsImpl::SetBlendSrcAlpha(const t_targets_alpha target)
+	void BlendSettingsImpl::SetBlendSrcAlpha(const t_targets_blend target)
 	{
 		const auto value{ D3D12_BLEND_SRC_ALPHA };
 		(this->*target)(reinterpret_cast<const char *>(&value));
@@ -159,7 +159,7 @@ namespace Renderer::DX12
 
 
 
-	void BlendSettingsImpl::SetBlendInverseSrcAlpha(const t_targets_alpha target)
+	void BlendSettingsImpl::SetBlendInverseSrcAlpha(const t_targets_blend target)
 	{
 		const auto value{ D3D12_BLEND_INV_SRC_ALPHA };
 		(this->*target)(reinterpret_cast<const char *>(&value));
@@ -168,7 +168,7 @@ namespace Renderer::DX12
 
 
 
-	void BlendSettingsImpl::SetBlendDstAlpha(const t_targets_alpha target)
+	void BlendSettingsImpl::SetBlendDstAlpha(const t_targets_blend target)
 	{
 		const auto value{ D3D12_BLEND_DEST_ALPHA };
 		(this->*target)(reinterpret_cast<const char *>(&value));
@@ -177,7 +177,7 @@ namespace Renderer::DX12
 
 
 
-	void BlendSettingsImpl::SetBlendInverseDstAlpha(const t_targets_alpha target)
+	void BlendSettingsImpl::SetBlendInverseDstAlpha(const t_targets_blend target)
 	{
 		const auto value{ D3D12_BLEND_INV_DEST_ALPHA };
 		(this->*target)(reinterpret_cast<const char *>(&value));
