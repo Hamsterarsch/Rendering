@@ -46,11 +46,13 @@ namespace Renderer
 
 
 			
-			protected: UniquePtr<AllocatableGpuMemory> memory;
+			protected: UniquePtr<AllocatableGpuMemory> bufferMemory;
+
+			protected: UniquePtr<AllocatableGpuMemory> textureMemory;
 
 			
 
-			public: ResourceFactory(DeviceResources *resources, Queue *queue, UniquePtr<AllocatableGpuMemory> &&memory);
+			public: ResourceFactory(DeviceResources *resources, Queue *queue, UniquePtr<AllocatableGpuMemory> &&bufferMemory, UniquePtr<AllocatableGpuMemory> &&textureMemory);
 
 			public: ResourceFactory(ResourceFactory &&other) noexcept = default;
 
@@ -79,6 +81,10 @@ namespace Renderer
 
 				private: void SubmitListAndFenceSynchronization(CmdList *list);
 
+			public: ResourceAllocation MakeTextureWithData(const void *data, size_t width, size_t height, D3D12_RESOURCE_STATES desiredState, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
+
+				private: ResourceAllocation MakePlacedTextureResource(const D3D12_SUBRESOURCE_FOOTPRINT &subresourceSize, D3D12_RESOURCE_FLAGS resourceFlags, D3D12_RESOURCE_STATES resourceState);
+			
 			public: DxPtr<ID3D12Resource> MakeCommittedBuffer
 			(
 				size_t sizeInBytes,

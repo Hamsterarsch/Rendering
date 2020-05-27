@@ -80,6 +80,13 @@ namespace Renderer::DX12
 					D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT * 32,
 					D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT,
 					D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS 
+				),
+				std::make_unique<ResourceMemory>
+				(
+					resources.get(),
+					D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT * 16,
+					D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT,
+					D3D12_HEAP_FLAG_ALLOW_ONLY_NON_RT_DS_TEXTURES
 				)
 			)
 		},
@@ -93,7 +100,7 @@ namespace Renderer::DX12
 		shaderFactory->AddIncludeDirectory(Filesystem::Conversions::MakeExeRelative("../Content/Shaders/Includes").c_str());
 						
 		commandProcessor.SubmitContextCommand(std::make_unique<Commands::BindDescriptorsContextCommand>(descriptors));
-
+		
 		/*
 		VolumeTileGridData gridData;
 		gridData.screenDimensions.x = outputSurface->GetWidth();

@@ -21,7 +21,8 @@ namespace RHA
 
 			public: virtual D3D12_GPU_VIRTUAL_ADDRESS CopyDataToUploadAddress(const void *data, size_t dataByteCount, size_t alignment) = 0;
 
-					
+			public: virtual D3D12_GPU_VIRTUAL_ADDRESS CopyTextureDataToUploadAddress(const char *data, const D3D12_SUBRESOURCE_FOOTPRINT &resourceInfo) = 0;
+										
 		};
 
 		
