@@ -9,6 +9,7 @@
 #include "Shared/Exception/Exception.hpp"
 #include "Shared/PtrTypes.hpp"
 #include "DX12/WindowSurface.hpp"
+#include "Descriptor/DescriptorAllocator.hpp"
 
 
 namespace Renderer
@@ -127,6 +128,8 @@ namespace Renderer
 		inline RHA::DX12::WindowSurface *HandleMapWindowSurfaceAccessor(UniquePtr<RHA::DX12::WindowSurface> &entity) { return entity.get(); }		
 		using HandleMapWindowSurface = HandleMap<UniquePtr<RHA::DX12::WindowSurface>, RHA::DX12::WindowSurface *, &HandleMapWindowSurfaceAccessor>;
 
+		inline DescriptorAllocator &HandleMapDescriptorAccessor(DescriptorAllocator &entity) { return entity; }
+		using HandleMapDescriptor = HandleMap<DescriptorAllocator, DescriptorAllocator &, &HandleMapDescriptorAccessor>;
 
 	}
 	

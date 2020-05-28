@@ -12,7 +12,8 @@ namespace Renderer
 		Buffer,
 		Signature,
 		Light,
-		WindowSurface
+		WindowSurface,
+		DescriptorAllocator
 		
 	};
 

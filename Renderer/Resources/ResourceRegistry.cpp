@@ -105,6 +105,17 @@ namespace Renderer::DX12
 	}
 
 
+	
+	ResourceHandle::t_hash ResourceRegistry::Register(DescriptorAllocator &&allocator)
+	{
+		const auto handle{ handleProvider.MakeHandle(ResourceHandle::t_resourceTypes::DescriptorAllocator) };
+		registryDescriptor.Register(handle, std::move(allocator));
+
+		return handle;
+		
+	}
+
+
 
 	ID3D12Resource *ResourceRegistry::GetResource(const ResourceHandle::t_hash handle)
 	{
@@ -141,6 +152,14 @@ namespace Renderer::DX12
 	Light &ResourceRegistry::GetLight(const ResourceHandle::t_hash handle)
 	{
 		return registryLight.Get(handle);
+		
+	}
+
+	
+
+	DescriptorAllocator &ResourceRegistry::GetDescriptorAllocator(const ResourceHandle::t_hash handle)
+	{
+		return registryDescriptor.Get(handle);
 		
 	}
 
@@ -206,6 +225,7 @@ namespace Renderer::DX12
 	{
 		registryResource.PurgeUnreferencedEntities();
 		registryWindowSurface.PurgeUnreferencedEntities();
+		registryDescriptor.PurgeUnreferencedEntities();
 		if(shouldPurgePsoAndSignature)
 		{
 			registryPso.PurgeUnreferencedEntities();
@@ -266,9 +286,17 @@ namespace Renderer::DX12
 				
 			}
 
+			if(handleType == ResourceHandle::t_resourceTypes::DescriptorAllocator)
+			{
+				(registryDescriptor.*operation)(handle);
+				return;
+				
+			}
+
 			if(handleType == ResourceHandle::t_resourceTypes::Light)
 			{
-				return;				
+				return;
+				
 			}
 
 			(registryResource.*operation)(handle);

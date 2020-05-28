@@ -16,6 +16,7 @@ namespace Renderer
 		public: virtual const void *R8G8B8A8_Norm() const = 0;
 						
 	};
-	
+
+	using t_format_target = const void *(FormatTargets:: *)() const;
 	
 }

@@ -283,6 +283,7 @@
     <ClInclude Include="Interface\Resources\ResourceTypes.hpp" />
     <ClInclude Include="Interface\Resources\SerializationContainer.hpp" />
     <ClInclude Include="Interface\Resources\SerializationHook.hpp" />
+    <ClInclude Include="Interface\ResourceViewFactory.hpp" />
     <ClInclude Include="Interface\StateSettings\BlendSettings.hpp" />
     <ClInclude Include="Interface\StateSettings\DepthStencilSettings.hpp" />
     <ClInclude Include="Interface\StateSettings\FilterTargets.hpp" />
@@ -298,6 +299,7 @@
     <ClInclude Include="Resources\Descriptor\DescriptorChunk.hpp" />
     <ClInclude Include="Resources\Descriptor\DescriptorChunkRegistry.hpp" />
     <ClInclude Include="Resources\Descriptor\DescriptorMemory.hpp" />
+    <ClInclude Include="Resources\Descriptor\ResourceViewFactoryImpl.hpp" />
     <ClInclude Include="Resources\DynamicHeapSet.hpp" />
     <ClInclude Include="Resources\HandleFactory.hpp" />
     <ClInclude Include="Resources\MaintainsInternalRenderResources.hpp" />
@@ -328,6 +330,7 @@
     <ClInclude Include="StateSettings\RasterizerSettingsImpl.hpp" />
     <ClInclude Include="StateSettings\SamplerSpec.hpp" />
     <ClInclude Include="StateSettings\SemanticTargetsImpl.hpp" />
+    <ClInclude Include="StateSettings\TargetHelpers.hpp" />
     <ClInclude Include="StateSettings\VertexLayoutSettingsImpl.hpp" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -352,6 +355,7 @@
     <ClCompile Include="Resources\Descriptor\DescriptorAllocator.cpp" />
     <ClCompile Include="Resources\Descriptor\DescriptorChunkRegistry.cpp" />
     <ClCompile Include="Resources\Descriptor\DescriptorMemory.cpp" />
+    <ClCompile Include="Resources\Descriptor\ResourceViewFactoryImpl.cpp" />
     <ClCompile Include="Resources\DynamicHeapSet.cpp" />
     <ClCompile Include="Resources\HandleFactory.cpp" />
     <ClCompile Include="Resources\HandleWrapper.cpp" />

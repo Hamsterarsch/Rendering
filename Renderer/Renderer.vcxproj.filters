@@ -258,6 +258,15 @@
     <ClInclude Include="StateSettings\SamplerSpec.hpp">
       <Filter>Interface\StateSettings</Filter>
     </ClInclude>
+    <ClInclude Include="Interface\ResourceViewFactory.hpp">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\Descriptor\ResourceViewFactoryImpl.hpp">
+      <Filter>Resources\Descriptor</Filter>
+    </ClInclude>
+    <ClInclude Include="StateSettings\TargetHelpers.hpp">
+      <Filter>StateSettings</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -396,6 +405,9 @@
     </ClCompile>
     <ClCompile Include="StateSettings\FilterTargetsImpl.cpp">
       <Filter>StateSettings</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\Descriptor\ResourceViewFactoryImpl.cpp">
+      <Filter>Resources\Descriptor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
