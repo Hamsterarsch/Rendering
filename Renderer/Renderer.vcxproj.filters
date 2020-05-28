@@ -267,6 +267,27 @@
     <ClInclude Include="StateSettings\TargetHelpers.hpp">
       <Filter>StateSettings</Filter>
     </ClInclude>
+    <ClInclude Include="Commands\Basic\SetViewportCommand.hpp">
+      <Filter>Commands\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\Basic\SetScissorRectCommand.hpp">
+      <Filter>Commands\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\Basic\SetVertexBufferCommand.hpp">
+      <Filter>Commands\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\Basic\SetIndexBufferCommand.hpp">
+      <Filter>Commands\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\Basic\SetPipelineStateCommand.hpp">
+      <Filter>Commands\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\Basic\SetSignatureGraphicsCommand.hpp">
+      <Filter>Commands\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\Basic\SetDescriptorBlockViewsGraphicsCommand.hpp">
+      <Filter>Commands\Basic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -409,6 +430,27 @@
     <ClCompile Include="Resources\Descriptor\ResourceViewFactoryImpl.cpp">
       <Filter>Resources\Descriptor</Filter>
     </ClCompile>
+    <ClCompile Include="Commands\Basic\SetViewportCommand.cpp">
+      <Filter>Commands\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Basic\SetVertexBufferCommand.cpp">
+      <Filter>Commands\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Basic\SetScissorRectCommand.cpp">
+      <Filter>Commands\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Basic\SetSignatureGraphicsCommand.cpp">
+      <Filter>Commands\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Basic\SetPipelineStateCommand.cpp">
+      <Filter>Commands\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Basic\SetIndexBufferCommand.cpp">
+      <Filter>Commands\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Basic\SetDescriptorBlockViewsGraphicsCommand.cpp">
+      <Filter>Commands\Basic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">
@@ -458,6 +500,9 @@
     </Filter>
     <Filter Include="StateSettings">
       <UniqueIdentifier>{2902b0dd-1459-46e0-b961-17347c10abde}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Commands\Basic">
+      <UniqueIdentifier>{aad6765a-6344-4012-ba88-f613411d9b7a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

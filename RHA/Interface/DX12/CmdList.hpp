@@ -94,6 +94,12 @@ namespace RHA
 				size_t numRects
 			) = 0;
 
+
+
+			public: virtual void RecordSetVertexBuffer(const D3D12_VERTEX_BUFFER_VIEW &view) = 0;
+
+			public: virtual void RecordSetIndexBuffer(const D3D12_INDEX_BUFFER_VIEW &view) = 0;
+			
 			
 			public: virtual void StopRecording() = 0;
 

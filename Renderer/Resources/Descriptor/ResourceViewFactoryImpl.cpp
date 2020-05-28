@@ -14,7 +14,7 @@ namespace Renderer::DX12
 
 
 	
-	void ResourceViewFactoryImpl::DeclareNewViewBlock(const ResourceHandle::t_hash forSignature, const size_t numViews, const size_t numSamplers)
+	void ResourceViewFactoryImpl::DeclareNewDescriptorBlock(const ResourceHandle::t_hash forSignature, const size_t numViews, const size_t numSamplers)
 	{
 		this->forSignature = forSignature;
 		currentAllocator = memory.GetDescriptorAllocator(numViews, numSamplers);
@@ -164,7 +164,7 @@ namespace Renderer::DX12
 
 
 	
-	ResourceHandle::t_hash ResourceViewFactoryImpl::FinalizeViewBlock()
+	ResourceHandle::t_hash ResourceViewFactoryImpl::FinalizeDescriptorBlock()
 	{		
 		return registry->Register(std::move(currentAllocator));
 		

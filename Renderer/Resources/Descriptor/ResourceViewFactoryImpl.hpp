@@ -22,7 +22,7 @@ namespace Renderer::DX12
 		public: ResourceViewFactoryImpl(RHA::DX12::DeviceResources &resources, ResourceRegistry &registry);
 
 		
-		public: void DeclareNewViewBlock(ResourceHandle::t_hash forSignature, size_t numViews, size_t numSamplers) override;
+		public: void DeclareNewDescriptorBlock(ResourceHandle::t_hash forSignature, size_t numViews, size_t numSamplers) override;
 
 		
 		public: void CreateShaderResourceView(ResourceHandle::t_hash forResource, size_t ordinal) override;
@@ -82,7 +82,7 @@ namespace Renderer::DX12
 		) override;
 
 		
-		public: ResourceHandle::t_hash FinalizeViewBlock() override;
+		public: ResourceHandle::t_hash FinalizeDescriptorBlock() override;
 
 	};
 		

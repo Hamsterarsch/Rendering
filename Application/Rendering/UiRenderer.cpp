@@ -174,11 +174,11 @@ namespace App::Rendering
 
 		//descriptors
 		auto &viewFactory{ mediator->Renderer().GetViewFactory() };
-		viewFactory.DeclareNewViewBlock(uiSignature, 2, 0);
+		viewFactory.DeclareNewDescriptorBlock(uiSignature, 2, 0);
 		viewFactory.CreateConstantBufferView(uiConstantBuffer, 1, cbvSizeInBytes);
 		viewFactory.CreateShaderResourceView(uiFontTexture, 1);
 		
-		uiDescriptors = { &mediator->Renderer(), viewFactory.FinalizeViewBlock() };
+		uiDescriptors = { &mediator->Renderer(), viewFactory.FinalizeDescriptorBlock() };
 
 		
 		//submit commands for ui rendering

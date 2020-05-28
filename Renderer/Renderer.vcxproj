@@ -243,6 +243,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Commands\Basic\SetDescriptorBlockViewsGraphicsCommand.hpp" />
+    <ClInclude Include="Commands\Basic\SetIndexBufferCommand.hpp" />
+    <ClInclude Include="Commands\Basic\SetPipelineStateCommand.hpp" />
+    <ClInclude Include="Commands\Basic\SetSignatureGraphicsCommand.hpp" />
+    <ClInclude Include="Commands\Basic\SetScissorRectCommand.hpp" />
+    <ClInclude Include="Commands\Basic\SetVertexBufferCommand.hpp" />
+    <ClInclude Include="Commands\Basic\SetViewportCommand.hpp" />
     <ClInclude Include="Commands\ClearDepthSurfaceCommand.hpp" />
     <ClInclude Include="Commands\DX12CommandFactory.hpp" />
     <ClInclude Include="Commands\DX12CommandProcessor.hpp" />
@@ -335,6 +342,13 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Commands\Basic\SetDescriptorBlockViewsGraphicsCommand.cpp" />
+    <ClCompile Include="Commands\Basic\SetIndexBufferCommand.cpp" />
+    <ClCompile Include="Commands\Basic\SetPipelineStateCommand.cpp" />
+    <ClCompile Include="Commands\Basic\SetScissorRectCommand.cpp" />
+    <ClCompile Include="Commands\Basic\SetSignatureGraphicsCommand.cpp" />
+    <ClCompile Include="Commands\Basic\SetVertexBufferCommand.cpp" />
+    <ClCompile Include="Commands\Basic\SetViewportCommand.cpp" />
     <ClCompile Include="Commands\DX12CommandFactory.cpp" />
     <ClCompile Include="Commands\InitVolumeTileGridCommand.cpp" />
     <ClCompile Include="Commands\CommandProcessorImpl.cpp" />

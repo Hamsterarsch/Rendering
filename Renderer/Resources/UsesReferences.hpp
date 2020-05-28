@@ -16,5 +16,11 @@ namespace Renderer
 		
 	};
 
+	inline void Invoke(UsesReferences &instance, void(UsesReferences:: *operation)(ResourceHandle::t_hash), const ResourceHandle::t_hash hash)
+	{
+		(instance.*operation)(hash);
+		
+	}
+
 	
 }
