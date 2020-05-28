@@ -154,6 +154,31 @@ namespace App::Rendering
 		}
 		uiVertexIndexBuffer = { &mediator->Renderer(), mediator->Renderer().MakeBuffer(bufferContents.data(), bufferContents.size()) };
 
+		
+		//cbv creation
+		float L = imguiDrawData->DisplayPos.x;
+		float R = imguiDrawData->DisplayPos.x + imguiDrawData->DisplaySize.x;
+		float T = imguiDrawData->DisplayPos.y;
+		float B = imguiDrawData->DisplayPos.y + imguiDrawData->DisplaySize.y;
+		float orthogonalProjection[4][4]
+		{
+		    { 2.0f/(R-L),   0.0f,           0.0f,       0.0f },
+		    { 0.0f,         2.0f/(T-B),     0.0f,       0.0f },
+		    { 0.0f,         0.0f,           0.5f,       0.0f },
+		    { (R+L)/(L-R),  (T+B)/(B-T),    0.5f,       1.0f },
+		};		    
+
+		auto cbvSizeInBytes{ sizeof(float) * 4 * 4 };
+		uiConstantBuffer = { &mediator->Renderer(), mediator->Renderer().MakeBuffer(&orthogonalProjection, cbvSizeInBytes) };
+
+
+		//descriptors
+		auto &viewFactory{ mediator->Renderer().GetViewFactory() };
+		viewFactory.DeclareNewViewBlock(uiSignature, 2, 0);
+		viewFactory.CreateConstantBufferView(uiConstantBuffer, 1, cbvSizeInBytes);
+		viewFactory.CreateShaderResourceView(uiFontTexture, 1);
+		
+		uiDescriptors = { &mediator->Renderer(), viewFactory.FinalizeViewBlock() };
 
 		
 		//submit commands for ui rendering

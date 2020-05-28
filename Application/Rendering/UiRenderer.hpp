@@ -24,6 +24,10 @@ namespace App::Rendering
 		private: Renderer::HandleWrapper uiFontTexture;
 		
 		private: Renderer::HandleWrapper uiVertexIndexBuffer;
+
+		private: Renderer::HandleWrapper uiConstantBuffer;
+
+		private: Renderer::HandleWrapper uiDescriptors;
 		
 		
 		public: UiRenderer(RendererMediator &mediator);
