@@ -255,9 +255,6 @@
     <ClInclude Include="StateSettings\FilterTargetsImpl.hpp">
       <Filter>StateSettings</Filter>
     </ClInclude>
-    <ClInclude Include="StateSettings\SamplerSpec.hpp">
-      <Filter>Interface\StateSettings</Filter>
-    </ClInclude>
     <ClInclude Include="Interface\ResourceViewFactory.hpp">
       <Filter>Interface</Filter>
     </ClInclude>
@@ -287,6 +284,18 @@
     </ClInclude>
     <ClInclude Include="Commands\Basic\SetDescriptorBlockViewsGraphicsCommand.hpp">
       <Filter>Commands\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\Commands\CompositeCommand.hpp">
+      <Filter>Interface\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\Basic\DrawIndexedInstancedCommand.hpp">
+      <Filter>Commands\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\StateSettings\SamplerSpec.hpp">
+      <Filter>Interface\StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\UserContextCommandWrapper.hpp">
+      <Filter>Commands</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -449,6 +458,12 @@
       <Filter>Commands\Basic</Filter>
     </ClCompile>
     <ClCompile Include="Commands\Basic\SetDescriptorBlockViewsGraphicsCommand.cpp">
+      <Filter>Commands\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Interface\Commands\CompositeCommand.cpp">
+      <Filter>Interface\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Basic\DrawIndexedInstancedCommand.cpp">
       <Filter>Commands\Basic</Filter>
     </ClCompile>
   </ItemGroup>

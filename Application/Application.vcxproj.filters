@@ -29,14 +29,14 @@
     <ClCompile Include="ThirdParty\imgui\imgui_widgets.cpp">
       <Filter>ThirdParty\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="ThirdParty\imgui\imgui_impl_dx12.cpp">
-      <Filter>ThirdParty\imgui</Filter>
-    </ClCompile>
     <ClCompile Include="ThirdParty\imgui\imgui_impl_win32.cpp">
       <Filter>ThirdParty\imgui</Filter>
     </ClCompile>
     <ClCompile Include="Rendering\UiRenderer.cpp">
       <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\imgui\imgui_impl_dx12.cpp">
+      <Filter>ThirdParty\imgui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

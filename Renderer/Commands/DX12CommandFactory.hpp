@@ -65,7 +65,16 @@ namespace Renderer::DX12::Commands
 			float minDepth,
 			float maxDepth
 		) override;
+
 						
+		UniquePtr<::Renderer::Commands::Command> DrawIndexedInstanced
+		(
+			size_t instanceCount,
+			size_t indexCountPerInstance,
+			size_t offsetOntoIndexViewStart,
+			size_t offsetOntoIndexValue
+		) override;
+		
 	};
 	
 	

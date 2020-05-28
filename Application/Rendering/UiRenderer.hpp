@@ -2,10 +2,9 @@
 #include "Resources/HandleWrapper.hpp"
 
 
-namespace ImGui
-{
-	class ImGuiContext;
-}
+
+struct ImGuiContext;
+
 
 namespace App::Rendering
 {
@@ -15,7 +14,7 @@ namespace App::Rendering
 	{
 		private: RendererMediator *mediator;
 				 
-		private: ImGui::ImGuiContext *imguiContext;
+		private: ImGuiContext *imguiContext;
 
 		private: Renderer::HandleWrapper uiSignature;
 		
@@ -32,9 +31,18 @@ namespace App::Rendering
 		
 		public: UiRenderer(RendererMediator &mediator);
 
-		public: void SubmitFrame();
-
 		public: ~UiRenderer();
+
+		public: bool IsInvalid() const;
+		
+		public: UiRenderer(UiRenderer &&other) noexcept;
+
+		public: UiRenderer &operator=(UiRenderer &&other) noexcept;
+
+				private: void Invalidate();
+
+		
+		public: void SubmitFrame();
 		
 	};
 	

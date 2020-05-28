@@ -112,6 +112,16 @@ namespace RHA::DX12
 		public: void RecordSetVertexBuffer(const D3D12_VERTEX_BUFFER_VIEW& view) override;
 		
 		public: void RecordSetIndexBuffer(const D3D12_INDEX_BUFFER_VIEW& view) override;
+
+		
+		void RecordDrawIndexedInstanced
+		(
+			size_t instanceCount,
+			size_t indexCountPerInstance,
+			size_t offsetOntoIndexViewStart,
+			size_t offsetOntoIndexValue,
+			size_t offsetOntoIndexValueForPerInstanceData
+		) override;
 		
 	};
 

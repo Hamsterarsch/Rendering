@@ -12,7 +12,7 @@
 #include "Resources/SerializationContainer.hpp"
 
 #include "Rendering/RendererMediator.hpp"
-#include "Renderer/StateSettings/SamplerSpec.hpp"
+#include "StateSettings/SamplerSpec.hpp"
 #include "ThirdParty/imgui/imgui.h"
 #include "ThirdParty/imgui/imgui_impl_win32.h"
 
@@ -26,12 +26,13 @@ namespace Windows
 		//Initialize();
 
 		
-		::App::Rendering::RendererMediator mediator{{renderer.get(), renderer->MakeWindowsWindowSurface(window.GetHandle())}, *renderer, {mediator, {1,1}} };
+		::App::Rendering::RendererMediator mediator{{renderer.get(), renderer->MakeWindowsWindowSurface(window.GetHandle())}, *renderer, {mediator, {1,1}}, {mediator} };
 
 
 		//dearimgui render setup
 		ImGui_ImplWin32_Init(window.GetHandle());
 
+		ImGui::ShowDemoWindow();
 		
 		
 		constexpr UINT NO_FILTER{ 0 };
@@ -74,6 +75,7 @@ namespace Windows
 		
 		void App::Initialize()
 		{
+			/*
 			struct
 			{
 				vertex vertexData[8]{ {-0.75, -0.75, 0 }, {0,0,-1}, {0.75, -0.75, 0}, {0,0,-1}, {0.75, 0.75, 0}, {0,0,-1}, { -0.75, 0.75, 0}, {0,0,-1} };
@@ -129,7 +131,7 @@ namespace Windows
 
 				psoOpaqueShadedWithInstanceSupport = renderer->MakePso(Renderer::PipelineTypes::Opaque, Renderer::VertexLayoutTypes::PositionNormal, shaderList, rootHandle);
 			}
-
+			*/
 
 			renderer->SetCamera(0, 0, -11, 0, 0, 0);
 			
@@ -143,7 +145,6 @@ namespace Windows
 		void App::Update()
 		{			
 			ImGui_ImplWin32_NewFrame();
-			ImGui::NewFrame();
 			
 		}
 

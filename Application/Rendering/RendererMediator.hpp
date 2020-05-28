@@ -2,6 +2,7 @@
 #include "Rendering/SceneRenderer.hpp"
 #include "Commands/CommandFactory.hpp"
 #include "Resources/HandleWrapper.hpp"
+#include "UiRenderer.hpp"
 
 
 namespace Renderer{ class Renderer; }
@@ -19,20 +20,24 @@ namespace App::Rendering
 
 		private: SceneRenderer sceneRenderer;
 
+		private: UiRenderer uiRenderer;
+
 		private: unsigned char minimumFrameDeltaMs;
 		
 		private: size_t lastSubmitTime;
 
 
 
-		public: RendererMediator(Renderer::HandleWrapper &&mainWindowSurface, Renderer::Renderer &renderer, SceneRenderer &&sceneRenderer);
+		public: RendererMediator(Renderer::HandleWrapper &&mainWindowSurface, Renderer::Renderer &renderer, SceneRenderer &&sceneRenderer, UiRenderer &&uiRenderer);
 
 		
 		public: void SubmitFrame();
 
 				private: void SubmitCommand(UniquePtr<Renderer::Commands::Command> &&command);
 
-		public: inline Renderer::Renderer &Renderer() const {  return *underlyingRenderer; }
+		public: Renderer::Renderer &Renderer() { return *underlyingRenderer; }
+
+		public: Renderer::Commands::CommandFactory &CommandFactory() { return *commandFactory; }
 		
 	};
 

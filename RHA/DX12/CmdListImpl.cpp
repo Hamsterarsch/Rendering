@@ -308,5 +308,20 @@ namespace RHA::DX12
 		
 	}
 
+
+	
+	void CmdListImpl::RecordDrawIndexedInstanced
+	(
+		const size_t instanceCount,
+		const size_t indexCountPerInstance,
+		const size_t offsetOntoIndexViewStart,
+		const size_t offsetOntoIndexValue,
+		const size_t offsetOntoIndexValueForPerInstanceData
+	)
+	{
+		glist->DrawIndexedInstanced(indexCountPerInstance, instanceCount, offsetOntoIndexViewStart, offsetOntoIndexValue, offsetOntoIndexValueForPerInstanceData);
+		
+	}
+
 	
 }

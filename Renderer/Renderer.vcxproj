@@ -243,6 +243,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Commands\Basic\DrawIndexedInstancedCommand.hpp" />
     <ClInclude Include="Commands\Basic\SetDescriptorBlockViewsGraphicsCommand.hpp" />
     <ClInclude Include="Commands\Basic\SetIndexBufferCommand.hpp" />
     <ClInclude Include="Commands\Basic\SetPipelineStateCommand.hpp" />
@@ -275,10 +276,12 @@
     <ClInclude Include="Commands\RenderMeshCommand.hpp" />
     <ClInclude Include="Commands\Surface\PrepareSurfaceForRenderingCommand.hpp" />
     <ClInclude Include="Commands\Surface\PresentSurfaceCommand.hpp" />
+    <ClInclude Include="Commands\UserContextCommandWrapper.hpp" />
     <ClInclude Include="ForwardRenderer.hpp" />
     <ClInclude Include="Interface\Commands\Command.hpp" />
     <ClInclude Include="Interface\Commands\CommandFactory.hpp" />
     <ClInclude Include="Interface\Commands\CommandProcessor.hpp" />
+    <ClInclude Include="Interface\Commands\CompositeCommand.hpp" />
     <ClInclude Include="Interface\Renderer.hpp" />
     <ClInclude Include="Interface\RendererExportHelper.hpp" />
     <ClInclude Include="Interface\Resources\HandleWrapper.hpp" />
@@ -296,6 +299,7 @@
     <ClInclude Include="Interface\StateSettings\FilterTargets.hpp" />
     <ClInclude Include="Interface\StateSettings\FormatTargets.hpp" />
     <ClInclude Include="Interface\StateSettings\RasterizerSettings.hpp" />
+    <ClInclude Include="Interface\StateSettings\SamplerSpec.hpp" />
     <ClInclude Include="Interface\StateSettings\SemanticTargets.hpp" />
     <ClInclude Include="Interface\StateSettings\StateSettings.hpp" />
     <ClInclude Include="Interface\StateSettings\AddressingTargets.hpp" />
@@ -335,13 +339,13 @@
     <ClInclude Include="StateSettings\FilterTargetsImpl.hpp" />
     <ClInclude Include="StateSettings\FormatTargetsImpl.hpp" />
     <ClInclude Include="StateSettings\RasterizerSettingsImpl.hpp" />
-    <ClInclude Include="StateSettings\SamplerSpec.hpp" />
     <ClInclude Include="StateSettings\SemanticTargetsImpl.hpp" />
     <ClInclude Include="StateSettings\TargetHelpers.hpp" />
     <ClInclude Include="StateSettings\VertexLayoutSettingsImpl.hpp" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Commands\Basic\DrawIndexedInstancedCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetDescriptorBlockViewsGraphicsCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetIndexBufferCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetPipelineStateCommand.cpp" />
@@ -363,6 +367,7 @@
     <ClCompile Include="Commands\RenderMeshCommand.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="ForwardRenderer.cpp" />
+    <ClCompile Include="Interface\Commands\CompositeCommand.cpp" />
     <ClCompile Include="Interface\Renderer.cpp" />
     <ClCompile Include="Lighting\LightContainer.cpp" />
     <ClCompile Include="Lighting\LightGrid\VolumeTileGrid.cpp" />

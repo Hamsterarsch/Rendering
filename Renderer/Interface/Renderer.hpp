@@ -59,6 +59,8 @@ namespace Renderer
 		public: virtual UniquePtr<::Renderer::Commands::CommandFactory> MakeCommandFactory() = 0;
 
 		public: virtual void SubmitCommand(UniquePtr<::Renderer::Commands::Command> &&command) = 0;
+
+		public: virtual void SubmitContextCommand(UniquePtr<::Renderer::Commands::Command> &&command) = 0;
 		
 		public: virtual void DestroyUnreferencedResources() = 0;
 

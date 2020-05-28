@@ -186,6 +186,8 @@ namespace Renderer::DX12
 
 		public: void SubmitCommand(UniquePtr<::Renderer::Commands::Command> &&command) override;
 
+		public: void SubmitContextCommand(UniquePtr<::Renderer::Commands::Command> &&command) override;
+		
 		public: void DestroyUnreferencedResources() override;
 
 		public: void DestroyExecutedCommands() override;
@@ -203,6 +205,7 @@ namespace Renderer::DX12
 
 		
 		public: ResourceViewFactory &GetViewFactory() override;
+
 		
 	};
 

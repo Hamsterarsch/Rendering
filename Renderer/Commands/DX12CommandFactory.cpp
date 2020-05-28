@@ -10,6 +10,7 @@
 #include "Commands/Basic/SetVertexBufferCommand.hpp"
 #include "Commands/Basic/SetScissorRectCommand.hpp"
 #include "Commands/Basic/SetViewportCommand.hpp"
+#include "Basic/DrawIndexedInstancedCommand.hpp"
 
 
 namespace Renderer::DX12::Commands
@@ -110,6 +111,20 @@ namespace Renderer::DX12::Commands
 	)
 	{
 		return MakeUnique<SetViewportCommand>(topLeftX, topLeftY, width, height, minDepth, maxDepth);
+		
+	}
+
+
+	
+	UniquePtr<::Renderer::Commands::Command> DX12CommandFactory::DrawIndexedInstanced
+	(
+		const size_t instanceCount, 
+		const size_t indexCountPerInstance, 
+		const size_t offsetOntoIndexViewStart, 
+		const size_t offsetOntoIndexValue
+	)
+	{
+		return MakeUnique<DrawIndexedInstancedCommand>(instanceCount, indexCountPerInstance, offsetOntoIndexViewStart, offsetOntoIndexValue);
 		
 	}
 

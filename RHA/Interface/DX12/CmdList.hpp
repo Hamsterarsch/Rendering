@@ -100,6 +100,16 @@ namespace RHA
 
 			public: virtual void RecordSetIndexBuffer(const D3D12_INDEX_BUFFER_VIEW &view) = 0;
 			
+
+			public: virtual void RecordDrawIndexedInstanced
+			(
+				size_t instanceCount,
+				size_t indexCountPerInstance,
+				size_t offsetOntoIndexViewStart,
+				size_t offsetOntoIndexValue,
+				size_t offsetOntoIndexValueForPerInstanceData
+			) = 0;
+
 			
 			public: virtual void StopRecording() = 0;
 

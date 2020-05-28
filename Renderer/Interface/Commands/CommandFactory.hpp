@@ -63,6 +63,14 @@ namespace Renderer::Commands
 			float maxDepth
 		) = 0;
 
+
+		public: virtual UniquePtr<::Renderer::Commands::Command> DrawIndexedInstanced
+		(
+			size_t instanceCount,
+			size_t indexCountPerInstance,
+			size_t offsetOntoIndexViewStart,
+			size_t offsetOntoIndexValue
+		) = 0;
 		
 	};
 	

@@ -2,19 +2,20 @@
 #include "Rendering/RendererMediator.hpp"
 
 #include "ThirdParty/imgui/imgui.h"
-#include "ThirdParty/imgui/imgui_impl_win32.h"
 
-//replace change this to be based on renderer cmds
-#include "ThirdParty/imgui/imgui_impl_dx12.h"
+
 #include <vector>
 #include "Renderer.hpp"
+#include "Commands/CompositeCommand.hpp"
 #include "Resources/SerializationContainer.hpp"
-#include "Renderer/StateSettings/SamplerSpec.hpp"
+#include "StateSettings/SamplerSpec.hpp"
 
 
 namespace App::Rendering
 {
-	UiRenderer::UiRenderer(RendererMediator &mediator)
+	UiRenderer::UiRenderer(RendererMediator &mediator) :
+		mediator{ &mediator },
+		imguiContext{ nullptr }
 	{
 		IMGUI_CHECKVERSION();
 		
@@ -52,7 +53,7 @@ namespace App::Rendering
 		samplerSpec.filter = &Renderer::FilterTargets::FilterMinMagMipLinear;
 
 		Renderer::SerializeContainer root{};
-		renderer->SerializeRootSignature(0, 1, 0, 0, root, &samplerSpec, 1);
+		renderer->SerializeRootSignature(0, 1, 0, 0, &root, &samplerSpec, 1);
 		uiSignature = { renderer, renderer->MakeRootSignature(root.GetData()) };
 
 
@@ -127,11 +128,73 @@ namespace App::Rendering
 				
 	}
 
+
+	
+	UiRenderer::~UiRenderer()
+	{
+		if(this->IsInvalid())
+		{
+			ImGui::DestroyContext();
+		}
+		
+	}
+	
+		bool UiRenderer::IsInvalid() const
+		{
+			return imguiContext != nullptr;
+		
+		}
+
+
+
+	UiRenderer::UiRenderer(UiRenderer &&other) noexcept
+	{
+		*this = std::move(other);
+		
+	}
+	   	
+		UiRenderer &UiRenderer::operator=(UiRenderer &&other) noexcept
+		{
+			if(this == &other)
+			{
+				return *this;
+				
+			}
+
+			mediator = std::move(other.mediator);
+			imguiContext = std::move(other.imguiContext);
+			uiSignature = std::move(other.uiSignature);
+			uiPso = std::move(other.uiPso);
+			uiFontTexture = std::move(other.uiFontTexture);
+			uiVertexIndexBuffer = std::move(other.uiVertexIndexBuffer);
+			uiConstantBuffer = std::move(other.uiConstantBuffer);
+			uiDescriptors = std::move(other.uiDescriptors);
+		
+			other.Invalidate();
+
+			return *this;
+		
+		}
+
+			void UiRenderer::Invalidate()
+			{
+				imguiContext = nullptr;
+			
+			}
+
+	
+
 	void UiRenderer::SubmitFrame()
 	{		
-		ImGui::Render();
+		ImGui::Render();		
 		auto *imguiDrawData{ ImGui::GetDrawData() };
 
+		if(imguiDrawData->DisplaySize.x <= 0 || imguiDrawData->DisplaySize.y <= 0)
+		{
+			return;
+			
+		}
+		
 		//buffer creation
 		std::vector<char> bufferContents;		
 
@@ -180,6 +243,11 @@ namespace App::Rendering
 		
 		uiDescriptors = { &mediator->Renderer(), viewFactory.FinalizeDescriptorBlock() };
 
+		auto &cmdFactory{ mediator->CommandFactory() };
+		auto uiCommand{ MakeUnique<Renderer::Commands::CompositeCommand>() };
+		uiCommand->Add(cmdFactory.SetSignatureGraphics(uiSignature));
+		uiCommand->Add(cmdFactory.SetPipelineState(uiPso));
+		uiCommand->Add(cmdFactory.SetDescriptorBlockViewsGraphics(uiDescriptors));
 		
 		//submit commands for ui rendering
 		const auto clipOffset{ imguiDrawData->DisplayPos };
@@ -197,30 +265,33 @@ namespace App::Rendering
 					throw;
 				}
 
-				//set new scissor rect
-				//set table
-				//draw
-				
+				uiCommand->Add(cmdFactory.SetScissorRect
+				(
+					drawCommand.ClipRect.x - clipOffset.x,
+					drawCommand.ClipRect.y - clipOffset.y,
+					drawCommand.ClipRect.z - clipOffset.x,
+					drawCommand.ClipRect.w - clipOffset.y 
+				));
+
+				uiCommand->Add(cmdFactory.DrawIndexedInstanced
+				(
+					drawCommand.ElemCount,
+					1,
+					drawCommand.IdxOffset + indexOffset,
+					drawCommand.VtxOffset + vertexOffset
+				));				
 			}
+			indexOffset += drawList->IdxBuffer.Size;
+			vertexOffset += drawList->VtxBuffer.Size;
 		}
-			
+
+		mediator->Renderer().SubmitCommand(std::move(uiCommand));		
+		ImGui::NewFrame();
+		
 	}
 				
-		//ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), cmd list)//draw data is what contains imgui state information related to rendering, because this function does the actual interaction with the gpu. maybe just work from here instead of replacing the rotten dx12 backend
-
-		//close and submit list
-		
 	
 
-	UiRenderer::~UiRenderer()
-	{
-		//ensure resources can be freed
-
-		ImGui_ImplDX12_Shutdown();
-
-		ImGui::DestroyContext();
-		
-	}
 
 	
 }

@@ -9,12 +9,14 @@ namespace App::Rendering
 	(
 		Renderer::HandleWrapper &&mainWindowSurface,
 		Renderer::Renderer &renderer,
-		SceneRenderer &&sceneRenderer
+		SceneRenderer &&sceneRenderer,
+		UiRenderer &&uiRenderer
 	)	:
 		underlyingRenderer{ &renderer },
 		commandFactory{ renderer.MakeCommandFactory() },
 		mainWindowSurface{ std::move(mainWindowSurface) },
 		sceneRenderer{ std::move(sceneRenderer) },
+		uiRenderer{ std::move(uiRenderer) },
 		minimumFrameDeltaMs{ 1 },
 		lastSubmitTime{ 0 }
 	{		
@@ -30,11 +32,12 @@ namespace App::Rendering
 		{
 			return;
 		}
-		
+				
 		SubmitCommand(commandFactory->PrepareSurfaceForRendering(mainWindowSurface));
 		
-		sceneRenderer.SubmitFrame();
-		
+		sceneRenderer.SubmitFrame();		
+		uiRenderer.SubmitFrame();
+		//are scissors reset automatically ?
 		SubmitCommand(commandFactory->PresentSurface(mainWindowSurface));
 
 		underlyingRenderer->DestroyUnreferencedResources();

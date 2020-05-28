@@ -34,13 +34,7 @@
 #include "Commands/BindDescriptorsContextCommand.hpp"
 #include "Commands/GlobalBufferContextCommand.hpp"
 #include "Commands/LightingSetup/FlagActiveVolumeTilesCommand.hpp"
-#include "Commands/LightingSetup/BuildActiveTileListCommand.hpp"
-#include "Commands/LightingSetup/AssignLightsToTilesCommand.hpp"
-#include "Commands/LightingContextCommand.hpp"
-#include "Commands/PresentSurfaceCommandOld.hpp"
-#include "Commands/LightingSetup/GenerateActiveTileListCommand.hpp"
-
-#include <chrono>
+#include "Commands/UserContextCommandWrapper.hpp"
 #include "Commands/DX12CommandFactory.hpp"
 
 #if DEBUG_OPTIMIZED
@@ -699,6 +693,13 @@ namespace Renderer::DX12
 	void ForwardRenderer::SubmitCommand(UniquePtr<::Renderer::Commands::Command> &&command)
 	{
 		commandProcessor.SubmitCommand(UniquePtr<Commands::DX12Command>{static_cast<Commands::DX12Command *>(command.release())});
+		
+	}
+
+	
+	void ForwardRenderer::SubmitContextCommand(UniquePtr<::Renderer::Commands::Command> &&command)
+	{
+		commandProcessor.SubmitContextCommand(MakeUnique<Commands::UserContextCommandWrapper>(descriptors, std::move(command)));
 		
 	}
 
