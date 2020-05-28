@@ -31,6 +31,39 @@ namespace Renderer::Commands
 
 		public: virtual UniquePtr<Command> BindSignatureToCompute(ResourceHandle::t_hash signature) = 0;
 		*/
+
+		public: virtual UniquePtr<::Renderer::Commands::Command> SetSignatureGraphics(ResourceHandle::t_hash signature) = 0;
+
+		public: virtual UniquePtr<::Renderer::Commands::Command> SetPipelineState(ResourceHandle::t_hash pipeline) = 0;
+
+		
+		public: virtual UniquePtr<::Renderer::Commands::Command> SetDescriptorBlockViewsGraphics(ResourceHandle::t_hash descriptorBlock) = 0;
+
+		
+		public: virtual UniquePtr<::Renderer::Commands::Command> SetIndexBuffer(ResourceHandle::t_hash indexBuffer, size_t byteOffsetToIndices, size_t numIndices) = 0;
+
+		public: virtual UniquePtr<::Renderer::Commands::Command> SetVertexBuffer
+		(
+			ResourceHandle::t_hash vertexBuffer,
+			size_t byteOffsetToVertices,
+			size_t numVertices,
+			size_t vertexStrideInBytes
+		) = 0;
+
+
+		public: virtual UniquePtr<::Renderer::Commands::Command> SetScissorRect(float topLeftX, float topLeftY, float width, float height) = 0;
+				
+		public: virtual UniquePtr<::Renderer::Commands::Command> SetViewport
+		(
+			float topLeftX, 
+			float topLeftY, 
+			float width,
+			float height,
+			float minDepth,
+			float maxDepth
+		) = 0;
+
+		
 	};
 	
 	

@@ -33,6 +33,39 @@ namespace Renderer::DX12::Commands
 		
 		public: UniquePtr<Renderer::Commands::Command> BindSignatureToCompute(ResourceHandle::t_hash signature) override;
 		*/
+
+
+		public: UniquePtr<::Renderer::Commands::Command> SetSignatureGraphics(ResourceHandle::t_hash signature) override;
+
+		public: UniquePtr<::Renderer::Commands::Command> SetPipelineState(ResourceHandle::t_hash pipeline) override;
+
+		
+		public: UniquePtr<::Renderer::Commands::Command> SetDescriptorBlockViewsGraphics(ResourceHandle::t_hash descriptorBlock) override;
+
+		
+		public: UniquePtr<::Renderer::Commands::Command> SetIndexBuffer(ResourceHandle::t_hash indexBuffer, size_t byteOffsetToIndices, size_t numIndices) override;
+
+		public: UniquePtr<::Renderer::Commands::Command> SetVertexBuffer
+		(
+			ResourceHandle::t_hash vertexBuffer,
+			size_t byteOffsetToVertices,
+			size_t numVertices,
+			size_t vertexStrideInBytes
+		) override;
+
+
+		public: UniquePtr<::Renderer::Commands::Command> SetScissorRect(float topLeftX, float topLeftY, float width, float height) override;
+				
+		public: UniquePtr<::Renderer::Commands::Command> SetViewport
+		(
+			float topLeftX, 
+			float topLeftY, 
+			float width,
+			float height,
+			float minDepth,
+			float maxDepth
+		) override;
+						
 	};
 	
 	
