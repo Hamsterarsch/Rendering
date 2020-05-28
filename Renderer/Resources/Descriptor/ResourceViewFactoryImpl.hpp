@@ -82,7 +82,7 @@ namespace Renderer::DX12
 		) override;
 
 		
-		public: ResourceHandle::t_hash GetCurrentViewBlock() override;
+		public: ResourceHandle::t_hash FinalizeViewBlock() override;
 
 	};
 		

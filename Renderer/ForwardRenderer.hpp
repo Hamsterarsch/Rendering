@@ -18,6 +18,7 @@
 #include "StateSettings/DepthStencilSettingsImpl.hpp"
 #include "StateSettings/VertexLayoutSettingsImpl.hpp"
 #include "StateSettings/RasterizerSettingsImpl.hpp"
+#include "Resources/Descriptor/ResourceViewFactoryImpl.hpp"
 
 
 namespace RHA
@@ -98,6 +99,8 @@ namespace Renderer::DX12
 		private: UniquePtr<Commands::InitVolumeTileGridCommand> initGridCmd;
 
 		private: std::vector<Commands::RenderMeshArguments> opaqueMeshArguments;
+
+		private: ResourceViewFactoryImpl resourceViewFactory;
 
 	 			
 		
@@ -198,6 +201,9 @@ namespace Renderer::DX12
 		
 		public: VertexLayoutSettings &GetVertexLayoutSettings() override;
 
+		
+		public: ResourceViewFactory &GetViewFactory() override;
+		
 	};
 
 

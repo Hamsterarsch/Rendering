@@ -36,7 +36,7 @@ namespace Renderer
 		public: virtual void CreateUnorderedAccessView(ResourceHandle::t_hash forResource, size_t ordinal, size_t firstIndex, size_t numElements, size_t elementStrideInBytes, ResourceHandle::t_hash counterResource) = 0;
 
 
-		public: virtual ResourceHandle::t_hash GetCurrentViewBlock() = 0;
+		public: virtual ResourceHandle::t_hash FinalizeViewBlock() = 0;
 		
 	};
 	

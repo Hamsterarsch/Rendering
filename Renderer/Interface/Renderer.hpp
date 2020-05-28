@@ -13,6 +13,7 @@
 #include "StateSettings/VertexLayoutSettings.hpp"
 #include "StateSettings/RasterizerSettings.hpp"
 #include "StateSettings/SamplerSpec.hpp"
+#include "ResourceViewFactory.hpp"
 
 namespace Renderer
 {
@@ -73,6 +74,9 @@ namespace Renderer
 		public: virtual RasterizerSettings &GetRasterizerSettings() = 0;
 
 		public: virtual VertexLayoutSettings &GetVertexLayoutSettings() = 0;
+
+
+		public: virtual ResourceViewFactory &GetViewFactory() = 0;
 				
 	};
 

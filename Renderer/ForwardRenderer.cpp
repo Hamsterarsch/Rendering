@@ -95,7 +95,8 @@ namespace Renderer::DX12
 		shaderFactory{ Facade::MakeShaderFactory(5, 1) },
 		descriptors{resources.get(), 1'000'000, 2048},
 		cmdFactory{ *this, registry, descriptors },
-		commandProcessor{ *resources, *commonQueue, registry }
+		commandProcessor{ *resources, *commonQueue, registry },
+		resourceViewFactory{ *resources, registry }
 	{			
 		shaderFactory->AddIncludeDirectory(Filesystem::Conversions::MakeExeRelative("../Content/Shaders/Includes").c_str());
 						
@@ -757,6 +758,14 @@ namespace Renderer::DX12
 		return vertexLayoutSettings;
 		
 	}
+
+
 	
+	ResourceViewFactory &ForwardRenderer::GetViewFactory()
+	{
+		return resourceViewFactory;
+		
+	}
+
 	
 }

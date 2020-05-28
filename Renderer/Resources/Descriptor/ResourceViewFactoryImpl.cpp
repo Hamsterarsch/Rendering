@@ -164,7 +164,7 @@ namespace Renderer::DX12
 
 
 	
-	ResourceHandle::t_hash ResourceViewFactoryImpl::GetCurrentViewBlock()
+	ResourceHandle::t_hash ResourceViewFactoryImpl::FinalizeViewBlock()
 	{		
 		return registry->Register(std::move(currentAllocator));
 		
