@@ -63,10 +63,12 @@ namespace Renderer::DX12::Commands
 	(
 		const ResourceHandle::t_hash indexBuffer,
 		const size_t byteOffsetToIndices, 
-		const size_t numIndices
+		const size_t numIndices,
+		const size_t indexSizeInBytes,
+		const t_format_target indexFormat
 	)
 	{
-		return MakeUnique<SetIndexBufferCommand>(indexBuffer, byteOffsetToIndices, numIndices, *registry);
+		return MakeUnique<SetIndexBufferCommand>(indexBuffer, byteOffsetToIndices, numIndices, indexSizeInBytes, indexFormat, *registry);
 		
 	}
 

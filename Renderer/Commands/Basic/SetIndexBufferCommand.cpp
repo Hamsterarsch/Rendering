@@ -1,4 +1,5 @@
 #include "Commands/Basic/SetIndexBufferCommand.hpp"
+#include "StateSettings/TargetHelpers.hpp"
 
 
 namespace Renderer::DX12::Commands
@@ -8,13 +9,15 @@ namespace Renderer::DX12::Commands
 		const ResourceHandle::t_hash indexBuffer, 
 		const size_t byteOffsetToIndices, 
 		const size_t numIndices,
+		const size_t indexSizeInBytes,
+		const t_format_target indexFormat,
 		HasQueriableResources &resourceProvider
 	)	:
 		indexBuffer{ indexBuffer }
 	{
 		indexView.BufferLocation = resourceProvider.GetResourceGpuAddress(indexBuffer) + byteOffsetToIndices;
-		indexView.SizeInBytes = numIndices * sizeof(unsigned);
-		indexView.Format = DXGI_FORMAT_R32_UINT;
+		indexView.SizeInBytes = numIndices * indexSizeInBytes;
+		indexView.Format = GetTargetValue<DXGI_FORMAT>(indexFormat);
 		
 	}
 

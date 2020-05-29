@@ -43,7 +43,14 @@ namespace Renderer::DX12::Commands
 		public: UniquePtr<::Renderer::Commands::Command> SetDescriptorBlockViewsGraphics(ResourceHandle::t_hash descriptorBlock) override;
 
 		
-		public: UniquePtr<::Renderer::Commands::Command> SetIndexBuffer(ResourceHandle::t_hash indexBuffer, size_t byteOffsetToIndices, size_t numIndices) override;
+		public: UniquePtr<::Renderer::Commands::Command> SetIndexBuffer
+		(
+			ResourceHandle::t_hash indexBuffer,
+			size_t byteOffsetToIndices,
+			size_t numIndices,
+			size_t indexSizeInBytes,
+			t_format_target indexFormat
+		) override;
 
 		public: UniquePtr<::Renderer::Commands::Command> SetVertexBuffer
 		(

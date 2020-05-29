@@ -1,5 +1,6 @@
 #pragma once
 #include "Commands/DX12Command.hpp"
+#include "StateSettings/FormatTargets.hpp"
 
 
 namespace Renderer::DX12::Commands
@@ -12,7 +13,15 @@ namespace Renderer::DX12::Commands
 		
 						 		
 		
-		public: SetIndexBufferCommand(ResourceHandle::t_hash indexBuffer, size_t byteOffsetToIndices, size_t numIndices, HasQueriableResources &resourceProvider);
+		public: SetIndexBufferCommand
+		(
+			ResourceHandle::t_hash indexBuffer,
+			size_t byteOffsetToIndices,
+			size_t numIndices,
+			size_t indexSizeInBytes,
+			t_format_target indexFormat,
+			HasQueriableResources &resourceProvider
+		);
 		
 		public:	void ExecuteOperationOnResourceReferences(UsesReferences &registry, void(UsesReferences:: *operation)(size_t)) override;
 		
