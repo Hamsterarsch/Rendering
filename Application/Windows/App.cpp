@@ -17,23 +17,57 @@
 #include "ThirdParty/imgui/imgui_impl_win32.h"
 
 
+// Forward declare message handler from imgui_impl_win32.cpp
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 namespace Windows
 {
+	
+	LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+	{
+	    if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
+	        return true;
+	
+	    switch (msg)
+	    {/*
+	    case WM_SIZE:
+	        if (g_pd3dDevice != NULL && wParam != SIZE_MINIMIZED)
+	        {
+	            WaitForLastSubmittedFrame();
+	            ImGui_ImplDX12_InvalidateDeviceObjects();
+	            CleanupRenderTarget();
+	            ResizeSwapChain(hWnd, (UINT)LOWORD(lParam), (UINT)HIWORD(lParam));
+	            CreateRenderTarget();
+	            ImGui_ImplDX12_CreateDeviceObjects();
+	        }
+	        return 0;*/
+	    case WM_SYSCOMMAND:
+	        if ((wParam & 0xfff0) == SC_KEYMENU) // Disable ALT application menu
+	            return 0;
+	        break;
+	    case WM_DESTROY:
+	        ::PostQuitMessage(0);
+	        return 0;
+	    }
+	    return ::DefWindowProc(hWnd, msg, wParam, lParam);
+	}
+	
 	App::App() :
-		window{ {1920, 1080}, true, L"Window", L"UniqueClassName" },
-		renderer{ Renderer::MakeRenderer(window.GetHandle()) }
+		window{ {1920, 1080}, true, L"Window", L"UniqueClassName", WndProc },
+		renderer{ Renderer::MakeRenderer(window.GetHandle()) },
+		rendererMediator
+	{
+		{ renderer.get(), renderer->MakeWindowsWindowSurface(window.GetHandle()) },
+		*renderer,
+		{ rendererMediator, {1,1} },
+		{ rendererMediator, renderer.get() }
+	}
 	{
 		//Initialize();
-
+		auto *d = WndProc;
 		
-		::App::Rendering::RendererMediator mediator{{renderer.get(), renderer->MakeWindowsWindowSurface(window.GetHandle())}, *renderer, {mediator, {1,1}}, {mediator} };
-
-
 		//dearimgui render setup
 		ImGui_ImplWin32_Init(window.GetHandle());
-
-		ImGui::ShowDemoWindow();
-		
 		
 		constexpr UINT NO_FILTER{ 0 };
 		constexpr decltype(nullptr) FOR_ALL_WINDOWS{ nullptr };
@@ -55,12 +89,13 @@ namespace Windows
 
 			if (hasNewMessage)
 			{
+				TranslateMessage(&msg);
 				DispatchMessage(&msg);
 			}
 			else
-			{
+			{				
 				Update();				
-				mediator.SubmitFrame();
+				rendererMediator.SubmitFrame();
 			}
 		}
 		ImGui_ImplWin32_Shutdown();
@@ -143,8 +178,12 @@ namespace Windows
 	
 	   	
 		void App::Update()
-		{			
+		{
 			ImGui_ImplWin32_NewFrame();
+			ImGui::NewFrame();
+												
+			ImGui::ShowDemoWindow();
+			
 			
 		}
 

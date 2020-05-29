@@ -13,7 +13,7 @@
 
 namespace App::Rendering
 {
-	UiRenderer::UiRenderer(RendererMediator &mediator) :
+	UiRenderer::UiRenderer(RendererMediator &mediator, ::Renderer::Renderer *renderer) :
 		mediator{ &mediator },
 		imguiContext{ nullptr }
 	{
@@ -21,39 +21,14 @@ namespace App::Rendering
 		
 		imguiContext = ImGui::CreateContext();
 		ImGui::StyleColorsDark();
-
-		auto *renderer{ &mediator.Renderer()  };
 		
-		auto &depthSettings{ renderer->GetDepthStencilSettings() };
-		depthSettings.SetEnableDepth(false);
-
-		
-		auto &blendSettings{ renderer->GetBlendSettings() };
-		blendSettings.SetEnableBlend(true);
-		
-		blendSettings.SetBlendSrcAlpha(&Renderer::BlendSettings::TargetSrc);
-		blendSettings.SetBlendInverseSrcAlpha(&Renderer::BlendSettings::TargetDst);
-		
-		blendSettings.SetBlendInverseSrcAlpha(&Renderer::BlendSettings::TargetSrcAlpha);
-		blendSettings.SetBlendZero(&Renderer::BlendSettings::TargetDstAlpha);
-
-		blendSettings.SetBlendOpAdd(&Renderer::BlendSettings::TargetBlendOpColor);
-		blendSettings.SetBlendOpAdd(&Renderer::BlendSettings::TargetBlendOpAlpha);
-
-		auto &rasterSettings{ renderer->GetRasterizerSettings() };
-		rasterSettings.SetFrontIsCounterClockwise(false);
-
-		auto &vertexLayoutSettings{ renderer->GetVertexLayoutSettings() };
-		vertexLayoutSettings.AddLayoutElementDesc(&Renderer::SemanticTargets::TargetPosition, 0, &Renderer::FormatTargets::R32G32_Float, (UINT)IM_OFFSETOF(ImDrawVert, pos));
-		vertexLayoutSettings.AddLayoutElementDesc(&Renderer::SemanticTargets::TargetTexcoord, 0, &Renderer::FormatTargets::R32G32_Float, (UINT)IM_OFFSETOF(ImDrawVert, uv));
-		vertexLayoutSettings.AddLayoutElementDesc(&Renderer::SemanticTargets::TargetColor, 0, &Renderer::FormatTargets::R8G8B8A8_Norm, (UINT)IM_OFFSETOF(ImDrawVert, col));//todo: check offsets
 
 		Renderer::SamplerSpec samplerSpec{};
 		samplerSpec.addressU = samplerSpec.addressV = samplerSpec.addressW = &Renderer::AddressingTargets::AddressingModeWrap;
 		samplerSpec.filter = &Renderer::FilterTargets::FilterMinMagMipLinear;
 
 		Renderer::SerializeContainer root{};
-		renderer->SerializeRootSignature(0, 1, 0, 0, &root, &samplerSpec, 1);
+		renderer->SerializeRootSignature(1, 1, 0, 0, &root, &samplerSpec, 1);
 		uiSignature = { renderer, renderer->MakeRootSignature(root.GetData()) };
 
 
@@ -63,13 +38,13 @@ namespace App::Rendering
 		int width, height;
 		io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
 
-		uiFontTexture ={ renderer, renderer->MakeTexture(pixels, width, height) };
+		uiFontTexture = { renderer, renderer->MakeTexture(pixels, width, height) };
 
 		//static_assert(sizeof(ImTextureID) >= 4, "Can't pack descriptor handle into TexID, 32-bit not supported yet.");
 		//io.Fonts->TexID = (ImTextureID)imguiFontsTex; //should be okay to not set io.Fonts because its only a user payload
 		
 		static const char* vertexShader =
-        "cbuffer vertexBuffer : register(b0) \
+        "cbuffer vertexBuffer : register(b2) \
         {\
           float4x4 ProjectionMatrix; \
         };\
@@ -99,6 +74,7 @@ namespace App::Rendering
 		Renderer::SerializeContainer vs{};
 		renderer->CompileVertexShader(vertexShader, strlen(vertexShader), &vs);
 
+		
 		static const char* pixelShader =
             "struct PS_INPUT\
             {\
@@ -118,11 +94,38 @@ namespace App::Rendering
 		Renderer::SerializeContainer ps{};
 		renderer->CompilePixelShader(pixelShader, strlen(pixelShader), &ps);
 
+		
 		Renderer::ShaderList list{};
 		list.vs.data = vs.GetData();
 		list.vs.sizeInBytes = vs.GetSize();
 		list.ps.data = ps.GetData();
 		list.ps.sizeInBytes = ps.GetSize();
+
+
+		auto &depthSettings{ renderer->GetDepthStencilSettings() };
+		depthSettings.SetEnableDepth(false);
+
+		
+		auto &blendSettings{ renderer->GetBlendSettings() };
+		blendSettings.SetEnableBlend(true);
+		
+		blendSettings.SetBlendSrcAlpha(&Renderer::BlendSettings::TargetSrc);
+		blendSettings.SetBlendInverseSrcAlpha(&Renderer::BlendSettings::TargetDst);
+		
+		blendSettings.SetBlendInverseSrcAlpha(&Renderer::BlendSettings::TargetSrcAlpha);
+		blendSettings.SetBlendZero(&Renderer::BlendSettings::TargetDstAlpha);
+
+		blendSettings.SetBlendOpAdd(&Renderer::BlendSettings::TargetBlendOpColor);
+		blendSettings.SetBlendOpAdd(&Renderer::BlendSettings::TargetBlendOpAlpha);
+
+		auto &rasterSettings{ renderer->GetRasterizerSettings() };
+		rasterSettings.SetFrontIsCounterClockwise(false);
+
+		auto &vertexLayoutSettings{ renderer->GetVertexLayoutSettings() };
+		vertexLayoutSettings.AddLayoutElementDesc(&Renderer::SemanticTargets::TargetPosition, 0, &Renderer::FormatTargets::R32G32_Float, (UINT)IM_OFFSETOF(ImDrawVert, pos));
+		vertexLayoutSettings.AddLayoutElementDesc(&Renderer::SemanticTargets::TargetTexcoord, 0, &Renderer::FormatTargets::R32G32_Float, (UINT)IM_OFFSETOF(ImDrawVert, uv));
+		vertexLayoutSettings.AddLayoutElementDesc(&Renderer::SemanticTargets::TargetColor, 0, &Renderer::FormatTargets::R8G8B8A8_UNorm, (UINT)IM_OFFSETOF(ImDrawVert, col));//todo: check offsets
+
 		
 		uiPso = { renderer, renderer->MakePso(list, uiSignature) };
 				
@@ -188,10 +191,20 @@ namespace App::Rendering
 	{		
 		ImGui::Render();		
 		auto *imguiDrawData{ ImGui::GetDrawData() };
-
+		
 		if(imguiDrawData->DisplaySize.x <= 0 || imguiDrawData->DisplaySize.y <= 0)
 		{
 			return;
+			
+		}
+
+		if(imguiDrawData->TotalVtxCount == 0 || imguiDrawData->TotalIdxCount == 0)
+		{
+			auto uiReferenceDummy{ MakeUnique<Renderer::Commands::CompositeCommand>() };
+			uiReferenceDummy->AddReferenceTo(uiFontTexture);
+
+			mediator->Renderer().SubmitCommand(std::move(uiReferenceDummy));			
+			return;//todo: do something against destroyed ui resources in this case other than fake commands
 			
 		}
 		
@@ -201,7 +214,7 @@ namespace App::Rendering
 		static_assert(sizeof(char) == 1);
 		const auto vertexDataSizeInBytes{ imguiDrawData->TotalVtxCount * sizeof(ImDrawVert) };
 		const auto bufferSizeInBytes{ vertexDataSizeInBytes + imguiDrawData->TotalIdxCount * sizeof(ImDrawIdx) };
-		bufferContents.reserve(bufferSizeInBytes);
+		bufferContents.resize(bufferSizeInBytes);
 		
 		//imgui stores vertices/indices per draw list, so we have to copy it to a continuous memory block before upload
 		auto *vertexMemory{ bufferContents.data() };
@@ -239,7 +252,7 @@ namespace App::Rendering
 		auto &viewFactory{ mediator->Renderer().GetViewFactory() };
 		viewFactory.DeclareNewDescriptorBlock(uiSignature, 2, 0);
 		viewFactory.CreateConstantBufferView(uiConstantBuffer, 1, cbvSizeInBytes);
-		viewFactory.CreateShaderResourceView(uiFontTexture, 1);
+		viewFactory.CreateShaderResourceView(uiFontTexture, 1, &Renderer::FormatTargets::R8G8B8A8_UNorm, 1, 0);
 		
 		uiDescriptors = { &mediator->Renderer(), viewFactory.FinalizeDescriptorBlock() };
 
@@ -248,6 +261,16 @@ namespace App::Rendering
 		uiCommand->Add(cmdFactory.SetSignatureGraphics(uiSignature));
 		uiCommand->Add(cmdFactory.SetPipelineState(uiPso));
 		uiCommand->Add(cmdFactory.SetDescriptorBlockViewsGraphics(uiDescriptors));
+		uiCommand->Add(cmdFactory.SetVertexBuffer(uiVertexIndexBuffer, 0, imguiDrawData->TotalVtxCount, sizeof(ImDrawVert)));
+		uiCommand->Add(cmdFactory.SetIndexBuffer
+		(
+			uiVertexIndexBuffer,
+			vertexDataSizeInBytes,
+			imguiDrawData->TotalIdxCount,
+			sizeof(ImDrawIdx),
+			&Renderer::FormatTargets::R16_Uint
+		));
+		
 		
 		//submit commands for ui rendering
 		const auto clipOffset{ imguiDrawData->DisplayPos };
@@ -265,18 +288,20 @@ namespace App::Rendering
 					throw;
 				}
 
+				const auto topLeftX{ drawCommand.ClipRect.x - clipOffset.x };
+				const auto topLeftY{ drawCommand.ClipRect.y - clipOffset.y };
 				uiCommand->Add(cmdFactory.SetScissorRect
 				(
-					drawCommand.ClipRect.x - clipOffset.x,
-					drawCommand.ClipRect.y - clipOffset.y,
-					drawCommand.ClipRect.z - clipOffset.x,
-					drawCommand.ClipRect.w - clipOffset.y 
+					topLeftX,
+					topLeftY,
+					drawCommand.ClipRect.z - clipOffset.x - topLeftX,
+					drawCommand.ClipRect.w - clipOffset.y - topLeftY 
 				));
 
 				uiCommand->Add(cmdFactory.DrawIndexedInstanced
 				(
-					drawCommand.ElemCount,
 					1,
+					drawCommand.ElemCount,
 					drawCommand.IdxOffset + indexOffset,
 					drawCommand.VtxOffset + vertexOffset
 				));				
@@ -286,7 +311,6 @@ namespace App::Rendering
 		}
 
 		mediator->Renderer().SubmitCommand(std::move(uiCommand));		
-		ImGui::NewFrame();
 		
 	}
 				

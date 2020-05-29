@@ -2,7 +2,7 @@
 #include "Resources/HandleWrapper.hpp"
 
 
-
+namespace Renderer { class Renderer; }
 struct ImGuiContext;
 
 
@@ -29,7 +29,7 @@ namespace App::Rendering
 		private: Renderer::HandleWrapper uiDescriptors;
 		
 		
-		public: UiRenderer(RendererMediator &mediator);
+		public: UiRenderer(RendererMediator &mediator, ::Renderer::Renderer *renderer);
 
 		public: ~UiRenderer();
 

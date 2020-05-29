@@ -31,6 +31,8 @@ namespace App::Rendering
 		public: RendererMediator(Renderer::HandleWrapper &&mainWindowSurface, Renderer::Renderer &renderer, SceneRenderer &&sceneRenderer, UiRenderer &&uiRenderer);
 
 		
+		public: bool DidRenderLastSubmit() const;
+		
 		public: void SubmitFrame();
 
 				private: void SubmitCommand(UniquePtr<Renderer::Commands::Command> &&command);
