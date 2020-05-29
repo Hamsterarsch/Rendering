@@ -90,7 +90,7 @@ namespace Renderer::DX12
 		descriptors{resources.get(), 1'000'000, 2048},
 		cmdFactory{ *this, registry, descriptors },
 		commandProcessor{ *resources, *commonQueue, registry },
-		resourceViewFactory{ *resources, registry }
+		resourceViewFactory{ *resources, registry, descriptors }
 	{			
 		shaderFactory->AddIncludeDirectory(Filesystem::Conversions::MakeExeRelative("../Content/Shaders/Includes").c_str());
 						
@@ -692,7 +692,7 @@ namespace Renderer::DX12
 	
 	void ForwardRenderer::SubmitCommand(UniquePtr<::Renderer::Commands::Command> &&command)
 	{
-		commandProcessor.SubmitCommand(UniquePtr<Commands::DX12Command>{static_cast<Commands::DX12Command *>(command.release())});
+		commandProcessor.SubmitCommand(std::move(command));
 		
 	}
 
