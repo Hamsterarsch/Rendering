@@ -297,6 +297,16 @@
     <ClInclude Include="Commands\UserContextCommandWrapper.hpp">
       <Filter>Commands</Filter>
     </ClInclude>
+    <ClInclude Include="Interface\Commands\CompositeCommand.hpp">
+      <Filter>Interface\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\ContainsReferences.hpp">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\Descriptor\ReferenceAwareDescriptorAllocator.hpp">
+      <Filter>Resources\Descriptor</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />

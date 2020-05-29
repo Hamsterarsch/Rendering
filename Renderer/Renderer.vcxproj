@@ -278,10 +278,12 @@
     <ClInclude Include="Commands\Surface\PresentSurfaceCommand.hpp" />
     <ClInclude Include="Commands\UserContextCommandWrapper.hpp" />
     <ClInclude Include="ForwardRenderer.hpp" />
+    <ClInclude Include="Helpers.hpp" />
     <ClInclude Include="Interface\Commands\Command.hpp" />
     <ClInclude Include="Interface\Commands\CommandFactory.hpp" />
     <ClInclude Include="Interface\Commands\CommandProcessor.hpp" />
     <ClInclude Include="Interface\Commands\CompositeCommand.hpp" />
+    <ClInclude Include="Interface\ContainsReferences.hpp" />
     <ClInclude Include="Interface\Renderer.hpp" />
     <ClInclude Include="Interface\RendererExportHelper.hpp" />
     <ClInclude Include="Interface\Resources\HandleWrapper.hpp" />
@@ -310,6 +312,7 @@
     <ClInclude Include="Resources\Descriptor\DescriptorChunk.hpp" />
     <ClInclude Include="Resources\Descriptor\DescriptorChunkRegistry.hpp" />
     <ClInclude Include="Resources\Descriptor\DescriptorMemory.hpp" />
+    <ClInclude Include="Resources\Descriptor\ReferenceAwareDescriptorAllocator.hpp" />
     <ClInclude Include="Resources\Descriptor\ResourceViewFactoryImpl.hpp" />
     <ClInclude Include="Resources\DynamicHeapSet.hpp" />
     <ClInclude Include="Resources\HandleFactory.hpp" />
