@@ -10,6 +10,8 @@
 #include "Shared/PtrTypes.hpp"
 #include "DX12/WindowSurface.hpp"
 #include "Descriptor/DescriptorAllocator.hpp"
+#include "Descriptor/ReferenceAwareDescriptorAllocator.hpp"
+#include <functional>
 
 
 namespace Renderer
@@ -35,7 +37,8 @@ namespace Renderer
 			private: std::unordered_map<ResourceHandle::t_hash, size_t> references;
 
 			private: std::unordered_set<ResourceHandle::t_hash> unreferenced;
-			
+
+			private: std::function<void(t_entity &)> onEntityPurged;
 					 					 			
 			
 			public: t_get Get(ResourceHandle::t_hash handle) 
@@ -98,7 +101,12 @@ namespace Renderer
 			{
 				for(auto &&handle : unreferenced)
 				{
-					entities.erase(handle);
+					if(onEntityPurged)
+					{
+						onEntityPurged(entities.at(handle));						
+					}
+					
+					entities.erase(handle);					
 					references.erase(handle);					
 				}
 				unreferenced.clear();
@@ -110,6 +118,12 @@ namespace Renderer
 			public: virtual bool IsHandleUnknown(ResourceHandle::t_hash handle) const 
 			{
 				return references.find(handle) == references.end();
+				
+			}
+
+			public: void SetOnEntityPurged(decltype(onEntityPurged) callback)
+			{
+				onEntityPurged = std::move(callback);
 				
 			}
 		
@@ -128,8 +142,8 @@ namespace Renderer
 		inline RHA::DX12::WindowSurface *HandleMapWindowSurfaceAccessor(UniquePtr<RHA::DX12::WindowSurface> &entity) { return entity.get(); }		
 		using HandleMapWindowSurface = HandleMap<UniquePtr<RHA::DX12::WindowSurface>, RHA::DX12::WindowSurface *, &HandleMapWindowSurfaceAccessor>;
 
-		inline DescriptorAllocator &HandleMapDescriptorAccessor(DescriptorAllocator &entity) { return entity; }
-		using HandleMapDescriptor = HandleMap<DescriptorAllocator, DescriptorAllocator &, &HandleMapDescriptorAccessor>;
+		inline ReferenceAwareDescriptorAllocator &HandleMapDescriptorAccessor(ReferenceAwareDescriptorAllocator &entity) { return entity; }
+		using HandleMapDescriptor = HandleMap<ReferenceAwareDescriptorAllocator, ReferenceAwareDescriptorAllocator &, &HandleMapDescriptorAccessor>;
 
 	}
 	

@@ -1,25 +1,28 @@
 #pragma once
 #include "ResourceViewFactory.hpp"
 #include "DescriptorMemory.hpp"
+#include "ContainsReferences.hpp"
+#include "ReferenceAwareDescriptorAllocator.hpp"
 
 
 namespace Renderer::DX12
 {
 	class ResourceRegistry;
 
+	
 	class ResourceViewFactoryImpl final : public ResourceViewFactory
 	{
 		private: ResourceRegistry *registry;
 
-		private: DescriptorMemory memory;
+		private: DescriptorMemory *memory;
 
-		private: DescriptorAllocator currentAllocator;
+		private: ReferenceAwareDescriptorAllocator currentAllocator;
 
 		private: ResourceHandle::t_hash forSignature;
 		
 		
 		
-		public: ResourceViewFactoryImpl(RHA::DX12::DeviceResources &resources, ResourceRegistry &registry);
+		public: ResourceViewFactoryImpl(RHA::DX12::DeviceResources &resources, ResourceRegistry &registry, DescriptorMemory &descriptors);
 
 		
 		public: void DeclareNewDescriptorBlock(ResourceHandle::t_hash forSignature, size_t numViews, size_t numSamplers) override;
@@ -41,9 +44,17 @@ namespace Renderer::DX12
 			ResourceHandle::t_hash forResource, 
 			size_t ordinal,
 			size_t firstIndex,
-			size_t numElements,
-			size_t elementStrideInBytes,
+			size_t numElements,			
 			t_format_target format
+		) override;
+
+		public: void CreateShaderResourceView
+		(
+			ResourceHandle::t_hash forResource, 
+			size_t ordinal,
+			t_format_target format,
+			uint16_t numMips,
+			uint16_t mostDetailedMip
 		) override;
 
 		

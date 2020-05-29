@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 #include "Shared/InterfaceHelpers.hpp"
 #include "Resources/ResourceHandle.hpp"
 #include "StateSettings/FormatTargets.hpp"
@@ -20,8 +21,17 @@ namespace Renderer
 
 		public: virtual void CreateShaderResourceView(ResourceHandle::t_hash forResource, size_t ordinal, size_t firstIndex, size_t numElements, size_t elementStrideInBytes) = 0;
 
-		public: virtual void CreateShaderResourceView(ResourceHandle::t_hash forResource, size_t ordinal, size_t firstIndex, size_t numElements, size_t elementStrideInBytes, t_format_target format) = 0;
+		public: virtual void CreateShaderResourceView(ResourceHandle::t_hash forResource, size_t ordinal, size_t firstIndex, size_t numElements, t_format_target format) = 0;
 
+		public: virtual void CreateShaderResourceView
+		(
+			ResourceHandle::t_hash forResource, 
+			size_t ordinal,
+			t_format_target format,
+			uint16_t numMips,
+			uint16_t mostDetailedMip
+		) = 0;
+		
 
 		public: virtual void CreateConstantBufferView(ResourceHandle::t_hash forResource, size_t ordinal, size_t sizeInBytes) = 0;
 

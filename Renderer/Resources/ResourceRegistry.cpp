@@ -7,6 +7,11 @@ namespace Renderer::DX12
 	ResourceRegistry::ResourceRegistry(const bool neverPurgePsoAndSignature) :
 		shouldPurgePsoAndSignature{ !neverPurgePsoAndSignature }
 	{
+		registryDescriptor.SetOnEntityPurged([&r = registryResource](ReferenceAwareDescriptorAllocator &entity)
+		{
+			entity.ExecuteOperationOnResourceReferences(r, &UsesReferences::RemoveReference);
+		});
+		
 	}
 
 	bool ResourceRegistry::IsHandleUnknown(const ResourceHandle::t_hash handle) const
@@ -27,6 +32,11 @@ namespace Renderer::DX12
 			return registryLight.IsHandleUnknown(handle);
 		}
 
+		if(handleType == ResourceHandle::t_resourceTypes::DescriptorAllocator)
+		{
+			return registryDescriptor.IsHandleUnknown(handle);
+		}
+		
 		return registryResource.IsHandleUnknown(handle);
 		
 	}
@@ -106,9 +116,11 @@ namespace Renderer::DX12
 
 
 	
-	ResourceHandle::t_hash ResourceRegistry::Register(DescriptorAllocator &&allocator)
+	ResourceHandle::t_hash ResourceRegistry::Register(ReferenceAwareDescriptorAllocator &&allocator)
 	{
 		const auto handle{ handleProvider.MakeHandle(ResourceHandle::t_resourceTypes::DescriptorAllocator) };
+
+		allocator.ExecuteOperationOnResourceReferences(registryResource, &UsesReferences::AddReference);
 		registryDescriptor.Register(handle, std::move(allocator));
 
 		return handle;
@@ -159,7 +171,7 @@ namespace Renderer::DX12
 
 	DescriptorAllocator &ResourceRegistry::GetDescriptorAllocator(const ResourceHandle::t_hash handle)
 	{
-		return registryDescriptor.Get(handle);
+		return registryDescriptor.Get(handle).allocator;
 		
 	}
 
@@ -224,8 +236,8 @@ namespace Renderer::DX12
 	void ResourceRegistry::PurgeUnreferencedEntities()
 	{
 		registryResource.PurgeUnreferencedEntities();
-		registryWindowSurface.PurgeUnreferencedEntities();
 		registryDescriptor.PurgeUnreferencedEntities();
+		registryWindowSurface.PurgeUnreferencedEntities();
 		if(shouldPurgePsoAndSignature)
 		{
 			registryPso.PurgeUnreferencedEntities();

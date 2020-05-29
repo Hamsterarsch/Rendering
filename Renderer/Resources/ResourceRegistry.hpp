@@ -3,6 +3,7 @@
 #include "Resources/HandleFactory.hpp"
 #include "Resources/Registry.hpp"
 #include "Lighting/LightContainer.hpp"
+#include "Resources/Descriptor/ReferenceAwareDescriptorAllocator.hpp"
 
 
 namespace Renderer
@@ -55,7 +56,7 @@ namespace Renderer
 
 			public: ResourceHandle::t_hash Register(UniquePtr<RHA::DX12::WindowSurface> &&surface);
 
-			public: ResourceHandle::t_hash Register(DescriptorAllocator &&allocator);
+			public: ResourceHandle::t_hash Register(ReferenceAwareDescriptorAllocator &&allocator);
 					
 			public: virtual ID3D12Resource *GetResource(ResourceHandle::t_hash handle) override;
 

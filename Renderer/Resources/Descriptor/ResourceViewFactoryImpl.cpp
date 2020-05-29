@@ -6,9 +6,9 @@
 
 namespace Renderer::DX12
 {
-	ResourceViewFactoryImpl::ResourceViewFactoryImpl(RHA::DX12::DeviceResources &resources, ResourceRegistry &registry) :
+	ResourceViewFactoryImpl::ResourceViewFactoryImpl(RHA::DX12::DeviceResources &resources, ResourceRegistry &registry, DescriptorMemory &descriptors) :
 		registry{ &registry },
-		memory{ &resources, 1000, 50 }
+		memory{ &descriptors }
 	{
 	}
 
@@ -17,8 +17,8 @@ namespace Renderer::DX12
 	void ResourceViewFactoryImpl::DeclareNewDescriptorBlock(const ResourceHandle::t_hash forSignature, const size_t numViews, const size_t numSamplers)
 	{
 		this->forSignature = forSignature;
-		currentAllocator = memory.GetDescriptorAllocator(numViews, numSamplers);
-		currentAllocator.OpenNewTable();
+		currentAllocator.allocator = memory->GetDescriptorAllocator(numViews, numSamplers);
+		currentAllocator.allocator.OpenNewTable();
 		
 	}
 
@@ -26,7 +26,8 @@ namespace Renderer::DX12
 	
 	void ResourceViewFactoryImpl::CreateShaderResourceView(const ResourceHandle::t_hash forResource, const size_t ordinal)
 	{
-		currentAllocator.CreateDefaultedSrv(registry->GetResource(forResource), registry->GetSignatureSrvOffset(forSignature, ordinal));
+		currentAllocator.allocator.CreateDefaultedSrv(registry->GetResource(forResource), registry->GetSignatureSrvOffset(forSignature, ordinal));
+		currentAllocator.AddReferenceTo(forResource);
 		
 	}
 
@@ -39,7 +40,7 @@ namespace Renderer::DX12
 		const size_t elementStrideInBytes
 	)
 	{
-		currentAllocator.CreateSrvBuffer
+		currentAllocator.allocator.CreateSrvBuffer
 		(
 			registry->GetResource(forResource),
 			registry->GetSignatureSrvOffset(forSignature, ordinal),
@@ -47,6 +48,7 @@ namespace Renderer::DX12
 			numElements,
 			elementStrideInBytes
 		);
+		currentAllocator.AddReferenceTo(forResource);
 		
 	}
 
@@ -57,12 +59,11 @@ namespace Renderer::DX12
 		const ResourceHandle::t_hash forResource,
 		const size_t ordinal,
 		const size_t firstIndex,
-		const size_t numElements,
-		const size_t elementStrideInBytes,
+		const size_t numElements,		
 		const t_format_target format
 	)
 	{
-		currentAllocator.CreateSrvBufferFormatted
+		currentAllocator.allocator.CreateSrvBufferFormatted
 		(
 			registry->GetResource(forResource),
 			registry->GetSignatureSrvOffset(forSignature, ordinal),
@@ -70,11 +71,35 @@ namespace Renderer::DX12
 			numElements,
 			GetTargetValue<DXGI_FORMAT>(format)
 		);
+		currentAllocator.AddReferenceTo(forResource);
 		
 	}
 
 
 	
+	void ResourceViewFactoryImpl::CreateShaderResourceView
+	(
+		const ResourceHandle::t_hash forResource, 
+		const size_t ordinal,
+		const t_format_target format,
+		const uint16_t numMips,
+		const uint16_t mostDetailedMip
+	)
+	{
+		currentAllocator.allocator.CreateSrvTex2D
+		(
+			registry->GetResource(forResource),
+			registry->GetSignatureSrvOffset(forSignature, ordinal),
+			format,
+			numMips,
+			mostDetailedMip
+		);
+		currentAllocator.AddReferenceTo(forResource);
+		
+	}
+
+
+
 	void ResourceViewFactoryImpl::CreateConstantBufferView
 	(
 		const ResourceHandle::t_hash forResource, 
@@ -82,7 +107,8 @@ namespace Renderer::DX12
 		const size_t sizeInBytes
 	)
 	{
-		currentAllocator.CreateCbv(registry->GetResource(forResource), registry->GetSignatureCbvOffset(forSignature, ordinal), sizeInBytes);
+		currentAllocator.allocator.CreateCbv(registry->GetResource(forResource), registry->GetSignatureCbvOffset(forSignature, ordinal), sizeInBytes);
+		currentAllocator.AddReferenceTo(forResource);
 		
 	}
 
@@ -105,7 +131,7 @@ namespace Renderer::DX12
 		const size_t elementStrideInBytes
 	)
 	{
-		currentAllocator.CreateUavBuffer
+		currentAllocator.allocator.CreateUavBuffer
 		(
 			registry->GetResource(forResource),
 			registry->GetSignatureUavOffset(forSignature, ordinal),
@@ -113,6 +139,7 @@ namespace Renderer::DX12
 			numElements,
 			elementStrideInBytes
 		);
+		currentAllocator.AddReferenceTo(forResource);
 		
 	}
 
@@ -127,7 +154,7 @@ namespace Renderer::DX12
 		t_format_target format
 	)
 	{
-		currentAllocator.CreateUavBufferFormatted
+		currentAllocator.allocator.CreateUavBufferFormatted
 		(
 			registry->GetResource(forResource),
 			registry->GetSignatureUavOffset(forSignature, ordinal),
@@ -135,6 +162,7 @@ namespace Renderer::DX12
 			numElements,
 			GetTargetValue<DXGI_FORMAT>(format)
 		);
+		currentAllocator.AddReferenceTo(forResource);
 		
 	}
 
@@ -150,7 +178,7 @@ namespace Renderer::DX12
 		const ResourceHandle::t_hash counterResource
 	)
 	{
-		currentAllocator.CreateUavBufferWithCounter
+		currentAllocator.allocator.CreateUavBufferWithCounter
 		(
 			registry->GetResource(forResource), 
 			registry->GetResource(counterResource),
@@ -159,6 +187,8 @@ namespace Renderer::DX12
 			numElements,
 			elementStrideInBytes
 		);
+		currentAllocator.AddReferenceTo(forResource);
+		currentAllocator.AddReferenceTo(counterResource);
 		
 	}
 
