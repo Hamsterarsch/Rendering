@@ -22,9 +22,27 @@ namespace Renderer::DX12
 
 
 	
-	const void *FormatTargetsImpl::R8G8B8A8_Norm() const
+	const void *FormatTargetsImpl::R8G8B8A8_SNorm() const
 	{
 		static constexpr auto format{ DXGI_FORMAT_R8G8B8A8_SNORM };
+		return &format;
+		
+	}
+
+
+	
+	const void *FormatTargetsImpl::R8G8B8A8_UNorm() const
+	{
+		static constexpr auto format{ DXGI_FORMAT_R8G8B8A8_UNORM };
+		return &format;
+		
+	}
+
+
+
+	const void *FormatTargetsImpl::R16_Uint() const
+	{
+		static constexpr auto format{ DXGI_FORMAT_R16_UINT };
 		return &format;
 		
 	}

@@ -10,7 +10,11 @@ namespace Renderer::DX12
 		
 		public: const void *R32G32_Float() const override;
 
-		public: const void *R8G8B8A8_Norm() const override;
+		public: const void *R8G8B8A8_SNorm() const override;
+		
+		public: const void *R8G8B8A8_UNorm() const override;
+		
+		public: const void *R16_Uint() const override;
 		
 		
 		public: static const FormatTargetsImpl &Get();
