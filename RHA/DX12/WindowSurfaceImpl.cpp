@@ -93,7 +93,7 @@ namespace RHA
 				
 				}
 
-		void WindowSurfaceImpl::CreateViewsForChainBuffers(DeviceResources *resources)
+			void WindowSurfaceImpl::CreateViewsForChainBuffers(DeviceResources *resources)
 			{
 				for (size_t bufferIndex{ 0 }; bufferIndex < buffers.size(); ++bufferIndex)
 				{
