@@ -95,7 +95,7 @@ namespace Renderer::DX12
 			
 			desc.ShaderRegister = samplerAmount + staticSamplerIndex;
 
-			staticSamplerDescs.emplace_back(std::move(desc));			
+			staticSamplerDescs.at(staticSamplerIndex) = std::move(desc);			
 		}
 		rootDesc.Desc_1_1.pStaticSamplers = staticSamplerDescs.data();
 		rootDesc.Desc_1_1.NumStaticSamplers = staticSamplerDescs.size();
@@ -109,6 +109,12 @@ namespace Renderer::DX12
 		DxPtr<ID3DBlob> rootBlob, errorBlob;
 		{
 			const auto result{ D3D12SerializeVersionedRootSignature(&rootDesc, &rootBlob, &errorBlob) };
+			if(errorBlob)
+			{
+				auto *errorString{ reinterpret_cast<const char *>(errorBlob->GetBufferPointer()) };
+				int e = 2;
+			}
+			
 			CheckSerialization(result);
 		}
 				   
