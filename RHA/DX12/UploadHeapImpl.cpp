@@ -102,7 +102,7 @@ namespace RHA::DX12
 
 	D3D12_GPU_VIRTUAL_ADDRESS UploadHeapImpl::CopyTextureDataToUploadAddress(const char *data, const D3D12_SUBRESOURCE_FOOTPRINT &resourceInfo)
 	{
-		if(ThereIsNoCapacityFor(resourceInfo.Width * resourceInfo.Height * resourceInfo.Depth * 32))
+		if(ThereIsNoCapacityFor(resourceInfo.Width * resourceInfo.Height * resourceInfo.Depth * 4))
 		{
 			throw Exception::Exception{ "Upload heap out of memory" };
 		}
@@ -114,7 +114,7 @@ namespace RHA::DX12
 		{
 			unsigned char *uploadPos{ cpuSideAllocPos + scanlineIndex * resourceInfo.RowPitch };
 			const char *copyPos{ &data[scanlineIndex * resourceInfo.Width * 4] };
-			std::memcpy(uploadPos, copyPos, resourceInfo.Width * 32);
+			std::memcpy(uploadPos, copyPos, resourceInfo.Width * 4);
 		}
 				
 		const auto gpuAllocationStart{ uploadBuffer->GetGPUVirtualAddress() + offsetToAllocation };
