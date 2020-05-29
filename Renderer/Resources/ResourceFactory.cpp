@@ -170,15 +170,20 @@ namespace Renderer::DX12
 			width,
 			height,
 			1,
-			RHA::Utility::IncreaseValueToAlignment(width * 32, D3D12_TEXTURE_DATA_PITCH_ALIGNMENT)
+			RHA::Utility::IncreaseValueToAlignment(width * 4, D3D12_TEXTURE_DATA_PITCH_ALIGNMENT)
 		};
 
-		uploadBuffer->Reset();
-		uploadBuffer->CopyTextureDataToUploadAddress(reinterpret_cast<const char *>(data), subresourceSize);
 
 		auto creationState{ desiredState };
 		if(data != nullptr)
-		{							
+		{
+			const auto sizeInBytes{ subresourceSize.Width * subresourceSize.Height * subresourceSize.Depth * 4 };
+			if(UploadBufferCanNotFitAllocation(sizeInBytes))
+			{
+				uploadBuffer = Facade::MakeUploadHeap(resources, sizeInBytes);
+			}			
+			uploadBuffer->Reset();
+			
 			uploadBuffer->CopyTextureDataToUploadAddress(reinterpret_cast<const char *>(data), subresourceSize);
 			creationState = D3D12_RESOURCE_STATE_COPY_DEST;
 		}
@@ -187,10 +192,9 @@ namespace Renderer::DX12
 		
 
 		D3D12_TEXTURE_COPY_LOCATION dstLoc{};
-		dstLoc.Type = D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT;
+		dstLoc.Type = D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX;
 		dstLoc.pResource = outAlloc.resource.Get();
-		dstLoc.PlacedFootprint.Footprint = subresourceSize;
-		dstLoc.PlacedFootprint.Offset = outAlloc.allocation.offsetToAllocation;
+		dstLoc.SubresourceIndex = 0;
 
 		D3D12_TEXTURE_COPY_LOCATION srcLoc{};
 		srcLoc.Type = D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT;
@@ -230,7 +234,7 @@ namespace Renderer::DX12
 			desc.DepthOrArraySize = subresourceSize.Depth;
 			desc.Flags = resourceFlags;
 			desc.Alignment = D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT;
-			desc.Format = DXGI_FORMAT_R8G8B8A8_SNORM;
+			desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 			desc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
 			desc.MipLevels = 1;
 			desc.SampleDesc.Count = 1;
