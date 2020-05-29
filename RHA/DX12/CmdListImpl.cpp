@@ -310,6 +310,14 @@ namespace RHA::DX12
 
 
 	
+	void CmdListImpl::RecordSetPrimitiveTopology(const D3D12_PRIMITIVE_TOPOLOGY type)
+	{
+		glist->IASetPrimitiveTopology(type);
+		
+	}
+
+
+
 	void CmdListImpl::RecordDrawIndexedInstanced
 	(
 		const size_t instanceCount,

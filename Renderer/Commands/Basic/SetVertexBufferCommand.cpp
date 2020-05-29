@@ -30,6 +30,7 @@ namespace Renderer::DX12::Commands
 	void SetVertexBufferCommand::Execute(DX12CommandProcessor &context)
 	{
 		context.GetList().RecordSetVertexBuffer(vertexView);
+		context.GetList().RecordSetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		
 	}
 

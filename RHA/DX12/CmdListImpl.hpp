@@ -113,6 +113,8 @@ namespace RHA::DX12
 		
 		public: void RecordSetIndexBuffer(const D3D12_INDEX_BUFFER_VIEW& view) override;
 
+		public: void RecordSetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY type) override;
+		
 		
 		void RecordDrawIndexedInstanced
 		(
@@ -122,7 +124,7 @@ namespace RHA::DX12
 			size_t offsetOntoIndexValue,
 			size_t offsetOntoIndexValueForPerInstanceData
 		) override;
-		
+
 	};
 
 	

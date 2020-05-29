@@ -99,8 +99,10 @@ namespace RHA
 			public: virtual void RecordSetVertexBuffer(const D3D12_VERTEX_BUFFER_VIEW &view) = 0;
 
 			public: virtual void RecordSetIndexBuffer(const D3D12_INDEX_BUFFER_VIEW &view) = 0;
-			
 
+			public: virtual void RecordSetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY type) = 0;
+
+			
 			public: virtual void RecordDrawIndexedInstanced
 			(
 				size_t instanceCount,
