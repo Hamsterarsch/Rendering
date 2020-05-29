@@ -4,6 +4,7 @@
 #include "Shared/PtrTypes.hpp"
 #include "Command.hpp"
 #include "Resources/ResourceHandle.hpp"
+#include "StateSettings/FormatTargets.hpp"
 
 
 namespace Renderer::Commands
@@ -40,7 +41,14 @@ namespace Renderer::Commands
 		public: virtual UniquePtr<::Renderer::Commands::Command> SetDescriptorBlockViewsGraphics(ResourceHandle::t_hash descriptorBlock) = 0;
 
 		
-		public: virtual UniquePtr<::Renderer::Commands::Command> SetIndexBuffer(ResourceHandle::t_hash indexBuffer, size_t byteOffsetToIndices, size_t numIndices) = 0;
+		public: virtual UniquePtr<::Renderer::Commands::Command> SetIndexBuffer
+		(
+			ResourceHandle::t_hash indexBuffer,
+			size_t byteOffsetToIndices,
+			size_t numIndices,
+			size_t indexSizeInBytes,
+			t_format_target indexFormat
+		) = 0;
 
 		public: virtual UniquePtr<::Renderer::Commands::Command> SetVertexBuffer
 		(
