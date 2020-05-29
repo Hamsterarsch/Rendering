@@ -1,6 +1,9 @@
 #pragma once
 #include <d3d12.h>
+#include <cstdint>
 #include "Resources/Descriptor/DescriptorChunk.hpp"
+#include "StateSettings/FormatTargets.hpp"
+
 
 namespace RHA
 {
@@ -44,13 +47,18 @@ namespace Renderer::DX12
 		
 		public: DescriptorAllocator(RHA::DX12::DeviceResources *resources, DescriptorMemory *parent, const DescriptorChunk &viewChunk, const DescriptorChunk &samplerChunk);
 
-		public: DescriptorAllocator(DescriptorAllocator &&other) noexcept;
+		public: ~DescriptorAllocator();
 		
-		public: DescriptorAllocator &operator=(DescriptorAllocator &&rhs) noexcept;
+			public: bool IsInvalid() const;
 		
 		public: void Free();
 		
-		public: ~DescriptorAllocator();
+		public: DescriptorAllocator(DescriptorAllocator &&other) noexcept;
+		
+		public: DescriptorAllocator &operator=(DescriptorAllocator &&rhs) noexcept;
+
+			private: void Invalidate();
+								
 
 		
 		public: DescriptorAllocator(const DescriptorAllocator &other) = delete;
@@ -76,6 +84,9 @@ namespace Renderer::DX12
 
 				private: void UpdateAfterTableIndex(const ChunkData &forChunkData, size_t offsetFromTableStartToDescriptor);
 
+		public: void CreateSrvTex2D(ID3D12Resource *resource, size_t tableOffset, t_format_target format, uint16_t numMips, uint16_t mostDetailedMip);
+		
+		
 		public: void CreateSrvBuffer(ID3D12Resource *resource, size_t tableOffset, size_t firstIndex, size_t numElements, size_t strideInBytes);
 
 		public: void CreateSrvBufferFormatted(ID3D12Resource *resource, size_t tableOffset, size_t firstIndex, size_t numElements, DXGI_FORMAT format);
