@@ -2,6 +2,9 @@
 #include "Types/Dimensions2D.hpp"
 #include "Shared/Exception/CreationFailedException.hpp"
 
+//#include <Uxtheme.h>
+//#pragma comment(lib, "UxTheme.lib")
+
 namespace Windows
 {
 	Window::Window(const std::wstring &windowName, const std::wstring &className, WNDPROC windowProc) :
@@ -44,13 +47,15 @@ namespace Windows
 
 				ChangeDisplaySettings(&primaryDisplaySettings, CDS_FULLSCREEN);
 			}*/
-			
+
+			//IsAppThemed()
+			//SetThemeAppProperties(0);
 			handle =
 			CreateWindow
 			(
 				className.data(),
 				this->windowName.data(),
-				WS_OVERLAPPED | WS_THICKFRAME,
+				WS_OVERLAPPEDWINDOW,
 				displacementX,
 				displacementY,
 				size.GetWidth(),
@@ -61,6 +66,7 @@ namespace Windows
 				NO_INIT_MSG
 			);
 
+			//SetWindowTheme(handle, L"", L"");
 			//SetWindowLong(handle, GWL_STYLE, 0);
 		
 			if(handle == nullptr)

@@ -117,8 +117,12 @@ namespace Windows
 		{
 			ImGui_ImplWin32_NewFrame();
 			ImGui::NewFrame();
-												
-			ImGui::ShowDemoWindow();
+
+			ImGui::SetNextWindowPos({0,0});			;
+			ImGui::SetNextWindowSize(ImGui::GetWindowViewport()->Size);
+			ImGui::Begin("Open Project", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);			
+			ImGui::Text("Open Project");
+			ImGui::End();
 			
 			
 		}
