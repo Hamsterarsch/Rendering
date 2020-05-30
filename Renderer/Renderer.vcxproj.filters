@@ -5,9 +5,6 @@
     <ClInclude Include="Interface\RendererExportHelper.hpp">
       <Filter>Interface</Filter>
     </ClInclude>
-    <ClInclude Include="Interface\Renderer.hpp">
-      <Filter>Interface</Filter>
-    </ClInclude>
     <ClInclude Include="Interface\Resources\ResourceHandle.hpp">
       <Filter>Interface\Resources</Filter>
     </ClInclude>
@@ -86,7 +83,6 @@
     <ClInclude Include="ShaderRelevantTypes\VolumeTileGridData.hpp">
       <Filter>ShaderRelevantTypes</Filter>
     </ClInclude>
-    <ClInclude Include="ForwardRenderer.hpp" />
     <ClInclude Include="Interface\Resources\SerializationHook.hpp">
       <Filter>Interface\Resources</Filter>
     </ClInclude>
@@ -122,12 +118,6 @@
     </ClInclude>
     <ClInclude Include="ShaderRelevantTypes\GlobalBufferData.hpp">
       <Filter>ShaderRelevantTypes</Filter>
-    </ClInclude>
-    <ClInclude Include="Resources\Pso\DepthStencilFactory.hpp">
-      <Filter>Resources\Pso</Filter>
-    </ClInclude>
-    <ClInclude Include="Resources\Pso\DepthStencilFactoryDefault.hpp">
-      <Filter>Resources\Pso</Filter>
     </ClInclude>
     <ClInclude Include="ShaderRelevantTypes\Light.hpp">
       <Filter>ShaderRelevantTypes</Filter>
@@ -192,9 +182,6 @@
     <ClInclude Include="Commands\DX12CommandProcessor.hpp">
       <Filter>Commands</Filter>
     </ClInclude>
-    <ClInclude Include="Commands\CommandHelper.hpp">
-      <Filter>Commands</Filter>
-    </ClInclude>
     <ClInclude Include="Commands\Surface\PrepareSurfaceForRenderingCommand.hpp">
       <Filter>Commands\Surface</Filter>
     </ClInclude>
@@ -210,6 +197,113 @@
     <ClInclude Include="Commands\Surface\PresentSurfaceCommand.hpp">
       <Filter>Commands\Surface</Filter>
     </ClInclude>
+    <ClInclude Include="Interface\StateSettings\StateSettings.hpp">
+      <Filter>Interface\StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\StateSettings\BlendSettings.hpp">
+      <Filter>Interface\StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\StateSettings\DepthStencilSettings.hpp">
+      <Filter>Interface\StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="StateSettings\BlendSettingsImpl.hpp">
+      <Filter>StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="StateSettings\DepthStencilSettingsImpl.hpp">
+      <Filter>StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\StateSettings\RasterizerSettings.hpp">
+      <Filter>Interface\StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\StateSettings\VertexLayoutSettings.hpp">
+      <Filter>Interface\StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="StateSettings\FormatTargetsImpl.hpp">
+      <Filter>StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="StateSettings\VertexLayoutSettingsImpl.hpp">
+      <Filter>StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\StateSettings\FormatTargets.hpp">
+      <Filter>Interface\StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\StateSettings\SemanticTargets.hpp">
+      <Filter>Interface\StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="StateSettings\SemanticTargetsImpl.hpp">
+      <Filter>StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="StateSettings\RasterizerSettingsImpl.hpp">
+      <Filter>StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\StateSettings\AddressingTargets.hpp">
+      <Filter>Interface\StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\StateSettings\FilterTargets.hpp">
+      <Filter>Interface\StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="StateSettings\AddressingTargetsImpl.hpp">
+      <Filter>StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="StateSettings\FilterTargetsImpl.hpp">
+      <Filter>StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\ResourceViewFactory.hpp">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\Descriptor\ResourceViewFactoryImpl.hpp">
+      <Filter>Resources\Descriptor</Filter>
+    </ClInclude>
+    <ClInclude Include="StateSettings\TargetHelpers.hpp">
+      <Filter>StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\Basic\SetViewportCommand.hpp">
+      <Filter>Commands\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\Basic\SetScissorRectCommand.hpp">
+      <Filter>Commands\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\Basic\SetVertexBufferCommand.hpp">
+      <Filter>Commands\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\Basic\SetIndexBufferCommand.hpp">
+      <Filter>Commands\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\Basic\SetPipelineStateCommand.hpp">
+      <Filter>Commands\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\Basic\SetSignatureGraphicsCommand.hpp">
+      <Filter>Commands\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\Basic\SetDescriptorBlockViewsGraphicsCommand.hpp">
+      <Filter>Commands\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\Commands\CompositeCommand.hpp">
+      <Filter>Interface\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\Basic\DrawIndexedInstancedCommand.hpp">
+      <Filter>Commands\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\StateSettings\SamplerSpec.hpp">
+      <Filter>Interface\StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\UserContextCommandWrapper.hpp">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\Commands\CompositeCommand.hpp">
+      <Filter>Interface\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\ContainsReferences.hpp">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\Descriptor\ReferenceAwareDescriptorAllocator.hpp">
+      <Filter>Resources\Descriptor</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers.hpp" />
+    <ClInclude Include="Interface\RendererFacade.hpp">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererFacadeImpl.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -273,7 +367,6 @@
     <ClCompile Include="Lighting\LightGrid\VolumeTileGrid.cpp">
       <Filter>Lighting\LightGrid</Filter>
     </ClCompile>
-    <ClCompile Include="ForwardRenderer.cpp" />
     <ClCompile Include="Resources\SerializationContainer.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
@@ -325,6 +418,61 @@
     <ClCompile Include="Commands\PresentSurfaceCommandOld.cpp">
       <Filter>Commands</Filter>
     </ClCompile>
+    <ClCompile Include="StateSettings\BlendSettingsImpl.cpp">
+      <Filter>StateSettings</Filter>
+    </ClCompile>
+    <ClCompile Include="StateSettings\DepthStencilSettingsImpl.cpp">
+      <Filter>StateSettings</Filter>
+    </ClCompile>
+    <ClCompile Include="StateSettings\FormatTargetsImpl.cpp">
+      <Filter>StateSettings</Filter>
+    </ClCompile>
+    <ClCompile Include="StateSettings\VertexLayoutSettingsImpl.cpp">
+      <Filter>StateSettings</Filter>
+    </ClCompile>
+    <ClCompile Include="StateSettings\SemanticTargetsImpl.cpp">
+      <Filter>StateSettings</Filter>
+    </ClCompile>
+    <ClCompile Include="StateSettings\RasterizerSettingsImpl.cpp">
+      <Filter>StateSettings</Filter>
+    </ClCompile>
+    <ClCompile Include="StateSettings\AddressingTargetsImpl.cpp">
+      <Filter>StateSettings</Filter>
+    </ClCompile>
+    <ClCompile Include="StateSettings\FilterTargetsImpl.cpp">
+      <Filter>StateSettings</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\Descriptor\ResourceViewFactoryImpl.cpp">
+      <Filter>Resources\Descriptor</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Basic\SetViewportCommand.cpp">
+      <Filter>Commands\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Basic\SetVertexBufferCommand.cpp">
+      <Filter>Commands\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Basic\SetScissorRectCommand.cpp">
+      <Filter>Commands\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Basic\SetSignatureGraphicsCommand.cpp">
+      <Filter>Commands\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Basic\SetPipelineStateCommand.cpp">
+      <Filter>Commands\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Basic\SetIndexBufferCommand.cpp">
+      <Filter>Commands\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Basic\SetDescriptorBlockViewsGraphicsCommand.cpp">
+      <Filter>Commands\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Interface\Commands\CompositeCommand.cpp">
+      <Filter>Interface\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Basic\DrawIndexedInstancedCommand.cpp">
+      <Filter>Commands\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="RendererFacadeImpl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">
@@ -368,6 +516,15 @@
     </Filter>
     <Filter Include="Commands\Surface">
       <UniqueIdentifier>{c903f83d-8590-4ac6-8033-d1e7fb5ac6ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interface\StateSettings">
+      <UniqueIdentifier>{c22f794f-5bff-484f-bd5c-dd4c6fe95217}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="StateSettings">
+      <UniqueIdentifier>{2902b0dd-1459-46e0-b961-17347c10abde}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Commands\Basic">
+      <UniqueIdentifier>{aad6765a-6344-4012-ba88-f613411d9b7a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

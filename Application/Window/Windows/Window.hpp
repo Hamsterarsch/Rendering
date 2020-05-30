@@ -5,8 +5,9 @@
 
 class Dimensions2D;
 
+
 namespace Windows
-{
+{	
 	class Window
 	{
 		private: const std::wstring windowName;
@@ -19,9 +20,10 @@ namespace Windows
 
 		
 		
-		public: Window(const Dimensions2D &size, bool isBorderlessFullscreen, const std::wstring &windowName, const std::wstring &className);
 		
-			private: void CreateWindowClass() const;
+		public: Window(const Dimensions2D &size, bool isBorderlessFullscreen, const std::wstring &windowName, const std::wstring &className, WNDPROC windowProc = nullptr);
+		
+			private: void CreateWindowClass(WNDPROC windowProc) const;
 		
 			private: static LRESULT _stdcall Procedure(HWND handle, UINT msg, WPARAM wparam, LPARAM lparam);
 		

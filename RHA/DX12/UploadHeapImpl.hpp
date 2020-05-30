@@ -6,7 +6,7 @@
 namespace RHA
 {
 	namespace DX12
-	{		
+	{				
 		class UploadHeapImpl : public UploadHeap
 		{
 			private: DxPtr<ID3D12Resource> uploadBuffer;
@@ -17,7 +17,7 @@ namespace RHA
 
 			private: BYTE *cpuSideAllocPos;
 
-
+			
 			
 			public: UploadHeapImpl(DeviceResources *resources, size_t sizeInBytes);
 
@@ -35,8 +35,11 @@ namespace RHA
 
 				private: bool ThereIsNoCapacityFor(size_t countBytes) const;
 			
-				private: void CopyToAllocSidePos(const void *data, size_t dataByteCount, size_t alignment);
-						 							 							 			
+				private: void AdjustAllocationOffsets(size_t dataByteCount, size_t alignment);
+
+			
+			public: D3D12_GPU_VIRTUAL_ADDRESS CopyTextureDataToUploadAddress(const char *data, const D3D12_SUBRESOURCE_FOOTPRINT &resourceInfo) override;
+			
 		};
 		
 		

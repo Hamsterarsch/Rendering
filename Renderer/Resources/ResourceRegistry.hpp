@@ -3,6 +3,7 @@
 #include "Resources/HandleFactory.hpp"
 #include "Resources/Registry.hpp"
 #include "Lighting/LightContainer.hpp"
+#include "Resources/Descriptor/ReferenceAwareDescriptorAllocator.hpp"
 
 
 namespace Renderer
@@ -25,6 +26,8 @@ namespace Renderer
 			private: LightContainer registryLight;
 
 			private: HandleMapWindowSurface registryWindowSurface;
+
+			private: HandleMapDescriptor registryDescriptor;
 			
 			private: HandleFactory handleProvider;
 
@@ -52,6 +55,8 @@ namespace Renderer
 			public: ResourceHandle::t_hash Register(Light &&info);
 
 			public: ResourceHandle::t_hash Register(UniquePtr<RHA::DX12::WindowSurface> &&surface);
+
+			public: ResourceHandle::t_hash Register(ReferenceAwareDescriptorAllocator &&allocator);
 					
 			public: virtual ID3D12Resource *GetResource(ResourceHandle::t_hash handle) override;
 
@@ -62,6 +67,8 @@ namespace Renderer
 			public: virtual ID3D12RootSignature *GetSignature(ResourceHandle::t_hash handle) override;
 
 			public: virtual RHA::DX12::WindowSurface *GetSurface(ResourceHandle::t_hash handle) override;
+
+			public: DescriptorAllocator &GetDescriptorAllocator(ResourceHandle::t_hash handle) override;
 
 			public: Light &GetLight(ResourceHandle::t_hash handle);
 					

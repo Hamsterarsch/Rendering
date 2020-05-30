@@ -15,19 +15,27 @@ namespace Renderer::DX12
 	
 	ResourceAllocation::~ResourceAllocation()
 	{
-		Free();
+		if(IsValid())
+		{
+			Free();
+		}		
 		
 	}
 	
 		void ResourceAllocation::Free()
 		{
-			if(IsValid())
-			{
-				owner->Deallocate(*this, type);
-			}	
+			owner->Deallocate(*this, type);
+			Invalidate();			
 		
 		}
+
+			void ResourceAllocation::Invalidate()
+			{
+				resource = nullptr;
 		
+			}
+	
+
 			bool ResourceAllocation::IsValid() const
 			{
 				return resource != nullptr;
@@ -45,22 +53,27 @@ namespace Renderer::DX12
 
 
 	
-	ResourceAllocation &ResourceAllocation::operator=(ResourceAllocation &&other) noexcept
+	ResourceAllocation &ResourceAllocation::operator=(ResourceAllocation &&rhs) noexcept
 	{
-		if(this == &other)
+		if(this == &rhs)
 		{
 			return *this;
 			
 		}
 
-		Free();
+		if(IsValid())
+		{
+			Free();			
+		}
 		
-		owner = std::move(other.owner);
-		other.owner = nullptr;
+		owner = std::move(rhs.owner);
+		rhs.owner = nullptr;
 		
-		type = std::move(other.type);
-		resource = std::move(other.resource);			
-		allocation = std::move(other.allocation);
+		type = std::move(rhs.type);
+		resource = std::move(rhs.resource);			
+		allocation = std::move(rhs.allocation);
+
+		rhs.Invalidate();
 		
 		return *this;
 		

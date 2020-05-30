@@ -6,6 +6,7 @@
 #include "Shared/Types/Containers/QueueConcurrent.hpp"
 
 #include <future>
+#include "Commands/Command.hpp"
 
 namespace RHA::DX12
 {
@@ -37,7 +38,7 @@ namespace Renderer::DX12::Commands
 
 		private: struct Bucket
 		{
-			UniquePtr<DX12Command> command;
+			UniquePtr<::Renderer::Commands::Command> command;
 			
 			bool isContextCommand;
 
@@ -45,21 +46,23 @@ namespace Renderer::DX12::Commands
 
 			Bucket() : Bucket{ {}, false } {}
 
-			Bucket(UniquePtr<DX12Command> &&command) : Bucket{ std::move(command), false } {}
+			Bucket(UniquePtr<::Renderer::Commands::Command> &&command) : Bucket{ std::move(command), false } {}
 
-			Bucket(UniquePtr<DX12Command> &&command, bool isContextCommand) : Bucket{ std::move(command), isContextCommand, 0 } {}
+			Bucket(UniquePtr<::Renderer::Commands::Command> &&command, bool isContextCommand) : Bucket{ std::move(command), isContextCommand, 0 } {}
 			
-			Bucket(UniquePtr<DX12Command> &&command, bool isContextCommand, intptr_t extractHandle) : command{ std::move(command) }, isContextCommand{ isContextCommand }, extractHandle{ extractHandle } {}
+			Bucket(UniquePtr<::Renderer::Commands::Command> &&command, bool isContextCommand, intptr_t extractHandle) : command{ std::move(command) }, isContextCommand{ isContextCommand }, extractHandle{ extractHandle } {}
 			
 		};
 		
 		private: QueueConcurrent<Bucket> queuedCommands;
 				 		
-		private: UniquePtr<DX12Command> currentContextCommand;
+		private: UniquePtr<::Renderer::Commands::Command> currentContextCommand;
 
-		private: std::vector<UniquePtr<DX12Command>> executedCommands;
+		private: std::vector<UniquePtr<::Renderer::Commands::Command>> recordedCommands;
 
-		private: std::unordered_map<intptr_t, UniquePtr<DX12Command>> extractableCommands;
+		private: std::vector<UniquePtr<::Renderer::Commands::Command>> commandsToBeFreed;
+
+		private: std::unordered_map<intptr_t, UniquePtr<::Renderer::Commands::Command>> extractableCommands;
 
 		private: std::mutex mutexOutputCommands;
 
@@ -113,16 +116,16 @@ namespace Renderer::DX12::Commands
 		public: bool ShouldExecuteContextCommandFor(CommandContextEvents reason) const override;
 
 
-		public: void SubmitCommand(UniquePtr<DX12Command> &&command);
+		public: void SubmitCommand(UniquePtr<::Renderer::Commands::Command> &&command);
 
-		public: intptr_t SubmitExtractableCommand(UniquePtr<DX12Command> &&command);
+		public: intptr_t SubmitExtractableCommand(UniquePtr<::Renderer::Commands::Command> &&command);
 		
-		public: void SubmitContextCommand(UniquePtr<DX12Command> &&command);
+		public: void SubmitContextCommand(UniquePtr<::Renderer::Commands::Command> &&command);
 
 
 		public: void WaitForCommand(intptr_t handle);
 
-		public: UniquePtr<DX12Command> ExtractCommand(intptr_t handle);
+		public: UniquePtr<::Renderer::Commands::Command> ExtractCommand(intptr_t handle);
 
 		public: void FreeExecutedCommands();
 

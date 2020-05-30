@@ -7,6 +7,11 @@ namespace Renderer::DX12
 	ResourceRegistry::ResourceRegistry(const bool neverPurgePsoAndSignature) :
 		shouldPurgePsoAndSignature{ !neverPurgePsoAndSignature }
 	{
+		registryDescriptor.SetOnEntityPurged([&r = registryResource](ReferenceAwareDescriptorAllocator &entity)
+		{
+			entity.ExecuteOperationOnResourceReferences(r, &UsesReferences::RemoveReference);
+		});
+		
 	}
 
 	bool ResourceRegistry::IsHandleUnknown(const ResourceHandle::t_hash handle) const
@@ -27,6 +32,11 @@ namespace Renderer::DX12
 			return registryLight.IsHandleUnknown(handle);
 		}
 
+		if(handleType == ResourceHandle::t_resourceTypes::DescriptorAllocator)
+		{
+			return registryDescriptor.IsHandleUnknown(handle);
+		}
+		
 		return registryResource.IsHandleUnknown(handle);
 		
 	}
@@ -105,6 +115,19 @@ namespace Renderer::DX12
 	}
 
 
+	
+	ResourceHandle::t_hash ResourceRegistry::Register(ReferenceAwareDescriptorAllocator &&allocator)
+	{
+		const auto handle{ handleProvider.MakeHandle(ResourceHandle::t_resourceTypes::DescriptorAllocator) };
+
+		allocator.ExecuteOperationOnResourceReferences(registryResource, &UsesReferences::AddReference);
+		registryDescriptor.Register(handle, std::move(allocator));
+
+		return handle;
+		
+	}
+
+
 
 	ID3D12Resource *ResourceRegistry::GetResource(const ResourceHandle::t_hash handle)
 	{
@@ -141,6 +164,14 @@ namespace Renderer::DX12
 	Light &ResourceRegistry::GetLight(const ResourceHandle::t_hash handle)
 	{
 		return registryLight.Get(handle);
+		
+	}
+
+	
+
+	DescriptorAllocator &ResourceRegistry::GetDescriptorAllocator(const ResourceHandle::t_hash handle)
+	{
+		return registryDescriptor.Get(handle).allocator;
 		
 	}
 
@@ -204,6 +235,7 @@ namespace Renderer::DX12
 	
 	void ResourceRegistry::PurgeUnreferencedEntities()
 	{
+		registryDescriptor.PurgeUnreferencedEntities();
 		registryResource.PurgeUnreferencedEntities();
 		registryWindowSurface.PurgeUnreferencedEntities();
 		if(shouldPurgePsoAndSignature)
@@ -266,9 +298,17 @@ namespace Renderer::DX12
 				
 			}
 
+			if(handleType == ResourceHandle::t_resourceTypes::DescriptorAllocator)
+			{
+				(registryDescriptor.*operation)(handle);
+				return;
+				
+			}
+
 			if(handleType == ResourceHandle::t_resourceTypes::Light)
 			{
-				return;				
+				return;
+				
 			}
 
 			(registryResource.*operation)(handle);

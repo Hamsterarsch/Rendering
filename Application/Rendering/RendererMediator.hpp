@@ -2,22 +2,25 @@
 #include "Rendering/SceneRenderer.hpp"
 #include "Commands/CommandFactory.hpp"
 #include "Resources/HandleWrapper.hpp"
+#include "UiRenderer.hpp"
 
 
-namespace Renderer{ class Renderer; }
+namespace Renderer{ class RendererFacade; }
 
 
 namespace App::Rendering
 {
 	class RendererMediator
 	{
-		private: Renderer::Renderer *underlyingRenderer;
+		private: RendererFacade *underlyingRenderer;
 
-		private: UniquePtr<Renderer::Commands::CommandFactory> commandFactory;
+		private: UniquePtr<Commands::CommandFactory> commandFactory;
 		
-		private: Renderer::HandleWrapper mainWindowSurface;
+		private: HandleWrapper mainWindowSurface;
 
 		private: SceneRenderer sceneRenderer;
+
+		private: UiRenderer uiRenderer;
 
 		private: unsigned char minimumFrameDeltaMs;
 		
@@ -25,12 +28,18 @@ namespace App::Rendering
 
 
 
-		public: RendererMediator(Renderer::HandleWrapper &&mainWindowSurface, Renderer::Renderer &renderer, SceneRenderer &&sceneRenderer);
+		public: RendererMediator(HandleWrapper &&mainWindowSurface, RendererFacade &renderer, SceneRenderer &&sceneRenderer, UiRenderer &&uiRenderer);
 
+		
+		public: bool DidRenderLastSubmit() const;
 		
 		public: void SubmitFrame();
 
-				private: void SubmitCommand(UniquePtr<Renderer::Commands::Command> &&command);
+			private: void SubmitCommand(UniquePtr<Commands::Command> &&command);
+
+		public: ::Renderer::RendererFacade &Renderer() { return *underlyingRenderer; }
+
+		public: Commands::CommandFactory &CommandFactory() { return *commandFactory; }
 		
 	};
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "Window/Windows/Window.hpp"
-#include "Renderer.hpp"
+#include "RendererFacade.hpp"
+#include "Rendering/RendererMediator.hpp"
 
 
 namespace Windows
@@ -9,11 +10,9 @@ namespace Windows
 	{
 		private: Windows::Window window;
 
-		private: UniquePtr<Renderer::Renderer> renderer;
-
-		private: size_t meshHandle, rootHandle, meshSize, meshBytesToIndices;
-
-		private: size_t psoOpaqueShadedWithInstanceSupport;
+		private: UniquePtr<Renderer::RendererFacade> renderer;
+				 
+		private: ::App::Rendering::RendererMediator rendererMediator;
 		
 
 		

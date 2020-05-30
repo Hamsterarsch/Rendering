@@ -11,9 +11,10 @@ namespace Renderer
 		(
 			DeviceResources *resources, 
 			Queue *queue,
-			UniquePtr<DeallocatableGpuMemory> &&memory
+			UniquePtr<DeallocatableGpuMemory> &&bufferMemory,
+			UniquePtr<DeallocatableGpuMemory> &&textureMemory
 		)	:
-			ResourceFactory{ resources, queue, std::move(memory) }
+			ResourceFactory{ resources, queue, std::move(bufferMemory), std::move(textureMemory) }
 		{
 		}
 
@@ -26,6 +27,10 @@ namespace Renderer
 			case ResourceTypes::Buffer:
 				DeallocateBuffer(allocation);
 				break;
+			case ResourceTypes::Texture:
+				reinterpret_cast<DeallocatableGpuMemory *>(textureMemory.get())->Deallocate(allocation.allocation);													
+				CheckAndReleaseResourceRefs(allocation.resource);
+				break;
 			default:
 				ThrowIfDebug(Exception::Exception{ "Resource type missing handling in dx12 resource factory deallocation" });				
 			}
@@ -34,7 +39,8 @@ namespace Renderer
 
 			void ResourceFactoryDeallocatable::DeallocateBuffer(ResourceAllocation &allocation)
 			{
-				reinterpret_cast<DeallocatableGpuMemory *>(memory.get())->Deallocate(allocation.allocation);				
+				reinterpret_cast<DeallocatableGpuMemory *>(bufferMemory.get())->Deallocate(allocation.allocation);									
+				
 				CheckAndReleaseResourceRefs(allocation.resource);
 				
 			}

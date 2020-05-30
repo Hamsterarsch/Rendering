@@ -4,12 +4,12 @@
 
 namespace Windows
 {
-	Window::Window(const Dimensions2D &size, const bool isBorderlessFullscreen, const std::wstring &windowName, const std::wstring &className) :
+	Window::Window(const Dimensions2D &size, const bool isBorderlessFullscreen, const std::wstring &windowName, const std::wstring &className, WNDPROC windowProc) :
 		windowName{ windowName },
 		className{ className },
-		isFullscreen{ isBorderlessFullscreen }
+		isFullscreen{ isBorderlessFullscreen }		
 	{
-		CreateWindowClass();
+		CreateWindowClass(windowProc != nullptr ? windowProc : &Window::Procedure);
 
 		constexpr unsigned NO_X_DISP{ 0 }, NO_Y_DISP{ 0 };
 		constexpr decltype(nullptr) NO_PARENT{}, NO_MENU{};
@@ -54,13 +54,14 @@ namespace Windows
 		
 	}
 
-		void Window::CreateWindowClass() const
+		void Window::CreateWindowClass(WNDPROC windowProc) const
 		{
+		
 			WNDCLASSW wclass{};
 			wclass.cbClsExtra = sizeof(decltype(wclass));
 			wclass.hInstance = GetModuleHandle(nullptr);
 			wclass.lpszClassName = this->className.data();
-			wclass.lpfnWndProc = &Window::Procedure;
+			wclass.lpfnWndProc = windowProc;
 			wclass.style = CS_OWNDC;
 
 			RegisterClass(&wclass);
@@ -69,6 +70,7 @@ namespace Windows
 
 		LRESULT _stdcall Window::Procedure(HWND handle, UINT msg, WPARAM wparam, LPARAM lparam)
 		{
+		
 			switch(msg)
 			{
 			case WM_CLOSE:

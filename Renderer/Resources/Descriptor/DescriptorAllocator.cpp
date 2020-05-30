@@ -2,6 +2,8 @@
 #include "DX12/DeviceResources.hpp"
 #include "Resources/Descriptor/DescriptorMemory.hpp"
 #include "Shared/Exception/Exception.hpp"
+#include "Utility/Alignment.hpp"
+#include "StateSettings/TargetHelpers.hpp"
 
 
 namespace Renderer::DX12
@@ -38,6 +40,50 @@ namespace Renderer::DX12
 		parent{ parent }
 	{
 	}
+
+
+
+	DescriptorAllocator::~DescriptorAllocator() noexcept
+	{
+		if(!IsInvalid())
+		{
+			Free();					
+			
+		}
+							
+	}
+
+		bool DescriptorAllocator::IsInvalid() const
+		{
+			return parent == nullptr;
+		
+		}
+
+		void DescriptorAllocator::Free()
+		{			
+			if(view.chunk.capacity > 0)
+			{
+				parent->RetireViewDescriptorChunk(view.chunk);
+			}
+
+			if(sampler.chunk.capacity > 0)
+			{
+				parent->RetireSamplerDescriptorChunk(sampler.chunk);
+			}
+					
+			Invalidate();
+		
+		}
+
+			void DescriptorAllocator::Invalidate()
+			{
+				parent = nullptr;
+				resources = nullptr;
+				sampler = view = ChunkData{ {}, -1, 0 };
+			
+			}
+
+
 	
 	DescriptorAllocator::DescriptorAllocator(DescriptorAllocator &&other) noexcept : DescriptorAllocator{}
 	{			
@@ -55,50 +101,24 @@ namespace Renderer::DX12
 			
 		}
 
-		Free();
+		if(!IsInvalid())
+		{
+			Free();			
+		}
 		
 		view = std::move(rhs.view);
 		sampler = std::move(rhs.sampler);
 		resources = std::move(rhs.resources);
 		parent = std::move(rhs.parent);
+
+		rhs.Invalidate();
 		
 		return *this;
 		
 	}
-	
-		void DescriptorAllocator::Free()
-		{
-			if(parent == nullptr)
-			{
-				return;
-			}
-			
-			if(view.chunk.capacity > 0)
-			{
-				parent->RetireViewDescriptorChunk(view.chunk);
-			}
 
-			if(sampler.chunk.capacity > 0)
-			{
-				parent->RetireSamplerDescriptorChunk(sampler.chunk);
-			}
-		
-			parent = nullptr;
-			resources = nullptr;
-			sampler = view = ChunkData{ {}, -1, 0 };
-		
-		}
 
 	
-	
-	DescriptorAllocator::~DescriptorAllocator() noexcept
-	{
-		Free();					
-					
-	}
-
-
-
 	void DescriptorAllocator::OpenNewTable()
 	{			
 		view.offsetToTableStart = view.offsetToAfterTable;
@@ -131,7 +151,7 @@ namespace Renderer::DX12
 	)
 	{
 		CreateSrvInternal(resource, tableOffset, nullptr);
-					
+							
 	}
 
 		void DescriptorAllocator::CreateSrvInternal(ID3D12Resource *resource, const size_t tableOffset, const D3D12_SHADER_RESOURCE_VIEW_DESC *desc)
@@ -180,8 +200,28 @@ namespace Renderer::DX12
 
 			}
 
+	void DescriptorAllocator::CreateSrvTex2D
+	(
+		ID3D12Resource *resource,
+		const size_t tableOffset,
+		const Format format,
+		const uint16_t numMips,
+		const uint16_t mostDetailedMip
+	)
+	{
+		D3D12_SHADER_RESOURCE_VIEW_DESC desc{};
+		desc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+		desc.Format = GetTargetValue<DXGI_FORMAT>(format);        
+        desc.Texture2D.MipLevels = numMips;
+        desc.Texture2D.MostDetailedMip = mostDetailedMip;
+        desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 
-	
+		CreateSrvInternal(resource, tableOffset, &desc);
+		
+	}
+
+
+
 	void DescriptorAllocator::CreateSrvBuffer
 	(
 		ID3D12Resource *resource,
@@ -239,7 +279,7 @@ namespace Renderer::DX12
 	{
 		CheckIfValidOpenTable();
 					
-		D3D12_CONSTANT_BUFFER_VIEW_DESC desc{ resource->GetGPUVirtualAddress(), bufferSizeInBytes };
+		D3D12_CONSTANT_BUFFER_VIEW_DESC desc{ resource->GetGPUVirtualAddress(), RHA::Utility::IncreaseValueToAlignment(bufferSizeInBytes, 256) };//todo: make such alignments device based and consostently provided
 		resources->GetDevice()->CreateConstantBufferView
 		(
 			&desc,

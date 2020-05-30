@@ -8,7 +8,13 @@ namespace Renderer
 	{
 		class ResourceFactoryDeallocatable : public ResourceFactory
 		{
-			public: ResourceFactoryDeallocatable(DeviceResources *resources, Queue *queue, UniquePtr<DeallocatableGpuMemory> &&memory);
+			public: ResourceFactoryDeallocatable
+			(
+				DeviceResources *resources,
+				Queue *queue,
+				UniquePtr<DeallocatableGpuMemory> &&bufferMemory,
+				UniquePtr<DeallocatableGpuMemory> &&textureMemory
+			);
 
 					
 			public: virtual void DeallocateInternal(ResourceAllocation &allocation, ResourceTypes type) override;

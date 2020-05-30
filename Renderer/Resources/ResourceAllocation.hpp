@@ -26,11 +26,13 @@ namespace Renderer::DX12
 
 		public: void Free();
 
+			private: void Invalidate();
+
 		public: bool IsValid() const;
 		
 		public: ResourceAllocation(ResourceAllocation &&other) noexcept;
 
-		public: ResourceAllocation &operator=(ResourceAllocation &&other) noexcept;
+		public: ResourceAllocation &operator=(ResourceAllocation &&rhs) noexcept;
 
 		public: ResourceHandle::t_resourceTypes GetType() const { return type; }
 		

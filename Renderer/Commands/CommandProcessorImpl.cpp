@@ -43,7 +43,7 @@ namespace Renderer::DX12::Commands
 
 							if(currentContextCommand)
 							{
-								executedCommands.push_back(std::move(currentContextCommand));							
+								recordedCommands.push_back(std::move(currentContextCommand));							
 							}
 						}
 						currentContextCommand = std::move(bucket.command);
@@ -70,11 +70,8 @@ namespace Renderer::DX12::Commands
 						
 					}
 
-					{
-						std::lock_guard lock{ mutexOutputCommands };
-						executedCommands.push_back(std::move(bucket.command));						
-					}
-					
+					recordedCommands.push_back(std::move(bucket.command));						
+										
 					++commandsExecutedSinceListSubmit;					
 					if(ListCapacityIsReached())
 					{
@@ -184,6 +181,23 @@ namespace Renderer::DX12::Commands
 		
 		allocator->Reset();
 		ResetList();
+
+		{
+			std::lock_guard lock{ mutexOutputCommands };
+			if(commandsToBeFreed.empty())
+			{
+				using std::swap;
+				swap(recordedCommands, commandsToBeFreed);
+				return;
+				
+			}
+			
+			while(!recordedCommands.empty())
+			{
+				commandsToBeFreed.emplace_back(std::move(recordedCommands.back()));
+				recordedCommands.pop_back();				
+			}			
+		}
 		
 	}
 
@@ -197,7 +211,7 @@ namespace Renderer::DX12::Commands
 
 
 	
-	void CommandProcessorImpl::SubmitCommand(UniquePtr<DX12Command> &&command)
+	void CommandProcessorImpl::SubmitCommand(UniquePtr<::Renderer::Commands::Command> &&command)
 	{
 		command->ExecuteOperationOnResourceReferences(*registry, &UsesReferences::AddReference);
 		queuedCommands.Push({std::move(command)});
@@ -206,7 +220,7 @@ namespace Renderer::DX12::Commands
 
 	
 	
-	intptr_t CommandProcessorImpl::SubmitExtractableCommand(UniquePtr<DX12Command> &&command)
+	intptr_t CommandProcessorImpl::SubmitExtractableCommand(UniquePtr<::Renderer::Commands::Command> &&command)
 	{
 		const auto key{ reinterpret_cast<intptr_t>(command.get()) };
 
@@ -219,7 +233,7 @@ namespace Renderer::DX12::Commands
 
 
 	
-	void CommandProcessorImpl::SubmitContextCommand(UniquePtr<DX12Command> &&command)
+	void CommandProcessorImpl::SubmitContextCommand(UniquePtr<::Renderer::Commands::Command> &&command)
 	{
 		command->ExecuteOperationOnResourceReferences(*registry, &UsesReferences::AddReference);
 		queuedCommands.Push({std::move(command), true});
@@ -241,7 +255,7 @@ namespace Renderer::DX12::Commands
 
 
 	
-	UniquePtr<DX12Command> CommandProcessorImpl::ExtractCommand(const intptr_t handle)
+	UniquePtr<::Renderer::Commands::Command> CommandProcessorImpl::ExtractCommand(const intptr_t handle)
 	{
 		PropagateExceptions();
 		
@@ -261,11 +275,11 @@ namespace Renderer::DX12::Commands
 	{
 		std::lock_guard lock{ mutexOutputCommands };
 
-		for(auto &&cmd : executedCommands)
+		for(auto &&cmd : commandsToBeFreed)
 		{
 			cmd->ExecuteOperationOnResourceReferences(*registry, &UsesReferences::RemoveReference);
 		}
-		executedCommands.clear();			
+		commandsToBeFreed.clear();			
 	
 	}
 
