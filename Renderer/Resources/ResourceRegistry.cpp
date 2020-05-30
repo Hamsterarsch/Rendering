@@ -167,7 +167,15 @@ namespace Renderer::DX12
 		
 	}
 
+
 	
+	bool ResourceRegistry::IsWindowSurfaceReferenced(const ResourceHandle::t_hash handle) const
+	{
+		return registryWindowSurface.GetReferenceCount(handle) > 0;
+		
+	}
+
+
 
 	DescriptorAllocator &ResourceRegistry::GetDescriptorAllocator(const ResourceHandle::t_hash handle)
 	{
@@ -237,7 +245,7 @@ namespace Renderer::DX12
 	{
 		registryDescriptor.PurgeUnreferencedEntities();
 		registryResource.PurgeUnreferencedEntities();
-		registryWindowSurface.PurgeUnreferencedEntities();
+		
 		if(shouldPurgePsoAndSignature)
 		{
 			registryPso.PurgeUnreferencedEntities();

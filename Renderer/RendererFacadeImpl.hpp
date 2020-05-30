@@ -139,6 +139,15 @@ namespace Renderer::DX12
    		
 		public: ResourceHandle::t_hash MakeWindowsWindowSurface(HWND windowHandle) override;
 
+		public: void SetWindowSurfaceToFullscreen(ResourceHandle::t_hash surface) override;
+
+			private: void WaitForCommandsAndQueue();
+		
+		public: void SetWindowSurfaceToWindowed(ResourceHandle::t_hash surface) override;
+		
+		public: void FitWindowSurfaceToWindow(ResourceHandle::t_hash surface) override;
+
+		
 		public: UniquePtr<::Renderer::Commands::CommandFactory> MakeCommandFactory() override;
 
 		public: void SubmitCommand(UniquePtr<::Renderer::Commands::Command> &&command) override;
@@ -160,8 +169,7 @@ namespace Renderer::DX12
 
 		
 		public: ResourceViewFactory &GetViewFactory() override;
-
-		
+							   		
 	};
 
 

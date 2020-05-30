@@ -43,6 +43,12 @@ namespace Renderer
 		
 		public: virtual ResourceHandle::t_hash MakeWindowsWindowSurface(HWND windowHandle) = 0;
 
+		public: virtual void SetWindowSurfaceToFullscreen(ResourceHandle::t_hash surface) = 0;
+
+		public: virtual void SetWindowSurfaceToWindowed(ResourceHandle::t_hash surface) = 0;
+
+		public: virtual void FitWindowSurfaceToWindow(ResourceHandle::t_hash surface) = 0;
+		
 		
 		public: virtual UniquePtr<Commands::CommandFactory> MakeCommandFactory() = 0;
 
@@ -66,7 +72,7 @@ namespace Renderer
 
 
 		public: virtual ResourceViewFactory &GetViewFactory() = 0;
-				
+								
 	};
 
 

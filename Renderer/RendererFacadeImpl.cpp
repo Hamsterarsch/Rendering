@@ -577,6 +577,52 @@ namespace Renderer::DX12
 
 
 	
+	void RendererFacadeImpl::SetWindowSurfaceToFullscreen(ResourceHandle::t_hash surface)
+	{
+		if(registry.IsWindowSurfaceReferenced(surface))
+		{
+			WaitForCommandsAndQueue();			
+		}
+
+		registry.GetSurface(surface)->GoFullscreen();
+		
+	}
+
+		void RendererFacadeImpl::WaitForCommandsAndQueue()
+		{
+			commandProcessor.WaitForIdle();
+			commandProcessor.SubmitAndWaitForGpuWork();
+		
+		}
+
+
+
+	void RendererFacadeImpl::SetWindowSurfaceToWindowed(ResourceHandle::t_hash surface)
+	{
+		if(registry.IsWindowSurfaceReferenced(surface))
+		{
+			WaitForCommandsAndQueue();			
+		}
+
+		registry.GetSurface(surface)->GoWindowed();
+		
+	}
+
+
+	
+	void RendererFacadeImpl::FitWindowSurfaceToWindow(ResourceHandle::t_hash surface)
+	{
+		if(registry.IsWindowSurfaceReferenced(surface))
+		{
+			WaitForCommandsAndQueue();			
+		}
+
+		registry.GetSurface(surface)->ResizeToWindow();
+		
+	}
+
+
+
 	UniquePtr<::Renderer::Commands::CommandFactory> RendererFacadeImpl::MakeCommandFactory()
 	{
 		return MakeUnique<Commands::DX12CommandFactory>(registry);

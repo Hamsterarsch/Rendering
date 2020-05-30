@@ -94,8 +94,8 @@ namespace Renderer
 				}				
 				
 			}
-						
 
+					
 			
 			public: virtual void PurgeUnreferencedEntities() override
 			{
@@ -124,6 +124,12 @@ namespace Renderer
 			public: void SetOnEntityPurged(decltype(onEntityPurged) callback)
 			{
 				onEntityPurged = std::move(callback);
+				
+			}
+
+			public: size_t GetReferenceCount(ResourceHandle::t_hash handle) const
+			{
+				return references.at(handle);
 				
 			}
 		
