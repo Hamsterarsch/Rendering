@@ -43,7 +43,7 @@ namespace Renderer::DX12::Commands
 
 							if(currentContextCommand)
 							{
-								executedCommands.push_back(std::move(currentContextCommand));							
+								recordedCommands.push_back(std::move(currentContextCommand));							
 							}
 						}
 						currentContextCommand = std::move(bucket.command);
@@ -70,11 +70,8 @@ namespace Renderer::DX12::Commands
 						
 					}
 
-					{
-						std::lock_guard lock{ mutexOutputCommands };
-						executedCommands.push_back(std::move(bucket.command));						
-					}
-					
+					recordedCommands.push_back(std::move(bucket.command));						
+										
 					++commandsExecutedSinceListSubmit;					
 					if(ListCapacityIsReached())
 					{
@@ -184,6 +181,23 @@ namespace Renderer::DX12::Commands
 		
 		allocator->Reset();
 		ResetList();
+
+		{
+			std::lock_guard lock{ mutexOutputCommands };
+			if(commandsToBeFreed.empty())
+			{
+				using std::swap;
+				swap(recordedCommands, commandsToBeFreed);
+				return;
+				
+			}
+			
+			while(!recordedCommands.empty())
+			{
+				commandsToBeFreed.emplace_back(std::move(recordedCommands.back()));
+				recordedCommands.pop_back();				
+			}			
+		}
 		
 	}
 
@@ -261,11 +275,11 @@ namespace Renderer::DX12::Commands
 	{
 		std::lock_guard lock{ mutexOutputCommands };
 
-		for(auto &&cmd : executedCommands)
+		for(auto &&cmd : commandsToBeFreed)
 		{
 			cmd->ExecuteOperationOnResourceReferences(*registry, &UsesReferences::RemoveReference);
 		}
-		executedCommands.clear();			
+		commandsToBeFreed.clear();			
 	
 	}
 

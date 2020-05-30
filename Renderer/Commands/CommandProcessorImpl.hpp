@@ -58,7 +58,9 @@ namespace Renderer::DX12::Commands
 				 		
 		private: UniquePtr<::Renderer::Commands::Command> currentContextCommand;
 
-		private: std::vector<UniquePtr<::Renderer::Commands::Command>> executedCommands;
+		private: std::vector<UniquePtr<::Renderer::Commands::Command>> recordedCommands;
+
+		private: std::vector<UniquePtr<::Renderer::Commands::Command>> commandsToBeFreed;
 
 		private: std::unordered_map<intptr_t, UniquePtr<::Renderer::Commands::Command>> extractableCommands;
 
