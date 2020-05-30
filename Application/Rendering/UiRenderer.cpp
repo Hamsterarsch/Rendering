@@ -69,17 +69,16 @@ namespace App::Rendering
 			depthSettings.SetEnableDepth(false);
 
 			
-			auto &blendSettings{ renderer.GetBlendSettings() };
-			blendSettings.SetEnableBlend(true);
+			renderer.GetBlendSettings()
+			.SetEnableBlend(true)			
+			.SetBlendSrcAlpha(&BlendSettings::TargetSrc)
+			.SetBlendInverseSrcAlpha(&BlendSettings::TargetDst)
 			
-			blendSettings.SetBlendSrcAlpha(&BlendSettings::TargetSrc);
-			blendSettings.SetBlendInverseSrcAlpha(&BlendSettings::TargetDst);
-			
-			blendSettings.SetBlendInverseSrcAlpha(&BlendSettings::TargetSrcAlpha);
-			blendSettings.SetBlendZero(&BlendSettings::TargetDstAlpha);
+			.SetBlendInverseSrcAlpha(&BlendSettings::TargetSrcAlpha)
+			.SetBlendZero(&BlendSettings::TargetDstAlpha)
 
-			blendSettings.SetBlendOpAdd(&BlendSettings::TargetBlendOpColor);
-			blendSettings.SetBlendOpAdd(&BlendSettings::TargetBlendOpAlpha);
+			.SetBlendOpAdd(&BlendSettings::TargetBlendOpColor)
+			.SetBlendOpAdd(&BlendSettings::TargetBlendOpAlpha);
 
 		
 			auto &rasterSettings{ renderer.GetRasterizerSettings() };

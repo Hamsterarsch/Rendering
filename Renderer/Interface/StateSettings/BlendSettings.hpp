@@ -38,36 +38,36 @@ namespace Renderer
 		public: using t_targets_op = void(BlendSettingsBlendOpTargets:: *)(const char *);
 		
 
-		public: virtual void SetEnableBlend(bool value) = 0;
+		public: virtual BlendSettings &SetEnableBlend(bool value) = 0;
 		
 		
-		public: virtual void SetBlendZero(t_targets_blend target) = 0;
+		public: virtual BlendSettings &SetBlendZero(t_targets_blend target) = 0;
 
-		public: virtual void SetBlendOne(t_targets_blend target) = 0;
+		public: virtual BlendSettings &SetBlendOne(t_targets_blend target) = 0;
 
-		public: virtual void SetBlendSrcColor(t_targets_blend target) = 0;
+		public: virtual BlendSettings &SetBlendSrcColor(t_targets_blend target) = 0;
 
-		public: virtual void SetBlendInverseSrcColor(t_targets_blend target) = 0;
+		public: virtual BlendSettings &SetBlendInverseSrcColor(t_targets_blend target) = 0;
 
-		public: virtual void SetBlendDstColor(t_targets_blend target) = 0;
+		public: virtual BlendSettings &SetBlendDstColor(t_targets_blend target) = 0;
 		
-		public: virtual void SetBlendInverseDstColor(t_targets_blend target) = 0;
+		public: virtual BlendSettings &SetBlendInverseDstColor(t_targets_blend target) = 0;
 
 
-		public: virtual void SetBlendSrcAlpha(t_targets_blend target) = 0;
+		public: virtual BlendSettings &SetBlendSrcAlpha(t_targets_blend target) = 0;
 
-		public: virtual void SetBlendInverseSrcAlpha(t_targets_blend target) = 0;
+		public: virtual BlendSettings &SetBlendInverseSrcAlpha(t_targets_blend target) = 0;
 
-		public: virtual void SetBlendDstAlpha(t_targets_blend target) = 0;
+		public: virtual BlendSettings &SetBlendDstAlpha(t_targets_blend target) = 0;
 
-		public: virtual void SetBlendInverseDstAlpha(t_targets_blend target) = 0;
+		public: virtual BlendSettings &SetBlendInverseDstAlpha(t_targets_blend target) = 0;
 
 
-		public: virtual void SetBlendOpAdd(t_targets_op target) = 0;
+		public: virtual BlendSettings &SetBlendOpAdd(t_targets_op target) = 0;
 
-		public: virtual void SetBlendOpSubtract(t_targets_op target) = 0;
+		public: virtual BlendSettings &SetBlendOpSubtract(t_targets_op target) = 0;
 
-		public: virtual void SetBlendReversedSubtract(t_targets_op target) = 0;
+		public: virtual BlendSettings &SetBlendReversedSubtract(t_targets_op target) = 0;
 						
 	};
 

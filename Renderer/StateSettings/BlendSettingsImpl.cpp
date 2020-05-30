@@ -87,129 +87,145 @@ namespace Renderer::DX12
 
 
 
-	void BlendSettingsImpl::SetEnableBlend(const bool value)
+	BlendSettings &BlendSettingsImpl::SetEnableBlend(const bool value)
 	{
 		current.enableBlend = value;
+
+		return *this;
 		
 	}
 
 
 
-	void BlendSettingsImpl::SetBlendZero(const t_targets_blend target)
+	BlendSettings &BlendSettingsImpl::SetBlendZero(const t_targets_blend target)
 	{
 		const auto value{ D3D12_BLEND_ZERO };
 		(this->*target)(reinterpret_cast<const char *>(&value));
 		
+		return *this;
 	}
 
 
 
-	void BlendSettingsImpl::SetBlendOne(const t_targets_blend target)
+	BlendSettings &BlendSettingsImpl::SetBlendOne(const t_targets_blend target)
 	{
 		const auto value{ D3D12_BLEND_ONE };
 		(this->*target)(reinterpret_cast<const char *>(&value));
 		
+		return *this;
 	}
 
 
 
-	void BlendSettingsImpl::SetBlendSrcColor(const t_targets_blend target)
+	BlendSettings &BlendSettingsImpl::SetBlendSrcColor(const t_targets_blend target)
 	{
 		const auto value{ D3D12_BLEND_SRC_COLOR };
 		(this->*target)(reinterpret_cast<const char *>(&value));
 		
+		return *this;
 	}
 
 
 
-	void BlendSettingsImpl::SetBlendInverseSrcColor(const t_targets_blend target)
+	BlendSettings &BlendSettingsImpl::SetBlendInverseSrcColor(const t_targets_blend target)
 	{
 		const auto value{ D3D12_BLEND_INV_SRC_COLOR };
 		(this->*target)(reinterpret_cast<const char *>(&value));
+
+		return *this;
 		
 	}
 
 
 
-	void BlendSettingsImpl::SetBlendDstColor(const t_targets_blend target)
+	BlendSettings &BlendSettingsImpl::SetBlendDstColor(const t_targets_blend target)
 	{
 		const auto value{ D3D12_BLEND_DEST_COLOR };
 		(this->*target)(reinterpret_cast<const char *>(&value));
 		
+		return *this;
 	}
 
 
 
-	void BlendSettingsImpl::SetBlendInverseDstColor(const t_targets_blend target)
+	BlendSettings &BlendSettingsImpl::SetBlendInverseDstColor(const t_targets_blend target)
 	{
 		const auto value{ D3D12_BLEND_INV_DEST_COLOR };
 		(this->*target)(reinterpret_cast<const char *>(&value));
 		
+		return *this;
 		
 	}
 
 
 
-	void BlendSettingsImpl::SetBlendSrcAlpha(const t_targets_blend target)
+	BlendSettings &BlendSettingsImpl::SetBlendSrcAlpha(const t_targets_blend target)
 	{
 		const auto value{ D3D12_BLEND_SRC_ALPHA };
 		(this->*target)(reinterpret_cast<const char *>(&value));
 				
+		return *this;
 	}
 
 
 
-	void BlendSettingsImpl::SetBlendInverseSrcAlpha(const t_targets_blend target)
+	BlendSettings &BlendSettingsImpl::SetBlendInverseSrcAlpha(const t_targets_blend target)
 	{
 		const auto value{ D3D12_BLEND_INV_SRC_ALPHA };
 		(this->*target)(reinterpret_cast<const char *>(&value));
 				
+		return *this;
 	}
 
 
 
-	void BlendSettingsImpl::SetBlendDstAlpha(const t_targets_blend target)
+	BlendSettings &BlendSettingsImpl::SetBlendDstAlpha(const t_targets_blend target)
 	{
 		const auto value{ D3D12_BLEND_DEST_ALPHA };
 		(this->*target)(reinterpret_cast<const char *>(&value));
 				
+		return *this;
 	}
 
 
 
-	void BlendSettingsImpl::SetBlendInverseDstAlpha(const t_targets_blend target)
+	BlendSettings &BlendSettingsImpl::SetBlendInverseDstAlpha(const t_targets_blend target)
 	{
 		const auto value{ D3D12_BLEND_INV_DEST_ALPHA };
 		(this->*target)(reinterpret_cast<const char *>(&value));
 		
+		return *this;
 		
 	}
 
 
 	
-	void BlendSettingsImpl::SetBlendOpAdd(const t_targets_op target)
+	BlendSettings &BlendSettingsImpl::SetBlendOpAdd(const t_targets_op target)
 	{
 		const auto value{ D3D12_BLEND_OP_ADD };
 		(this->*target)(reinterpret_cast<const char *>(&value));
 		
+		return *this;
 	}
 
 
 	
-	void BlendSettingsImpl::SetBlendOpSubtract(const t_targets_op target)
+	BlendSettings &BlendSettingsImpl::SetBlendOpSubtract(const t_targets_op target)
 	{
 		const auto value{ D3D12_BLEND_OP_SUBTRACT };
 		(this->*target)(reinterpret_cast<const char *>(&value));
 		
+		return *this;
 	}
 
 
 	
-	void BlendSettingsImpl::SetBlendReversedSubtract(const t_targets_op target)
+	BlendSettings &BlendSettingsImpl::SetBlendReversedSubtract(const t_targets_op target)
 	{
 		const auto value{ D3D12_BLEND_OP_REV_SUBTRACT };
 		(this->*target)(reinterpret_cast<const char *>(&value));
 		
+		return *this;
 	}
 
 
