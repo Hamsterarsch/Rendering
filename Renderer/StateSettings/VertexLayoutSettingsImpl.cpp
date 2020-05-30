@@ -29,11 +29,11 @@ namespace Renderer::DX12
 
 
 	
-	void VertexLayoutSettingsImpl::AddLayoutElementDesc
+	VertexLayoutSettings &VertexLayoutSettingsImpl::AddLayoutElementDesc
 	(
-		const t_target_semantic semantic,
+		const t_semantic_target semantic,
 		const unsigned char semanticIndex,
-		const t_target_format format,
+		const t_format_target format,
 		const unsigned byteOffset
 	)
 	{
@@ -50,6 +50,8 @@ namespace Renderer::DX12
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
 			0
 		});
+
+		return *this;
 		
 	}
 

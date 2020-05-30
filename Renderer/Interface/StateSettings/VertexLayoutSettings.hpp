@@ -7,13 +7,8 @@
 namespace Renderer
 {	
 	class VertexLayoutSettings : public StateSettings
-	{
-		public: using t_target_semantic = const void *(SemanticTargets:: *)() const;
-
-		public: using t_target_format = const void *(FormatTargets:: *)() const;
-
-		
-		public: virtual void AddLayoutElementDesc(t_target_semantic semantic, unsigned char semanticIndex, t_target_format format, unsigned byteOffset) = 0;
+	{		
+		public: virtual VertexLayoutSettings &AddLayoutElementDesc(t_semantic_target semantic, unsigned char semanticIndex, t_format_target format, unsigned byteOffset) = 0;
 								
 	};
 	

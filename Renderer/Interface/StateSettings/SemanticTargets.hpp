@@ -18,6 +18,8 @@ namespace Renderer
 		public: virtual const void *TargetColor() const = 0;
 		
 	};
+
+	using t_semantic_target = const void *(SemanticTargets:: *)() const;
 						
 	
 }

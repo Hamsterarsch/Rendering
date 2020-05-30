@@ -55,19 +55,9 @@ namespace App::Rendering
 
 		void UiRenderer::CreateUiPipeline(::Renderer::Renderer &renderer)
 		{
-			const auto vs{ CreateUiVertexShader(renderer) };
-			const auto ps{ CreateUiPixelShader(renderer) };
+			renderer.GetDepthStencilSettings()
+			.SetEnableDepth(false);
 		
-			ShaderList list{};
-			list.vs.data = vs.GetData();
-			list.vs.sizeInBytes = vs.GetSize();
-			list.ps.data = ps.GetData();
-			list.ps.sizeInBytes = ps.GetSize();
-
-
-			auto &depthSettings{ renderer.GetDepthStencilSettings() };
-			depthSettings.SetEnableDepth(false);
-
 			
 			renderer.GetBlendSettings()
 			.SetEnableBlend(true)			
@@ -81,14 +71,25 @@ namespace App::Rendering
 			.SetBlendOpAdd(&BlendSettings::TargetBlendOpAlpha);
 
 		
-			auto &rasterSettings{ renderer.GetRasterizerSettings() };
-			rasterSettings.SetFrontIsCounterClockwise(false);
+			renderer.GetRasterizerSettings()
+			.SetFrontIsCounterClockwise(false);
 
-			auto &vertexLayoutSettings{ renderer.GetVertexLayoutSettings() };
-			vertexLayoutSettings.AddLayoutElementDesc(&SemanticTargets::TargetPosition, 0, &FormatTargets::R32G32_Float, (UINT)IM_OFFSETOF(ImDrawVert, pos));
-			vertexLayoutSettings.AddLayoutElementDesc(&SemanticTargets::TargetTexcoord, 0, &FormatTargets::R32G32_Float, (UINT)IM_OFFSETOF(ImDrawVert, uv));
-			vertexLayoutSettings.AddLayoutElementDesc(&SemanticTargets::TargetColor, 0, &FormatTargets::R8G8B8A8_UNorm, (UINT)IM_OFFSETOF(ImDrawVert, col));
+		
+			renderer.GetVertexLayoutSettings()
+			.AddLayoutElementDesc(&SemanticTargets::TargetPosition, 0, &FormatTargets::R32G32_Float, (UINT)IM_OFFSETOF(ImDrawVert, pos))
+			.AddLayoutElementDesc(&SemanticTargets::TargetTexcoord, 0, &FormatTargets::R32G32_Float, (UINT)IM_OFFSETOF(ImDrawVert, uv))
+			.AddLayoutElementDesc(&SemanticTargets::TargetColor, 0, &FormatTargets::R8G8B8A8_UNorm, (UINT)IM_OFFSETOF(ImDrawVert, col));
 
+
+			const auto vs{ CreateUiVertexShader(renderer) };
+			const auto ps{ CreateUiPixelShader(renderer) };
+		
+			ShaderList list{};
+			list.vs.data = vs.GetData();
+			list.vs.sizeInBytes = vs.GetSize();
+			list.ps.data = ps.GetData();
+			list.ps.sizeInBytes = ps.GetSize();
+		
 		
 			uiPso = { &renderer, renderer.MakePso(list, uiSignature) };
 		
