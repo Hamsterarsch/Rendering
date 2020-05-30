@@ -7,11 +7,7 @@
 #include "Resources/ResourceRegistry.hpp"
 #include "Resources/MaintainsInternalRenderResources.hpp"
 #include "Resources/Descriptor/DescriptorMemory.hpp"
-#include "ShaderRelevantTypes/GlobalBufferData.hpp"
-#include "Lighting/LightGrid/VolumeTileGrid.hpp"
-#include "Commands/CommandHelper.hpp"
 #include "Commands/CommandProcessorImpl.hpp"
-#include "Resources/HandleWrapper.hpp"
 #include "Commands/RenderMeshCommand.hpp"
 #include "Commands/CommandFactory.hpp"
 #include "StateSettings/BlendSettingsImpl.hpp"
@@ -54,7 +50,6 @@ namespace Renderer::DX12
 		private: UniquePtr<RHA::DX12::Fence> closeFence;
 
 		private: HANDLE closeEvent;
-
 				 			
 		private: UniquePtr<ResourceFactory> resourceFactory;
 		
@@ -87,6 +82,10 @@ namespace Renderer::DX12
 		public: ~RendererFacadeImpl();
 
 			private: void WaitForIdleQueue();
+
+		public: RendererFacadeImpl(const RendererFacadeImpl &) = delete;
+
+		public: RendererFacadeImpl &operator=(const RendererFacadeImpl &) = delete;
 
 
 		public: virtual size_t MakeBuffer(const void *data, size_t sizeInBytes) override;
@@ -149,8 +148,6 @@ namespace Renderer::DX12
 		public: void DestroyUnreferencedResources() override;
 
 		public: void DestroyExecutedCommands() override;
-
-		public: void WaitForCommands() override;
 
 		
 		public: BlendSettings &GetBlendSettings() override;

@@ -1,41 +1,16 @@
 #include "RendererFacadeImpl.hpp"
 #include "RHA/Interface/DX12/Facade.hpp"
 #include "Shared/Filesystem/Conversions.hpp"
-
-#include "Commands/RenderMeshCommand.hpp"
-
-
-#include "Math/Interface/Utility.hpp"
-#include "Lighting/LightGrid/VolumeTileGrid.hpp"
-#include "ShaderRelevantTypes/VolumeTileGridData.hpp"
-
 #include "Resources/HandleFactory.hpp"
 #include "Resources/ResourceRegistry.hpp"
 #include "Resources/ResourceFactoryDeallocatable.hpp"
-
-
-
-
-
 #include "Resources/Descriptor/DescriptorMemory.hpp"
-#include <fstream>
-
 #include "Interface/Resources/SerializationContainer.hpp"
-#include "Commands/InitVolumeTileGridCommand.hpp"
-
-#include "Interface/Resources/SerializationContainer.hpp"
-
 #include "Utility/Alignment.hpp"
-#include "Commands/ClearDepthSurfaceCommand.hpp"
-#include "Commands/PrepareSurfaceForRenderingCommand.hpp"
-#include "Commands/PrepareSurfaceForPresentCommand.h"
-
-#include "ShaderRelevantTypes/Light.hpp"
 #include "Commands/BindDescriptorsContextCommand.hpp"
-#include "Commands/GlobalBufferContextCommand.hpp"
-#include "Commands/LightingSetup/FlagActiveVolumeTilesCommand.hpp"
 #include "Commands/UserContextCommandWrapper.hpp"
 #include "Commands/DX12CommandFactory.hpp"
+
 
 #if DEBUG_OPTIMIZED
 	constexpr bool enableDebugLayers = true;
@@ -615,6 +590,7 @@ namespace Renderer::DX12
 		
 	}
 
+
 	
 	void RendererFacadeImpl::SubmitContextCommand(UniquePtr<::Renderer::Commands::Command> &&command)
 	{
@@ -636,14 +612,6 @@ namespace Renderer::DX12
 	void RendererFacadeImpl::DestroyExecutedCommands()
 	{
 		commandProcessor.FreeExecutedCommands();
-		
-	}
-
-
-	
-	void RendererFacadeImpl::WaitForCommands()
-	{
-		commandProcessor.WaitForIdle();
 		
 	}
 

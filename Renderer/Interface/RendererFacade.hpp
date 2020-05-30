@@ -54,7 +54,6 @@ namespace Renderer
 
 		public: virtual void DestroyExecutedCommands() = 0;
 
-		public: virtual void WaitForCommands() = 0;
 
 
 		public: virtual BlendSettings &GetBlendSettings() = 0;

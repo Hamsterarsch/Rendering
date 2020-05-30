@@ -264,7 +264,6 @@
     <ClInclude Include="Commands\LightingSetup\GenerateActiveTileListCommand.hpp" />
     <ClInclude Include="Commands\DX12Command.hpp" />
     <ClInclude Include="Commands\CompositeRecordCommand.hpp" />
-    <ClInclude Include="Commands\CommandHelper.hpp" />
     <ClInclude Include="Commands\InitVolumeTileGridCommand.hpp" />
     <ClInclude Include="Commands\PrepareSurfaceForPresentCommand.h" />
     <ClInclude Include="Commands\BindSurfaceCommand.hpp" />

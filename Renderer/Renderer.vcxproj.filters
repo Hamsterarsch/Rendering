@@ -182,9 +182,6 @@
     <ClInclude Include="Commands\DX12CommandProcessor.hpp">
       <Filter>Commands</Filter>
     </ClInclude>
-    <ClInclude Include="Commands\CommandHelper.hpp">
-      <Filter>Commands</Filter>
-    </ClInclude>
     <ClInclude Include="Commands\Surface\PrepareSurfaceForRenderingCommand.hpp">
       <Filter>Commands\Surface</Filter>
     </ClInclude>
