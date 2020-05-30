@@ -21,7 +21,8 @@ namespace RHA
 			private: D3D12_GPU_DESCRIPTOR_HANDLE heapStartGpu;
 		
 
-			
+			public: DescriptorHeapImpl() = default;
+						
 			public: DescriptorHeapImpl(DeviceResources *resources, D3D12_DESCRIPTOR_HEAP_TYPE type, size_t capacity, bool isGpuVisible);
 
 				private: static void CheckHeapCreation(HRESULT result);
@@ -38,6 +39,8 @@ namespace RHA
 					private: bool IndexIsInvalid(size_t index) const;
 			
 			public: virtual D3D12_GPU_DESCRIPTOR_HANDLE GetHandleGpu(size_t index) const override;
+
+			public: bool IsValid() const { return heap != nullptr; }
 													
 		};
 

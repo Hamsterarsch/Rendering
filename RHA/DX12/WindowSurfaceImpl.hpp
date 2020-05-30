@@ -14,6 +14,8 @@ namespace RHA::DX12
 
 		private: static constexpr float clearColor[4]{ 0,0,0,1 };
 
+		private: RHA::DX12::DeviceResources *resources;
+		
 		private: DxPtr<IDXGISwapChain1> swapChain;
 
 		private: std::array<DxPtr<ID3D12Resource>, bufferCount> buffers;
@@ -40,7 +42,7 @@ namespace RHA::DX12
 		
 				private: void QueryViewportInformation();
 
-			private: void CreateViewsForChainBuffers(class DeviceResources *resources);
+			private: void CreateViewsForChainBuffers();
 		
 				private: static void CheckBufferQuery(HRESULT result);
 						 				
@@ -80,6 +82,8 @@ namespace RHA::DX12
 		
 
 		public: void GoFullscreen() override;
+
+			private: void ReleaseSwapchainBuffers();
 
 		public: void ResizeToWindow() override;
 		

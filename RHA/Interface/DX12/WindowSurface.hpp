@@ -15,13 +15,13 @@ namespace RHA::DX12
 		DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(WindowSurface)
 
 
-		public: virtual inline size_t GetWidth() const = 0;
+		public: virtual size_t GetWidth() const = 0;
 		
-		public: virtual inline size_t GetHeight() const = 0;
+		public: virtual size_t GetHeight() const = 0;
 
-		public: virtual inline void EnableVerticalSync() = 0;
+		public: virtual void EnableVerticalSync() = 0;
 
-		public: virtual inline void DisableVerticalSync() = 0;
+		public: virtual void DisableVerticalSync() = 0;
 		
 		public: virtual DxPtr<ID3D12Resource> GetResourceTemplate() = 0;
 		
@@ -39,7 +39,7 @@ namespace RHA::DX12
 		public: virtual void ResizeToWindow() = 0;
 
 		public: virtual void GoWindowed() = 0;
-						
+										
 	};
 
 	

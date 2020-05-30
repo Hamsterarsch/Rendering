@@ -10,28 +10,28 @@ namespace RHA::DX12
 {
 
 	WindowSurfaceImpl::WindowSurfaceImpl(DeviceResources *resources, Queue *queue, HWND window) :
-		WindowSurface{},
+		resources{ resources },
 		viewHeap{ resources, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, bufferCount, false },			
 		currentBackbufferIndex{ 0 },
 		targetedVerticalBlank{ 0 }
 	{
 		CreateSwapChain(resources, queue, window);
 
-		CreateViewsForChainBuffers(resources);
+		CreateViewsForChainBuffers();
 				   						
 	}
 
 		void WindowSurfaceImpl::CreateSwapChain(DeviceResources *resources, Queue *queue, HWND window)
 		{
 			DXGI_SWAP_CHAIN_FULLSCREEN_DESC fsDesc{};
-			fsDesc.Windowed = false;				
-							
-			constexpr unsigned AUTO_OBTAIN{ 0 };
+			fsDesc.Windowed = true;				
+						
+			constexpr unsigned FIT_WINDOW{ 0 };
 			constexpr unsigned NO_MSAA{ 1 };
 
 			DXGI_SWAP_CHAIN_DESC1 swapDesc{};
-			swapDesc.Width = AUTO_OBTAIN;
-			swapDesc.Height = AUTO_OBTAIN;
+			swapDesc.Width = FIT_WINDOW;
+			swapDesc.Height = FIT_WINDOW;
 			swapDesc.Stereo = false;
 			swapDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 			swapDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
@@ -93,7 +93,7 @@ namespace RHA::DX12
 			
 			}
 
-		void WindowSurfaceImpl::CreateViewsForChainBuffers(DeviceResources *resources)
+		void WindowSurfaceImpl::CreateViewsForChainBuffers()
 		{
 			for (size_t bufferIndex{ 0 }; bufferIndex < buffers.size(); ++bufferIndex)
 			{
@@ -105,6 +105,7 @@ namespace RHA::DX12
 
 				resources->GetDevice()->CreateRenderTargetView(buffers.at(bufferIndex).Get(), nullptr, viewHeap.GetHandleCpu(bufferIndex));
 			}
+			currentBackbufferIndex = 0;
 		
 		}
 
@@ -238,24 +239,48 @@ namespace RHA::DX12
 
 
 	void WindowSurfaceImpl::GoFullscreen()
-	{		
+	{
+		ReleaseSwapchainBuffers();
+		
 		swapChain->SetFullscreenState(true, nullptr);
 		ResizeToWindow();
-		
+
+		CreateViewsForChainBuffers();
+		QueryViewportInformation();
+				
 	}
-	
+
+		void WindowSurfaceImpl::ReleaseSwapchainBuffers()
+		{
+			for(auto &&buffer : buffers)
+			{
+				buffer.Reset();
+			}
+		
+		}
+
 		void WindowSurfaceImpl::ResizeToWindow()
-		{		
+		{
+			ReleaseSwapchainBuffers();
+		
 			swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
-			
+
+			CreateViewsForChainBuffers();
+			QueryViewportInformation();
+		
 		}
 
 
 	
 	void WindowSurfaceImpl::GoWindowed()
-	{		
+	{
+		ReleaseSwapchainBuffers();
+		
 		swapChain->SetFullscreenState(false, nullptr);
 		ResizeToWindow();
+
+		CreateViewsForChainBuffers();
+		QueryViewportInformation();
 		
 	}
 
