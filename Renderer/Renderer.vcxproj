@@ -277,7 +277,7 @@
     <ClInclude Include="Commands\Surface\PrepareSurfaceForRenderingCommand.hpp" />
     <ClInclude Include="Commands\Surface\PresentSurfaceCommand.hpp" />
     <ClInclude Include="Commands\UserContextCommandWrapper.hpp" />
-    <ClInclude Include="ForwardRenderer.hpp" />
+    <ClInclude Include="RendererFacadeImpl.hpp" />
     <ClInclude Include="Helpers.hpp" />
     <ClInclude Include="Interface\Commands\Command.hpp" />
     <ClInclude Include="Interface\Commands\CommandFactory.hpp" />
@@ -369,7 +369,7 @@
     <ClCompile Include="Commands\PresentSurfaceCommandOld.cpp" />
     <ClCompile Include="Commands\RenderMeshCommand.cpp" />
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="ForwardRenderer.cpp" />
+    <ClCompile Include="RendererFacadeImpl.cpp" />
     <ClCompile Include="Interface\Commands\CompositeCommand.cpp" />
     <ClCompile Include="Interface\Renderer.cpp" />
     <ClCompile Include="Lighting\LightContainer.cpp" />

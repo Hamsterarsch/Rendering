@@ -45,12 +45,8 @@ namespace Renderer::DX12
 	
 
 	
-	class ForwardRenderer final : public RendererFacade, public MaintainsInternalRenderResources
+	class RendererFacadeImpl final : public RendererFacade, public MaintainsInternalRenderResources
 	{	
-		private: long long lastDispatchTime;
-
-		private: const unsigned char maxScheduledFrames;
-		
 		private: UniquePtr<RHA::DX12::DeviceResources> resources;
 
 		private: UniquePtr<RHA::DX12::Queue> commonQueue;
@@ -77,62 +73,26 @@ namespace Renderer::DX12
 		private: RootSignatureFactory signatureFactory;
 		
 		private: UniquePtr<ShaderFactory> shaderFactory;
-		
-
-
-		private: HandleWrapper globalBuffer;
-
-		private: GlobalBufferData globalsToDispatch;
-
+			
 		private: DescriptorMemory descriptors;
 
-		private: HandleWrapper depthOnlyPso, defaultSignature, uav1Signature, markActiveTilesPso, markActiveTilesSignature, buildTileListPso, buildTileListSignature;
-
-		private: HandleWrapper assignLightsSignature, assignLightsPso, lightsBuffer;
-
-		private: VolumeTileGrid volumeTileGrid;
-
-		private: CommandHelper cmdFactory;
-
 		private: Commands::CommandProcessorImpl commandProcessor;
-
-		private: UniquePtr<Commands::InitVolumeTileGridCommand> initGridCmd;
-
-		private: std::vector<Commands::RenderMeshArguments> opaqueMeshArguments;
 
 		private: ResourceViewFactoryImpl resourceViewFactory;
 
 	 			
 		
-		public: ForwardRenderer(HWND outputWindow);
+		public: RendererFacadeImpl(HWND outputWindow);
 											 
-		public: ~ForwardRenderer();
+		public: ~RendererFacadeImpl();
 
 			private: void WaitForIdleQueue();
 
 
-		public: virtual bool IsBusy() const override;
-		
-		public: virtual void DispatchFrame() override;
-							
-			private: void AbortDispatch();
-					 		
-
-		public: virtual void RenderMesh(size_t signatureHandle, size_t psoHandle, size_t meshHandle, size_t sizeInBytes, size_t byteOffsetToIndices, size_t transformBufferHandle = 0, size_t instanceCount = 1) override;
-
-		public: virtual void SetCamera(float x, float y, float z, float pitch, float yaw, float roll) override;
-							
-
-		public: virtual size_t MakeLight(const float (& position)[3], const float (& rotation)[3], const float(& color)[3], float radius) override;
-				
-		
 		public: virtual size_t MakeBuffer(const void *data, size_t sizeInBytes) override;
 
 			private: size_t MakeBufferInternal(const void *data, size_t sizeInBytes, size_t handle);
-					 			
-		public: virtual void RemakeBuffer(const void *data, size_t sizeInBytes, size_t handle) override;
 		
-
 		public: virtual size_t MakeBuffer(const void *data, size_t sizeInBytes, D3D12_RESOURCE_STATES state) override;
 
 		public: virtual size_t MakeUavBuffer(const void *data, size_t sizeInBytes) override;
@@ -173,13 +133,11 @@ namespace Renderer::DX12
 		public: ResourceHandle::t_hash MakeTexture(const void *data, size_t width, size_t height) override;
 
 		
-		public: bool ResourceMustBeRemade(size_t handle) override;
+		public: bool IsResourceValid(size_t handle) override;
 
 		public: void RetireHandle(size_t handle) override;
 
-
-		//new interface
-							   		
+   		
 		public: ResourceHandle::t_hash MakeWindowsWindowSurface(HWND windowHandle) override;
 
 		public: UniquePtr<::Renderer::Commands::CommandFactory> MakeCommandFactory() override;

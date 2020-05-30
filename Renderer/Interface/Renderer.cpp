@@ -1,5 +1,5 @@
 #include "RendererFacade.hpp"
-#include "ForwardRenderer.hpp"
+#include "RendererFacadeImpl.hpp"
 
 
 namespace Renderer
@@ -7,7 +7,7 @@ namespace Renderer
 
 	UniquePtr<RendererFacade> MakeRenderer(HWND outputWindow)
 	{
-		return std::make_unique<DX12::ForwardRenderer>(outputWindow);
+		return std::make_unique<DX12::RendererFacadeImpl>(outputWindow);
 		
 	}
 	

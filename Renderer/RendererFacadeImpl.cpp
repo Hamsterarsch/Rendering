@@ -1,4 +1,4 @@
-#include "ForwardRenderer.hpp"
+#include "RendererFacadeImpl.hpp"
 #include "RHA/Interface/DX12/Facade.hpp"
 #include "Shared/Filesystem/Conversions.hpp"
 
@@ -54,10 +54,8 @@ namespace Renderer::DX12
 	using namespace RHA::DX12;
 
 	
-	ForwardRenderer::ForwardRenderer(HWND outputWindow)
+	RendererFacadeImpl::RendererFacadeImpl(HWND outputWindow)
 		:
-		lastDispatchTime{ 0 },
-		maxScheduledFrames{ 2 },
 		resources{ Facade::MakeDeviceResources(D3D_FEATURE_LEVEL_12_0, enableDebugLayers, enableGpuValidation) },
 		commonQueue{ Facade::MakeQueue(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT) },
 		closeFence{ Facade::MakeFence(resources.get()) },
@@ -87,8 +85,7 @@ namespace Renderer::DX12
 		psoFactory{ resources.get(), depthStencilSettings, blendSettings, rasterizerSettings, vertexLayoutSettings },
 		signatureFactory{ resources.get() },
 		shaderFactory{ Facade::MakeShaderFactory(5, 1) },
-		descriptors{resources.get(), 1'000'000, 2048},
-		cmdFactory{ *this, registry, descriptors },
+		descriptors{resources.get(), 1'000'000, 2048},		
 		commandProcessor{ *resources, *commonQueue, registry },
 		resourceViewFactory{ *resources, registry, descriptors }
 	{			
@@ -262,13 +259,13 @@ namespace Renderer::DX12
 		   
 
 	
-	ForwardRenderer::~ForwardRenderer()
+	RendererFacadeImpl::~RendererFacadeImpl()
 	{			
 		WaitForIdleQueue();
 		
 	}
 
-		void ForwardRenderer::WaitForIdleQueue()
+		void RendererFacadeImpl::WaitForIdleQueue()
 		{
 			closeFence->GetFence()->SetEventOnCompletion(1, closeEvent);
 			closeFence->Signal(1, commonQueue.get());
@@ -279,21 +276,6 @@ namespace Renderer::DX12
 
 
 	
-	bool ForwardRenderer::IsBusy() const
-	{
-		return false;
-		
-	}
-
-
-	
-	void ForwardRenderer::DispatchFrame()
-	{		
-		if(IsBusy())
-		{
-			AbortDispatch();
-			return;
-		}
 		/*
 		const auto currentTime{ std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count() / 1000.f };
 		const auto dispatchDelta{ currentTime - lastDispatchTime };
@@ -407,64 +389,9 @@ namespace Renderer::DX12
 		registry.PurgeUnreferencedEntities();
 		commandProcessor.FreeExecutedCommands();
 		*/
-	}
-
-		void ForwardRenderer::AbortDispatch()
-		{		
-			opaqueMeshArguments.clear();
-		
-		}
-	
-
-	void ForwardRenderer::RenderMesh(size_t signatureHandle, size_t psoHandle, size_t meshHandle, size_t sizeInBytes, size_t byteOffsetToIndices, size_t transformBufferHandle, size_t instanceCount)
-	{
-		//todo branch between translucent/opaque based on pso class
-		opaqueMeshArguments.emplace_back
-		(
-			Commands::RenderMeshArguments{ signatureHandle, psoHandle,  transformBufferHandle, instanceCount, meshHandle, byteOffsetToIndices, sizeInBytes - byteOffsetToIndices }
-		);			
-
-	}
-
 
 	
-	void ForwardRenderer::SetCamera(float x, float y, float z, float pitch, float yaw, float roll)
-	{
-		globalsToDispatch.view = Math::Matrix::MakeRotation(-pitch, -yaw, -roll);
-		globalsToDispatch.view.Translate(-x, -y, -z);
-
-		globalsToDispatch.inverseView = globalsToDispatch.view.Inverse();		
-		globalsToDispatch.inverseProjection = globalsToDispatch.projection.Inverse();
-
-	}
-
-
-	
-	size_t ForwardRenderer::MakeLight(const float (& position)[3], const float (& rotation)[3], const float(& color)[3], float radius)
-	{
-		Light light{};
-		
-		light.worldPos.x = position[0];
-		light.worldPos.y = position[1];
-		light.worldPos.z = position[2];
-
-		auto v = Math::Matrix::MakeRotation(rotation[0], rotation[1], rotation[2]).Transform({0,0,1,1});
-		light.worldForwardVector.x = v.x;
-		light.worldForwardVector.y = v.y;
-		light.worldForwardVector.z = v.z;
-		
-		light.color.x = color[0];
-		light.color.x = color[1];
-		light.color.x = color[2];
-				
-		light.radius = radius;
-
-		return registry.Register(std::move(light));
-				
-	}
-
-		
-	size_t ForwardRenderer::MakeBuffer(const void *data, const size_t sizeInBytes)
+	size_t RendererFacadeImpl::MakeBuffer(const void *data, const size_t sizeInBytes)
 	{			
 		return registry.Register
 		(
@@ -473,7 +400,7 @@ namespace Renderer::DX12
 		
 	}
 
-		size_t ForwardRenderer::MakeBufferInternal(const void *data, const size_t sizeInBytes, const size_t handle)
+		size_t RendererFacadeImpl::MakeBufferInternal(const void *data, const size_t sizeInBytes, const size_t handle)
 		{
 			auto allocation
 			{
@@ -491,18 +418,10 @@ namespace Renderer::DX12
 			return handle;
 		
 		}
-		
 
 	
-	void ForwardRenderer::RemakeBuffer(const void* data, size_t sizeInBytes, size_t handle)
-	{
-		MakeBufferInternal(data, sizeInBytes, handle);
-		
-	}
-
-
 	
-	size_t ForwardRenderer::MakeBuffer(const void *data, const size_t sizeInBytes, const D3D12_RESOURCE_STATES state)
+	size_t RendererFacadeImpl::MakeBuffer(const void *data, const size_t sizeInBytes, const D3D12_RESOURCE_STATES state)
 	{
 		return registry.Register
 		(					
@@ -512,7 +431,7 @@ namespace Renderer::DX12
 
 
 
-	size_t ForwardRenderer::MakeUavBuffer(const void *data, const size_t sizeInBytes)
+	size_t RendererFacadeImpl::MakeUavBuffer(const void *data, const size_t sizeInBytes)
 	{						
 		return registry.Register
 		(					
@@ -523,7 +442,7 @@ namespace Renderer::DX12
 
 
 	
-	DxPtr<ID3D12Resource> ForwardRenderer::MakeReadbackBuffer(const size_t sizeInBytes)
+	DxPtr<ID3D12Resource> RendererFacadeImpl::MakeReadbackBuffer(const size_t sizeInBytes)
 	{			
 		return resourceFactory->MakeCommittedBuffer(RHA::Utility::IncreaseValueToAlignment(sizeInBytes, 256), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_HEAP_TYPE_READBACK, D3D12_HEAP_FLAG_NONE);
 		
@@ -531,7 +450,7 @@ namespace Renderer::DX12
 
 	
 
-	void ForwardRenderer::CompileVertexShader(const char *shader, size_t length, SerializationHook *serializer) const
+	void RendererFacadeImpl::CompileVertexShader(const char *shader, size_t length, SerializationHook *serializer) const
 	{
 		auto shaderBlob{ shaderFactory->MakeVertexShader(shader, length, "main")};
 
@@ -542,7 +461,7 @@ namespace Renderer::DX12
 
 
 	
-	void ForwardRenderer::CompilePixelShader(const char *shader, size_t length, SerializationHook* serializer) const
+	void RendererFacadeImpl::CompilePixelShader(const char *shader, size_t length, SerializationHook* serializer) const
 	{
 		auto shaderBlob{ shaderFactory->MakePixelShader(shader, length, "main")};
 
@@ -554,7 +473,7 @@ namespace Renderer::DX12
 
 
 	
-	void ForwardRenderer::CompileComputeShader(const char *shader, const size_t length, SerializationHook *serializer) const
+	void RendererFacadeImpl::CompileComputeShader(const char *shader, const size_t length, SerializationHook *serializer) const
 	{
 		auto shaderBlob{ shaderFactory->MakeComputeShader(shader, length, "main") };
 
@@ -565,7 +484,7 @@ namespace Renderer::DX12
 
 	
 
-	void ForwardRenderer::SerializeRootSignature
+	void RendererFacadeImpl::SerializeRootSignature
 	(
 		unsigned cbvAmount,
 		unsigned srvAmount, 
@@ -589,7 +508,7 @@ namespace Renderer::DX12
 
 
 	
-	size_t ForwardRenderer::MakeRootSignature(const void *serializedData)
+	size_t RendererFacadeImpl::MakeRootSignature(const void *serializedData)
 	{
 		const auto size{ ExtractSizeFrom(serializedData) };
 		auto signatureData
@@ -606,19 +525,19 @@ namespace Renderer::DX12
 					
 	}
 
-		SIZE_T ForwardRenderer::ExtractSizeFrom(const void *data)
+		SIZE_T RendererFacadeImpl::ExtractSizeFrom(const void *data)
 		{
 			return *reinterpret_cast<const SIZE_T *>(data);
 		
 		}
 
-		const unsigned char *ForwardRenderer::ExtractSignatureFrom(const void *data)
+		const unsigned char *RendererFacadeImpl::ExtractSignatureFrom(const void *data)
 		{
 			return reinterpret_cast<const unsigned char *>(data) + sizeof SIZE_T;
 		
 		}
 
-		size_t ForwardRenderer::ExtractSamplerCountFrom(const void *data, const SIZE_T signatureSize)
+		size_t RendererFacadeImpl::ExtractSamplerCountFrom(const void *data, const SIZE_T signatureSize)
 		{
 			return *reinterpret_cast<const size_t *>
 			(
@@ -631,7 +550,7 @@ namespace Renderer::DX12
 
 
 	
-	size_t ForwardRenderer::MakePso(const ShaderList &shaders, size_t signatureHandle)
+	size_t RendererFacadeImpl::MakePso(const ShaderList &shaders, size_t signatureHandle)
 	{
 		auto pipelineState{	psoFactory.MakePso(shaders, registry.GetSignature(signatureHandle), D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE) };		
 		return registry.Register(std::move(pipelineState));
@@ -640,7 +559,7 @@ namespace Renderer::DX12
 
 
 	
-	size_t ForwardRenderer::MakePso(const Blob &csBlob, const size_t signatureHandle)
+	size_t RendererFacadeImpl::MakePso(const Blob &csBlob, const size_t signatureHandle)
 	{
 		auto pipelineState{ psoFactory.MakePso(csBlob, registry.GetSignature(signatureHandle)) };
 		return registry.Register(std::move(pipelineState));
@@ -649,7 +568,7 @@ namespace Renderer::DX12
 
 
 	
-	ResourceHandle::t_hash ForwardRenderer::MakeTexture(const void *data, const size_t width, const size_t height)
+	ResourceHandle::t_hash RendererFacadeImpl::MakeTexture(const void *data, const size_t width, const size_t height)
 	{
 		auto resource{ resourceFactory->MakeTextureWithData(data, width, height, D3D12_RESOURCE_STATE_COMMON) };
 		return registry.Register(std::move(resource));
@@ -658,7 +577,7 @@ namespace Renderer::DX12
 
 
 
-	bool ForwardRenderer::ResourceMustBeRemade(size_t handle)
+	bool RendererFacadeImpl::IsResourceValid(size_t handle)
 	{
 		return registry.IsHandleUnknown(handle);
 		
@@ -666,7 +585,7 @@ namespace Renderer::DX12
 
 
 	
-	void ForwardRenderer::RetireHandle(const size_t handle)
+	void RendererFacadeImpl::RetireHandle(const size_t handle)
 	{		
 		registry.RetireHandle(handle);
 		
@@ -674,7 +593,7 @@ namespace Renderer::DX12
 
 
 		
-	ResourceHandle::t_hash ForwardRenderer::MakeWindowsWindowSurface(HWND windowHandle)
+	ResourceHandle::t_hash RendererFacadeImpl::MakeWindowsWindowSurface(HWND windowHandle)
 	{		
 		return registry.Register(RHA::DX12::Facade::MakeWindowSurface(resources.get(), commonQueue.get(), windowHandle));
 		
@@ -682,7 +601,7 @@ namespace Renderer::DX12
 
 
 	
-	UniquePtr<::Renderer::Commands::CommandFactory> ForwardRenderer::MakeCommandFactory()
+	UniquePtr<::Renderer::Commands::CommandFactory> RendererFacadeImpl::MakeCommandFactory()
 	{
 		return MakeUnique<Commands::DX12CommandFactory>(registry);
 		
@@ -690,14 +609,14 @@ namespace Renderer::DX12
 
 
 	
-	void ForwardRenderer::SubmitCommand(UniquePtr<::Renderer::Commands::Command> &&command)
+	void RendererFacadeImpl::SubmitCommand(UniquePtr<::Renderer::Commands::Command> &&command)
 	{
 		commandProcessor.SubmitCommand(std::move(command));
 		
 	}
 
 	
-	void ForwardRenderer::SubmitContextCommand(UniquePtr<::Renderer::Commands::Command> &&command)
+	void RendererFacadeImpl::SubmitContextCommand(UniquePtr<::Renderer::Commands::Command> &&command)
 	{
 		commandProcessor.SubmitContextCommand(MakeUnique<Commands::UserContextCommandWrapper>(descriptors, std::move(command)));
 		
@@ -705,7 +624,7 @@ namespace Renderer::DX12
 
 
 
-	void ForwardRenderer::DestroyUnreferencedResources()
+	void RendererFacadeImpl::DestroyUnreferencedResources()
 	{
 		registry.PurgeUnreferencedEntities();
 		
@@ -714,7 +633,7 @@ namespace Renderer::DX12
 
 
 	
-	void ForwardRenderer::DestroyExecutedCommands()
+	void RendererFacadeImpl::DestroyExecutedCommands()
 	{
 		commandProcessor.FreeExecutedCommands();
 		
@@ -722,7 +641,7 @@ namespace Renderer::DX12
 
 
 	
-	void ForwardRenderer::WaitForCommands()
+	void RendererFacadeImpl::WaitForCommands()
 	{
 		commandProcessor.WaitForIdle();
 		
@@ -730,7 +649,7 @@ namespace Renderer::DX12
 
 
 	
-	BlendSettings &ForwardRenderer::GetBlendSettings()
+	BlendSettings &RendererFacadeImpl::GetBlendSettings()
 	{
 		return blendSettings;
 		
@@ -738,7 +657,7 @@ namespace Renderer::DX12
 
 
 	
-	DepthStencilSettings &ForwardRenderer::GetDepthStencilSettings()
+	DepthStencilSettings &RendererFacadeImpl::GetDepthStencilSettings()
 	{		
 		return depthStencilSettings;
 		
@@ -746,7 +665,7 @@ namespace Renderer::DX12
 
 
 	
-	RasterizerSettings &ForwardRenderer::GetRasterizerSettings()
+	RasterizerSettings &RendererFacadeImpl::GetRasterizerSettings()
 	{
 		return rasterizerSettings;
 		
@@ -754,7 +673,7 @@ namespace Renderer::DX12
 
 
 	
-	VertexLayoutSettings &ForwardRenderer::GetVertexLayoutSettings()
+	VertexLayoutSettings &RendererFacadeImpl::GetVertexLayoutSettings()
 	{
 		return vertexLayoutSettings;
 		
@@ -762,7 +681,7 @@ namespace Renderer::DX12
 
 
 	
-	ResourceViewFactory &ForwardRenderer::GetViewFactory()
+	ResourceViewFactory &RendererFacadeImpl::GetViewFactory()
 	{
 		return resourceViewFactory;
 		

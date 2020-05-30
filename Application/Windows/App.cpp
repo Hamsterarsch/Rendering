@@ -110,68 +110,7 @@ namespace Windows
 		
 		void App::Initialize()
 		{
-			/*
-			struct
-			{
-				vertex vertexData[8]{ {-0.75, -0.75, 0 }, {0,0,-1}, {0.75, -0.75, 0}, {0,0,-1}, {0.75, 0.75, 0}, {0,0,-1}, { -0.75, 0.75, 0}, {0,0,-1} };
-				unsigned indices[6]{ 0,1,2, 2,3,0 };
-			} meshdata;
-			meshSize = sizeof meshdata;
-			meshBytesToIndices = sizeof meshdata.vertexData;
-
-			meshHandle = renderer->MakeBuffer(&meshdata, sizeof(meshdata));
-						
-
-			Renderer::SerializeContainer root{};
-			renderer->SerializeRootSignature(1, 3, 0, 0, &root);
-			rootHandle = renderer->MakeRootSignature(root.GetData());
-
-			Renderer::SerializeContainer ps{};
-			{
-				std::ifstream shaderFile{Filesystem::Conversions::MakeExeRelative(L"../Content/Shaders/Lighting.ps"), std::ios_base::in | std::ios_base::ate };
-				
-				const auto charCount{ shaderFile.tellg() };
-				shaderFile.seekg(0);
-
-				auto pshader{ std::make_unique<char[]>(charCount) };
-				shaderFile.read( pshader.get(), charCount);
-							
-				renderer->CompilePixelShader(pshader.get(), charCount, &ps);
-								
-			}
-
-
-			Renderer::SerializeContainer vs{};
-			{
-				std::ifstream shaderFile{Filesystem::Conversions::MakeExeRelative(L"../Content/Shaders/LightingInstanced.vs"), std::ios_base::in | std::ios_base::ate };
-					
-				const auto charCount{ shaderFile.tellg() };
-				shaderFile.seekg(0);
-
-				auto pshader{ std::make_unique<char[]>(charCount) };
-				shaderFile.read( pshader.get(), charCount);
-							
-				renderer->CompileVertexShader(pshader.get(), charCount, &vs);
-								
-			}
-			
-
-			{
-				Renderer::ShaderList shaderList{};
-				shaderList.vs.data = vs.GetData();
-				shaderList.vs.sizeInBytes = vs.GetSize();
-
-				shaderList.ps.data = ps.GetData();
-				shaderList.ps.sizeInBytes = ps.GetSize();
-
-				psoOpaqueShadedWithInstanceSupport = renderer->MakePso(Renderer::PipelineTypes::Opaque, Renderer::VertexLayoutTypes::PositionNormal, shaderList, rootHandle);
-			}
-			*/
-
-			renderer->SetCamera(0, 0, -11, 0, 0, 0);
-			
-			renderer->MakeLight({0, 0, -1}, {0, 0, 0}, {1, 4, 4}, 3);
-			renderer->MakeLight({4, 0, -2}, {0, 0, 0}, {6, 0, 0},  5);			
+		
 		
 		}
 
