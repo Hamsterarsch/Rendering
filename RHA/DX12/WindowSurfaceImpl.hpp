@@ -3,16 +3,14 @@
 #include <array>
 #include "DX12/DescriptorHeapImpl.hpp"
 #include "DX12/WindowSurface.hpp"
-#include "DX12/CmdAllocatorImpl.hpp"
 #include "DX12/CmdList.hpp"
-#include "DX12/Fence.hpp"
 
 
 namespace RHA
 {
 	namespace DX12
 	{		
-		class WindowSurfaceImpl : public WindowSurface
+		class WindowSurfaceImpl final : public WindowSurface
 		{			
 			private: static constexpr short bufferCount{ 2 };
 
@@ -48,28 +46,46 @@ namespace RHA
 			
 					private: static void CheckBufferQuery(HRESULT result);
 							 				
-			public: virtual ~WindowSurfaceImpl() override;
+			public: ~WindowSurfaceImpl() override;
+
+				public: bool IsValid() const;
+
+					private: void Free();
+
+			public: WindowSurfaceImpl(WindowSurfaceImpl && other) noexcept;
+
+			public: WindowSurfaceImpl &operator=(WindowSurfaceImpl &&rhs) noexcept;
+
+				private: void Invalidate();
 			
 
-			public: virtual inline size_t  GetWidth() const override { return defaultViewport.Width; }
+			public: size_t  GetWidth() const override { return defaultViewport.Width; }
 
-			public: virtual inline size_t GetHeight() const override { return defaultViewport.Height; }
+			public: size_t GetHeight() const override { return defaultViewport.Height; }
 
-			public: virtual inline void EnableVerticalSync() override { targetedVerticalBlank = 1; }
+			public: void EnableVerticalSync() override { targetedVerticalBlank = 1; }
 
-			public: virtual inline void DisableVerticalSync() override { targetedVerticalBlank = 0; }
+			public: void DisableVerticalSync() override { targetedVerticalBlank = 0; }
 			
-			public: virtual inline DxPtr<ID3D12Resource> GetResourceTemplate() override { return buffers[0]; }
+			public: DxPtr<ID3D12Resource> GetResourceTemplate() override { return buffers[0]; }
 																	   			
-			public: virtual void Present() override;
+			public: void Present() override;
 
-			public: virtual void RecordPipelineBindings(CmdList &list, const D3D12_CPU_DESCRIPTOR_HANDLE *depthDescriptor) override;
+			public: void RecordPipelineBindings(CmdList &list, const D3D12_CPU_DESCRIPTOR_HANDLE *depthDescriptor) override;
 
 				private: ID3D12Resource *GetBackbuffer();
 
-			public: virtual void RecordPreparationForRendering(CmdList &list) override;
+			public: void RecordPreparationForRendering(CmdList &list) override;
 
-			public: virtual void RecordPreparationForPresenting(CmdList &list) override;
+			public: void RecordPreparationForPresenting(CmdList &list) override;
+
+			
+
+			public: void GoFullscreen() override;
+
+			public: void ResizeToWindow() override;
+			
+			public: void GoWindowed() override;
 
 		};
 

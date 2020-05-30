@@ -31,6 +31,7 @@ namespace Renderer::DX12
 	
 	RendererFacadeImpl::RendererFacadeImpl(HWND outputWindow)
 		:
+		RendererFacade{},
 		resources{ Facade::MakeDeviceResources(D3D_FEATURE_LEVEL_12_0, enableDebugLayers, enableGpuValidation) },
 		commonQueue{ Facade::MakeQueue(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT) },
 		closeFence{ Facade::MakeFence(resources.get()) },
