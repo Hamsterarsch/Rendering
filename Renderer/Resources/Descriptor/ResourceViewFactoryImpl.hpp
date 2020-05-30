@@ -45,14 +45,14 @@ namespace Renderer::DX12
 			size_t ordinal,
 			size_t firstIndex,
 			size_t numElements,			
-			t_format_target format
+			Format format
 		) override;
 
 		public: void CreateShaderResourceView
 		(
 			ResourceHandle::t_hash forResource, 
 			size_t ordinal,
-			t_format_target format,
+			Format format,
 			uint16_t numMips,
 			uint16_t mostDetailedMip
 		) override;
@@ -79,7 +79,7 @@ namespace Renderer::DX12
 			size_t ordinal,
 			size_t firstIndex,
 			size_t numElements,			
-			t_format_target format
+			Format format
 		) override;
 
 		public: void CreateUnorderedAccessView

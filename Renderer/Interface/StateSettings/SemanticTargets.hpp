@@ -19,7 +19,7 @@ namespace Renderer
 		
 	};
 
-	using t_semantic_target = const void *(SemanticTargets:: *)() const;
+	using Semantic = const void *(SemanticTargets:: *)() const;
 						
 	
 }

@@ -21,6 +21,6 @@ namespace Renderer
 						
 	};
 
-	using t_format_target = const void *(FormatTargets:: *)() const;
+	using Format = const void *(FormatTargets:: *)() const;
 	
 }

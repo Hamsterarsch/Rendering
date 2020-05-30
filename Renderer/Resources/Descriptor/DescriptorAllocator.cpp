@@ -204,7 +204,7 @@ namespace Renderer::DX12
 	(
 		ID3D12Resource *resource,
 		const size_t tableOffset,
-		const t_format_target format,
+		const Format format,
 		const uint16_t numMips,
 		const uint16_t mostDetailedMip
 	)

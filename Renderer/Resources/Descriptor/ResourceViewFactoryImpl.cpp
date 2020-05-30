@@ -60,7 +60,7 @@ namespace Renderer::DX12
 		const size_t ordinal,
 		const size_t firstIndex,
 		const size_t numElements,		
-		const t_format_target format
+		const Format format
 	)
 	{
 		currentAllocator.allocator.CreateSrvBufferFormatted
@@ -81,7 +81,7 @@ namespace Renderer::DX12
 	(
 		const ResourceHandle::t_hash forResource, 
 		const size_t ordinal,
-		const t_format_target format,
+		const Format format,
 		const uint16_t numMips,
 		const uint16_t mostDetailedMip
 	)
@@ -151,7 +151,7 @@ namespace Renderer::DX12
 		size_t ordinal,
 		size_t firstIndex,
 		size_t numElements,		
-		t_format_target format
+		Format format
 	)
 	{
 		currentAllocator.allocator.CreateUavBufferFormatted

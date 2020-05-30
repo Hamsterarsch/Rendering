@@ -21,13 +21,13 @@ namespace Renderer
 
 		public: virtual void CreateShaderResourceView(ResourceHandle::t_hash forResource, size_t ordinal, size_t firstIndex, size_t numElements, size_t elementStrideInBytes) = 0;
 
-		public: virtual void CreateShaderResourceView(ResourceHandle::t_hash forResource, size_t ordinal, size_t firstIndex, size_t numElements, t_format_target format) = 0;
+		public: virtual void CreateShaderResourceView(ResourceHandle::t_hash forResource, size_t ordinal, size_t firstIndex, size_t numElements, Format format) = 0;
 
 		public: virtual void CreateShaderResourceView
 		(
 			ResourceHandle::t_hash forResource, 
 			size_t ordinal,
-			t_format_target format,
+			Format format,
 			uint16_t numMips,
 			uint16_t mostDetailedMip
 		) = 0;
@@ -41,7 +41,7 @@ namespace Renderer
 
 		public: virtual void CreateUnorderedAccessView(ResourceHandle::t_hash forResource, size_t ordinal, size_t firstIndex, size_t numElements, size_t elementStrideInBytes) = 0;
 
-		public: virtual void CreateUnorderedAccessView(ResourceHandle::t_hash forResource, size_t ordinal, size_t firstIndex, size_t numElements, t_format_target format) = 0;
+		public: virtual void CreateUnorderedAccessView(ResourceHandle::t_hash forResource, size_t ordinal, size_t firstIndex, size_t numElements, Format format) = 0;
 
 		public: virtual void CreateUnorderedAccessView(ResourceHandle::t_hash forResource, size_t ordinal, size_t firstIndex, size_t numElements, size_t elementStrideInBytes, ResourceHandle::t_hash counterResource) = 0;
 

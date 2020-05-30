@@ -47,7 +47,7 @@ namespace Renderer::Commands
 			size_t byteOffsetToIndices,
 			size_t numIndices,
 			size_t indexSizeInBytes,
-			t_format_target indexFormat
+			Format indexFormat
 		) = 0;
 
 		public: virtual UniquePtr<::Renderer::Commands::Command> SetVertexBuffer

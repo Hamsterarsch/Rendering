@@ -84,7 +84,7 @@ namespace Renderer::DX12
 
 				private: void UpdateAfterTableIndex(const ChunkData &forChunkData, size_t offsetFromTableStartToDescriptor);
 
-		public: void CreateSrvTex2D(ID3D12Resource *resource, size_t tableOffset, t_format_target format, uint16_t numMips, uint16_t mostDetailedMip);
+		public: void CreateSrvTex2D(ID3D12Resource *resource, size_t tableOffset, Format format, uint16_t numMips, uint16_t mostDetailedMip);
 		
 		
 		public: void CreateSrvBuffer(ID3D12Resource *resource, size_t tableOffset, size_t firstIndex, size_t numElements, size_t strideInBytes);

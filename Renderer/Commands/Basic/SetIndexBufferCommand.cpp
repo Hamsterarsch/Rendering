@@ -10,7 +10,7 @@ namespace Renderer::DX12::Commands
 		const size_t byteOffsetToIndices, 
 		const size_t numIndices,
 		const size_t indexSizeInBytes,
-		const t_format_target indexFormat,
+		const Format indexFormat,
 		HasQueriableResources &resourceProvider
 	)	:
 		indexBuffer{ indexBuffer }

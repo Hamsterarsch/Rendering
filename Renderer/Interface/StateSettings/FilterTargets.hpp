@@ -12,7 +12,7 @@ namespace Renderer
 		
 	};
 
-	using t_filter_targets = const void *(FilterTargets:: *)() const;
+	using Filter = const void *(FilterTargets:: *)() const;
 	
 	
 }

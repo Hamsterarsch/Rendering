@@ -31,9 +31,9 @@ namespace Renderer::DX12
 	
 	VertexLayoutSettings &VertexLayoutSettingsImpl::AddLayoutElementDesc
 	(
-		const t_semantic_target semantic,
+		const Semantic semantic,
 		const unsigned char semanticIndex,
-		const t_format_target format,
+		const Format format,
 		const unsigned byteOffset
 	)
 	{

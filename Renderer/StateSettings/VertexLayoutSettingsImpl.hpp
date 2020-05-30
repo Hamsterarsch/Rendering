@@ -23,7 +23,7 @@ namespace Renderer::DX12
 		public: void RestoreSettings() override;
 		
 				
-		public: VertexLayoutSettings &AddLayoutElementDesc(t_semantic_target semantic, unsigned char semanticIndex, t_format_target format, unsigned byteOffset) override;
+		public: VertexLayoutSettings &AddLayoutElementDesc(Semantic semantic, unsigned char semanticIndex, Format format, unsigned byteOffset) override;
 
 		public: D3D12_INPUT_LAYOUT_DESC GetLayoutDesc() const;
 				

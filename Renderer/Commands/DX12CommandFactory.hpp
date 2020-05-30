@@ -49,7 +49,7 @@ namespace Renderer::DX12::Commands
 			size_t byteOffsetToIndices,
 			size_t numIndices,
 			size_t indexSizeInBytes,
-			t_format_target indexFormat
+			Format indexFormat
 		) override;
 
 		public: UniquePtr<::Renderer::Commands::Command> SetVertexBuffer
