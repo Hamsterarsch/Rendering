@@ -36,50 +36,62 @@ namespace Renderer::DX12
 
 
 		
-	void RasterizerSettingsImpl::SetFillModeSolid()
+	RasterizerSettings &RasterizerSettingsImpl::SetFillModeSolid()
 	{
 		current.fillMode = D3D12_FILL_MODE_SOLID;
 		
+		return *this;
+
 	}
 
 
 	
-	void RasterizerSettingsImpl::SetFillModeWireframe()
+	RasterizerSettings &RasterizerSettingsImpl::SetFillModeWireframe()
 	{
 		current.fillMode = D3D12_FILL_MODE_WIREFRAME;
 		
+		return *this;
+
 	}
 
 
 	
-	void RasterizerSettingsImpl::SetFrontIsCounterClockwise(const bool value)
+	RasterizerSettings &RasterizerSettingsImpl::SetFrontIsCounterClockwise(const bool value)
 	{
 		current.frontIsCounterClockwise = value;
 		
+		return *this;
+
 	}
 
 
 	
-	void RasterizerSettingsImpl::SetFrontfaceCulling()
+	RasterizerSettings &RasterizerSettingsImpl::SetFrontfaceCulling()
 	{
 		current.cullMode = D3D12_CULL_MODE_FRONT;
 		
+		return *this;
+
 	}
 
 
 	
-	void RasterizerSettingsImpl::SetBackfaceCulling()
+	RasterizerSettings &RasterizerSettingsImpl::SetBackfaceCulling()
 	{
 		current.cullMode = D3D12_CULL_MODE_BACK;
 		
+		return *this;
+
 	}
 
 
 	
-	void RasterizerSettingsImpl::SetNoCulling()
+	RasterizerSettings &RasterizerSettingsImpl::SetNoCulling()
 	{
 		current.cullMode = D3D12_CULL_MODE_NONE;
 		
+		return *this;
+
 	}
 
 

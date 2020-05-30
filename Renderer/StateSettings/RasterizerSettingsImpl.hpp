@@ -26,17 +26,17 @@ namespace Renderer::DX12
 		public: void RestoreSettings() override;
 
 		
-		public: void SetFillModeSolid() override;
+		public: RasterizerSettings &SetFillModeSolid() override;
 				
-		public: void SetFillModeWireframe() override;
+		public: RasterizerSettings &SetFillModeWireframe() override;
 				
-		public: void SetFrontIsCounterClockwise(bool value) override;
+		public: RasterizerSettings &SetFrontIsCounterClockwise(bool value) override;
 
-		public:void SetFrontfaceCulling() override;
+		public:RasterizerSettings &SetFrontfaceCulling() override;
 
-		public:void SetBackfaceCulling() override;
+		public:RasterizerSettings &SetBackfaceCulling() override;
 
-		public:void SetNoCulling() override;			
+		public:RasterizerSettings &SetNoCulling() override;			
 
 
 		public: D3D12_RASTERIZER_DESC GetRasterizerDesc() const;
