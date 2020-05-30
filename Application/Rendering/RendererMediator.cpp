@@ -7,15 +7,14 @@
 namespace App::Rendering
 {
 	RendererMediator::RendererMediator
-	(
-		HandleWrapper &&mainWindowSurface,
+	(		
 		RendererFacade &renderer,
 		SceneRenderer &&sceneRenderer,
 		UiRenderer &&uiRenderer
 	)	:
 		underlyingRenderer{ &renderer },
 		commandFactory{ renderer.MakeCommandFactory() },
-		mainWindowSurface{ std::move(mainWindowSurface) },
+		mainWindowSurface{ 0 },
 		sceneRenderer{ std::move(sceneRenderer) },
 		uiRenderer{ std::move(uiRenderer) },
 		minimumFrameDeltaMs{ 2 },
@@ -27,6 +26,11 @@ namespace App::Rendering
 	
 	void RendererMediator::SubmitFrame()
 	{
+		if(!mainWindowSurface)
+		{
+			return;
+		}
+		
 		/*
 		const auto currentTime{ std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count() };
 		const auto delta{ currentTime - lastSubmitTime };
@@ -54,6 +58,11 @@ namespace App::Rendering
 				underlyingRenderer->SubmitCommand(std::move(command));
 				
 			}
-			
+
+	void RendererMediator::SetMainWindowSurface(ResourceHandle::t_hash surface)
+	{
+		mainWindowSurface = surface;
+		
+	}
 	
 }

@@ -12,7 +12,8 @@ int main()
 {
 	try
 	{		
-		Windows::App app{};
+		auto &app{ Windows::App::Get() };
+		app.EnterLoop();
 		
 	}
 	catch(std::exception &e)

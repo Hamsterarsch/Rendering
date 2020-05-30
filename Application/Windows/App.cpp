@@ -29,18 +29,16 @@ namespace Windows
 	        return true;
 	
 	    switch (msg)
-	    {/*
+	    {
 	    case WM_SIZE:
-	        if (g_pd3dDevice != NULL && wParam != SIZE_MINIMIZED)
+	        if (wParam != SIZE_MINIMIZED)
 	        {
-	            WaitForLastSubmittedFrame();
-	            ImGui_ImplDX12_InvalidateDeviceObjects();
-	            CleanupRenderTarget();
-	            ResizeSwapChain(hWnd, (UINT)LOWORD(lParam), (UINT)HIWORD(lParam));
-	            CreateRenderTarget();
-	            ImGui_ImplDX12_CreateDeviceObjects();
-	        }
-	        return 0;*/
+				const auto width{ LOWORD(lParam) };
+	        	const auto height{ HIWORD(lParam) };
+				App::Get().ResizeMainWindow(height, width);
+	        	
+			}	           
+	        return 0;
 	    case WM_SYSCOMMAND:
 	        if ((wParam & 0xfff0) == SC_KEYMENU) // Disable ALT application menu
 	            return 0;
@@ -51,22 +49,35 @@ namespace Windows
 	    }
 	    return ::DefWindowProc(hWnd, msg, wParam, lParam);
 	}
+
+
 	
-	App::App() :
-		window{ {1920, 1080}, true, L"Window", L"UniqueClassName", WndProc },
-		renderer{ Renderer::MakeRenderer(window.GetHandle()) },
-		rendererMediator
+	App &App::Get()
 	{
-		{ renderer.get(), renderer->MakeWindowsWindowSurface(window.GetHandle()) },
-		*renderer,
-		{ rendererMediator, {1,1} },
-		{ rendererMediator, *renderer }
-	}
-	{
-		//Initialize();
-		auto *d = WndProc;
+		static App app{};
+		return app;
 		
-		//dearimgui render setup
+	}
+
+		App::App() :
+			window{ {1280, 720}, L"Window", L"UniqueClassName", WndProc },
+			renderer{ Renderer::MakeRenderer(window.GetHandle()) },
+			mainWindowSurface{ renderer.get(), renderer->MakeWindowsWindowSurface(window.GetHandle()) },
+			rendererMediator
+			{			
+				*renderer,
+				{ rendererMediator, {1,1} },
+				{ rendererMediator, *renderer }
+			}
+		{
+			rendererMediator.SetMainWindowSurface(mainWindowSurface);			
+		}
+
+	
+	
+	void App::EnterLoop()
+	{
+		window.ShowWindow();
 		ImGui_ImplWin32_Init(window.GetHandle());
 		
 		constexpr UINT NO_FILTER{ 0 };
@@ -100,21 +111,7 @@ namespace Windows
 		}
 		ImGui_ImplWin32_Shutdown();
 		
-	}
-
-	struct vertex
-	{
-		float x, y, z;
-	};
-
-		
-		void App::Initialize()
-		{
-		
-		
-		}
-
-	
+	}	
 	   	
 		void App::Update()
 		{
@@ -125,6 +122,14 @@ namespace Windows
 			
 			
 		}
+
+
+	
+	void App::ResizeMainWindow(int width, int height)
+	{		
+		renderer->FitWindowSurfaceToWindow(mainWindowSurface);
+		
+	}
 
 	
 }

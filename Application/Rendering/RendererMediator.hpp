@@ -16,7 +16,7 @@ namespace App::Rendering
 
 		private: UniquePtr<Commands::CommandFactory> commandFactory;
 		
-		private: HandleWrapper mainWindowSurface;
+		private: size_t mainWindowSurface;
 
 		private: SceneRenderer sceneRenderer;
 
@@ -28,10 +28,8 @@ namespace App::Rendering
 
 
 
-		public: RendererMediator(HandleWrapper &&mainWindowSurface, RendererFacade &renderer, SceneRenderer &&sceneRenderer, UiRenderer &&uiRenderer);
+		public: RendererMediator(RendererFacade &renderer, SceneRenderer &&sceneRenderer, UiRenderer &&uiRenderer);
 
-		
-		public: bool DidRenderLastSubmit() const;
 		
 		public: void SubmitFrame();
 
@@ -40,6 +38,8 @@ namespace App::Rendering
 		public: ::Renderer::RendererFacade &Renderer() { return *underlyingRenderer; }
 
 		public: Commands::CommandFactory &CommandFactory() { return *commandFactory; }
+
+		public: void SetMainWindowSurface(ResourceHandle::t_hash surface);
 		
 	};
 
