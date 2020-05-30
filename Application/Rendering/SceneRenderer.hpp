@@ -2,7 +2,7 @@
 #include "Math/Interface/Types/Matrix.hpp"
 
 
-namespace Renderer{ class Renderer; }
+namespace Renderer{ class RendererFacade; }
 
 
 namespace App::Rendering

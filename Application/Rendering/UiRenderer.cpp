@@ -5,7 +5,7 @@
 
 
 #include <vector>
-#include "Renderer.hpp"
+#include "RendererFacade.hpp"
 #include "Commands/CompositeCommand.hpp"
 #include "Resources/SerializationContainer.hpp"
 #include "StateSettings/SamplerSpec.hpp"
@@ -13,7 +13,7 @@
 
 namespace App::Rendering
 {
-	UiRenderer::UiRenderer(RendererMediator &mediator, ::Renderer::Renderer &renderer) :
+	UiRenderer::UiRenderer(RendererMediator &mediator, ::Renderer::RendererFacade &renderer) :
 		mediator{ &mediator },
 		imguiContext{ nullptr },
 		submitDrawData{ nullptr },
@@ -30,7 +30,7 @@ namespace App::Rendering
 					
 	}
 
-		void UiRenderer::CreateUiSignature(::Renderer::Renderer &renderer)
+		void UiRenderer::CreateUiSignature(::Renderer::RendererFacade &renderer)
 		{
 			SamplerSpec samplerSpec{};
 			samplerSpec.addressU = samplerSpec.addressV = samplerSpec.addressW = &AddressingTargets::AddressingModeWrap;
@@ -42,7 +42,7 @@ namespace App::Rendering
 		
 		}
 
-		void UiRenderer::CreateUiFontTexture(::Renderer::Renderer &renderer)
+		void UiRenderer::CreateUiFontTexture(::Renderer::RendererFacade &renderer)
 		{
 			ImGuiIO &io{ ImGui::GetIO() };
 			unsigned char *pixels;
@@ -53,7 +53,7 @@ namespace App::Rendering
 		
 		}
 
-		void UiRenderer::CreateUiPipeline(::Renderer::Renderer &renderer)
+		void UiRenderer::CreateUiPipeline(::Renderer::RendererFacade &renderer)
 		{
 			renderer.GetDepthStencilSettings()
 			.SetEnableDepth(false);
@@ -95,7 +95,7 @@ namespace App::Rendering
 		
 		}
 
-			SerializeContainer UiRenderer::CreateUiVertexShader(::Renderer::Renderer &renderer)
+			SerializeContainer UiRenderer::CreateUiVertexShader(::Renderer::RendererFacade &renderer)
 			{			
 				static const char* vertexShader =
 				"cbuffer vertexBuffer : register(b2)\
@@ -131,7 +131,7 @@ namespace App::Rendering
 			
 			}
 
-			SerializeContainer UiRenderer::CreateUiPixelShader(::Renderer::Renderer &renderer)
+			SerializeContainer UiRenderer::CreateUiPixelShader(::Renderer::RendererFacade &renderer)
 			{
 				static const char *pixelShader =
 			    "struct PS_INPUT\

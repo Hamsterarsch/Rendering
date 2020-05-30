@@ -1,5 +1,5 @@
 #pragma once
-#include "Interface/Renderer.hpp"
+#include "Interface/RendererFacade.hpp"
 #include "Resources/ResourceAllocation.hpp"
 #include "Resources/Pso/PsoFactory.hpp"
 #include "Resources/RootSignature/RootSignatureFactory.hpp"
@@ -45,7 +45,7 @@ namespace Renderer::DX12
 	
 
 	
-	class ForwardRenderer final : public Renderer, public MaintainsInternalRenderResources
+	class ForwardRenderer final : public RendererFacade, public MaintainsInternalRenderResources
 	{	
 		private: long long lastDispatchTime;
 

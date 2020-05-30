@@ -5,18 +5,18 @@
 #include "UiRenderer.hpp"
 
 
-namespace Renderer{ class Renderer; }
+namespace Renderer{ class RendererFacade; }
 
 
 namespace App::Rendering
 {
 	class RendererMediator
 	{
-		private: ::Renderer::Renderer *underlyingRenderer;
+		private: RendererFacade *underlyingRenderer;
 
 		private: UniquePtr<Commands::CommandFactory> commandFactory;
 		
-		private: ::Renderer::HandleWrapper mainWindowSurface;
+		private: HandleWrapper mainWindowSurface;
 
 		private: SceneRenderer sceneRenderer;
 
@@ -28,7 +28,7 @@ namespace App::Rendering
 
 
 
-		public: RendererMediator(HandleWrapper &&mainWindowSurface, ::Renderer::Renderer &renderer, SceneRenderer &&sceneRenderer, UiRenderer &&uiRenderer);
+		public: RendererMediator(HandleWrapper &&mainWindowSurface, RendererFacade &renderer, SceneRenderer &&sceneRenderer, UiRenderer &&uiRenderer);
 
 		
 		public: bool DidRenderLastSubmit() const;
@@ -37,7 +37,7 @@ namespace App::Rendering
 
 			private: void SubmitCommand(UniquePtr<Commands::Command> &&command);
 
-		public: ::Renderer::Renderer &Renderer() { return *underlyingRenderer; }
+		public: ::Renderer::RendererFacade &Renderer() { return *underlyingRenderer; }
 
 		public: Commands::CommandFactory &CommandFactory() { return *commandFactory; }
 		

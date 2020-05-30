@@ -20,11 +20,8 @@ namespace Renderer
 	class SerializationHook;
 
 
-	class RENDERER_DLLSPEC Renderer : public virtual MaintainsRenderResources
+	class RENDERER_DLLSPEC RendererFacade : public virtual MaintainsRenderResources
 	{
-		DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(Renderer)
-		
-
 		public: virtual bool IsBusy() const = 0;
 		
 		public: virtual void DispatchFrame() = 0;
@@ -56,11 +53,11 @@ namespace Renderer
 		public: virtual ResourceHandle::t_hash MakeWindowsWindowSurface(HWND windowHandle) = 0;
 
 		
-		public: virtual UniquePtr<::Renderer::Commands::CommandFactory> MakeCommandFactory() = 0;
+		public: virtual UniquePtr<Commands::CommandFactory> MakeCommandFactory() = 0;
 
-		public: virtual void SubmitCommand(UniquePtr<::Renderer::Commands::Command> &&command) = 0;
+		public: virtual void SubmitCommand(UniquePtr<Commands::Command> &&command) = 0;
 
-		public: virtual void SubmitContextCommand(UniquePtr<::Renderer::Commands::Command> &&command) = 0;
+		public: virtual void SubmitContextCommand(UniquePtr<Commands::Command> &&command) = 0;
 		
 		public: virtual void DestroyUnreferencedResources() = 0;
 
@@ -83,7 +80,7 @@ namespace Renderer
 	};
 
 
-	UniquePtr<Renderer> RENDERER_DLLSPEC MakeRenderer(HWND outputWindow);
+	UniquePtr<RendererFacade> RENDERER_DLLSPEC MakeRenderer(HWND outputWindow);
 	
 	
 }

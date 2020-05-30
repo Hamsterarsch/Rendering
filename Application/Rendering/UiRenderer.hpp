@@ -5,7 +5,7 @@
 namespace Renderer
 {
 	class SerializeContainer;
-	class Renderer;
+	class RendererFacade;
 
 	namespace Commands
 	{
@@ -61,17 +61,17 @@ namespace App::Rendering
 		
 
 		
-		public: UiRenderer(RendererMediator &mediator, ::Renderer::Renderer &renderer);
+		public: UiRenderer(RendererMediator &mediator, ::Renderer::RendererFacade &renderer);
 
-			private: void CreateUiSignature(::Renderer::Renderer &renderer);
+			private: void CreateUiSignature(::Renderer::RendererFacade &renderer);
 		
-			private: void CreateUiFontTexture(::Renderer::Renderer &renderer);
+			private: void CreateUiFontTexture(::Renderer::RendererFacade &renderer);
 
-			private: void CreateUiPipeline(::Renderer::Renderer &renderer);
+			private: void CreateUiPipeline(::Renderer::RendererFacade &renderer);
 
-				private: static SerializeContainer CreateUiVertexShader(::Renderer::Renderer &renderer);
+				private: static SerializeContainer CreateUiVertexShader(::Renderer::RendererFacade &renderer);
 
-				private: static SerializeContainer CreateUiPixelShader(::Renderer::Renderer &renderer);
+				private: static SerializeContainer CreateUiPixelShader(::Renderer::RendererFacade &renderer);
 						 		
 
 		public: ~UiRenderer();

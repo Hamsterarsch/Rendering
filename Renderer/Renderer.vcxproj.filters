@@ -5,9 +5,6 @@
     <ClInclude Include="Interface\RendererExportHelper.hpp">
       <Filter>Interface</Filter>
     </ClInclude>
-    <ClInclude Include="Interface\Renderer.hpp">
-      <Filter>Interface</Filter>
-    </ClInclude>
     <ClInclude Include="Interface\Resources\ResourceHandle.hpp">
       <Filter>Interface\Resources</Filter>
     </ClInclude>
@@ -307,6 +304,9 @@
       <Filter>Resources\Descriptor</Filter>
     </ClInclude>
     <ClInclude Include="Helpers.hpp" />
+    <ClInclude Include="Interface\RendererFacade.hpp">
+      <Filter>Interface</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />

@@ -1,6 +1,6 @@
 #pragma once
 #include "Window/Windows/Window.hpp"
-#include "Renderer.hpp"
+#include "RendererFacade.hpp"
 #include "Rendering/RendererMediator.hpp"
 
 
@@ -10,7 +10,7 @@ namespace Windows
 	{
 		private: Windows::Window window;
 
-		private: UniquePtr<Renderer::Renderer> renderer;
+		private: UniquePtr<Renderer::RendererFacade> renderer;
 				 
 		private: ::App::Rendering::RendererMediator rendererMediator;
 		

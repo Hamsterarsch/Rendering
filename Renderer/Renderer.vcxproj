@@ -284,7 +284,7 @@
     <ClInclude Include="Interface\Commands\CommandProcessor.hpp" />
     <ClInclude Include="Interface\Commands\CompositeCommand.hpp" />
     <ClInclude Include="Interface\ContainsReferences.hpp" />
-    <ClInclude Include="Interface\Renderer.hpp" />
+    <ClInclude Include="Interface\RendererFacade.hpp" />
     <ClInclude Include="Interface\RendererExportHelper.hpp" />
     <ClInclude Include="Interface\Resources\HandleWrapper.hpp" />
     <ClInclude Include="Interface\Resources\Pso\PipelineTypes.hpp" />

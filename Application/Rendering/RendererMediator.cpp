@@ -1,5 +1,5 @@
 #include "Rendering/RendererMediator.hpp"
-#include "Renderer.hpp"
+#include "RendererFacade.hpp"
 #include <chrono>
 #include <iostream>
 
@@ -9,7 +9,7 @@ namespace App::Rendering
 	RendererMediator::RendererMediator
 	(
 		HandleWrapper &&mainWindowSurface,
-		::Renderer::Renderer &renderer,
+		RendererFacade &renderer,
 		SceneRenderer &&sceneRenderer,
 		UiRenderer &&uiRenderer
 	)	:
