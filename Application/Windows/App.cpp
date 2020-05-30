@@ -60,7 +60,7 @@ namespace Windows
 		{ renderer.get(), renderer->MakeWindowsWindowSurface(window.GetHandle()) },
 		*renderer,
 		{ rendererMediator, {1,1} },
-		{ rendererMediator, renderer.get() }
+		{ rendererMediator, *renderer }
 	}
 	{
 		//Initialize();

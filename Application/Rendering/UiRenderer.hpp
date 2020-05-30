@@ -2,38 +2,83 @@
 #include "Resources/HandleWrapper.hpp"
 
 
-namespace Renderer { class Renderer; }
+namespace Renderer
+{
+	class SerializeContainer;
+	class Renderer;
+
+	namespace Commands
+	{
+		class CompositeCommand;
+		class CommandFactory;
+	}
+}
+
 struct ImGuiContext;
+struct ImDrawData;
+struct ImDrawList;
 
 
 namespace App::Rendering
 {
 	class RendererMediator;
+	using namespace Renderer;
 	
 	class UiRenderer
 	{
+		
 		private: RendererMediator *mediator;
 				 
 		private: ImGuiContext *imguiContext;
 
-		private: Renderer::HandleWrapper uiSignature;
+		private: HandleWrapper uiSignature;
 		
-		private: Renderer::HandleWrapper uiPso;
+		private: HandleWrapper uiPso;
 
-		private: Renderer::HandleWrapper uiFontTexture;
+		private: HandleWrapper uiFontTexture;
 		
-		private: Renderer::HandleWrapper uiVertexIndexBuffer;
+		private: HandleWrapper uiVertexIndexBuffer;
 
-		private: Renderer::HandleWrapper uiConstantBuffer;
+		private: HandleWrapper uiConstantBuffer;
 
-		private: Renderer::HandleWrapper uiDescriptors;
+		private: HandleWrapper uiDescriptors;
+
+		private: ImDrawData *submitDrawData;
+
+		private: size_t vertexIndexBufferSizeInBytes;
+
+		private: struct
+		{
+			float x{ 0 };
+			float y{ 0 };
+		} lastSubmitDisplayPos, lastSubmitDisplaySize;
+
+		private: size_t constantBufferSizeInBytes;
+
+		private: unsigned drawRecordVertexOffset;
 		
+		private: unsigned drawRecordIndexOffset;
 		
-		public: UiRenderer(RendererMediator &mediator, ::Renderer::Renderer *renderer);
+
+		
+		public: UiRenderer(RendererMediator &mediator, ::Renderer::Renderer &renderer);
+
+			private: void CreateUiSignature(::Renderer::Renderer &renderer);
+		
+			private: void CreateUiFontTexture(::Renderer::Renderer &renderer);
+
+			private: void CreateUiPipeline(::Renderer::Renderer &renderer);
+
+				private: static SerializeContainer CreateUiVertexShader(::Renderer::Renderer &renderer);
+
+				private: static SerializeContainer CreateUiPixelShader(::Renderer::Renderer &renderer);
+						 		
 
 		public: ~UiRenderer();
 
-		public: bool IsInvalid() const;
+		public: bool IsValid() const;
+
+			private: void Free();
 		
 		public: UiRenderer(UiRenderer &&other) noexcept;
 
@@ -43,6 +88,24 @@ namespace App::Rendering
 
 		
 		public: void SubmitFrame();
+
+			private: bool ScreenIsMinimized() const;
+
+			private: bool DrawDataIsEmpty() const;
+
+			private: void CreateBufferWithUiVertexIndexData();
+
+			private: bool TryToUpdateUiConstantBuffer();
+
+				private: bool ConstantBufferValuesHaveNotChanged();
+
+			private: void CreateDescriptorBlockForUiResources();
+
+			private: void SubmitUiRendererWork();
+
+			private: void RecordDrawDataDrawLists(Commands::CompositeCommand &targetCommand, Commands::CommandFactory &cmdFactory);
+
+				private: void RecordDrawListDrawCommands(const ImDrawList &drawList, Commands::CompositeCommand &targetCommand, Commands::CommandFactory &cmdFactory);
 		
 	};
 	

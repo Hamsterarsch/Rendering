@@ -235,8 +235,8 @@ namespace Renderer::DX12
 	
 	void ResourceRegistry::PurgeUnreferencedEntities()
 	{
-		registryResource.PurgeUnreferencedEntities();
 		registryDescriptor.PurgeUnreferencedEntities();
+		registryResource.PurgeUnreferencedEntities();
 		registryWindowSurface.PurgeUnreferencedEntities();
 		if(shouldPurgePsoAndSignature)
 		{

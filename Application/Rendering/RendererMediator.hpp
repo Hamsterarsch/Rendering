@@ -12,11 +12,11 @@ namespace App::Rendering
 {
 	class RendererMediator
 	{
-		private: Renderer::Renderer *underlyingRenderer;
+		private: ::Renderer::Renderer *underlyingRenderer;
 
-		private: UniquePtr<Renderer::Commands::CommandFactory> commandFactory;
+		private: UniquePtr<Commands::CommandFactory> commandFactory;
 		
-		private: Renderer::HandleWrapper mainWindowSurface;
+		private: ::Renderer::HandleWrapper mainWindowSurface;
 
 		private: SceneRenderer sceneRenderer;
 
@@ -28,18 +28,18 @@ namespace App::Rendering
 
 
 
-		public: RendererMediator(Renderer::HandleWrapper &&mainWindowSurface, Renderer::Renderer &renderer, SceneRenderer &&sceneRenderer, UiRenderer &&uiRenderer);
+		public: RendererMediator(HandleWrapper &&mainWindowSurface, ::Renderer::Renderer &renderer, SceneRenderer &&sceneRenderer, UiRenderer &&uiRenderer);
 
 		
 		public: bool DidRenderLastSubmit() const;
 		
 		public: void SubmitFrame();
 
-				private: void SubmitCommand(UniquePtr<Renderer::Commands::Command> &&command);
+			private: void SubmitCommand(UniquePtr<Commands::Command> &&command);
 
-		public: Renderer::Renderer &Renderer() { return *underlyingRenderer; }
+		public: ::Renderer::Renderer &Renderer() { return *underlyingRenderer; }
 
-		public: Renderer::Commands::CommandFactory &CommandFactory() { return *commandFactory; }
+		public: Commands::CommandFactory &CommandFactory() { return *commandFactory; }
 		
 	};
 

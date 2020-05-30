@@ -8,8 +8,8 @@ namespace App::Rendering
 {
 	RendererMediator::RendererMediator
 	(
-		Renderer::HandleWrapper &&mainWindowSurface,
-		Renderer::Renderer &renderer,
+		HandleWrapper &&mainWindowSurface,
+		::Renderer::Renderer &renderer,
 		SceneRenderer &&sceneRenderer,
 		UiRenderer &&uiRenderer
 	)	:
@@ -49,7 +49,7 @@ namespace App::Rendering
 				
 	}
 	
-			void RendererMediator::SubmitCommand(UniquePtr<Renderer::Commands::Command> &&command)
+			void RendererMediator::SubmitCommand(UniquePtr<Commands::Command> &&command)
 			{
 				underlyingRenderer->SubmitCommand(std::move(command));
 				
