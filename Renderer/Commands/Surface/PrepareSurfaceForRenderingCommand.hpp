@@ -15,7 +15,7 @@ namespace Renderer::DX12::Commands
 		
 		public: void ExecuteOperationOnResourceReferences(UsesReferences &registry, void( UsesReferences:: *operation)(size_t))	override
 		{
-			registry.AddReference(surface);
+			Invoke(registry, operation, surface);
 			
 		}
 		
