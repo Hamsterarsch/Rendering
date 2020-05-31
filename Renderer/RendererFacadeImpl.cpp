@@ -60,7 +60,7 @@ namespace Renderer::DX12
 		psoFactory{ resources.get(), depthStencilSettings, blendSettings, rasterizerSettings, vertexLayoutSettings },
 		signatureFactory{ resources.get() },
 		shaderFactory{ Facade::MakeShaderFactory(5, 1) },
-		descriptors{ resources.get(), 1'000'000, 2048 },		
+		descriptors{ resources.get(), 524'288, 512 },		
 		commandProcessor{ *resources, *commonQueue, registry, counterFactory },
 		resourceViewFactory{ *resources, registry, descriptors }
 	{			

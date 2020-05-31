@@ -40,7 +40,6 @@ namespace Renderer::DX12
 {
 	class ResourceFactory;
 	
-
 	
 	class RendererFacadeImpl final : public RendererFacade, public MaintainsInternalRenderResources
 	{	
