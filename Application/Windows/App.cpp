@@ -114,16 +114,34 @@ namespace Windows
 	}	
 	   	
 		void App::Update()
-		{
+		{		
+			static ImGuiWindowFlags StaticNoTitle{ ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoDecoration };
+		
 			ImGui_ImplWin32_NewFrame();
 			ImGui::NewFrame();
 
-			ImGui::SetNextWindowPos({0,0});			;
+			ImGui::SetNextWindowPos({0,0});			
 			ImGui::SetNextWindowSize(ImGui::GetWindowViewport()->Size);
-			ImGui::Begin("Open Project", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);			
-			ImGui::Text("Open Project");
+			ImGui::Begin("OuterWindow", nullptr, StaticNoTitle);
+
+			auto outerSize{ ImGui::GetWindowSize() };
+			auto innerSizeX{ outerSize.x * .5f };
+			auto innerSizeY{ outerSize.y * .5f };
+			auto innerPosX{ (outerSize.x - innerSizeX) / 2.f };
+			auto innerPosY{ (outerSize.y - innerSizeY) / 2.f };
+		
+			ImGui::SetNextWindowSize({innerSizeX, innerSizeY});
+			ImGui::SetNextWindowPos({innerPosX, innerPosY});
+				ImGui::Begin("InnerWindow", nullptr, StaticNoTitle | ImGuiWindowFlags_NoBackground);
+					ImGui::Text("Open a project or create a new one to begin");
+					ImGui::Columns(2, nullptr, false);
+					ImGui::Button("Create New");
+					ImGui::NextColumn();
+					ImGui::Button("Open Existing");
+				ImGui::End();
 			ImGui::End();
 			
+			ImGui::ShowDemoWindow();
 			
 		}
 
