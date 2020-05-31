@@ -22,9 +22,11 @@ namespace App::Rendering
 
 		private: UiRenderer uiRenderer;
 
-		private: unsigned char minimumFrameDeltaMs;
-		
-		private: size_t lastSubmitTime;
+		private: size_t submitIterations;
+
+		private: CounterFactory::CounterID frameCounter;
+
+		private: unsigned char maximumFrameLag;
 
 
 

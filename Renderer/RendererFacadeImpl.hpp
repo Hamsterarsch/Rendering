@@ -15,6 +15,7 @@
 #include "StateSettings/VertexLayoutSettingsImpl.hpp"
 #include "StateSettings/RasterizerSettingsImpl.hpp"
 #include "Resources/Descriptor/ResourceViewFactoryImpl.hpp"
+#include "CounterFactoryImpl.hpp"
 
 
 namespace RHA
@@ -71,15 +72,18 @@ namespace Renderer::DX12
 			
 		private: DescriptorMemory descriptors;
 
+		private: CounterFactoryImpl counterFactory;
+		
 		private: Commands::CommandProcessorImpl commandProcessor;
 
 		private: ResourceViewFactoryImpl resourceViewFactory;
+
 
 	 			
 		
 		public: RendererFacadeImpl(HWND outputWindow);
 											 
-		public: ~RendererFacadeImpl();
+		public: ~RendererFacadeImpl() override;
 
 			private: void WaitForIdleQueue();
 
@@ -169,6 +173,8 @@ namespace Renderer::DX12
 
 		
 		public: ResourceViewFactory &GetViewFactory() override;
+
+		public: CounterFactory &GetCounterFactory() override;
 							   		
 	};
 

@@ -3,6 +3,9 @@
 #include "Resources/HasQueriableResources.hpp"
 #include "Commands/CommandProcessor.hpp"
 
+namespace Renderer::DX12{ class CounterFactoryImpl; }
+
+
 
 namespace Renderer::DX12::Commands
 {
@@ -13,7 +16,7 @@ namespace Renderer::DX12::Commands
 		GraphicsSignatureChanged,
 		ComputeSignatureChanged
 	};
-
+		
 	
 	class DX12CommandProcessor : public ::Renderer::Commands::CommandProcessor
 	{		
@@ -27,6 +30,9 @@ namespace Renderer::DX12::Commands
 		public: virtual void NotifyCommandContextAbout(CommandContextEvents event) = 0;
 
 		public: virtual bool ShouldExecuteContextCommandFor(CommandContextEvents reason) const = 0;
+
+
+		public: virtual CounterFactoryImpl &GetCounters() = 0;
 		
 	};
 	

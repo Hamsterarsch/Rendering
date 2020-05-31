@@ -30,8 +30,7 @@ namespace Renderer::DX12
 
 	
 	RendererFacadeImpl::RendererFacadeImpl(HWND outputWindow)
-		:
-		RendererFacade{},
+		:		
 		resources{ Facade::MakeDeviceResources(D3D_FEATURE_LEVEL_12_0, enableDebugLayers, enableGpuValidation) },
 		commonQueue{ Facade::MakeQueue(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT) },
 		closeFence{ Facade::MakeFence(resources.get()) },
@@ -61,8 +60,8 @@ namespace Renderer::DX12
 		psoFactory{ resources.get(), depthStencilSettings, blendSettings, rasterizerSettings, vertexLayoutSettings },
 		signatureFactory{ resources.get() },
 		shaderFactory{ Facade::MakeShaderFactory(5, 1) },
-		descriptors{resources.get(), 1'000'000, 2048},		
-		commandProcessor{ *resources, *commonQueue, registry },
+		descriptors{ resources.get(), 1'000'000, 2048 },		
+		commandProcessor{ *resources, *commonQueue, registry, counterFactory },
 		resourceViewFactory{ *resources, registry, descriptors }
 	{			
 		shaderFactory->AddIncludeDirectory(Filesystem::Conversions::MakeExeRelative("../Content/Shaders/Includes").c_str());
@@ -702,5 +701,12 @@ namespace Renderer::DX12
 		
 	}
 
+
+	
+	CounterFactory &RendererFacadeImpl::GetCounterFactory()
+	{
+		return counterFactory;
+		
+	}
 	
 }

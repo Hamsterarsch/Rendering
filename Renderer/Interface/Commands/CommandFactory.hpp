@@ -5,6 +5,7 @@
 #include "Command.hpp"
 #include "Resources/ResourceHandle.hpp"
 #include "StateSettings/FormatTargets.hpp"
+#include "CounterFactory.hpp"
 
 
 namespace Renderer::Commands
@@ -33,15 +34,15 @@ namespace Renderer::Commands
 		public: virtual UniquePtr<Command> BindSignatureToCompute(ResourceHandle::t_hash signature) = 0;
 		*/
 
-		public: virtual UniquePtr<::Renderer::Commands::Command> SetSignatureGraphics(ResourceHandle::t_hash signature) = 0;
+		public: virtual UniquePtr<Command> SetSignatureGraphics(ResourceHandle::t_hash signature) = 0;
 
-		public: virtual UniquePtr<::Renderer::Commands::Command> SetPipelineState(ResourceHandle::t_hash pipeline) = 0;
-
-		
-		public: virtual UniquePtr<::Renderer::Commands::Command> SetDescriptorBlockViewsGraphics(ResourceHandle::t_hash descriptorBlock) = 0;
+		public: virtual UniquePtr<Command> SetPipelineState(ResourceHandle::t_hash pipeline) = 0;
 
 		
-		public: virtual UniquePtr<::Renderer::Commands::Command> SetIndexBuffer
+		public: virtual UniquePtr<Command> SetDescriptorBlockViewsGraphics(ResourceHandle::t_hash descriptorBlock) = 0;
+
+		
+		public: virtual UniquePtr<Command> SetIndexBuffer
 		(
 			ResourceHandle::t_hash indexBuffer,
 			size_t byteOffsetToIndices,
@@ -50,7 +51,7 @@ namespace Renderer::Commands
 			Format indexFormat
 		) = 0;
 
-		public: virtual UniquePtr<::Renderer::Commands::Command> SetVertexBuffer
+		public: virtual UniquePtr<Command> SetVertexBuffer
 		(
 			ResourceHandle::t_hash vertexBuffer,
 			size_t byteOffsetToVertices,
@@ -59,9 +60,9 @@ namespace Renderer::Commands
 		) = 0;
 
 
-		public: virtual UniquePtr<::Renderer::Commands::Command> SetScissorRect(float topLeftX, float topLeftY, float width, float height) = 0;
+		public: virtual UniquePtr<Command> SetScissorRect(float topLeftX, float topLeftY, float width, float height) = 0;
 				
-		public: virtual UniquePtr<::Renderer::Commands::Command> SetViewport
+		public: virtual UniquePtr<Command> SetViewport
 		(
 			float topLeftX, 
 			float topLeftY, 
@@ -72,13 +73,15 @@ namespace Renderer::Commands
 		) = 0;
 
 
-		public: virtual UniquePtr<::Renderer::Commands::Command> DrawIndexedInstanced
+		public: virtual UniquePtr<Command> DrawIndexedInstanced
 		(
 			size_t instanceCount,
 			size_t indexCountPerInstance,
 			size_t offsetOntoIndexViewStart,
 			size_t offsetOntoIndexValue
 		) = 0;
+
+		public: virtual UniquePtr<Command> IncreaseCounter(CounterFactory::CounterID id, size_t valueToIncreaseBy) = 0;
 		
 	};
 	

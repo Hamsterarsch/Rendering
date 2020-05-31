@@ -4,9 +4,9 @@
 #include "Resources/HasQueriableResources.hpp"
 #include "Shared/PtrTypes.hpp"
 #include "Shared/Types/Containers/QueueConcurrent.hpp"
-
 #include <future>
 #include "Commands/Command.hpp"
+
 
 namespace RHA::DX12
 {
@@ -15,7 +15,10 @@ namespace RHA::DX12
 	class Queue;	
 }
 
-namespace Renderer::DX12{ class ResourceRegistry; }
+namespace Renderer::DX12
+{	
+	class ResourceRegistry;
+}
 
 
 namespace Renderer::DX12::Commands
@@ -67,9 +70,7 @@ namespace Renderer::DX12::Commands
 		private: std::mutex mutexOutputCommands;
 
 		private: std::condition_variable extractableCommandsSignal;
-				 
-		
-
+				 				 
 		private: struct ThreadResult
 		{
 			int result;
@@ -88,9 +89,11 @@ namespace Renderer::DX12::Commands
 
 		private: CommandContextEvents currentContextEvent;
 
+		private: CounterFactoryImpl *counterFactory;
 		
 
-		public: CommandProcessorImpl(RHA::DX12::DeviceResources &resources, RHA::DX12::Queue &queue, ResourceRegistry &registry);
+		
+		public: CommandProcessorImpl(RHA::DX12::DeviceResources &resources, RHA::DX12::Queue &queue, ResourceRegistry &registry, CounterFactoryImpl &counterFactory);
 
 			private: ThreadResult Update();
 
@@ -134,10 +137,8 @@ namespace Renderer::DX12::Commands
 		public: void PropagateExceptions();
 
 
-		
-		
-		
-		
+		public: CounterFactoryImpl &GetCounters() override;
+
 	};
 	
 	

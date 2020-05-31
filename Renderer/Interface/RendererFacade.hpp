@@ -72,6 +72,8 @@ namespace Renderer
 
 
 		public: virtual ResourceViewFactory &GetViewFactory() = 0;
+
+		public: virtual CounterFactory &GetCounterFactory() = 0;
 								
 	};
 

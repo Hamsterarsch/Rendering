@@ -2,7 +2,6 @@
 #include "Resources/ResourceRegistry.hpp"
 #include "Commands/Surface/PrepareSurfaceForRenderingCommand.hpp"
 #include "Commands/Surface/PresentSurfaceCommand.hpp"
-
 #include "Commands/Basic/SetSignatureGraphicsCommand.hpp"
 #include "Commands/Basic/SetPipelineStateCommand.hpp"
 #include "Commands/Basic/SetDescriptorBlockViewsGraphicsCommand.hpp"
@@ -10,7 +9,8 @@
 #include "Commands/Basic/SetVertexBufferCommand.hpp"
 #include "Commands/Basic/SetScissorRectCommand.hpp"
 #include "Commands/Basic/SetViewportCommand.hpp"
-#include "Basic/DrawIndexedInstancedCommand.hpp"
+#include "Commands/Basic/DrawIndexedInstancedCommand.hpp"
+#include "Commands/IncreaseCounterCommand.hpp"
 
 
 namespace Renderer::DX12::Commands
@@ -128,6 +128,18 @@ namespace Renderer::DX12::Commands
 	{
 		return MakeUnique<DrawIndexedInstancedCommand>(instanceCount, indexCountPerInstance, offsetOntoIndexViewStart, offsetOntoIndexValue);
 		
+	}
+
+
+	
+	UniquePtr<Renderer::Commands::Command> DX12CommandFactory::IncreaseCounter
+	(
+		const CounterFactory::CounterID id,
+		const size_t valueToIncreaseBy
+	)
+	{
+		return MakeUnique<IncreaseCounterCommand>(id, valueToIncreaseBy);
+			
 	}
 
 	

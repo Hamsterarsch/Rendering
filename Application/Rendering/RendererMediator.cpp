@@ -16,9 +16,10 @@ namespace App::Rendering
 		commandFactory{ renderer.MakeCommandFactory() },
 		mainWindowSurface{ 0 },
 		sceneRenderer{ std::move(sceneRenderer) },
-		uiRenderer{ std::move(uiRenderer) },
-		minimumFrameDeltaMs{ 2 },
-		lastSubmitTime{ 0 }
+		uiRenderer{ std::move(uiRenderer) },		
+		submitIterations{ 0 },
+		frameCounter{ underlyingRenderer->GetCounterFactory().MakeCounter(0) },
+		maximumFrameLag{ 3 }
 	{		
 	}
 
@@ -30,26 +31,25 @@ namespace App::Rendering
 		{
 			return;
 		}
-		
-		/*
-		const auto currentTime{ std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count() };
-		const auto delta{ currentTime - lastSubmitTime };
-		lastSubmitTime = currentTime;
-		if(delta <= minimumFrameDeltaMs)
+
+		if(submitIterations >= maximumFrameLag)
 		{
-			std::cout << "skip render" << std::endl; 
-			return;
-		} todo do something against idle submission stacking */
-				
+			underlyingRenderer->GetCounterFactory().WaitForCounterToReach(frameCounter, submitIterations - maximumFrameLag);
+			
+		}
+						
 		SubmitCommand(commandFactory->PrepareSurfaceForRendering(mainWindowSurface));
 		
 		sceneRenderer.SubmitFrame();		
 		uiRenderer.SubmitFrame();
+		
 		//are scissors reset automatically ?
 		SubmitCommand(commandFactory->PresentSurface(mainWindowSurface));
-
+		SubmitCommand(commandFactory->IncreaseCounter(frameCounter, 1));
+		
 		underlyingRenderer->DestroyUnreferencedResources();
 		underlyingRenderer->DestroyExecutedCommands();
+		++submitIterations;
 				
 	}
 	
@@ -59,6 +59,8 @@ namespace App::Rendering
 				
 			}
 
+
+	
 	void RendererMediator::SetMainWindowSurface(ResourceHandle::t_hash surface)
 	{
 		mainWindowSurface = surface;
