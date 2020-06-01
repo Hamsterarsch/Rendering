@@ -38,6 +38,9 @@
     <ClCompile Include="ThirdParty\imgui\imgui_impl_dx12.cpp">
       <Filter>ThirdParty\imgui</Filter>
     </ClCompile>
+    <ClCompile Include="Ui\ImguiTypeArithmetics.cpp">
+      <Filter>Ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window\Windows\Window.hpp">
@@ -82,6 +85,9 @@
     <ClInclude Include="Rendering\UiRenderer.hpp">
       <Filter>Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="Ui\ImguiTypeArithmetics.hpp">
+      <Filter>Ui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Window">
@@ -104,6 +110,9 @@
     </Filter>
     <Filter Include="ThirdParty\imgui">
       <UniqueIdentifier>{ddbbf907-7515-4c0a-b81f-98ba47aef966}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ui">
+      <UniqueIdentifier>{dcf19b90-d69e-4b31-b294-a47cf0afb6e6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
