@@ -15,6 +15,8 @@
 #include "StateSettings/SamplerSpec.hpp"
 #include "ThirdParty/imgui/imgui.h"
 #include "ThirdParty/imgui/imgui_impl_win32.h"
+#include "Ui/ImguiTypeArithmetics.hpp"
+#include "Windows/SelectPathDialog.hpp"
 
 
 // Forward declare message handler from imgui_impl_win32.cpp
@@ -112,35 +114,138 @@ namespace Windows
 		ImGui_ImplWin32_Shutdown();
 		
 	}	
-	   	
+
+	
+	static bool ButtonCentered(const char *label, bool centerVertical = true, bool centerHorizontal = true)
+	{
+		const auto buttonRect{ ImGui::GetStyle().FramePadding*2 + ImGui::CalcTextSize(label) };
+		auto offset{ ( ImGui::GetContentRegionAvail() - buttonRect) *.5f };
+
+		offset.x = centerHorizontal ? offset.x : 0;
+		offset.y = centerVertical ? offset.y : 0;
+		
+		ImGui::SetCursorPos(ImGui::GetCursorPos() + offset);
+				
+		return ImGui::Button(label);
+		
+	}
+
+		int F(ImGuiInputTextCallbackData *data)
+		{
+			switch(data->EventFlag)
+			{
+				case ImGuiInputTextFlags_CallbackResize:					
+					reinterpret_cast<std::string *>(data->UserData)->resize(data->BufTextLen);
+				break;
+				case ImGuiInputTextFlags_CallbackCharFilter:
+					switch(data->EventChar)
+					{
+						case '.': return 1;
+						case '/': return 1;
+						case '\\': return 1;
+						case ' ': return 1;
+						case '\t': return 1;
+					}
+				break;
+			}
+			return 0;
+		}
+	
 		void App::Update()
 		{		
-			static ImGuiWindowFlags StaticNoTitle{ ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoDecoration };
+			static ImGuiWindowFlags StaticWindowStyle{ ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize };
 		
 			ImGui_ImplWin32_NewFrame();
 			ImGui::NewFrame();
 
 			ImGui::SetNextWindowPos({0,0});			
 			ImGui::SetNextWindowSize(ImGui::GetWindowViewport()->Size);
-			ImGui::Begin("OuterWindow", nullptr, StaticNoTitle);
-
-			auto outerSize{ ImGui::GetWindowSize() };
-			auto innerSizeX{ outerSize.x * .5f };
-			auto innerSizeY{ outerSize.y * .5f };
-			auto innerPosX{ (outerSize.x - innerSizeX) / 2.f };
-			auto innerPosY{ (outerSize.y - innerSizeY) / 2.f };
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0);
+			ImGui::Begin("OuterWindow", nullptr, StaticWindowStyle | ImGuiWindowFlags_NoDecoration);
+			ImGui::PopStyleVar();
 		
-			ImGui::SetNextWindowSize({innerSizeX, innerSizeY});
-			ImGui::SetNextWindowPos({innerPosX, innerPosY});
-				ImGui::Begin("InnerWindow", nullptr, StaticNoTitle | ImGuiWindowFlags_NoBackground);
-					ImGui::Text("Open a project or create a new one to begin");
+			auto outerSize{ ImGui::GetWindowSize() };
+			auto innerSize{ outerSize * ImVec2{.5f, .25f} };
+			
+			auto innerPos{ (outerSize - innerSize) / 2.f };
+			innerPos.y -= outerSize.y *.15f;
+		
+			ImGui::SetNextWindowSize(innerSize);
+			ImGui::SetNextWindowPos(innerPos);
+				ImGui::PushStyleColor(ImGuiCol_TitleBg, IM_COL32(100, 144, 133, 255));
+				ImGui::PushStyleColor(ImGuiCol_WindowBg, IM_COL32(30, 30, 30, 255));
+				ImGui::PushStyleVar(ImGuiStyleVar_WindowTitleAlign, {.5, .5});
+				ImGui::Begin("Open a project or create a new one to begin", nullptr, StaticWindowStyle);
+				ImGui::PopStyleVar();
+				ImGui::PopStyleColor(2);		
+
+					ImGui::Spacing();
+					ImGui::Spacing();
 					ImGui::Columns(2, nullptr, false);
-					ImGui::Button("Create New");
-					ImGui::NextColumn();
-					ImGui::Button("Open Existing");
+
+				const char *cnlabe{ "Create a new Project" };
+				if(ButtonCentered("Create New"))
+				{
+					ImGui::OpenPopup(cnlabe);		
+				}
+
+				if(ImGui::IsPopupOpen(cnlabe))
+				{
+					ImGui::PushStyleVar(ImGuiStyleVar_WindowTitleAlign, {.5, .5});
+					bool b{ true };
+					if(ImGui::BeginPopupModal(cnlabe, &b, StaticWindowStyle))
+					{						
+						ImGui::Spacing();						
+						ImGui::Text("Select a folder where the project should be created");
+												
+						static std::string path{};
+						if(ImGui::Button("Select Folder"))
+						{
+							::App::Windows::SelectPathDialog d{};
+							path = d.GetSelectedItem().string();
+							
+						}
+						const auto endPos{ ImGui::GetCursorPosX() + ImGui::GetItemRectSize().x };
+
+						ImGui::SameLine(endPos, 5);
+							ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
+							ImGui::InputText(" ", path.data(), path.size(), ImGuiInputTextFlags_ReadOnly);
+													
+						
+						ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetStyle().FramePadding.x);
+						ImGui::Text("Project Name: ");
+						
+						ImGui::SameLine(endPos, 5);
+						ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
+						static std::string str{};
+						ImGui::InputText("lablee", str.data(), str.capacity(), ImGuiInputTextFlags_CallbackResize | ImGuiInputTextFlags_CallbackCharFilter, &F, &str);
+
+						
+						ImGui::Spacing();
+						ImGui::Spacing();
+
+						if(ButtonCentered("Confirm", false))
+						{
+							int e = 1;//do stuff
+						}
+						
+						ImGui::EndPopup();
+					}
+					ImGui::PopStyleVar();
+				}
+		
+				ImGui::NextColumn();
+				if(ButtonCentered("Open Existing"))
+				{
+				}
+					
 				ImGui::End();
+		
 			ImGui::End();
 			
+
+
+		
 			ImGui::ShowDemoWindow();
 			
 		}

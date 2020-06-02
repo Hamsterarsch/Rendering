@@ -15,8 +15,9 @@ namespace Windows
 		private: Renderer::HandleWrapper mainWindowSurface;
 		
 		private: ::App::Rendering::RendererMediator rendererMediator;
-		
 
+
+		
 		public: static App &Get();
 		
 			private: App();

@@ -7,11 +7,13 @@
 
 
 #include "AssetSystem/Interface/AssetSystem.hpp"
+#include "Windows/SelectPathDialog.hpp"
 
 int main()
 {
 	try
-	{		
+	{
+		
 		auto &app{ Windows::App::Get() };
 		app.EnterLoop();
 		
