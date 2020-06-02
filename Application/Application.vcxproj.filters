@@ -41,6 +41,9 @@
     <ClCompile Include="Ui\ImguiTypeArithmetics.cpp">
       <Filter>Ui</Filter>
     </ClCompile>
+    <ClCompile Include="Windows\SelectPathDialog.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window\Windows\Window.hpp">
@@ -87,6 +90,9 @@
     </ClInclude>
     <ClInclude Include="Ui\ImguiTypeArithmetics.hpp">
       <Filter>Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Windows\SelectPathDialog.hpp">
+      <Filter>Windows</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

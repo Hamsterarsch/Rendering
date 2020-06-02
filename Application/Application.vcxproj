@@ -270,6 +270,7 @@
     <ClInclude Include="Types\Dimensions2D.hpp" />
     <ClInclude Include="Ui\ImguiTypeArithmetics.hpp" />
     <ClInclude Include="Windows\App.hpp" />
+    <ClInclude Include="Windows\SelectPathDialog.hpp" />
     <ClInclude Include="Window\Windows\Window.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -293,6 +294,7 @@
     <ClCompile Include="Types\Dimensions2D.cpp" />
     <ClCompile Include="Ui\ImguiTypeArithmetics.cpp" />
     <ClCompile Include="Windows\App.cpp" />
+    <ClCompile Include="Windows\SelectPathDialog.cpp" />
     <ClCompile Include="Window\Windows\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
