@@ -268,7 +268,16 @@
     <ClInclude Include="ThirdParty\imgui\imstb_textedit.h" />
     <ClInclude Include="ThirdParty\imgui\imstb_truetype.h" />
     <ClInclude Include="Types\Dimensions2D.hpp" />
+    <ClInclude Include="Ui\Core\CharacterFilter.hpp" />
+    <ClInclude Include="Ui\Core\StringInputTarget.hpp" />
+    <ClInclude Include="Ui\Core\WidgetBase.hpp" />
+    <ClInclude Include="Ui\Core\WidgetBehavior.hpp" />
+    <ClInclude Include="Ui\Core\WidgetBuilder.hpp" />
+    <ClInclude Include="Ui\Core\WidgetBuilderImpl.hpp" />
     <ClInclude Include="Ui\ImguiTypeArithmetics.hpp" />
+    <ClInclude Include="Ui\Widgets\ButtonWidget.hpp" />
+    <ClInclude Include="Ui\Widgets\EqualColumnsWidget.hpp" />
+    <ClInclude Include="Ui\Widget\WindowWidget.hpp" />
     <ClInclude Include="Windows\App.hpp" />
     <ClInclude Include="Windows\SelectPathDialog.hpp" />
     <ClInclude Include="Window\Windows\Window.hpp" />
@@ -292,6 +301,7 @@
     <ClCompile Include="ThirdParty\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="ThirdParty\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Types\Dimensions2D.cpp" />
+    <ClCompile Include="Ui\Core\WidgetBuilderImpl.cpp" />
     <ClCompile Include="Ui\ImguiTypeArithmetics.cpp" />
     <ClCompile Include="Windows\App.cpp" />
     <ClCompile Include="Windows\SelectPathDialog.cpp" />

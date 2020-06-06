@@ -17,6 +17,10 @@
 #include "ThirdParty/imgui/imgui_impl_win32.h"
 #include "Ui/ImguiTypeArithmetics.hpp"
 #include "Windows/SelectPathDialog.hpp"
+#include "Ui/Core/WidgetBuilderImpl.hpp"
+#include "Ui/Widget/WindowWidget.hpp"
+#include "Ui/Widgets/ButtonWidget.hpp"
+#include "Ui/Widgets/EqualColumnsWidget.hpp"
 
 
 // Forward declare message handler from imgui_impl_win32.cpp
@@ -72,7 +76,32 @@ namespace Windows
 				{ rendererMediator, *renderer }
 			}
 		{
-			rendererMediator.SetMainWindowSurface(mainWindowSurface);			
+			rendererMediator.SetMainWindowSurface(mainWindowSurface);
+
+
+			auto widget{ MakeUnique<::App::Ui::Widgets::WindowWidget>("Open a project or create a new one to begin") };					
+			widget->isNocollapse = true;
+			widget->isStatic = true;
+			widget->pos.y = .4;
+			widget->size.y = .25;
+
+			auto gr{ MakeUnique<::App::Ui::Widgets::EqualColumnsWidget>() };
+
+			auto button{ MakeUnique<::App::Ui::Widgets::ButtonWidget>("Create New", MakeUnique<::App::Ui::Widgets::ToggleWidgetHideStateBehavior>(*widget)) };
+			button->alignment = .5;
+			button->centerVertical = true;
+
+			auto button2{ MakeUnique<::App::Ui::Widgets::ButtonWidget>("Open Project", MakeUnique<::App::Ui::Widgets::ToggleWidgetHideStateBehavior>(*widget)) };
+			button2->alignment = .5;
+			button2->centerVertical = true;
+
+			gr->AddChild(std::move(button));
+			gr->AddChild(std::move(button2));
+		
+			widget->AddChild(std::move(gr));
+		
+			widgets.push_front(std::move(widget));
+		
 		}
 
 	
@@ -154,10 +183,24 @@ namespace Windows
 		void App::Update()
 		{		
 			static ImGuiWindowFlags StaticWindowStyle{ ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize };
+
+			static ::App::Ui::WidgetBuilderImpl builder{};
 		
 			ImGui_ImplWin32_NewFrame();
 			ImGui::NewFrame();
 
+			for(auto &&widget : widgets)
+			{
+				widget->Render(builder);
+			}
+
+			for(auto &&widget : widgets)
+			{
+				widget->UpdateBehaviors();
+			
+			}
+
+		/*
 			ImGui::SetNextWindowPos({0,0});			
 			ImGui::SetNextWindowSize(ImGui::GetWindowViewport()->Size);
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0);
@@ -247,7 +290,7 @@ namespace Windows
 
 		
 			ImGui::ShowDemoWindow();
-			
+			*/
 		}
 
 

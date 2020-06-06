@@ -44,6 +44,9 @@
     <ClCompile Include="Windows\SelectPathDialog.cpp">
       <Filter>Windows</Filter>
     </ClCompile>
+    <ClCompile Include="Ui\Core\WidgetBuilderImpl.cpp">
+      <Filter>Ui\Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window\Windows\Window.hpp">
@@ -94,6 +97,33 @@
     <ClInclude Include="Windows\SelectPathDialog.hpp">
       <Filter>Windows</Filter>
     </ClInclude>
+    <ClInclude Include="Ui\Core\WidgetBase.hpp">
+      <Filter>Ui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Core\WidgetBehavior.hpp">
+      <Filter>Ui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Widget\WindowWidget.hpp">
+      <Filter>Ui\Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Core\WidgetBuilder.hpp">
+      <Filter>Ui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Core\WidgetBuilderImpl.hpp">
+      <Filter>Ui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Core\StringInputTarget.hpp">
+      <Filter>Ui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Core\CharacterFilter.hpp">
+      <Filter>Ui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Widgets\ButtonWidget.hpp">
+      <Filter>Ui\Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Widgets\EqualColumnsWidget.hpp">
+      <Filter>Ui\Widgets</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Window">
@@ -119,6 +149,12 @@
     </Filter>
     <Filter Include="Ui">
       <UniqueIdentifier>{dcf19b90-d69e-4b31-b294-a47cf0afb6e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ui\Core">
+      <UniqueIdentifier>{0dd49621-d539-4645-95dc-654e3afff5a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ui\Widgets">
+      <UniqueIdentifier>{6428eaf6-fc2c-480a-9cce-7ba927dbdd8d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

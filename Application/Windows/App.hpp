@@ -2,7 +2,10 @@
 #include "Window/Windows/Window.hpp"
 #include "RendererFacade.hpp"
 #include "Rendering/RendererMediator.hpp"
+#include <forward_list>
 
+
+namespace App::Ui{ class WidgetBase; }
 
 namespace Windows
 {
@@ -16,6 +19,7 @@ namespace Windows
 		
 		private: ::App::Rendering::RendererMediator rendererMediator;
 
+		private: std::forward_list<UniquePtr<::App::Ui::WidgetBase>> widgets;
 
 		
 		public: static App &Get();
