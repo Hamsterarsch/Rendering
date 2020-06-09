@@ -5,7 +5,7 @@
 //#include <Uxtheme.h>
 //#pragma comment(lib, "UxTheme.lib")
 
-namespace Windows
+namespace App::Windows
 {
 	Window::Window(const std::wstring &windowName, const std::wstring &className, WNDPROC windowProc) :
 		Window

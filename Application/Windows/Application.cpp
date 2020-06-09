@@ -1,6 +1,6 @@
 #include "Types/Dimensions2D.hpp"
 #include "DX12/Facade.hpp"
-#include "Windows/App.hpp"
+#include "Windows/Application.hpp"
 
 #include "Shared/Filesystem/Conversions.hpp"
 #include <fstream>
@@ -31,7 +31,7 @@
 // Forward declare message handler from imgui_impl_win32.cpp
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-namespace Windows
+namespace App::Windows
 {
 	
 	LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -46,7 +46,7 @@ namespace Windows
 	        {
 				const auto width{ LOWORD(lParam) };
 	        	const auto height{ HIWORD(lParam) };
-				App::Get().ResizeMainWindow(height, width);
+				Application::Get().ResizeMainWindow(height, width);
 	        	
 			}	           
 	        return 0;
@@ -63,14 +63,14 @@ namespace Windows
 
 
 	
-	App &App::Get()
+	Application &Application::Get()
 	{
-		static App app{};
+		static Application app{};
 		return app;
 		
 	}
 
-		App::App() :
+		Application::Application() :
 			window{ {1280, 720}, L"Window", L"UniqueClassName", WndProc },
 			renderer{ Renderer::MakeRenderer(window.GetHandle()) },
 			mainWindowSurface{ renderer.get(), renderer->MakeWindowsWindowSurface(window.GetHandle()) },
@@ -90,35 +90,35 @@ namespace Windows
 			widget->pos.y = .4;
 			widget->size.y = .25;
 
-				auto behavior{ MakeUnique<::App::Ui::Client::CreateProjectDialogBehavior>() };
+				auto behavior{ MakeUnique<Ui::Client::CreateProjectDialogBehavior>() };
 				
-				auto grid{ MakeUnique<::App::Ui::Widgets::GridWidget>(5, 2) };
+				auto grid{ MakeUnique<Ui::Widgets::GridWidget>(5, 2) };
 
 				grid->DeclareChildPos(0,0, 2)
-				.AddChild(MakeUnique<::App::Ui::Widgets::ButtonWidget>("Select Folder", *behavior));
+				.AddChild(MakeUnique<Ui::Widgets::ButtonWidget>("Select Folder", *behavior));
 
 				grid->DeclareChildPos(2, 0, 3)
-				.AddChild(MakeUnique<::App::Ui::Widgets::InputWidget<::App::Ui::StringInputTarget>>("Folder Display", behavior->selectedFolder));
+				.AddChild(MakeUnique<Ui::Widgets::InputWidget<Ui::StringInputTarget>>("Folder Display", behavior->selectedFolder));
 				
 				grid->DeclareChildPos(0, 1, 2)
-				.AddChild(MakeUnique<::App::Ui::Widgets::TextWidget>("Project Name"));
+				.AddChild(MakeUnique<Ui::Widgets::TextWidget>("Project Name"));
 
 				grid->DeclareChildPos(2, 1, 3)
-				.AddChild(MakeUnique<::App::Ui::Widgets::InputWidget<::App::Ui::StringInputTarget>>("NameInput", behavior->projectName));
+				.AddChild(MakeUnique<Ui::Widgets::InputWidget<Ui::StringInputTarget>>("NameInput", behavior->projectName));
 				
-				auto createProjectDialog{ MakeUnique<::App::Ui::Widgets::ModalWidget>("Create a new Project", std::move(behavior)) };
+				auto createProjectDialog{ MakeUnique<Ui::Widgets::ModalWidget>("Create a new Project", std::move(behavior)) };
 				createProjectDialog->AddChild(std::move(grid));
 				
 		
 			{
-				auto grid{ MakeUnique<::App::Ui::Widgets::EqualColumnsWidget>() };
+				auto grid{ MakeUnique<Ui::Widgets::EqualColumnsWidget>() };
 
-				auto btnOpen{ MakeUnique<::App::Ui::Widgets::ButtonWidget>("Open Project", MakeUnique<::App::Ui::Widgets::ToggleWidgetHideStateBehavior>(*widget)) };
+				auto btnOpen{ MakeUnique<Ui::Widgets::ButtonWidget>("Open Project", MakeUnique<::App::Ui::Widgets::ToggleWidgetHideStateBehavior>(*widget)) };
 				btnOpen->alignment = .5;
 				btnOpen->centerVertical = true;
 				grid->AddChild(std::move(btnOpen));
 				
-				auto btnCreateNew{ MakeUnique<::App::Ui::Widgets::ButtonWidget>("Create New", MakeUnique<::App::Ui::Widgets::ToggleWidgetHideStateBehavior>(*createProjectDialog)) };
+				auto btnCreateNew{ MakeUnique<Ui::Widgets::ButtonWidget>("Create New", MakeUnique<Ui::Widgets::ToggleWidgetHideStateBehavior>(*createProjectDialog)) };
 				btnCreateNew->alignment = .5;
 				btnCreateNew->centerVertical = true;
 				grid->AddChild(std::move(btnCreateNew));
@@ -135,7 +135,7 @@ namespace Windows
 
 	
 	
-	void App::EnterLoop()
+	void Application::EnterLoop()
 	{
 		window.ShowWindow();
 		ImGui_ImplWin32_Init(window.GetHandle());
@@ -176,11 +176,11 @@ namespace Windows
 	
 
 	
-		void App::Update()
+		void Application::Update()
 		{		
 			static ImGuiWindowFlags StaticWindowStyle{ ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize };
 
-			static ::App::Ui::WidgetBuilderImpl builder{};
+			static Ui::WidgetBuilderImpl builder{};
 		
 			ImGui_ImplWin32_NewFrame();
 			ImGui::NewFrame();
@@ -291,7 +291,7 @@ namespace Windows
 
 
 	
-	void App::ResizeMainWindow(int width, int height)
+	void Application::ResizeMainWindow(int width, int height)
 	{		
 		renderer->FitWindowSurfaceToWindow(mainWindowSurface);
 		

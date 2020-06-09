@@ -8,9 +8,6 @@
       <Filter>Types</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Windows\App.cpp">
-      <Filter>Windows</Filter>
-    </ClCompile>
     <ClCompile Include="Rendering\SceneRenderer.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
@@ -56,6 +53,9 @@
     <ClCompile Include="Ui\Widgets\GridWidget.cpp">
       <Filter>Ui\Widgets</Filter>
     </ClCompile>
+    <ClCompile Include="Windows\Application.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window\Windows\Window.hpp">
@@ -63,9 +63,6 @@
     </ClInclude>
     <ClInclude Include="Types\Dimensions2D.hpp">
       <Filter>Types</Filter>
-    </ClInclude>
-    <ClInclude Include="Windows\App.hpp">
-      <Filter>Windows</Filter>
     </ClInclude>
     <ClInclude Include="Rendering\SceneRenderer.hpp">
       <Filter>Rendering</Filter>
@@ -150,6 +147,9 @@
     </ClInclude>
     <ClInclude Include="Ui\Client\CreateProjectDialog.hpp">
       <Filter>Ui\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="Windows\Application.hpp">
+      <Filter>Windows</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

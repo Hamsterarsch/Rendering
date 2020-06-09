@@ -6,7 +6,7 @@
 class Dimensions2D;
 
 
-namespace Windows
+namespace App::Windows
 {	
 	class Window
 	{

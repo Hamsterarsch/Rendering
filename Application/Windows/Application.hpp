@@ -7,25 +7,25 @@
 
 namespace App::Ui{ class WidgetBase; }
 
-namespace Windows
+namespace App::Windows
 {
-	class App
+	class Application
 	{
-		private: Windows::Window window;
+		private: Window window;
 
 		private: UniquePtr<Renderer::RendererFacade> renderer;
 
 		private: Renderer::HandleWrapper mainWindowSurface;
 		
-		private: ::App::Rendering::RendererMediator rendererMediator;
+		private: Rendering::RendererMediator rendererMediator;
 
-		private: std::forward_list<UniquePtr<::App::Ui::WidgetBase>> widgets;
+		private: std::forward_list<UniquePtr<Ui::WidgetBase>> widgets;
 
 		
 		
-		public: static App &Get();
+		public: static Application &Get();
 		
-			private: App();
+			private: Application();
 
 		
 		public: void EnterLoop();

@@ -284,7 +284,7 @@
     <ClInclude Include="Ui\Widgets\ModalWidget.hpp" />
     <ClInclude Include="Ui\Widgets\TextWidget.hpp" />
     <ClInclude Include="Ui\Widgets\WindowWidget.hpp" />
-    <ClInclude Include="Windows\App.hpp" />
+    <ClInclude Include="Windows\Application.hpp" />
     <ClInclude Include="Windows\SelectPathDialog.hpp" />
     <ClInclude Include="Window\Windows\Window.hpp" />
   </ItemGroup>
@@ -312,7 +312,7 @@
     <ClCompile Include="Ui\ImguiTypeArithmetics.cpp" />
     <ClCompile Include="Ui\Misc\AssetNameFilter.cpp" />
     <ClCompile Include="Ui\Widgets\GridWidget.cpp" />
-    <ClCompile Include="Windows\App.cpp" />
+    <ClCompile Include="Windows\Application.cpp" />
     <ClCompile Include="Windows\SelectPathDialog.cpp" />
     <ClCompile Include="Window\Windows\Window.cpp" />
   </ItemGroup>

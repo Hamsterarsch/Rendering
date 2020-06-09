@@ -1,4 +1,4 @@
-#include "Windows/App.hpp"
+#include "Windows/Application.hpp"
 #include "Shared/Exception/Exception.hpp"
 #include "Shared/Filesystem/Conversions.hpp"
 #include <fstream>
@@ -14,7 +14,7 @@ int main()
 	try
 	{
 		
-		auto &app{ Windows::App::Get() };
+		auto &app{ App::Windows::Application::Get() };
 		app.EnterLoop();
 		
 	}
