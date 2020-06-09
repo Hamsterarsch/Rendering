@@ -60,14 +60,19 @@ namespace App::Ui
 
 		public: WidgetBuilder &MakeButton(bool *isPressed, bool centerVertical) override;
 				
-		WidgetBuilder& MakeTextInput(StringInputTarget& target) override{ return *this;}
+		WidgetBuilder& MakeTextInput(StringInputTarget& target) override;
 
 		
 		WidgetBuilder& MakeGrid(size_t columns, size_t rows) override;
 		
 		WidgetBuilder& MakeCell(size_t startColIndex, size_t startRowIndex, size_t colSpan = 1, size_t rowSpan = 1) override;
-		
 
+
+		WidgetBuilder& MakeModal(bool* isOpen) override;
+		WidgetBuilder& MakeText(const char* text) override;
+		WidgetBuilder& MakeCheckbox(bool* isChecked) override;
+
+			private: void CenterNextItem(float nextItemWidth) const;
 	};
 
 	

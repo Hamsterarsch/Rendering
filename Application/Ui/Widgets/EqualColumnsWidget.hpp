@@ -24,7 +24,7 @@ namespace App::Ui::Widgets
 			builder
 			.DeclareName(name.c_str())
 			.MakeGrid(GetChildCount(), 1);
-
+			
 			size_t renderedChildren{ 0 };
 			for(auto &&child : children)
 			{

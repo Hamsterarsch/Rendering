@@ -18,9 +18,14 @@
 #include "Ui/ImguiTypeArithmetics.hpp"
 #include "Windows/SelectPathDialog.hpp"
 #include "Ui/Core/WidgetBuilderImpl.hpp"
-#include "Ui/Widget/WindowWidget.hpp"
 #include "Ui/Widgets/ButtonWidget.hpp"
 #include "Ui/Widgets/EqualColumnsWidget.hpp"
+#include "Ui/Widgets/WindowWidget.hpp"
+#include "Ui/Widgets/ModalWidget.hpp"
+#include "Ui/Widgets/InputWidget.hpp"
+#include "Ui/Widgets/GridWidget.hpp"
+#include "Ui/Widgets/TextWidget.hpp"
+#include "Ui/Client/CreateProjectDialog.hpp"
 
 
 // Forward declare message handler from imgui_impl_win32.cpp
@@ -85,23 +90,47 @@ namespace Windows
 			widget->pos.y = .4;
 			widget->size.y = .25;
 
-			auto gr{ MakeUnique<::App::Ui::Widgets::EqualColumnsWidget>() };
+				auto behavior{ MakeUnique<::App::Ui::Client::CreateProjectDialogBehavior>() };
+				
+				auto grid{ MakeUnique<::App::Ui::Widgets::GridWidget>(5, 2) };
 
-			auto button{ MakeUnique<::App::Ui::Widgets::ButtonWidget>("Create New", MakeUnique<::App::Ui::Widgets::ToggleWidgetHideStateBehavior>(*widget)) };
-			button->alignment = .5;
-			button->centerVertical = true;
+				grid->DeclareChildPos(0,0, 2)
+				.AddChild(MakeUnique<::App::Ui::Widgets::ButtonWidget>("Select Folder", *behavior));
 
-			auto button2{ MakeUnique<::App::Ui::Widgets::ButtonWidget>("Open Project", MakeUnique<::App::Ui::Widgets::ToggleWidgetHideStateBehavior>(*widget)) };
-			button2->alignment = .5;
-			button2->centerVertical = true;
+				grid->DeclareChildPos(2, 0, 3)
+				.AddChild(MakeUnique<::App::Ui::Widgets::InputWidget<::App::Ui::StringInputTarget>>("Folder Display", behavior->selectedFolder));
+				
+				grid->DeclareChildPos(0, 1, 2)
+				.AddChild(MakeUnique<::App::Ui::Widgets::TextWidget>("Project Name"));
 
-			gr->AddChild(std::move(button));
-			gr->AddChild(std::move(button2));
+				grid->DeclareChildPos(2, 1, 3)
+				.AddChild(MakeUnique<::App::Ui::Widgets::InputWidget<::App::Ui::StringInputTarget>>("NameInput", behavior->projectName));
+				
+				auto createProjectDialog{ MakeUnique<::App::Ui::Widgets::ModalWidget>("Create a new Project", std::move(behavior)) };
+				createProjectDialog->AddChild(std::move(grid));
+				
 		
-			widget->AddChild(std::move(gr));
+			{
+				auto grid{ MakeUnique<::App::Ui::Widgets::EqualColumnsWidget>() };
+
+				auto btnOpen{ MakeUnique<::App::Ui::Widgets::ButtonWidget>("Open Project", MakeUnique<::App::Ui::Widgets::ToggleWidgetHideStateBehavior>(*widget)) };
+				btnOpen->alignment = .5;
+				btnOpen->centerVertical = true;
+				grid->AddChild(std::move(btnOpen));
+				
+				auto btnCreateNew{ MakeUnique<::App::Ui::Widgets::ButtonWidget>("Create New", MakeUnique<::App::Ui::Widgets::ToggleWidgetHideStateBehavior>(*createProjectDialog)) };
+				btnCreateNew->alignment = .5;
+				btnCreateNew->centerVertical = true;
+				grid->AddChild(std::move(btnCreateNew));
+						
+				widget->AddChild(std::move(grid));
+			}
+
+			widget->AddChild(std::move(createProjectDialog));
+	
+			
 		
 			widgets.push_front(std::move(widget));
-		
 		}
 
 	
@@ -145,40 +174,7 @@ namespace Windows
 	}	
 
 	
-	static bool ButtonCentered(const char *label, bool centerVertical = true, bool centerHorizontal = true)
-	{
-		const auto buttonRect{ ImGui::GetStyle().FramePadding*2 + ImGui::CalcTextSize(label) };
-		auto offset{ ( ImGui::GetContentRegionAvail() - buttonRect) *.5f };
 
-		offset.x = centerHorizontal ? offset.x : 0;
-		offset.y = centerVertical ? offset.y : 0;
-		
-		ImGui::SetCursorPos(ImGui::GetCursorPos() + offset);
-				
-		return ImGui::Button(label);
-		
-	}
-
-		int F(ImGuiInputTextCallbackData *data)
-		{
-			switch(data->EventFlag)
-			{
-				case ImGuiInputTextFlags_CallbackResize:					
-					reinterpret_cast<std::string *>(data->UserData)->resize(data->BufTextLen);
-				break;
-				case ImGuiInputTextFlags_CallbackCharFilter:
-					switch(data->EventChar)
-					{
-						case '.': return 1;
-						case '/': return 1;
-						case '\\': return 1;
-						case ' ': return 1;
-						case '\t': return 1;
-					}
-				break;
-			}
-			return 0;
-		}
 	
 		void App::Update()
 		{		

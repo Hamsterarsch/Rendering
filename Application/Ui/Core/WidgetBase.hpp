@@ -1,81 +1,60 @@
 #pragma once
-#include "Shared/InterfaceHelpers.hpp"
-#include "Types/Vector.hpp"
-#include "Ui/Core/WidgetBehavior.hpp"
+#include "Shared/PtrTypes.hpp"
+#include <forward_list>
+
 
 namespace App::Ui
 {	
 	class WidgetBuilder;
 	class WidgetBehavior;
-
+	class Slot;
 	
 	class WidgetBase
 	{
-		DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS_NOCTOR(WidgetBase)
-
 		private: size_t childCount;
 		
-		protected: std::forward_list<UniquePtr<WidgetBase>> children;
-		
 		private: bool isHidden;
+		
+		private: UniquePtr<Slot> slot;
+		
+		protected: std::forward_list<UniquePtr<WidgetBase>> children;
 
 		protected: unsigned zIndex;
 
 
 		
-		public: WidgetBase() : childCount{ 0 }, isHidden{ false }, zIndex{ 0 } {}
+		public: WidgetBase();
 
-		public: void Render(WidgetBuilder &builder)
-		{
-			if(IsHidden())
-			{
-				return;
-				
-			}
-			
-			RenderInternal(builder);
-
-			
-		}
+		public: virtual ~WidgetBase();
 		
-		protected: virtual void RenderInternal(WidgetBuilder &builder) = 0;
-
-		protected: void RenderChildren(WidgetBuilder &builder)
-		{
-			for(auto &&child : children)
-			{
-				child->Render(builder);
-			}
-		}
-
-		protected: size_t GetChildCount() const { return childCount; }
-
-		public: virtual WidgetBehavior *GetBehavior() = 0;
-
+		protected: virtual WidgetBehavior *GetBehavior() { return nullptr; }
 		
 		public: void SetIsHidden(bool value) { isHidden = value; }
 
+		protected: size_t GetChildCount() const { return childCount; }
+
+		public: Slot *GetSlot() { return slot.get(); }
+
+		
+		
+		public: void Render(WidgetBuilder &builder);
+		
 		public: bool IsHidden() const { return isHidden; }
+		
+		protected: virtual void RenderInternal(WidgetBuilder &builder) = 0;
 
-		public: void AddChild(UniquePtr<WidgetBase> &&widget) { children.emplace_front(std::move(widget)); ++childCount; }
+		protected: void RenderChildren(WidgetBuilder &builder);
+				   					 
+		
+		public: void AddChild(UniquePtr<WidgetBase> &&widget);
 
-		public: void UpdateBehaviors()
-		{
-			if(GetBehavior())
-			{
-				GetBehavior()->Update();
-				
-			}
-			
-			for(auto &&child : children)
-			{
-				child->UpdateBehaviors();
-			}
-			
-		}
-						
+		protected: virtual void OnChildAdded(WidgetBase &child) {};
+
+		public: void UpdateBehaviors();
+		
+		public: void SetSlot(UniquePtr<Slot> &&slot);
+							   				 						
 	};
-
 
 	
 }

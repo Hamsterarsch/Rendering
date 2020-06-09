@@ -3,12 +3,13 @@
 
 
 #include "Ui/Core/WidgetBuilder.hpp"
+#include <string>
 
 namespace App::Ui::Widgets
 {
 	class WindowWidget : public WidgetBase
 	{
-		private: std::string title;
+		private: const char *title;
 
 		public: Math::Vector2 pivot;
 
@@ -36,7 +37,7 @@ namespace App::Ui::Widgets
 			}
 			
 			builder
-			.DeclareName(title.c_str())
+			.DeclareName(title)
 			.DeclareAlignment(.5)
 			.DeclareTabSize(size)
 			.DeclareTabPos(pos, pivot)						

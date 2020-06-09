@@ -51,6 +51,13 @@ namespace App::Ui
 
 		public: virtual WidgetBuilder &MakeCell(size_t startColIndex, size_t startRowIndex, size_t colSpan = 1, size_t rowSpan = 1) = 0;
 
+		
+		public: virtual WidgetBuilder &MakeModal(bool *isOpen) = 0;
+
+		public: virtual WidgetBuilder &MakeText(const char *text) = 0;
+
+		public: virtual WidgetBuilder &MakeCheckbox(bool *isChecked) = 0;
+
 
 		
 		

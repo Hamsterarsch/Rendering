@@ -47,6 +47,15 @@
     <ClCompile Include="Ui\Core\WidgetBuilderImpl.cpp">
       <Filter>Ui\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Ui\Misc\AssetNameFilter.cpp">
+      <Filter>Ui\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui\Core\WidgetBase.cpp">
+      <Filter>Ui\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui\Widgets\GridWidget.cpp">
+      <Filter>Ui\Widgets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window\Windows\Window.hpp">
@@ -103,9 +112,6 @@
     <ClInclude Include="Ui\Core\WidgetBehavior.hpp">
       <Filter>Ui\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Ui\Widget\WindowWidget.hpp">
-      <Filter>Ui\Widgets</Filter>
-    </ClInclude>
     <ClInclude Include="Ui\Core\WidgetBuilder.hpp">
       <Filter>Ui\Core</Filter>
     </ClInclude>
@@ -115,14 +121,35 @@
     <ClInclude Include="Ui\Core\StringInputTarget.hpp">
       <Filter>Ui\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Ui\Core\CharacterFilter.hpp">
-      <Filter>Ui\Core</Filter>
-    </ClInclude>
     <ClInclude Include="Ui\Widgets\ButtonWidget.hpp">
       <Filter>Ui\Widgets</Filter>
     </ClInclude>
     <ClInclude Include="Ui\Widgets\EqualColumnsWidget.hpp">
       <Filter>Ui\Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Widgets\WindowWidget.hpp">
+      <Filter>Ui\Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Widgets\ModalWidget.hpp">
+      <Filter>Ui\Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Widgets\InputWidget.hpp">
+      <Filter>Ui\Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Misc\AssetNameFilter.hpp">
+      <Filter>Ui\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Widgets\GridWidget.hpp">
+      <Filter>Ui\Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Core\Slot.hpp">
+      <Filter>Ui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Widgets\TextWidget.hpp">
+      <Filter>Ui\Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Client\CreateProjectDialog.hpp">
+      <Filter>Ui\Client</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -155,6 +182,12 @@
     </Filter>
     <Filter Include="Ui\Widgets">
       <UniqueIdentifier>{6428eaf6-fc2c-480a-9cce-7ba927dbdd8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ui\Misc">
+      <UniqueIdentifier>{406f811a-3931-4f1b-9dbf-b604d1b2d6e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ui\Client">
+      <UniqueIdentifier>{55f997ca-b729-4675-b687-1fabf666dc05}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

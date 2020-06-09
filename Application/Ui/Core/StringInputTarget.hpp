@@ -5,8 +5,6 @@
 
 namespace App::Ui
 {
-	class CharacterFilter;
-	
 	class StringInputTarget
 	{
 		DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(StringInputTarget)
@@ -14,11 +12,13 @@ namespace App::Ui
 		
 		public: virtual void Resize(size_t toLength) = 0;
 		
-		public: virtual void GetCapacity() const = 0;
+		public: virtual size_t GetCapacity() const = 0;
 
 		public: virtual char *GetBuffer() = 0;
 
-		public: virtual CharacterFilter GetFilter() const = 0;
+		public: virtual bool CharacterIsForbidden(char character) const = 0;
+
+		public: virtual bool IsReadOnly() const = 0;
 		
 	};
 	

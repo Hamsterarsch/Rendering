@@ -1,8 +1,9 @@
 #include "Ui/Core/WidgetBuilderImpl.hpp"
 #include "ThirdParty/imgui/imgui.h"
 #include "Ui/ImguiTypeArithmetics.hpp"
-#include "ThirdParty/imgui/imgui_internal.h"
 #include <string>
+#include "StringInputTarget.hpp"
+#include "ThirdParty/imgui/imgui_internal.h"
 
 
 namespace App::Ui
@@ -148,7 +149,57 @@ namespace App::Ui
 		return *this;
 		
 	}
+
+	struct ImGuiStringInputTargetAdapter
+	{
+		static inline StringInputTarget *inputTarget;
+		static int InputTextCallback(ImGuiInputTextCallbackData *data)
+		{
+			int out{ 0 };
+			
+			if(data->Flags & ImGuiInputTextFlags_CallbackCharFilter)
+			{
+				if(inputTarget->CharacterIsForbidden(data->EventChar))
+				{
+					out = 1;					
+				}
+			}
+
+			if(data->Flags & ImGuiInputTextFlags_CallbackResize)
+			{
+				inputTarget->Resize(data->BufTextLen);
+			}
+			
+			return out;
+		}
+		
+	};
 	
+	WidgetBuilder &WidgetBuilderImpl::MakeTextInput(StringInputTarget &target)
+	{
+		ImGuiStringInputTargetAdapter::inputTarget = &target;		
+		CenterNextItem(ImGui::GetCurrentContext()->CurrentWindow->DC.ItemWidth);
+
+		auto flags{ ImGuiInputTextFlags_CallbackResize | ImGuiInputTextFlags_CallbackCharFilter };
+		if(target.IsReadOnly())
+		{
+			flags |= ImGuiInputTextFlags_ReadOnly;
+		}
+		
+		ImGui::InputText
+		(
+			data.name.c_str(),
+			target.GetBuffer(),
+			target.GetCapacity(),
+			flags,
+			&ImGuiStringInputTargetAdapter::InputTextCallback
+		);
+		
+		data = defaults;				
+		return *this;
+		
+	}
+
 
 	WidgetBuilder &WidgetBuilderImpl::MakeGrid(size_t columns, size_t rows)
 	{
@@ -168,43 +219,89 @@ namespace App::Ui
 		
 	}
 
-		WidgetBuilder &WidgetBuilderImpl::MakeCell(size_t startColIndex, size_t startRowIndex, size_t colSpan, size_t rowSpan)
+	WidgetBuilder &WidgetBuilderImpl::MakeCell(size_t startColIndex, size_t startRowIndex, size_t colSpan, size_t rowSpan)
+	{
+		const ImVec2 cellOffset
 		{
-			const ImVec2 cellOffset
-			{
-				gridData.colWidth * startColIndex,
-				gridData.rowHeight * startRowIndex
-			};
-			ImGui::SetCursorPos(cellOffset);
-			
-			/*
-			float spacing{ 0 };
+			gridData.colWidth * startColIndex,
+			gridData.rowHeight * startRowIndex
+		};
+		ImGui::SetCursorPos(cellOffset);
 		
-			if (spacing < 0.0f) spacing = ImGui::GetStyle().ItemSpacing.x;
-			window->DC.CursorPos.x = window->DC.CursorPosPrevLine.x + spacing;
-			window->DC.CursorPos.y = window->DC.CursorPosPrevLine.y;
+		/*
+		float spacing{ 0 };
+	
+		if (spacing < 0.0f) spacing = ImGui::GetStyle().ItemSpacing.x;
+		window->DC.CursorPos.x = window->DC.CursorPosPrevLine.x + spacing;
+		window->DC.CursorPos.y = window->DC.CursorPosPrevLine.y;
     
-			window->DC.CurrLineSize = window->DC.PrevLineSize;
-			window->DC.CurrLineTextBaseOffset = window->DC.PrevLineTextBaseOffset;
-			*/
+		window->DC.CurrLineSize = window->DC.PrevLineSize;
+		window->DC.CurrLineTextBaseOffset = window->DC.PrevLineTextBaseOffset;
+		*/
+	
+		const ImVec2 cellSize
+		{
+			gridData.colWidth * colSpan,
+			gridData.rowHeight * rowSpan
+		};
 		
-			const ImVec2 cellSize
+		ImGui::BeginChild
+		(
+			("col" + std::to_string(startColIndex+gridData.columnCount+colSpan) + "row" + std::to_string(startRowIndex+gridData.rowCount+rowSpan)).c_str(),
+			cellSize
+		);
+		desctructionFuncStack.push_front(&ImGui::EndChild);
+	
+		return *this;
+	
+	}
+
+	
+	WidgetBuilder& WidgetBuilderImpl::MakeModal(bool* isOpen)
+	{		
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowTitleAlign, ImVec2{ data.alignment, 0.5 });		
+
+		auto windowSize{ ImGui::GetWindowViewport()->Size };
+		windowSize.x *= data.relativeSize.x;
+		windowSize.y *= data.relativeSize.y;
+		ImGui::SetNextWindowSize(windowSize, ImGuiCond_Once);
+
+		ImGui::OpenPopup(data.name.c_str());//ensure that begin always returns true. if you dont want to display the modal just dont call this function
+		ImGui::BeginPopupModal(data.name.c_str(), isOpen);
+		desctructionFuncStack.push_front(&ImGui::EndPopup);
+
+		ImGui::PopStyleVar();
+
+		return *this;
+		
+	}
+
+	WidgetBuilder& WidgetBuilderImpl::MakeText(const char* text)
+	{
+		ImGui::Text(text);
+		return *this;
+	}
+
+	WidgetBuilder& WidgetBuilderImpl::MakeCheckbox(bool* isChecked)
+	{
+		CenterNextItem(ImGui::GetFrameHeight());		
+		
+		ImGui::Checkbox(("##" + data.name).c_str(), isChecked);
+		data = defaults;
+		return *this;
+		
+	}
+
+		void WidgetBuilderImpl::CenterNextItem(const float nextItemWidth) const
+		{
+			auto availableWidth{ (ImGui::GetContentRegionAvail().x - nextItemWidth) };
+			if(availableWidth < 0)
 			{
-				gridData.colWidth * colSpan,
-				gridData.rowHeight * rowSpan
-			};
+				availableWidth = 0;
+			}
+		
+			ImGui::SetCursorPosX(ImGui::GetCursorPos().x + availableWidth * data.alignment);
 			
-			ImGui::BeginChild
-			(
-				("col" + std::to_string(startColIndex+gridData.columnCount+colSpan) + "row" + std::to_string(startRowIndex+gridData.rowCount+rowSpan)).c_str(),
-				cellSize
-			);
-			desctructionFuncStack.push_front(&ImGui::EndChild);
-		
-			return *this;
-		
 		}
-
-
 	
 }

@@ -22,6 +22,7 @@ namespace Windows
 		private: std::forward_list<UniquePtr<::App::Ui::WidgetBase>> widgets;
 
 		
+		
 		public: static App &Get();
 		
 			private: App();
