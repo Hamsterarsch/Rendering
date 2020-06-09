@@ -1,6 +1,6 @@
 #pragma once
 #include "Ui/Core/WidgetBase.hpp"
-#include "Ui/Core/WidgetBuilder.hpp"
+#include "Ui/Core/UiBuilder.hpp"
 #include <string>
 
 namespace App::Ui::Widgets
@@ -16,7 +16,7 @@ namespace App::Ui::Widgets
 
 		public: ModalWidget(const char *title, UniquePtr<WidgetBehavior> behavior = {}) : title{ title }, size{ .3, .3 }, behavior{ std::move(behavior) } { SetIsHidden(true); }
 		
-		public: void RenderInternal(WidgetBuilder &builder) override
+		public: void RenderInternal(UiBuilder &builder) override
 		{
 			
 			builder

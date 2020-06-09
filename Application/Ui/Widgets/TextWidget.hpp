@@ -1,6 +1,6 @@
 #pragma once
 #include "Ui/Core/WidgetBase.hpp"
-#include "Ui/Core/WidgetBuilder.hpp"
+#include "Ui/Core/UiBuilder.hpp"
 #include <string>
 
 namespace App::Ui::Widgets
@@ -13,7 +13,7 @@ namespace App::Ui::Widgets
 
 		public: TextWidget(const char *text) : text{ text } {}
 		
-		public: void RenderInternal(WidgetBuilder &builder) override
+		public: void RenderInternal(UiBuilder &builder) override
 		{			
 			builder.MakeText(text);
 			

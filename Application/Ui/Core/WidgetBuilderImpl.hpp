@@ -1,5 +1,5 @@
 #pragma once
-#include "WidgetBuilder.hpp"
+#include "UiBuilder.hpp"
 #include <forward_list>
 
 
@@ -8,7 +8,7 @@
 
 namespace App::Ui
 {
-	class WidgetBuilderImpl final : public WidgetBuilder
+	class WidgetBuilderImpl final : public UiBuilder
 	{
 		private: std::forward_list<void(*)()> desctructionFuncStack;
 				 		
@@ -33,44 +33,44 @@ namespace App::Ui
 				 	
 				 
 		
-		public: WidgetBuilder &DeclareAutoWidth() override;
+		public: UiBuilder &DeclareAutoWidth() override;
 
 
-		public: WidgetBuilder &LeaveWidget() override;
+		public: UiBuilder &LeaveWidget() override;
 
 				
-		public: WidgetBuilder &DeclareName(const char *name) override;
+		public: UiBuilder &DeclareName(const char *name) override;
 
-		public: WidgetBuilder &DeclareAlignment(float alignment) override;
+		public: UiBuilder &DeclareAlignment(float alignment) override;
 
-		public: WidgetBuilder &DeclareTabStatic() override;
+		public: UiBuilder &DeclareTabStatic() override;
 
-		public: WidgetBuilder &DeclareTabSize(const Math::Vector2 &relativeSize) override;
+		public: UiBuilder &DeclareTabSize(const Math::Vector2 &relativeSize) override;
 
-		public: WidgetBuilder &DeclareTabPos(const Math::Vector2 &relativePos, const Math::Vector2 &pivot) override;
+		public: UiBuilder &DeclareTabPos(const Math::Vector2 &relativePos, const Math::Vector2 &pivot) override;
 
-		public: WidgetBuilder &DeclareTabNocollapse() override;
+		public: UiBuilder &DeclareTabNocollapse() override;
 		
-		public: WidgetBuilder &MakeTab() override;
+		public: UiBuilder &MakeTab() override;
 		
 		
-		public: WidgetBuilder &MakeWrapper() override;
+		public: UiBuilder &MakeWrapper() override;
 
 			private: void DoItemPrologue();
 
-		public: WidgetBuilder &MakeButton(bool *isPressed, bool centerVertical) override;
+		public: UiBuilder &MakeButton(bool *isPressed, bool centerVertical) override;
 				
-		WidgetBuilder& MakeTextInput(StringInputTarget& target) override;
+		UiBuilder& MakeTextInput(StringInputTarget& target) override;
 
 		
-		WidgetBuilder& MakeGrid(size_t columns, size_t rows) override;
+		UiBuilder& MakeGrid(size_t columns, size_t rows) override;
 		
-		WidgetBuilder& MakeCell(size_t startColIndex, size_t startRowIndex, size_t colSpan = 1, size_t rowSpan = 1) override;
+		UiBuilder& MakeCell(size_t startColIndex, size_t startRowIndex, size_t colSpan = 1, size_t rowSpan = 1) override;
 
 
-		WidgetBuilder& MakeModal(bool* isOpen) override;
-		WidgetBuilder& MakeText(const char* text) override;
-		WidgetBuilder& MakeCheckbox(bool* isChecked) override;
+		UiBuilder& MakeModal(bool* isOpen) override;
+		UiBuilder& MakeText(const char* text) override;
+		UiBuilder& MakeCheckbox(bool* isChecked) override;
 
 			private: void CenterNextItem(float nextItemWidth) const;
 	};

@@ -1,6 +1,6 @@
 #pragma once
 #include "Ui/Core/WidgetBase.hpp"
-#include "Ui/Core/WidgetBuilder.hpp"
+#include "Ui/Core/UiBuilder.hpp"
 #include "Ui/Core/StringInputTarget.hpp"
 #include <string>
 #include "Ui/Misc/AssetNameFilter.hpp"
@@ -49,12 +49,12 @@ namespace App::Ui::Widgets
 		public: InputWidget(const char *name, StringInputTarget &target) : InputWidgetBase{ name }, target{ &target }, alignment{ .5 } {}
 		
 		
-		public: void RenderInternal(WidgetBuilder &builder) override;
+		public: void RenderInternal(UiBuilder &builder) override;
 
 		
 	};
 
-	inline void InputWidget<StringInputTarget>::RenderInternal(WidgetBuilder &builder)
+	inline void InputWidget<StringInputTarget>::RenderInternal(UiBuilder &builder)
 	{
 		builder
 		.DeclareAlignment(alignment)
@@ -76,14 +76,14 @@ namespace App::Ui::Widgets
 		
 		public: InputWidget(const char *name, bool &target) : InputWidgetBase{ name }, target{ &target }, alignment{ .5 }  {}
 		
-		public: void RenderInternal(WidgetBuilder &builder) override;
+		public: void RenderInternal(UiBuilder &builder) override;
 
 
 
 		
 	};
 
-	inline void InputWidget<bool>::RenderInternal(WidgetBuilder &builder)
+	inline void InputWidget<bool>::RenderInternal(UiBuilder &builder)
 	{
 		builder
 		.DeclareName(GetName())
@@ -97,11 +97,11 @@ namespace App::Ui::Widgets
 
 	class PropertyWidget final : public WidgetBase
 	{		
-		public: void RenderInternal(WidgetBuilder &builder) override;
+		public: void RenderInternal(UiBuilder &builder) override;
 		
 	};
 
-	inline void PropertyWidget::RenderInternal(WidgetBuilder &builder)
+	inline void PropertyWidget::RenderInternal(UiBuilder &builder)
 	{
 		builder
 		.MakeGrid(4, 1)

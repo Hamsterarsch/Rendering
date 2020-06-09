@@ -271,9 +271,13 @@
     <ClInclude Include="Ui\Client\CreateProjectDialog.hpp" />
     <ClInclude Include="Ui\Core\Slot.hpp" />
     <ClInclude Include="Ui\Core\StringInputTarget.hpp" />
+    <ClInclude Include="Ui\Core\UiAccessElement.hpp" />
+    <ClInclude Include="Ui\Core\UiElement.hpp" />
+    <ClInclude Include="Ui\Core\UiFrontend.hpp" />
+    <ClInclude Include="Ui\Core\UiLayoutElement.hpp" />
     <ClInclude Include="Ui\Core\WidgetBase.hpp" />
     <ClInclude Include="Ui\Core\WidgetBehavior.hpp" />
-    <ClInclude Include="Ui\Core\WidgetBuilder.hpp" />
+    <ClInclude Include="Ui\Core\UiBuilder.hpp" />
     <ClInclude Include="Ui\Core\WidgetBuilderImpl.hpp" />
     <ClInclude Include="Ui\ImguiTypeArithmetics.hpp" />
     <ClInclude Include="Ui\Misc\AssetNameFilter.hpp" />
@@ -307,6 +311,7 @@
     <ClCompile Include="ThirdParty\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="ThirdParty\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Types\Dimensions2D.cpp" />
+    <ClCompile Include="Ui\Core\UiLayoutElement.cpp" />
     <ClCompile Include="Ui\Core\WidgetBase.cpp" />
     <ClCompile Include="Ui\Core\WidgetBuilderImpl.cpp" />
     <ClCompile Include="Ui\ImguiTypeArithmetics.cpp" />

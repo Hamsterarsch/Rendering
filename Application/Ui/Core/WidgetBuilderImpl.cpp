@@ -8,7 +8,7 @@
 
 namespace App::Ui
 {
-	WidgetBuilder &WidgetBuilderImpl::DeclareAutoWidth()
+	UiBuilder &WidgetBuilderImpl::DeclareAutoWidth()
 	{		
 		ImGui::SetNextItemWidth( ImGui::GetContentRegionAvail().x );		
 
@@ -18,7 +18,7 @@ namespace App::Ui
 
 
 	
-	WidgetBuilder &WidgetBuilderImpl::LeaveWidget()
+	UiBuilder &WidgetBuilderImpl::LeaveWidget()
 	{
 		(*desctructionFuncStack.front())();
 		desctructionFuncStack.pop_front();
@@ -29,7 +29,7 @@ namespace App::Ui
 
 
 	
-	WidgetBuilder &WidgetBuilderImpl::DeclareName(const char *name)
+	UiBuilder &WidgetBuilderImpl::DeclareName(const char *name)
 	{
 		data.name = name;
 		return *this;
@@ -38,7 +38,7 @@ namespace App::Ui
 
 
 	
-	WidgetBuilder &WidgetBuilderImpl::DeclareAlignment(const float alignment)
+	UiBuilder &WidgetBuilderImpl::DeclareAlignment(const float alignment)
 	{
 		data.alignment = alignment;
 		return *this;
@@ -47,7 +47,7 @@ namespace App::Ui
 
 
 	
-	WidgetBuilder &WidgetBuilderImpl::DeclareTabStatic()
+	UiBuilder &WidgetBuilderImpl::DeclareTabStatic()
 	{
 		data.flagsWindow |= ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
 		return *this;
@@ -56,7 +56,7 @@ namespace App::Ui
 
 
 	
-	WidgetBuilder &WidgetBuilderImpl::DeclareTabSize(const Math::Vector2 &relativeSize)
+	UiBuilder &WidgetBuilderImpl::DeclareTabSize(const Math::Vector2 &relativeSize)
 	{
 		data.relativeSize = relativeSize;
 		return *this;
@@ -65,7 +65,7 @@ namespace App::Ui
 
 
 	
-	WidgetBuilder &WidgetBuilderImpl::DeclareTabPos(const Math::Vector2 &relativePos, const Math::Vector2 &pivot)
+	UiBuilder &WidgetBuilderImpl::DeclareTabPos(const Math::Vector2 &relativePos, const Math::Vector2 &pivot)
 	{
 		data.relativePos = relativePos;
 		data.pivot = pivot;
@@ -75,7 +75,7 @@ namespace App::Ui
 
 
 	
-	WidgetBuilder &WidgetBuilderImpl::DeclareTabNocollapse()
+	UiBuilder &WidgetBuilderImpl::DeclareTabNocollapse()
 	{
 		data.flagsWindow = ImGuiWindowFlags_NoCollapse;
 		return *this;
@@ -84,7 +84,7 @@ namespace App::Ui
 
 
 
-	WidgetBuilder &WidgetBuilderImpl::MakeTab()
+	UiBuilder &WidgetBuilderImpl::MakeTab()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowTitleAlign, ImVec2{ data.alignment, 0.5 });		
 
@@ -116,7 +116,7 @@ namespace App::Ui
 
 
 	
-	WidgetBuilder &WidgetBuilderImpl::MakeWrapper()
+	UiBuilder &WidgetBuilderImpl::MakeWrapper()
 	{
 		ImGui::Begin("Wrapper", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
 		desctructionFuncStack.push_front(&ImGui::End);
@@ -128,7 +128,7 @@ namespace App::Ui
 
 
 
-	WidgetBuilder &WidgetBuilderImpl::MakeButton(bool *isPressed, const bool centerVertical)
+	UiBuilder &WidgetBuilderImpl::MakeButton(bool *isPressed, const bool centerVertical)
 	{
 		const auto buttonRect{ ImGui::GetStyle().FramePadding*2 + ImGui::CalcTextSize(data.name.c_str()) };
 		auto offset{ ( ImGui::GetContentRegionAvail() - buttonRect) };
@@ -175,7 +175,7 @@ namespace App::Ui
 		
 	};
 	
-	WidgetBuilder &WidgetBuilderImpl::MakeTextInput(StringInputTarget &target)
+	UiBuilder &WidgetBuilderImpl::MakeTextInput(StringInputTarget &target)
 	{
 		ImGuiStringInputTargetAdapter::inputTarget = &target;		
 		CenterNextItem(ImGui::GetCurrentContext()->CurrentWindow->DC.ItemWidth);
@@ -201,7 +201,7 @@ namespace App::Ui
 	}
 
 
-	WidgetBuilder &WidgetBuilderImpl::MakeGrid(size_t columns, size_t rows)
+	UiBuilder &WidgetBuilderImpl::MakeGrid(size_t columns, size_t rows)
 	{
 		gridData.columnCount = columns;
 		gridData.rowCount = rows;
@@ -219,7 +219,7 @@ namespace App::Ui
 		
 	}
 
-	WidgetBuilder &WidgetBuilderImpl::MakeCell(size_t startColIndex, size_t startRowIndex, size_t colSpan, size_t rowSpan)
+	UiBuilder &WidgetBuilderImpl::MakeCell(size_t startColIndex, size_t startRowIndex, size_t colSpan, size_t rowSpan)
 	{
 		const ImVec2 cellOffset
 		{
@@ -257,7 +257,7 @@ namespace App::Ui
 	}
 
 	
-	WidgetBuilder& WidgetBuilderImpl::MakeModal(bool* isOpen)
+	UiBuilder& WidgetBuilderImpl::MakeModal(bool* isOpen)
 	{		
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowTitleAlign, ImVec2{ data.alignment, 0.5 });		
 
@@ -276,13 +276,13 @@ namespace App::Ui
 		
 	}
 
-	WidgetBuilder& WidgetBuilderImpl::MakeText(const char* text)
+	UiBuilder& WidgetBuilderImpl::MakeText(const char* text)
 	{
 		ImGui::Text(text);
 		return *this;
 	}
 
-	WidgetBuilder& WidgetBuilderImpl::MakeCheckbox(bool* isChecked)
+	UiBuilder& WidgetBuilderImpl::MakeCheckbox(bool* isChecked)
 	{
 		CenterNextItem(ImGui::GetFrameHeight());		
 		

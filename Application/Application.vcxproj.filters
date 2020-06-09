@@ -56,6 +56,9 @@
     <ClCompile Include="Windows\Application.cpp">
       <Filter>Windows</Filter>
     </ClCompile>
+    <ClCompile Include="Ui\Core\UiLayoutElement.cpp">
+      <Filter>Ui\Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window\Windows\Window.hpp">
@@ -109,9 +112,6 @@
     <ClInclude Include="Ui\Core\WidgetBehavior.hpp">
       <Filter>Ui\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Ui\Core\WidgetBuilder.hpp">
-      <Filter>Ui\Core</Filter>
-    </ClInclude>
     <ClInclude Include="Ui\Core\WidgetBuilderImpl.hpp">
       <Filter>Ui\Core</Filter>
     </ClInclude>
@@ -150,6 +150,21 @@
     </ClInclude>
     <ClInclude Include="Windows\Application.hpp">
       <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Core\UiElement.hpp">
+      <Filter>Ui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Core\UiBuilder.hpp">
+      <Filter>Ui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Core\UiFrontend.hpp">
+      <Filter>Ui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Core\UiAccessElement.hpp">
+      <Filter>Ui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Core\UiLayoutElement.hpp">
+      <Filter>Ui\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

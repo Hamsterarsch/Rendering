@@ -1,5 +1,5 @@
 #include "Ui/Widgets/GridWidget.hpp"
-#include "Ui/Core/WidgetBuilder.hpp"
+#include "Ui/Core/UiBuilder.hpp"
 #include "Ui/Core/Slot.hpp"
 
 
@@ -69,7 +69,7 @@ namespace App::Ui::Widgets
 
 
 	
-	void GridWidget::RenderInternal(WidgetBuilder &builder)
+	void GridWidget::RenderInternal(UiBuilder &builder)
 	{			
 		builder
 		.DeclareName(name.c_str())

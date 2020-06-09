@@ -20,7 +20,7 @@ namespace App::Ui
 
 	   
 
-	void WidgetBase::Render(WidgetBuilder &builder)
+	void WidgetBase::Render(UiBuilder &builder)
 	{
 		if(IsHidden())
 		{
@@ -34,7 +34,7 @@ namespace App::Ui
 
 
 	
-	void WidgetBase::RenderChildren(WidgetBuilder &builder)
+	void WidgetBase::RenderChildren(UiBuilder &builder)
 	{
 		for(auto &&child : children)
 		{

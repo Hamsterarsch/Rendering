@@ -2,7 +2,7 @@
 #include "Ui/Core/WidgetBase.hpp"
 #include "Ui/Core/WidgetBehavior.hpp"
 
-#include "Ui/Core/WidgetBuilder.hpp"
+#include "Ui/Core/UiBuilder.hpp"
 #include <string>
 #include <functional>
 #include "Shared/PtrTypes.hpp"
@@ -87,7 +87,7 @@ namespace App::Ui::Widgets
 			centerVertical{ false }
 		{}
 		
-		public: void RenderInternal(WidgetBuilder &builder) override
+		public: void RenderInternal(UiBuilder &builder) override
 		{
 			auto *targetBehavior{  parentBehavior ? parentBehavior : ownedBehavior.get() };
 			

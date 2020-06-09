@@ -29,7 +29,7 @@ namespace App::Ui::Widgets
 		
 		protected: void OnChildAdded(WidgetBase &child) override;
 
-		public: void RenderInternal(WidgetBuilder &builder) override;
+		public: void RenderInternal(UiBuilder &builder) override;
 
 	};
 

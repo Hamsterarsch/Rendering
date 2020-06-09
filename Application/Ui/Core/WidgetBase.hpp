@@ -5,7 +5,7 @@
 
 namespace App::Ui
 {	
-	class WidgetBuilder;
+	class UiBuilder;
 	class WidgetBehavior;
 	class Slot;
 	
@@ -37,13 +37,13 @@ namespace App::Ui
 
 		
 		
-		public: void Render(WidgetBuilder &builder);
+		public: void Render(UiBuilder &builder);
 		
 		public: bool IsHidden() const { return isHidden; }
 		
-		protected: virtual void RenderInternal(WidgetBuilder &builder) = 0;
+		protected: virtual void RenderInternal(UiBuilder &builder) = 0;
 
-		protected: void RenderChildren(WidgetBuilder &builder);
+		protected: void RenderChildren(UiBuilder &builder);
 				   					 
 		
 		public: void AddChild(UniquePtr<WidgetBase> &&widget);

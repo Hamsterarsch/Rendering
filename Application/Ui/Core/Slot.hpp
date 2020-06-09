@@ -1,13 +1,13 @@
 #pragma once
+#include "Shared/InterfaceHelpers.hpp"
 
 
 namespace App::Ui
 {
 	class Slot
 	{				
-		public: virtual ~Slot() = default;
-				
-		
+		DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(Slot)
+
 	};
 
 

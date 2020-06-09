@@ -2,7 +2,7 @@
 #include "Ui/Core/WidgetBase.hpp"
 
 
-#include "Ui/Core/WidgetBuilder.hpp"
+#include "Ui/Core/UiBuilder.hpp"
 #include <string>
 
 namespace App::Ui::Widgets
@@ -24,7 +24,7 @@ namespace App::Ui::Widgets
 		
 		public: WindowWidget(const char *title) : title{ title }, pivot{ .5, .5 }, size{ .5, .5 }, pos{ .5, .5 }, isNocollapse{ false }, isStatic{ false } {}
 		
-		public: void RenderInternal(WidgetBuilder &builder) override
+		public: void RenderInternal(UiBuilder &builder) override
 		{
 			if(isNocollapse)
 			{

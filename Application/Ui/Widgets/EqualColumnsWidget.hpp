@@ -2,7 +2,7 @@
 #include "Ui/Core/WidgetBase.hpp"
 
 
-#include "Ui/Core/WidgetBuilder.hpp"
+#include "Ui/Core/UiBuilder.hpp"
 
 namespace App::Ui::Widgets
 {
@@ -19,7 +19,7 @@ namespace App::Ui::Widgets
 		}
 		
 		
-		public: void RenderInternal(WidgetBuilder &builder) override
+		public: void RenderInternal(UiBuilder &builder) override
 		{			
 			builder
 			.DeclareName(name.c_str())
