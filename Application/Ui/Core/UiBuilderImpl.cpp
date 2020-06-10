@@ -1,14 +1,15 @@
-#include "Ui/Core/WidgetBuilderImpl.hpp"
+#include "Ui/Core/UiBuilderImpl.hpp"
 #include "ThirdParty/imgui/imgui.h"
 #include "Ui/ImguiTypeArithmetics.hpp"
 #include <string>
 #include "StringInputTarget.hpp"
 #include "ThirdParty/imgui/imgui_internal.h"
+#include "Shared/Exception/Exception.hpp"
 
 
-namespace App::Ui
+namespace App::Ui::Core
 {
-	UiBuilder &WidgetBuilderImpl::DeclareAutoWidth()
+	UiBuilder &UiBuilderImpl::DeclareAutoWidth()
 	{		
 		ImGui::SetNextItemWidth( ImGui::GetContentRegionAvail().x );		
 
@@ -18,7 +19,7 @@ namespace App::Ui
 
 
 	
-	UiBuilder &WidgetBuilderImpl::LeaveWidget()
+	UiBuilder &UiBuilderImpl::LeaveWidget()
 	{
 		(*desctructionFuncStack.front())();
 		desctructionFuncStack.pop_front();
@@ -29,7 +30,7 @@ namespace App::Ui
 
 
 	
-	UiBuilder &WidgetBuilderImpl::DeclareName(const char *name)
+	UiBuilder &UiBuilderImpl::DeclareName(const char *name)
 	{
 		data.name = name;
 		return *this;
@@ -38,7 +39,7 @@ namespace App::Ui
 
 
 	
-	UiBuilder &WidgetBuilderImpl::DeclareAlignment(const float alignment)
+	UiBuilder &UiBuilderImpl::DeclareAlignment(const float alignment)
 	{
 		data.alignment = alignment;
 		return *this;
@@ -47,7 +48,7 @@ namespace App::Ui
 
 
 	
-	UiBuilder &WidgetBuilderImpl::DeclareTabStatic()
+	UiBuilder &UiBuilderImpl::DeclareTabStatic()
 	{
 		data.flagsWindow |= ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
 		return *this;
@@ -56,7 +57,7 @@ namespace App::Ui
 
 
 	
-	UiBuilder &WidgetBuilderImpl::DeclareTabSize(const Math::Vector2 &relativeSize)
+	UiBuilder &UiBuilderImpl::DeclareTabSize(const Math::Vector2 &relativeSize)
 	{
 		data.relativeSize = relativeSize;
 		return *this;
@@ -65,7 +66,7 @@ namespace App::Ui
 
 
 	
-	UiBuilder &WidgetBuilderImpl::DeclareTabPos(const Math::Vector2 &relativePos, const Math::Vector2 &pivot)
+	UiBuilder &UiBuilderImpl::DeclareTabPos(const Math::Vector2 &relativePos, const Math::Vector2 &pivot)
 	{
 		data.relativePos = relativePos;
 		data.pivot = pivot;
@@ -75,7 +76,7 @@ namespace App::Ui
 
 
 	
-	UiBuilder &WidgetBuilderImpl::DeclareTabNocollapse()
+	UiBuilder &UiBuilderImpl::DeclareTabNocollapse()
 	{
 		data.flagsWindow = ImGuiWindowFlags_NoCollapse;
 		return *this;
@@ -84,7 +85,7 @@ namespace App::Ui
 
 
 
-	UiBuilder &WidgetBuilderImpl::MakeTab()
+	UiBuilder &UiBuilderImpl::MakeTab(bool *isOpenTarget)
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowTitleAlign, ImVec2{ data.alignment, 0.5 });		
 
@@ -102,7 +103,7 @@ namespace App::Ui
 		
 		ImGui::SetNextWindowPos(windowPos, ImGuiCond_Once);
 		
-		ImGui::Begin(data.name.c_str(), nullptr, data.flagsWindow);
+		ImGui::Begin(data.name.c_str(), isOpenTarget, data.flagsWindow);
 		desctructionFuncStack.push_front(&ImGui::End);
 
 		
@@ -116,7 +117,7 @@ namespace App::Ui
 
 
 	
-	UiBuilder &WidgetBuilderImpl::MakeWrapper()
+	UiBuilder &UiBuilderImpl::MakeWrapper()
 	{
 		ImGui::Begin("Wrapper", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
 		desctructionFuncStack.push_front(&ImGui::End);
@@ -128,7 +129,7 @@ namespace App::Ui
 
 
 
-	UiBuilder &WidgetBuilderImpl::MakeButton(bool *isPressed, const bool centerVertical)
+	UiBuilder &UiBuilderImpl::MakeButton(bool *isPressed, const bool centerVertical)
 	{
 		const auto buttonRect{ ImGui::GetStyle().FramePadding*2 + ImGui::CalcTextSize(data.name.c_str()) };
 		auto offset{ ( ImGui::GetContentRegionAvail() - buttonRect) };
@@ -152,7 +153,7 @@ namespace App::Ui
 
 	struct ImGuiStringInputTargetAdapter
 	{
-		static inline StringInputTarget *inputTarget;
+		static inline Core::StringInputTarget *inputTarget;
 		static int InputTextCallback(ImGuiInputTextCallbackData *data)
 		{
 			int out{ 0 };
@@ -175,7 +176,7 @@ namespace App::Ui
 		
 	};
 	
-	UiBuilder &WidgetBuilderImpl::MakeTextInput(StringInputTarget &target)
+	UiBuilder &UiBuilderImpl::MakeTextInput(Core::StringInputTarget &target)
 	{
 		ImGuiStringInputTargetAdapter::inputTarget = &target;		
 		CenterNextItem(ImGui::GetCurrentContext()->CurrentWindow->DC.ItemWidth);
@@ -201,7 +202,7 @@ namespace App::Ui
 	}
 
 
-	UiBuilder &WidgetBuilderImpl::MakeGrid(size_t columns, size_t rows)
+	UiBuilder &UiBuilderImpl::MakeGrid(size_t columns, size_t rows)
 	{
 		gridData.columnCount = columns;
 		gridData.rowCount = rows;
@@ -219,7 +220,7 @@ namespace App::Ui
 		
 	}
 
-	UiBuilder &WidgetBuilderImpl::MakeCell(size_t startColIndex, size_t startRowIndex, size_t colSpan, size_t rowSpan)
+	UiBuilder &UiBuilderImpl::MakeCell(size_t startColIndex, size_t startRowIndex, size_t colSpan, size_t rowSpan)
 	{
 		const ImVec2 cellOffset
 		{
@@ -257,7 +258,7 @@ namespace App::Ui
 	}
 
 	
-	UiBuilder& WidgetBuilderImpl::MakeModal(bool* isOpen)
+	UiBuilder &UiBuilderImpl::MakeModal()
 	{		
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowTitleAlign, ImVec2{ data.alignment, 0.5 });		
 
@@ -267,7 +268,7 @@ namespace App::Ui
 		ImGui::SetNextWindowSize(windowSize, ImGuiCond_Once);
 
 		ImGui::OpenPopup(data.name.c_str());//ensure that begin always returns true. if you dont want to display the modal just dont call this function
-		ImGui::BeginPopupModal(data.name.c_str(), isOpen);
+		ImGui::BeginPopupModal(data.name.c_str(), nullptr);
 		desctructionFuncStack.push_front(&ImGui::EndPopup);
 
 		ImGui::PopStyleVar();
@@ -276,13 +277,13 @@ namespace App::Ui
 		
 	}
 
-	UiBuilder& WidgetBuilderImpl::MakeText(const char* text)
+	UiBuilder& UiBuilderImpl::MakeText(const char* text)
 	{
 		ImGui::Text(text);
 		return *this;
 	}
 
-	UiBuilder& WidgetBuilderImpl::MakeCheckbox(bool* isChecked)
+	UiBuilder& UiBuilderImpl::MakeCheckbox(bool* isChecked)
 	{
 		CenterNextItem(ImGui::GetFrameHeight());		
 		
@@ -292,7 +293,7 @@ namespace App::Ui
 		
 	}
 
-		void WidgetBuilderImpl::CenterNextItem(const float nextItemWidth) const
+		void UiBuilderImpl::CenterNextItem(const float nextItemWidth) const
 		{
 			auto availableWidth{ (ImGui::GetContentRegionAvail().x - nextItemWidth) };
 			if(availableWidth < 0)

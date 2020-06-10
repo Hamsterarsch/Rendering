@@ -3,8 +3,10 @@
 #include "Shared/InterfaceHelpers.hpp"
 
 
-namespace App::Ui
+namespace App::Ui::Core
 {
+	 class StringInputTarget;
+	
 	inline bool IsAbsolute(const Math::Vector2 &size)
 	{
 		return std::abs(size.x) > 1 || std::abs(size.y) > 1;
@@ -12,7 +14,6 @@ namespace App::Ui
 	}
 
 	
-	class StringInputTarget;
 	
 	class UiBuilder
 	{
@@ -36,7 +37,7 @@ namespace App::Ui
 
 		public: virtual UiBuilder &DeclareTabNocollapse() = 0;
 		
-		public: virtual UiBuilder &MakeTab() = 0;
+		public: virtual UiBuilder &MakeTab(bool *isOpenTarget) = 0;
 
 
 		
@@ -45,7 +46,7 @@ namespace App::Ui
 		public: virtual UiBuilder &MakeButton(bool *isPressed, bool centerVertical) = 0;
 
 
-		public: virtual UiBuilder &MakeTextInput(StringInputTarget &target) = 0;
+		public: virtual UiBuilder &MakeTextInput(Core::StringInputTarget &target) = 0;
 
 		
 		public: virtual UiBuilder &MakeGrid(size_t columns, size_t rows) = 0;
@@ -53,7 +54,7 @@ namespace App::Ui
 		public: virtual UiBuilder &MakeCell(size_t startColIndex, size_t startRowIndex, size_t colSpan = 1, size_t rowSpan = 1) = 0;
 
 		
-		public: virtual UiBuilder &MakeModal(bool *isOpen) = 0;
+		public: virtual UiBuilder &MakeModal() = 0;
 
 		public: virtual UiBuilder &MakeText(const char *text) = 0;
 

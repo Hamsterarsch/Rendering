@@ -6,9 +6,9 @@
 #include "ThirdParty/imgui/imgui.h"
 
 
-namespace App::Ui
+namespace App::Ui::Core
 {
-	class WidgetBuilderImpl final : public UiBuilder
+	class UiBuilderImpl final : public UiBuilder
 	{
 		private: std::forward_list<void(*)()> desctructionFuncStack;
 				 		
@@ -51,7 +51,7 @@ namespace App::Ui
 
 		public: UiBuilder &DeclareTabNocollapse() override;
 		
-		public: UiBuilder &MakeTab() override;
+		public: UiBuilder &MakeTab(bool *isOpenTarget) override;
 		
 		
 		public: UiBuilder &MakeWrapper() override;
@@ -60,7 +60,7 @@ namespace App::Ui
 
 		public: UiBuilder &MakeButton(bool *isPressed, bool centerVertical) override;
 				
-		UiBuilder& MakeTextInput(StringInputTarget& target) override;
+		UiBuilder& MakeTextInput(Core::StringInputTarget& target) override;
 
 		
 		UiBuilder& MakeGrid(size_t columns, size_t rows) override;
@@ -68,7 +68,7 @@ namespace App::Ui
 		UiBuilder& MakeCell(size_t startColIndex, size_t startRowIndex, size_t colSpan = 1, size_t rowSpan = 1) override;
 
 
-		UiBuilder& MakeModal(bool* isOpen) override;
+		UiBuilder& MakeModal() override;
 		UiBuilder& MakeText(const char* text) override;
 		UiBuilder& MakeCheckbox(bool* isChecked) override;
 

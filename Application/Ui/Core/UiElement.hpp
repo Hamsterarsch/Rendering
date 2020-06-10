@@ -1,13 +1,17 @@
 #pragma once
+#include "Shared/PtrTypes.hpp"
 #include "Ui/Core/Slot.hpp"
 
-namespace App::Ui
+
+namespace App::Ui::Core
 {
 	class UiBuilder;
 		
 	class UiElement
 	{
 		private: UniquePtr<Slot> slot;
+
+		private: bool isHidden{ false };
 
 
 		
@@ -23,12 +27,29 @@ namespace App::Ui
 
 		public: UiElement &operator=(const UiElement &) = delete;
 
+
+		public: bool RenderAndQueryInput(UiBuilder &builder)
+		{
+			if(this->IsHidden())
+			{
+				return false;
 				
-		public: virtual void RenderAndQueryInput(UiBuilder &builder) = 0;
+			}
 
-		protected: void SetSlot(UniquePtr<Slot> &&slot) { this->slot = std::move(slot); }
+			RenderAndQueryInternal(builder);
+			return true;
+			
+		}
+		
+		public: virtual void RenderAndQueryInternal(UiBuilder &builder) = 0;
 
-		protected: Slot *GetSlot() { return slot.get(); }
+		public: bool IsHidden() const { return isHidden; }
+
+		public: void SetIsHidden(bool value) { isHidden = value; }
+
+		public: void SetSlot(UniquePtr<Slot> &&slot) { this->slot = std::move(slot); }
+
+		public: Slot *GetSlot() { return slot.get(); }
 		
 	};
 

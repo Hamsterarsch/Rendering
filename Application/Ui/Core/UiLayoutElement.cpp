@@ -1,7 +1,7 @@
 #include "Ui/Core/UiLayoutElement.hpp"
 
 
-namespace App::Ui
+namespace App::Ui::Core
 {	
 	void UiLayoutElement::AddChild(UniquePtr<UiElement> &&child)
 	{
@@ -11,15 +11,15 @@ namespace App::Ui
 
 
 	
-	void UiLayoutElement::RenderAndQueryInput(UiBuilder &builder)
+	void UiLayoutElement::RenderAndQueryInternal(UiBuilder &builder)
 	{
 		OnPreRenderAndQueryChildren(builder);
 
-		for(auto &&child : children)
+		for(size_t childIndex{ 0 }; childIndex < children.size(); ++childIndex)
 		{
-			OnPreRenderAndQueryChild(builder);
-			child->RenderAndQueryInput(builder);
-			OnPostRenderAndQueryChild(builder);
+			OnPreRenderAndQueryChild(builder, childIndex, *children.at(childIndex));
+			children.at(childIndex)->RenderAndQueryInternal(builder);
+			OnPostRenderAndQueryChild(builder, childIndex, *children.at(childIndex));
 		}
 
 		OnPostRenderAndQueryChildren(builder);

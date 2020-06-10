@@ -3,7 +3,7 @@
 #include "Shared/InterfaceHelpers.hpp"
 
 
-namespace App::Ui
+namespace App::Ui::Core
 {
 	class StringInputTarget
 	{

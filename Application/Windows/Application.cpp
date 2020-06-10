@@ -16,16 +16,9 @@
 #include "ThirdParty/imgui/imgui.h"
 #include "ThirdParty/imgui/imgui_impl_win32.h"
 #include "Ui/ImguiTypeArithmetics.hpp"
-#include "Windows/SelectPathDialog.hpp"
-#include "Ui/Core/WidgetBuilderImpl.hpp"
-#include "Ui/Widgets/ButtonWidget.hpp"
-#include "Ui/Widgets/EqualColumnsWidget.hpp"
-#include "Ui/Widgets/WindowWidget.hpp"
-#include "Ui/Widgets/ModalWidget.hpp"
-#include "Ui/Widgets/InputWidget.hpp"
-#include "Ui/Widgets/GridWidget.hpp"
-#include "Ui/Widgets/TextWidget.hpp"
-#include "Ui/Client/CreateProjectDialog.hpp"
+
+#include "Ui/User/StartupProjectDialog.hpp"
+#include "Ui/Core/UiBuilderImpl.hpp"
 
 
 // Forward declare message handler from imgui_impl_win32.cpp
@@ -84,53 +77,11 @@ namespace App::Windows
 			rendererMediator.SetMainWindowSurface(mainWindowSurface);
 
 
-			auto widget{ MakeUnique<::App::Ui::Widgets::WindowWidget>("Open a project or create a new one to begin") };					
-			widget->isNocollapse = true;
-			widget->isStatic = true;
-			widget->pos.y = .4;
-			widget->size.y = .25;
-
-				auto behavior{ MakeUnique<Ui::Client::CreateProjectDialogBehavior>() };
-				
-				auto grid{ MakeUnique<Ui::Widgets::GridWidget>(5, 2) };
-
-				grid->DeclareChildPos(0,0, 2)
-				.AddChild(MakeUnique<Ui::Widgets::ButtonWidget>("Select Folder", *behavior));
-
-				grid->DeclareChildPos(2, 0, 3)
-				.AddChild(MakeUnique<Ui::Widgets::InputWidget<Ui::StringInputTarget>>("Folder Display", behavior->selectedFolder));
-				
-				grid->DeclareChildPos(0, 1, 2)
-				.AddChild(MakeUnique<Ui::Widgets::TextWidget>("Project Name"));
-
-				grid->DeclareChildPos(2, 1, 3)
-				.AddChild(MakeUnique<Ui::Widgets::InputWidget<Ui::StringInputTarget>>("NameInput", behavior->projectName));
-				
-				auto createProjectDialog{ MakeUnique<Ui::Widgets::ModalWidget>("Create a new Project", std::move(behavior)) };
-				createProjectDialog->AddChild(std::move(grid));
-				
-		
-			{
-				auto grid{ MakeUnique<Ui::Widgets::EqualColumnsWidget>() };
-
-				auto btnOpen{ MakeUnique<Ui::Widgets::ButtonWidget>("Open Project", MakeUnique<::App::Ui::Widgets::ToggleWidgetHideStateBehavior>(*widget)) };
-				btnOpen->alignment = .5;
-				btnOpen->centerVertical = true;
-				grid->AddChild(std::move(btnOpen));
-				
-				auto btnCreateNew{ MakeUnique<Ui::Widgets::ButtonWidget>("Create New", MakeUnique<Ui::Widgets::ToggleWidgetHideStateBehavior>(*createProjectDialog)) };
-				btnCreateNew->alignment = .5;
-				btnCreateNew->centerVertical = true;
-				grid->AddChild(std::move(btnCreateNew));
-						
-				widget->AddChild(std::move(grid));
-			}
-
-			widget->AddChild(std::move(createProjectDialog));
-	
 			
-		
-			widgets.push_front(std::move(widget));
+
+			uiFrontends.push_back(MakeUnique<Ui::User::StartupProjectDialogFrontend>());
+						
+			
 		}
 
 	
@@ -178,22 +129,14 @@ namespace App::Windows
 	
 		void Application::Update()
 		{		
-			static ImGuiWindowFlags StaticWindowStyle{ ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize };
-
-			static Ui::WidgetBuilderImpl builder{};
+			static Ui::Core::UiBuilderImpl builder{};
 		
 			ImGui_ImplWin32_NewFrame();
 			ImGui::NewFrame();
 
-			for(auto &&widget : widgets)
+			for(auto &&frontend : uiFrontends)
 			{
-				widget->Render(builder);
-			}
-
-			for(auto &&widget : widgets)
-			{
-				widget->UpdateBehaviors();
-			
+				frontend->Update(builder);			
 			}
 
 		/*
