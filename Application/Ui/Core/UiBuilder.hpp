@@ -20,7 +20,7 @@ namespace App::Ui::Core
 		DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(UiBuilder)
 		
 
-		public: virtual UiBuilder &DeclareAutoWidth() = 0;
+		public: virtual UiBuilder &DeclareSize(float width, float height) = 0;
 
 		public: virtual UiBuilder &LeaveWidget() = 0;
 
@@ -31,16 +31,13 @@ namespace App::Ui::Core
 
 		public: virtual UiBuilder &DeclareTabStatic() = 0;
 
-		public: virtual UiBuilder &DeclareTabSize(const Math::Vector2 &relativeSize) = 0;
-
 		public: virtual UiBuilder &DeclareTabPos(const Math::Vector2 &relativePos, const Math::Vector2 &pivot) = 0;
 
 		public: virtual UiBuilder &DeclareTabNocollapse() = 0;
-		
+						
 		public: virtual UiBuilder &MakeTab(bool *isOpenTarget) = 0;
 
-
-		
+				
 		public: virtual UiBuilder &MakeWrapper() = 0;
 
 		public: virtual UiBuilder &MakeButton(bool *isPressed, bool centerVertical) = 0;

@@ -59,6 +59,9 @@
     <ClCompile Include="Ui\Core\UiBuilderImpl.cpp">
       <Filter>Ui\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Ui\Core\UiElement.cpp">
+      <Filter>Ui\Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window\Windows\Window.hpp">
@@ -166,6 +169,18 @@
     <ClInclude Include="Ui\User\StartupProjectDialog.hpp">
       <Filter>Ui\User</Filter>
     </ClInclude>
+    <ClInclude Include="Ui\Core\UiDecorator.hpp">
+      <Filter>Ui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Decorators\AlignmentDecorator.hpp">
+      <Filter>Ui\Decorators</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Core\ConstructionHelpers.hpp">
+      <Filter>Ui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Decorators\SizeDecorator.hpp">
+      <Filter>Ui\Decorators</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Window">
@@ -203,6 +218,9 @@
     </Filter>
     <Filter Include="Ui\User">
       <UniqueIdentifier>{55f997ca-b729-4675-b687-1fabf666dc05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ui\Decorators">
+      <UniqueIdentifier>{62511a3e-6a02-492d-9920-eed00ba3e789}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

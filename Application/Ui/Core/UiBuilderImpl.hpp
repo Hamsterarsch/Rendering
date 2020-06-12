@@ -18,9 +18,9 @@ namespace App::Ui::Core
 			std::string name{ " " };
 			float alignment{ 0 };
 			ImGuiWindowFlags flagsWindow{ 0 };
-			Math::Vector2 relativeSize{ .5, .5 };
+			Math::Vector2 userSpecifiedSize{ 0, 0 };
 			Math::Vector2 relativePos{ .5, .5 };
-			Math::Vector2 pivot{ .5, .5 };
+			Math::Vector2 pivot{ .5, .5 };			
 		} data, defaults;
 		
 		private: struct
@@ -33,7 +33,7 @@ namespace App::Ui::Core
 				 	
 				 
 		
-		public: UiBuilder &DeclareAutoWidth() override;
+		public: UiBuilder &DeclareSize(float width, float height) override;
 
 
 		public: UiBuilder &LeaveWidget() override;
@@ -44,9 +44,7 @@ namespace App::Ui::Core
 		public: UiBuilder &DeclareAlignment(float alignment) override;
 
 		public: UiBuilder &DeclareTabStatic() override;
-
-		public: UiBuilder &DeclareTabSize(const Math::Vector2 &relativeSize) override;
-
+				
 		public: UiBuilder &DeclareTabPos(const Math::Vector2 &relativePos, const Math::Vector2 &pivot) override;
 
 		public: UiBuilder &DeclareTabNocollapse() override;
@@ -73,6 +71,9 @@ namespace App::Ui::Core
 		UiBuilder& MakeCheckbox(bool* isChecked) override;
 
 			private: void CenterNextItem(float nextItemWidth) const;
+		private: void ApplyUserSizing(float &width, float &height) const;
+		private: void SetNextItemSize(float width, float height);
+		
 	};
 
 	

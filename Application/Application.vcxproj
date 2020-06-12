@@ -268,14 +268,18 @@
     <ClInclude Include="ThirdParty\imgui\imstb_textedit.h" />
     <ClInclude Include="ThirdParty\imgui\imstb_truetype.h" />
     <ClInclude Include="Types\Dimensions2D.hpp" />
+    <ClInclude Include="Ui\Core\ConstructionHelpers.hpp" />
     <ClInclude Include="Ui\Core\Slot.hpp" />
     <ClInclude Include="Ui\Core\StringInputTarget.hpp" />
     <ClInclude Include="Ui\Core\UiAccessElement.hpp" />
+    <ClInclude Include="Ui\Core\UiDecorator.hpp" />
     <ClInclude Include="Ui\Core\UiElement.hpp" />
     <ClInclude Include="Ui\Core\UiFrontend.hpp" />
     <ClInclude Include="Ui\Core\UiLayoutElement.hpp" />
     <ClInclude Include="Ui\Core\UiBuilder.hpp" />
     <ClInclude Include="Ui\Core\UiBuilderImpl.hpp" />
+    <ClInclude Include="Ui\Decorators\AlignmentDecorator.hpp" />
+    <ClInclude Include="Ui\Decorators\SizeDecorator.hpp" />
     <ClInclude Include="Ui\Elements\ButtonElement.hpp" />
     <ClInclude Include="Ui\Elements\EqualColumnsLayout.hpp" />
     <ClInclude Include="Ui\Elements\GridLayout.hpp" />
@@ -311,6 +315,7 @@
     <ClCompile Include="ThirdParty\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="ThirdParty\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Types\Dimensions2D.cpp" />
+    <ClCompile Include="Ui\Core\UiElement.cpp" />
     <ClCompile Include="Ui\Core\UiLayoutElement.cpp" />
     <ClCompile Include="Ui\Core\UiBuilderImpl.cpp" />
     <ClCompile Include="Ui\Elements\GridLayout.cpp" />

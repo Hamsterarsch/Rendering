@@ -6,6 +6,7 @@
 namespace App::Ui
 {
 	class GridSlot;
+		
 	
 	class GridLayout final : public Core::UiLayoutElement
 	{
@@ -26,7 +27,18 @@ namespace App::Ui
 		public: ~GridLayout() noexcept override;
 
 		
-		public: GridLayout &DeclareChildPos(unsigned startColumnIndex, unsigned startRowIndex, unsigned spanColumn = 1, unsigned spanRow = 1);
+		public: struct GridCell
+		{
+			unsigned startColumnIndex{ 0 };
+			unsigned startRowIndex{ 0 };
+			unsigned spanColumn{ 1 };
+			unsigned spanRow{ 1 };
+		};
+		
+		public: GridLayout &AddChildAt(const GridCell &cell, UniquePtr<UiElement> &&child);
+		
+			private: void DeclareChildPos(unsigned startColumnIndex, unsigned startRowIndex, unsigned spanColumn = 1, unsigned spanRow = 1);
+		
 		
 		protected: void OnChildAdded(UiElement &child) override;
 
@@ -40,6 +52,32 @@ namespace App::Ui
 		
 	};
 
+
+	
+	struct GridChildInfo
+	{
+		GridLayout::GridCell cellInfo;
+		
+		UniquePtr<Core::UiElement> child;
+		
+	};
+	
+	inline UniquePtr<GridLayout> operator+=(UniquePtr<GridLayout> &&instance, GridChildInfo &&childInfo)
+	{
+		instance->AddChildAt(childInfo.cellInfo, std::move(childInfo.child));
+		
+		return std::move(instance);
+		
+	}
+	
+	inline UniquePtr<GridLayout> &operator+=(UniquePtr<GridLayout> &instance, GridChildInfo &&childInfo)
+	{
+		instance->AddChildAt(childInfo.cellInfo, std::move(childInfo.child));
+		
+		return instance;
+		
+	}
+	
 	
 }
 

@@ -18,7 +18,7 @@ namespace App::Ui::Core
 		for(size_t childIndex{ 0 }; childIndex < children.size(); ++childIndex)
 		{
 			OnPreRenderAndQueryChild(builder, childIndex, *children.at(childIndex));
-			children.at(childIndex)->RenderAndQueryInternal(builder);
+			children.at(childIndex)->RenderAndQueryInput(builder);
 			OnPostRenderAndQueryChild(builder, childIndex, *children.at(childIndex));
 		}
 

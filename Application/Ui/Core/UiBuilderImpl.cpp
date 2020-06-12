@@ -9,9 +9,10 @@
 
 namespace App::Ui::Core
 {
-	UiBuilder &UiBuilderImpl::DeclareAutoWidth()
+	UiBuilder &UiBuilderImpl::DeclareSize(const float width, const float height)
 	{		
-		ImGui::SetNextItemWidth( ImGui::GetContentRegionAvail().x );		
+		data.userSpecifiedSize.x = width;
+		data.userSpecifiedSize.y = height;
 
 		return *this;
 				
@@ -41,7 +42,8 @@ namespace App::Ui::Core
 	
 	UiBuilder &UiBuilderImpl::DeclareAlignment(const float alignment)
 	{
-		data.alignment = alignment;
+		data.alignment = alignment;			
+		
 		return *this;
 		
 	}
@@ -56,16 +58,7 @@ namespace App::Ui::Core
 	}
 
 
-	
-	UiBuilder &UiBuilderImpl::DeclareTabSize(const Math::Vector2 &relativeSize)
-	{
-		data.relativeSize = relativeSize;
-		return *this;
-		
-	}
 
-
-	
 	UiBuilder &UiBuilderImpl::DeclareTabPos(const Math::Vector2 &relativePos, const Math::Vector2 &pivot)
 	{
 		data.relativePos = relativePos;
@@ -90,8 +83,7 @@ namespace App::Ui::Core
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowTitleAlign, ImVec2{ data.alignment, 0.5 });		
 
 		auto windowSize{ ImGui::GetWindowViewport()->Size };
-		windowSize.x *= data.relativeSize.x;
-		windowSize.y *= data.relativeSize.y;
+		ApplyUserSizing(windowSize.x, windowSize.y);
 		ImGui::SetNextWindowSize(windowSize, ImGuiCond_Once);
 
 		auto windowPos{ ImGui::GetWindowViewport()->Size };
@@ -131,15 +123,22 @@ namespace App::Ui::Core
 
 	UiBuilder &UiBuilderImpl::MakeButton(bool *isPressed, const bool centerVertical)
 	{
-		const auto buttonRect{ ImGui::GetStyle().FramePadding*2 + ImGui::CalcTextSize(data.name.c_str()) };
-		auto offset{ ( ImGui::GetContentRegionAvail() - buttonRect) };
+		if(data.userSpecifiedSize.x != 1)
+		{		
+			const auto buttonRect{ ImGui::GetStyle().FramePadding*2 + ImGui::CalcTextSize(data.name.c_str()) };
+			auto offset{ ( ImGui::GetContentRegionAvail() - buttonRect) };
 
-		offset.x *= data.alignment;
-		offset.y = centerVertical ? offset.y * .5f : 0;
+			offset.x *= data.alignment;
+			offset.y = centerVertical ? offset.y * .5f : 0;
+			
+			ImGui::SetCursorPos(ImGui::GetCursorPos() + offset);
+		}
+
+		ImVec2 size{ 0, 0 };
+		ApplyUserSizing(size.x, size.y);
+		//SetNextItemSize(size.x, size.y);
 		
-		ImGui::SetCursorPos(ImGui::GetCursorPos() + offset);
-				
-		const auto pressedResult{ ImGui::Button(data.name.c_str()) };
+		const auto pressedResult{ ImGui::Button(data.name.c_str(), size) };
 		if(isPressed)
 		{
 			*isPressed = pressedResult;
@@ -153,7 +152,7 @@ namespace App::Ui::Core
 
 	struct ImGuiStringInputTargetAdapter
 	{
-		static inline Core::StringInputTarget *inputTarget;
+		static inline StringInputTarget *inputTarget;
 		static int InputTextCallback(ImGuiInputTextCallbackData *data)
 		{
 			int out{ 0 };
@@ -186,6 +185,10 @@ namespace App::Ui::Core
 		{
 			flags |= ImGuiInputTextFlags_ReadOnly;
 		}
+
+		ImVec2 defaultSize{ ImGui::GetCurrentContext()->CurrentWindow->DC.ItemWidth, ImGui::GetCurrentContext()->CurrentWindow->DC.CurrLineSize.y };
+		ApplyUserSizing(defaultSize.x, defaultSize.y);
+		SetNextItemSize(defaultSize.x, defaultSize.y);
 		
 		ImGui::InputText
 		(
@@ -207,9 +210,11 @@ namespace App::Ui::Core
 		gridData.columnCount = columns;
 		gridData.rowCount = rows;
 
-		const auto query{  ImGui::GetContentRegionAvail() };
-		gridData.colWidth = query.x / columns;
-		gridData.rowHeight = query.y / rows;
+		ImVec2 gridSize{ ImGui::GetContentRegionAvail() };
+		ApplyUserSizing(gridSize.x, gridSize.y);
+			   		
+		gridData.colWidth = gridSize.x / columns;
+		gridData.rowHeight = gridSize.y / rows;
 				
 		ImGui::BeginChild(data.name.c_str());
 		desctructionFuncStack.push_front(&ImGui::EndChild);
@@ -262,13 +267,13 @@ namespace App::Ui::Core
 	{		
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowTitleAlign, ImVec2{ data.alignment, 0.5 });		
 
-		auto windowSize{ ImGui::GetWindowViewport()->Size };
-		windowSize.x *= data.relativeSize.x;
-		windowSize.y *= data.relativeSize.y;
+		ImVec2 windowSize{ ImGui::GetWindowViewport()->Size };
+		ApplyUserSizing(windowSize.x, windowSize.y);
+		
 		ImGui::SetNextWindowSize(windowSize, ImGuiCond_Once);
 
 		ImGui::OpenPopup(data.name.c_str());//ensure that begin always returns true. if you dont want to display the modal just dont call this function
-		ImGui::BeginPopupModal(data.name.c_str(), nullptr);
+		ImGui::BeginPopupModal(data.name.c_str(), nullptr, data.flagsWindow | ImGuiWindowFlags_NoResize);
 		desctructionFuncStack.push_front(&ImGui::EndPopup);
 
 		ImGui::PopStyleVar();
@@ -304,5 +309,33 @@ namespace App::Ui::Core
 			ImGui::SetCursorPosX(ImGui::GetCursorPos().x + availableWidth * data.alignment);
 			
 		}
+
+	void UiBuilderImpl::ApplyUserSizing(float &width, float &height) const
+	{
+		if(data.userSpecifiedSize.x > 0)
+		{
+			width = data.userSpecifiedSize.x <= 1 ? width * data.userSpecifiedSize.x : data.userSpecifiedSize.x;			
+		}
+
+		if(data.userSpecifiedSize.y > 0)
+		{
+			height = data.userSpecifiedSize.y <= 1 ? height * data.userSpecifiedSize.y : data.userSpecifiedSize.y;			
+		}
+					   		
+	}
+
+	void UiBuilderImpl::SetNextItemSize(float width, float height)
+	{
+		if(width > 0)
+		{
+			ImGui::SetNextItemWidth(width);			
+		}
+		
+		if(height > 0)
+		{
+			ImGui::GetCurrentContext()->CurrentWindow->DC.CurrLineSize.y = height;			
+		}
+		
+	}
 	
 }

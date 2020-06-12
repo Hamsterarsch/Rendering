@@ -31,7 +31,7 @@ namespace App::Ui
 			builder
 			.DeclareName(title)
 			.DeclareAlignment(.5)
-			.DeclareTabSize(size)								
+			.DeclareSize(size.x, size.y)								
 			.MakeModal();
 
 		}

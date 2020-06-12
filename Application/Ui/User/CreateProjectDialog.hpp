@@ -9,7 +9,8 @@
 #include "Ui/Elements/InputElement.hpp"
 #include "Ui/Elements/TextElement.hpp"
 #include "Ui/Elements/ModalElement.hpp"
-
+#include "Ui/Decorators/SizeDecorator.hpp"
+#include "Ui/Core/ConstructionHelpers.hpp"
 
 namespace App::Ui::User
 {
@@ -39,7 +40,6 @@ namespace App::Ui::User
 		public: bool IsReadOnly() const override { return isReadOnly; }
 
 	};
-	
 
 
 	
@@ -57,6 +57,7 @@ namespace App::Ui::User
 
 
 
+
 		public: CreateProjectDialogFrontend()
 			:
 			closeDialog{ false },
@@ -64,32 +65,23 @@ namespace App::Ui::User
 			shouldCreateProject{ false },
 			selectedFolder{ true }
 		{
-			auto grid{ MakeUnique<GridLayout>(5, 3) };
-
-			grid->DeclareChildPos(0,0, 2)
-			.AddChild(MakeUnique<ButtonElement>(*this, 1, "Select Folder"));
-
-			grid->DeclareChildPos(2, 0, 3)
-			.AddChild(MakeUnique<InputElement<Core::StringInputTarget>>(*this, 0, "Folder Display"));
+			auto grid{ Element<GridLayout>(5, 3) };			
 			
-			grid->DeclareChildPos(0, 1, 2)
-			.AddChild(MakeUnique<TextElement>("Project Name"));
-
-			grid->DeclareChildPos(2, 1, 3)
-			.AddChild(MakeUnique<InputElement<Core::StringInputTarget>>(*this, 1, "NameInput"));
-
-			auto subGrid{ MakeUnique<GridLayout>(2, 1) };
-
-			subGrid->DeclareChildPos(1,0)
-			.AddChild(MakeUnique<ButtonElement>(*this, 0, "Abort"));
-
-			grid->DeclareChildPos(0, 2, 5)
-			.AddChild(std::move(subGrid));
-
-			auto createProjectDialog{ MakeUnique<ModalElement>("Create a new Project") };
-			createProjectDialog->AddChild(std::move(grid));
+			grid += { {0,0, 2}, Element<ButtonElement>(*this, 1, "Select Folder") };
 			
-			uiElements.push_front(std::move(createProjectDialog));
+			grid += { {2,0, 3}, Element<InputElement<Core::StringInputTarget>>(*this, 0, "Folder Display") };
+			
+			grid += { {0,1, 2}, Element<TextElement>("Project Name") };
+
+			grid += { {2,1, 3},Element<InputElement<Core::StringInputTarget>>(*this, 1, "NameInput") };
+									
+			grid +=	
+			{
+				{0,2, 5},
+				Element<GridLayout>(2, 1) += { {1, 0}, Element<ButtonElement>(*this, 0, "Abort") += Decorator<Decorators::SizeDecorator>(1, 0) }
+			};
+									
+			uiElements.push_front(Element<ModalElement>("Create a new Project") += std::move(grid));
 			
 		}
 
