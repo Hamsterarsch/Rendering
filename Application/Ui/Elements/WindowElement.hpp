@@ -15,12 +15,6 @@ namespace App::Ui
 
 		private: size_t isOpenTargetIndex;
 
-		public: Math::Vector2 pivot;
-
-		public: Math::Vector2 size;
-
-		public: Math::Vector2 pos;
-
 		public: bool isNocollapse;
 
 		public: bool isStatic;
@@ -38,13 +32,13 @@ namespace App::Ui
 			:		
 			title{ title },
 			frontend{ nullptr },
-			isOpenTargetIndex{ 0 },
-			pivot{ .5, .5 },
-			size{ .5, .5 },
-			pos{ .5, .5 },
+			isOpenTargetIndex{ 0 },			
 			isNocollapse{ false },
 			isStatic{ false }
-		{}
+		{
+			size = position = pivot = { .5, .5 };
+			
+		}
 
 		
 		
@@ -63,10 +57,7 @@ namespace App::Ui
 			bool *isOpenTarget{ frontend ? frontend->GetInputTargetBool(isOpenTargetIndex) : nullptr };
 			
 			builder
-			.DeclareName(title)
-			.DeclareAlignment(.5)
-			.DeclareSize(size.x, size.y)
-			.DeclareTabPos(pos, pivot)						
+			.DeclareName(title)							
 			.MakeTab(isOpenTarget);
 			
 		}

@@ -4,7 +4,7 @@
 #include <filesystem>
 
 
-namespace AssetSystem
+namespace assetSystem
 {
 	class ASSET_SYSTEM_DLLSPEC Asset : Reflection::LimitedReflected
 	{

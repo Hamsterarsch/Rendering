@@ -30,15 +30,16 @@ namespace App::Ui
 
 
 
-	GridLayout::GridLayout(const unsigned numColumns, const unsigned numRows)
+	GridLayout::GridLayout(const unsigned numColumns, const unsigned numRows, const float cellPadding)
 		:
 		name{ "Grid_" + std::to_string(constructedInstances) },
 		numColumns{ numColumns },
 		numRows{ numRows },
-		currentSlot{ MakeUnique<GridSlot>(0,0,1,1) }
+		currentSlot{ MakeUnique<GridSlot>(0,0,1,1) },
+		cellPadding{ cellPadding }
 	{			
 		++constructedInstances;
-		
+			
 	}
 
 
@@ -94,6 +95,7 @@ namespace App::Ui
 	{
 		builder
 		.DeclareName(name.c_str())
+		.DeclarePadding(cellPadding)
 		.MakeGrid(numColumns, numRows);
 
 	}

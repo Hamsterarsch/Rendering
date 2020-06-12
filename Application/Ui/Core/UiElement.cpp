@@ -1,19 +1,9 @@
 #include "Ui/Core/UiElement.hpp"
-#include "UiDecorator.hpp"
+#include "Ui/Core/UiBuilder.hpp"
 
 
 namespace App::Ui::Core
-{
-	UiElement::UiElement() : decorators(0)
-	{
-	}
-
-
-	
-	UiElement::~UiElement() = default;
-
-	
-
+{	
 	bool UiElement::RenderAndQueryInput(UiBuilder &builder)
 	{
 		if(this->IsHidden())
@@ -22,27 +12,13 @@ namespace App::Ui::Core
 			
 		}
 
-		for(auto &&decorator : decorators)
-		{
-			decorator->Decorate(builder);
-		}
-		
+		builder
+		.DeclareSize(size)
+		.DeclarePosition(position, pivot);
+				
 		RenderAndQueryInternal(builder);
-
-		for(auto &&decorator : decorators)
-		{
-			decorator->Undecorate(builder);
-		}
 		
 		return true;
-		
-	}
-
-
-	
-	void UiElement::AddDecorator(UniquePtr<UiDecorator> &&decorator)
-	{
-		decorators.emplace_back(std::move(decorator));
 		
 	}
 

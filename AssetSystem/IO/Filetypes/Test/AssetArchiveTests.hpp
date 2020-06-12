@@ -3,7 +3,7 @@
 #include <string>
 
 
-namespace AssetSystem::IO
+namespace assetSystem::IO
 {
 	class AssetArchiveTests
 	{

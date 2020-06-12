@@ -5,6 +5,7 @@
 #include "Ui/Elements/EqualColumnsLayout.hpp"
 #include "Ui/Elements/ButtonElement.hpp"
 #include "Ui/Elements/WindowElement.hpp"
+#include "Ui/Core/ConstructionHelpers.hpp"
 
 
 namespace App::Ui::User
@@ -25,28 +26,22 @@ namespace App::Ui::User
 		{			
 			auto grid{ MakeUnique<EqualColumnsLayout>() };
 
-			auto btnCreateNew{ MakeUnique<ButtonElement>(*this, 0, "Create New") };
-			btnCreateNew->alignment = .5;
-			btnCreateNew->centerVertical = true;
-			grid->AddChild(std::move(btnCreateNew));
+			grid += Element<ButtonElement>(*this, 0, "Create New")
+					->* Set{&ButtonElement::position, {.5,.5}}
+					->* Set{&ButtonElement::pivot, {.5,.5}};
 			
-			auto btnOpen{ MakeUnique<ButtonElement>(*this, 1, "Open Project") };
-			btnOpen->alignment = .5;
-			btnOpen->centerVertical = true;
-			grid->AddChild(std::move(btnOpen));
-
-			
-			auto window{ MakeUnique<WindowElement>("Open a project or create a new one to begin") };					
+			grid += Element<ButtonElement>(*this, 1, "Open Project")
+					->* Set{&ButtonElement::position, {.5,.5}}
+					->* Set{&ButtonElement::pivot, {.5,.5}};
+						
+			auto window{ Element<WindowElement>("Open a project or create a new one to begin") += std::move(grid) };					
 			window->isNocollapse = true;
 			window->isStatic = true;
-			window->pos.y = .4;
+			window->position.y = .4;
 			window->size.y = .25;
 			
-			window->AddChild(std::move(grid));
-
 			uiElements.push_front(std::move(window));
-
-			
+						
 		}
 		
 

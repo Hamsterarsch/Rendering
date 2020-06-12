@@ -19,10 +19,12 @@ namespace App::Ui
 		private: unsigned numRows;
 
 		private: UniquePtr<GridSlot> currentSlot;
+
+		private: float cellPadding;
 		
 
 		
-		public: GridLayout(unsigned numColumns, unsigned numRows);
+		public: GridLayout(unsigned numColumns, unsigned numRows, float cellPadding = 0);
 
 		public: ~GridLayout() noexcept override;
 

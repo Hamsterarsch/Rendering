@@ -238,7 +238,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AssetSystem.cpp" />
+    <ClCompile Include="Core\AssetPtr.cpp" />
     <ClCompile Include="Core\AssetRegistry.cpp" />
+    <ClCompile Include="Core\AssetSystemImpl.cpp" />
     <ClCompile Include="Core\Assets\AssetSystemConfigAsset.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="IO\Archive.cpp" />
@@ -254,12 +256,15 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AssetRegistry.hpp" />
+    <ClInclude Include="Core\AssetMemory.hpp" />
     <ClInclude Include="Core\AssetRegistry.hpp" />
+    <ClInclude Include="Core\AssetSystemImpl.hpp" />
     <ClInclude Include="Core\Assets\AssetSystemConfigAsset.hpp" />
     <ClInclude Include="Interface\Asset.hpp" />
+    <ClInclude Include="Interface\AssetPtr.hpp" />
     <ClInclude Include="Interface\AssetSystem.hpp" />
     <ClInclude Include="Interface\AssetSystemExportHelper.hpp" />
+    <ClInclude Include="Interface\AssetSystemTypes.hpp" />
     <ClInclude Include="Interface\LimitedReflection.hpp" />
     <ClInclude Include="IO\DiskConversions.hpp" />
     <ClInclude Include="IO\Filetypes\AssetArchiveConstants.hpp" />

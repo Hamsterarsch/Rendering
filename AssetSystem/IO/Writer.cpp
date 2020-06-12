@@ -1,7 +1,7 @@
 #include "AssetSystem/IO/Writer.hpp"
 
 
-namespace AssetSystem
+namespace assetSystem
 {
 	bool IO::Writer::IsWriting() const
 	{

@@ -1,11 +1,11 @@
 #pragma once
+#include "AssetSystemTypes.hpp"
 #include "AssetSystem/IO/Archive.hpp"
-#include "AssetSystem/Core/Assets/AssetSystemConfigAsset.hpp"
 #include <filesystem>
 #include <unordered_map>
 
 
-namespace AssetSystem
+namespace assetSystem::Core
 {
 	namespace fs = std::filesystem;
 	
@@ -13,11 +13,11 @@ namespace AssetSystem
 	{
 		private: static const char *assetExtension;
 
-		private: fs::path configDir;
+		private: fs::path programDirectory;
 
-		private: Assets::AssetSystemConfigAsset config;
-
-		private: std::unordered_map<unsigned, fs::path> fileHandleMap;
+		private: fs::path projectAssetDirectory;
+				 		
+		private: std::unordered_map<AssetKey, fs::path> fileHandleMap;
 
 		private: struct ReferenceBucket
 		{
@@ -26,17 +26,20 @@ namespace AssetSystem
 			
 		};
 
-		private: std::unordered_map<unsigned, ReferenceBucket> references;
+		private: std::unordered_map<AssetKey, ReferenceBucket> references;
 		
+
 		
-		public: AssetRegistry();
+		public: AssetRegistry(const char *projectAssetDirectory);
 
-			private: void DiscoverAssets();
+			private: void DiscoverAssets(const fs::path &rootFolder);
 
-				private: void RegisterAsset(const fs::path &path);
+		public: void RegisterAsset(const fs::path &path);
 
+		public: fs::path GetAssetPath(AssetKey assetKey) const;
+						 		
 
-		IO::Archive& Serialize(IO::Archive& archive) override{ return archive; }
+		public: IO::Archive &Serialize(IO::Archive &archive) override{ return archive; }
 	};
 	
 	

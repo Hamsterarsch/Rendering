@@ -3,7 +3,7 @@
 #include <cstdint>
 
 
-namespace AssetSystem::IO
+namespace assetSystem::IO
 {
 	class Archivable;
 	

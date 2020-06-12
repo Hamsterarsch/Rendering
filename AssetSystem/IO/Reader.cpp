@@ -1,7 +1,7 @@
 #include "AssetSystem/IO/Reader.hpp"
 
 
-namespace AssetSystem::IO
+namespace assetSystem::IO
 {
 	bool Reader::IsWriting() const
 	{

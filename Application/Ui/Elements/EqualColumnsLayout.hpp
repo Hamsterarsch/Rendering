@@ -12,12 +12,14 @@ namespace App::Ui
 
 		private: std::string name;
 
+		private: float columPadding;
+
 
 		
-		public: EqualColumnsLayout() : name{ "EqualGrid_" + std::to_string(constructedInstances) }
+		public: EqualColumnsLayout(const float columnPadding = 0) : name{ "EqualGrid_" + std::to_string(constructedInstances) }, columPadding{ columnPadding }
 		{			
 			++constructedInstances;
-			
+
 		}
 				
 		protected: void OnPreRenderAndQueryChildren(Core::UiBuilder &builder) override
@@ -30,7 +32,7 @@ namespace App::Ui
 
 		protected: void OnPreRenderAndQueryChild(Core::UiBuilder &builder, size_t childIndex, UiElement &child) override
 		{
-			builder.MakeCell(childIndex, 0, 1, 1);
+			builder.DeclarePadding(columPadding).MakeCell(childIndex, 0, 1, 1);
 			
 		}
 

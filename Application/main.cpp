@@ -6,7 +6,7 @@
 #include <filesystem>
 
 
-#include "AssetSystem/Interface/AssetSystem.hpp"
+#include "AssetSystem/Interface/assetSystem.hpp"
 #include "Windows/SelectPathDialog.hpp"
 
 int main()

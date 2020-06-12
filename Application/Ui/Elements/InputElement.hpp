@@ -50,15 +50,12 @@ namespace App::Ui
 	{		
 		private: size_t targetIndex;
 
-		public: float alignment;
 		
-
 		
 		public: InputElement(t_frontend_param frontend, size_t targetIndex, const char *name)
 			:
 			InputElementBase{ frontend, name },
-			targetIndex{ targetIndex },
-			alignment{ .5 }
+			targetIndex{ targetIndex }
 		{}
 
 		
@@ -68,8 +65,7 @@ namespace App::Ui
 
 	inline void InputElement<Core::StringInputTarget>::RenderAndQueryInternal(Core::UiBuilder &builder)
 	{		
-		builder
-		.DeclareAlignment(alignment)
+		builder		
 		.MakeTextInput(*GetFrontend().GetInputTargetString(targetIndex));
 	
 	}
@@ -82,15 +78,12 @@ namespace App::Ui
 	{
 		private: size_t targetIndex;
 
-		public: float alignment;
-
-				
+				 				
 		
 		public: InputElement(t_frontend_param frontend, size_t targetIndex, const char *name)
 			:
 			InputElementBase{ frontend, name },
-			targetIndex{ targetIndex },
-			alignment{ .5 }
+			targetIndex{ targetIndex }
 		{}
 
 
@@ -101,8 +94,7 @@ namespace App::Ui
 	inline void InputElement<bool>::RenderAndQueryInternal(Core::UiBuilder &builder)
 	{
 		builder
-		.DeclareName(GetName())
-		.DeclareAlignment(alignment)
+		.DeclareName(GetName())		
 		.MakeCheckbox(GetFrontend().GetInputTargetBool(targetIndex));
 		
 	}

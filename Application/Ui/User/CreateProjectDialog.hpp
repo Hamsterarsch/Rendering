@@ -9,7 +9,6 @@
 #include "Ui/Elements/InputElement.hpp"
 #include "Ui/Elements/TextElement.hpp"
 #include "Ui/Elements/ModalElement.hpp"
-#include "Ui/Decorators/SizeDecorator.hpp"
 #include "Ui/Core/ConstructionHelpers.hpp"
 
 namespace App::Ui::User
@@ -65,24 +64,59 @@ namespace App::Ui::User
 			shouldCreateProject{ false },
 			selectedFolder{ true }
 		{
-			auto grid{ Element<GridLayout>(5, 3) };			
+			auto grid{ Element<GridLayout>(5, 3, 4) };			
 			
-			grid += { {0,0, 2}, Element<ButtonElement>(*this, 1, "Select Folder") };
+			grid += 
+			{
+				{0,0, 2}, Element<ButtonElement>(*this, 1, "Select Folder")				
+				->* Set{&ButtonElement::position, {.5,.5}}
+				->* Set{&ButtonElement::pivot, {.5,.5}}
+			};
 			
-			grid += { {2,0, 3}, Element<InputElement<Core::StringInputTarget>>(*this, 0, "Folder Display") };
+			grid += 
+			{
+				{2,0, 3}, Element<InputElement<Core::StringInputTarget>>(*this, 0, "Folder Display")
+					->* Set{&Core::UiElement::size, {1, 0}}
+					->* Set{&Core::UiElement::position, {0,.5}}
+					->* Set{&Core::UiElement::pivot, {0,.5}}
+			};
 			
-			grid += { {0,1, 2}, Element<TextElement>("Project Name") };
+			grid += 
+			{
+				{0,1, 2}, Element<TextElement>("Project Name")
+					->* Set{&TextElement::position, {.5,.5}}					
+					->* Set{&TextElement::pivot, {.5, .5}}
+			};
 
-			grid += { {2,1, 3},Element<InputElement<Core::StringInputTarget>>(*this, 1, "NameInput") };
-									
+			grid += 
+			{
+				{2,1, 3}, Element<InputElement<Core::StringInputTarget>>(*this, 1, "NameInput")
+					->* Set{&Core::UiElement::size, {1, 0}}
+					->* Set{&Core::UiElement::position, {0,.5}}
+					->* Set{&Core::UiElement::pivot, {0,.5}}
+			};
+						
 			grid +=	
 			{
 				{0,2, 5},
-				Element<GridLayout>(2, 1) += { {1, 0}, Element<ButtonElement>(*this, 0, "Abort") += Decorator<Decorators::SizeDecorator>(1, 0) }
+				Element<GridLayout>(2, 1, 4) += 
+					{
+						{1, 0}, Element<ButtonElement>(*this, 0, "Abort")
+						->* Set{&ButtonElement::size, {1, .5} }
+						->* Set{&ButtonElement::pivot, {0,1}}
+						->* Set{&ButtonElement::position, {0,1}}
+					}
+					+=
+					{						
+						{0, 0}, Element<ButtonElement>(*this, 2, "Confirm")
+						->* Set{&ButtonElement::size, {1, .5} }
+						->* Set{&ButtonElement::pivot, {0,1}}
+						->* Set{&ButtonElement::position, {0,1}}						
+					}
 			};
 									
 			uiElements.push_front(Element<ModalElement>("Create a new Project") += std::move(grid));
-			
+						
 		}
 
 		public: void OpenDialog()
@@ -113,6 +147,11 @@ namespace App::Ui::User
 			{
 				const Windows::SelectPathDialog dialog{};
 				selectedFolder.data = dialog.GetSelectedItem().string();
+			}
+
+			if(shouldCreateProject)
+			{
+				
 			}
 			
 		}

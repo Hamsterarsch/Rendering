@@ -1,7 +1,7 @@
 #pragma once
 #include "Shared/PtrTypes.hpp"
 #include "Ui/Core/Slot.hpp"
-#include <vector>
+#include "Types/Vector.hpp"
 
 
 namespace App::Ui::Core
@@ -16,13 +16,17 @@ namespace App::Ui::Core
 
 		private: bool isHidden{ false };
 
-		private: std::vector<UniquePtr<UiDecorator>> decorators;
+		
+		public: Math::Vector2 size{ 0, 0 };
+		
+		public: Math::Vector2 pivot{ 0, 0 };
 
+		public: Math::Vector2 position{ 0, 0 };
 
 		
-		public: UiElement();
+		public: UiElement() = default;
 
-		public: virtual ~UiElement();
+		public: virtual ~UiElement() = default;
 		
 		public: UiElement(UiElement &&) noexcept = default;
 		
@@ -44,8 +48,6 @@ namespace App::Ui::Core
 		public: void SetSlot(UniquePtr<Slot> &&slot) { this->slot = std::move(slot); }
 
 		public: Slot *GetSlot() { return slot.get(); }
-
-		public: void AddDecorator(UniquePtr<UiDecorator> &&decorator);
 		
 	};
 

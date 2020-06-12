@@ -4,7 +4,7 @@
 #include "IO/DiskConversions.hpp"
 
 
-namespace AssetSystem::IO
+namespace assetSystem::IO
 {
 	AssetWriter::AssetWriter(const std::filesystem::path &filepath) :
 		file{ filepath, std::ios_base::out | std::ios_base::trunc },

@@ -27,6 +27,12 @@
     <ClCompile Include="Core\Assets\AssetSystemConfigAsset.cpp">
       <Filter>Core\Assets</Filter>
     </ClCompile>
+    <ClCompile Include="Core\AssetSystemImpl.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\AssetPtr.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">
@@ -58,7 +64,6 @@
     <ClInclude Include="Interface\LimitedReflection.hpp">
       <Filter>Interface</Filter>
     </ClInclude>
-    <ClInclude Include="AssetRegistry.hpp" />
     <ClInclude Include="Interface\AssetSystem.hpp">
       <Filter>Interface</Filter>
     </ClInclude>
@@ -94,6 +99,18 @@
     </ClInclude>
     <ClInclude Include="Core\Assets\AssetSystemConfigAsset.hpp">
       <Filter>Core\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\AssetSystemImpl.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\AssetMemory.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\AssetPtr.hpp">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\AssetSystemTypes.hpp">
+      <Filter>Interface</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

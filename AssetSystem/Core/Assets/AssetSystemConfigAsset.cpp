@@ -2,7 +2,7 @@
 #include "AssetSystem/IO/Filetypes/AssetReader.hpp"
 
 
-namespace AssetSystem
+namespace assetSystem
 {
 	Assets::AssetSystemConfigAsset::AssetSystemConfigAsset(const std::filesystem::path &configDirectory)
 	{		

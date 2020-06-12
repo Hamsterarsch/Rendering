@@ -3,7 +3,7 @@
 #include "IO/DiskConversions.hpp"
 
 
-namespace AssetSystem::IO
+namespace assetSystem::IO
 {
 	AssetReader::AssetReader(const std::filesystem::path &filepath) :
 		file{ filepath, std::ios_base::in | std::ios_base::binary }

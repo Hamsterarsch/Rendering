@@ -4,7 +4,7 @@
 
 
 #include "ThirdParty/imgui/imgui.h"
-
+struct ImVec2;
 
 namespace App::Ui::Core
 {
@@ -15,13 +15,13 @@ namespace App::Ui::Core
 		
 		private: struct
 		{
-			std::string name{ " " };
-			float alignment{ 0 };
+			std::string name{ " " };			
+			Math::Vector2 size{ 0, 0 };
+			Math::Vector2 position{ 0, 0 };
+			Math::Vector2 pivot{ .5, .5 };
+			float padding{ 0 };
 			ImGuiWindowFlags flagsWindow{ 0 };
-			Math::Vector2 userSpecifiedSize{ 0, 0 };
-			Math::Vector2 relativePos{ .5, .5 };
-			Math::Vector2 pivot{ .5, .5 };			
-		} data, defaults;
+		} userSettings;
 		
 		private: struct
 		{
@@ -29,52 +29,65 @@ namespace App::Ui::Core
 			unsigned rowCount;
 			float colWidth;
 			float rowHeight;
+			float cellPadding{ 0 };
 		} gridData;
 				 	
-				 
+				 		
+
+		public: UiBuilderImpl();
 		
-		public: UiBuilder &DeclareSize(float width, float height) override;
+		public:	UiBuilder &DeclareSize(const Math::Vector2& size) override;
 
+		public: UiBuilder &DeclarePosition(const Math::Vector2 &position, const Math::Vector2 &pivot) override;
 
-		public: UiBuilder &LeaveWidget() override;
-
-				
 		public: UiBuilder &DeclareName(const char *name) override;
 
-		public: UiBuilder &DeclareAlignment(float alignment) override;
-
+		public: UiBuilder &DeclarePadding(float padding) override;
+		
 		public: UiBuilder &DeclareTabStatic() override;
-				
-		public: UiBuilder &DeclareTabPos(const Math::Vector2 &relativePos, const Math::Vector2 &pivot) override;
 
 		public: UiBuilder &DeclareTabNocollapse() override;
+
+				
+		public: UiBuilder &LeaveWidget() override;
 		
 		public: UiBuilder &MakeTab(bool *isOpenTarget) override;
+
+			private: void ApplyDimensionsForWindowTypeElements() const;
+
+				private: void ApplyUserSizing(float &width, float &height, bool forWindow = false) const;
+
+					private: static bool ShouldNotUseDefaultValue(float userSpecification);
+
+					private: static float GetRelativeOrAbsoluteValue(float userValue, float valueMaximum);
+
+				private: void ApplyUserPositioning(float &positionX, float &positionY, bool forWindow = false) const;
+
+				private: void ApplyUserPivot(float &positionX, float &positionY, float itemWidth, float itemHeight) const;
 		
+			private: void DoItemEpilogue();
+							
+		public: UiBuilder &MakeModal() override;
 		
-		public: UiBuilder &MakeWrapper() override;
+		public: UiBuilder &MakeButton(bool *isPressed) override;
 
-			private: void DoItemPrologue();
+			private: ImVec2 ApplyDimensionsForTextTypeElements(const char *text) const;
 
-		public: UiBuilder &MakeButton(bool *isPressed, bool centerVertical) override;
-				
-		UiBuilder& MakeTextInput(Core::StringInputTarget& target) override;
+				private: static void SetNextItemSize(float width, float height);
+		
+		public: UiBuilder &MakeText(const char* text) override;
+		
+		public: UiBuilder &MakeTextInput(StringInputTarget& target) override;						
+		
+		public: UiBuilder &MakeCheckbox(bool* isChecked) override;
 
 		
-		UiBuilder& MakeGrid(size_t columns, size_t rows) override;
+		public: UiBuilder &MakeGrid(size_t columns, size_t rows) override;
 		
-		UiBuilder& MakeCell(size_t startColIndex, size_t startRowIndex, size_t colSpan = 1, size_t rowSpan = 1) override;
+		public: UiBuilder &MakeCell(size_t startColIndex, size_t startRowIndex, size_t colSpan = 1, size_t rowSpan = 1) override;
+							   		
 
-
-		UiBuilder& MakeModal() override;
-		UiBuilder& MakeText(const char* text) override;
-		UiBuilder& MakeCheckbox(bool* isChecked) override;
-
-			private: void CenterNextItem(float nextItemWidth) const;
-		private: void ApplyUserSizing(float &width, float &height) const;
-		private: void SetNextItemSize(float width, float height);
-		
 	};
 
-	
+
 }

@@ -1,7 +1,7 @@
 #pragma once
 
 
-namespace AssetSystem::IO
+namespace assetSystem::IO
 {
 	struct AssetArchiveConstants
 	{

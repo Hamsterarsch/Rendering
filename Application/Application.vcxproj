@@ -278,8 +278,6 @@
     <ClInclude Include="Ui\Core\UiLayoutElement.hpp" />
     <ClInclude Include="Ui\Core\UiBuilder.hpp" />
     <ClInclude Include="Ui\Core\UiBuilderImpl.hpp" />
-    <ClInclude Include="Ui\Decorators\AlignmentDecorator.hpp" />
-    <ClInclude Include="Ui\Decorators\SizeDecorator.hpp" />
     <ClInclude Include="Ui\Elements\ButtonElement.hpp" />
     <ClInclude Include="Ui\Elements\EqualColumnsLayout.hpp" />
     <ClInclude Include="Ui\Elements\GridLayout.hpp" />

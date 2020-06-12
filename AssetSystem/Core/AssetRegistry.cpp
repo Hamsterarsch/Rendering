@@ -3,22 +3,22 @@
 #include "Shared/Hashing/CRC32.hpp"
 
 
-namespace AssetSystem
+namespace assetSystem::Core
 {
 	const char *AssetRegistry::assetExtension{ ".asset" };
 	
-	AssetRegistry::AssetRegistry() :
-		configDir{ Filesystem::Conversions::MakeExeRelative("../../Config/") },
-		config{ configDir }
+	AssetRegistry::AssetRegistry(const char *projectAssetDirectory) : 
+		programDirectory{ Filesystem::Conversions::MakeExeRelative("../../ProgramAssets/") },
+		projectAssetDirectory{ projectAssetDirectory }
 	{
-		DiscoverAssets();
+		DiscoverAssets(programDirectory);
+		DiscoverAssets(projectAssetDirectory);
 		
 	}
 
-		void AssetRegistry::DiscoverAssets()
-		{
-			const auto assetDirectory{ config.GetAssetDirectory() };
-			for(auto &&entry : fs::recursive_directory_iterator{ assetDirectory })
+		void AssetRegistry::DiscoverAssets(const fs::path &rootFolder)
+		{			
+			for(auto &&entry : fs::recursive_directory_iterator{ rootFolder })
 			{
 				if(entry.is_regular_file() && entry.path().extension() == assetExtension)
 				{
@@ -36,6 +36,14 @@ namespace AssetSystem
 				fileHandleMap[hash] = path;
 		
 			}
+
+
+	
+	fs::path AssetRegistry::GetAssetPath(const unsigned assetKey) const
+	{
+		return fileHandleMap.at(assetKey);
+		
+	}
 
 	
 }
