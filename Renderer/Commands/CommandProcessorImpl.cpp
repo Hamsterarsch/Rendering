@@ -2,10 +2,12 @@
 #include "Commands/DX12Command.hpp"
 #include "Resources/ResourceRegistry.hpp"
 #include "DX12/Facade.hpp"
+#include "CounterFactoryImpl.hpp"
+
 
 namespace Renderer::DX12::Commands
 {
-	CommandProcessorImpl::CommandProcessorImpl(RHA::DX12::DeviceResources &resources, RHA::DX12::Queue &queue, ResourceRegistry &registry) :
+	CommandProcessorImpl::CommandProcessorImpl(RHA::DX12::DeviceResources &resources, RHA::DX12::Queue &queue, ResourceRegistry &registry, CounterFactoryImpl &counterFactory) :
 		gpuQueue{ &queue },
 		allocator{ RHA::DX12::Facade::MakeCmdAllocator(&resources, D3D12_COMMAND_LIST_TYPE_DIRECT) },
 		list{ allocator->AllocateList() },
@@ -15,7 +17,8 @@ namespace Renderer::DX12::Commands
 		commandsExecutedSinceListSubmit{ 0 },
 		maxExecutedCommandsPerList{ 50 },
 		registry{ &registry },
-		currentContextEvent{ CommandContextEvents::Nothing }
+		currentContextEvent{ CommandContextEvents::Nothing },
+		counterFactory{ &counterFactory }
 	{		
 		updaterHandle = std::async(std::launch::async, &CommandProcessorImpl::Update, this);
 		
@@ -55,6 +58,7 @@ namespace Renderer::DX12::Commands
 					}
 					
 					bucket.command->Execute(*this);
+					++commandsExecutedSinceListSubmit;					
 
 					if(bucket.extractHandle > 0)
 					{
@@ -72,7 +76,6 @@ namespace Renderer::DX12::Commands
 
 					recordedCommands.push_back(std::move(bucket.command));						
 										
-					++commandsExecutedSinceListSubmit;					
 					if(ListCapacityIsReached())
 					{
 						SubmitList();
@@ -171,6 +174,8 @@ namespace Renderer::DX12::Commands
 	
 	void CommandProcessorImpl::SubmitAndWaitForGpuWork()
 	{
+		//we always need to do this even when commandsRecordedToList is 0, because commands can call this during execution
+		
 		SubmitList();
 				
 		fence->SetEventOnValue(fenceCompletionValue, event);
@@ -304,6 +309,14 @@ namespace Renderer::DX12::Commands
 			}
 			
 		}
+
+
+	
+	CounterFactoryImpl &CommandProcessorImpl::GetCounters()
+	{
+		return *counterFactory;
+		
+	}
 
 	
 }

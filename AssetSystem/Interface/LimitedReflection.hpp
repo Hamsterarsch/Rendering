@@ -2,7 +2,7 @@
 #include "Shared/InterfaceHelpers.hpp"
 
 
-namespace AssetSystem::Reflection
+namespace assetSystem::Reflection
 {
 	class TypeIdCounter
 	{
@@ -62,7 +62,7 @@ namespace AssetSystem::Reflection
 }
 
 #define DEFINE_TYPE_INFO(type, base)											\
-private: static constexpr AssetSystem::Reflection::TypeId<type>	typeId{};		\
+private: static constexpr assetSystem::Reflection::TypeId<type>	typeId{};		\
 																				\
 public: bool CastableTo(unsigned id) const override								\
 {																				\

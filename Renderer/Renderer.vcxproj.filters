@@ -304,6 +304,13 @@
       <Filter>Interface</Filter>
     </ClInclude>
     <ClInclude Include="RendererFacadeImpl.hpp" />
+    <ClInclude Include="Interface\CounterFactory.hpp">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="CounterFactoryImpl.hpp" />
+    <ClInclude Include="Commands\IncreaseCounterCommand.hpp">
+      <Filter>Commands</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -473,6 +480,10 @@
       <Filter>Commands\Basic</Filter>
     </ClCompile>
     <ClCompile Include="RendererFacadeImpl.cpp" />
+    <ClCompile Include="CounterFactoryImpl.cpp" />
+    <ClCompile Include="Commands\IncreaseCounterCommand.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">

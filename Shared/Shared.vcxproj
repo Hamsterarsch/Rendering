@@ -225,6 +225,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Debugging.hpp" />
     <ClInclude Include="Exception\CreationFailedException.hpp" />
     <ClInclude Include="Exception\Exception.hpp" />
     <ClInclude Include="Exception\ExceptionHelper.hpp" />

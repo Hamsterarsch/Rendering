@@ -82,6 +82,8 @@ namespace Renderer::DX12::Commands
 			size_t offsetOntoIndexValue
 		) override;
 		
+		public: UniquePtr<Renderer::Commands::Command> IncreaseCounter(CounterFactory::CounterID id, size_t valueToIncreaseBy) override;
+		
 	};
 	
 	

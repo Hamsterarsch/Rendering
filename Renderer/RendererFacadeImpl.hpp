@@ -15,6 +15,7 @@
 #include "StateSettings/VertexLayoutSettingsImpl.hpp"
 #include "StateSettings/RasterizerSettingsImpl.hpp"
 #include "Resources/Descriptor/ResourceViewFactoryImpl.hpp"
+#include "CounterFactoryImpl.hpp"
 
 
 namespace RHA
@@ -39,7 +40,6 @@ namespace Renderer::DX12
 {
 	class ResourceFactory;
 	
-
 	
 	class RendererFacadeImpl final : public RendererFacade, public MaintainsInternalRenderResources
 	{	
@@ -71,15 +71,18 @@ namespace Renderer::DX12
 			
 		private: DescriptorMemory descriptors;
 
+		private: CounterFactoryImpl counterFactory;
+		
 		private: Commands::CommandProcessorImpl commandProcessor;
 
 		private: ResourceViewFactoryImpl resourceViewFactory;
+
 
 	 			
 		
 		public: RendererFacadeImpl(HWND outputWindow);
 											 
-		public: ~RendererFacadeImpl();
+		public: ~RendererFacadeImpl() override;
 
 			private: void WaitForIdleQueue();
 
@@ -139,6 +142,15 @@ namespace Renderer::DX12
    		
 		public: ResourceHandle::t_hash MakeWindowsWindowSurface(HWND windowHandle) override;
 
+		public: void SetWindowSurfaceToFullscreen(ResourceHandle::t_hash surface) override;
+
+			private: void WaitForCommandsAndQueue();
+		
+		public: void SetWindowSurfaceToWindowed(ResourceHandle::t_hash surface) override;
+		
+		public: void FitWindowSurfaceToWindow(ResourceHandle::t_hash surface) override;
+
+		
 		public: UniquePtr<::Renderer::Commands::CommandFactory> MakeCommandFactory() override;
 
 		public: void SubmitCommand(UniquePtr<::Renderer::Commands::Command> &&command) override;
@@ -161,7 +173,8 @@ namespace Renderer::DX12
 		
 		public: ResourceViewFactory &GetViewFactory() override;
 
-		
+		public: CounterFactory &GetCounterFactory() override;
+							   		
 	};
 
 

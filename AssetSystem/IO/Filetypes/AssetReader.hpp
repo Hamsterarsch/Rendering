@@ -5,7 +5,7 @@
 #include <unordered_map>
 
 
-namespace AssetSystem::IO
+namespace assetSystem::io
 {
 	class AssetReader final : public Reader
 	{

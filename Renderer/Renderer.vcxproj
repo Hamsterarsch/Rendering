@@ -257,6 +257,7 @@
     <ClInclude Include="Commands\CommandProcessorImpl.hpp" />
     <ClInclude Include="Commands\BindDescriptorsContextCommand.hpp" />
     <ClInclude Include="Commands\GlobalBufferContextCommand.hpp" />
+    <ClInclude Include="Commands\IncreaseCounterCommand.hpp" />
     <ClInclude Include="Commands\LightingContextCommand.hpp" />
     <ClInclude Include="Commands\LightingSetup\AssignLightsToTilesCommand.hpp" />
     <ClInclude Include="Commands\LightingSetup\BuildActiveTileListCommand.hpp" />
@@ -276,6 +277,8 @@
     <ClInclude Include="Commands\Surface\PrepareSurfaceForRenderingCommand.hpp" />
     <ClInclude Include="Commands\Surface\PresentSurfaceCommand.hpp" />
     <ClInclude Include="Commands\UserContextCommandWrapper.hpp" />
+    <ClInclude Include="CounterFactoryImpl.hpp" />
+    <ClInclude Include="Interface\CounterFactory.hpp" />
     <ClInclude Include="RendererFacadeImpl.hpp" />
     <ClInclude Include="Helpers.hpp" />
     <ClInclude Include="Interface\Commands\Command.hpp" />
@@ -356,6 +359,7 @@
     <ClCompile Include="Commands\Basic\SetVertexBufferCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetViewportCommand.cpp" />
     <ClCompile Include="Commands\DX12CommandFactory.cpp" />
+    <ClCompile Include="Commands\IncreaseCounterCommand.cpp" />
     <ClCompile Include="Commands\InitVolumeTileGridCommand.cpp" />
     <ClCompile Include="Commands\CommandProcessorImpl.cpp" />
     <ClCompile Include="Commands\BindDescriptorsContextCommand.cpp" />
@@ -367,6 +371,7 @@
     <ClCompile Include="Commands\BindPsoAndSignatureCommand.cpp" />
     <ClCompile Include="Commands\PresentSurfaceCommandOld.cpp" />
     <ClCompile Include="Commands\RenderMeshCommand.cpp" />
+    <ClCompile Include="CounterFactoryImpl.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="RendererFacadeImpl.cpp" />
     <ClCompile Include="Interface\Commands\CompositeCommand.cpp" />

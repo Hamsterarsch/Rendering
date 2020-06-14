@@ -71,6 +71,8 @@ namespace Renderer
 			public: DescriptorAllocator &GetDescriptorAllocator(ResourceHandle::t_hash handle) override;
 
 			public: Light &GetLight(ResourceHandle::t_hash handle);
+
+			public: bool IsWindowSurfaceReferenced(ResourceHandle::t_hash handle) const;
 					
 			
 			public: size_t GetSignatureCbvOffset(ResourceHandle::t_hash handle, size_t cbvOrdinal);

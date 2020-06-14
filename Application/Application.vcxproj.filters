@@ -8,9 +8,6 @@
       <Filter>Types</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Windows\App.cpp">
-      <Filter>Windows</Filter>
-    </ClCompile>
     <ClCompile Include="Rendering\SceneRenderer.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
@@ -38,6 +35,54 @@
     <ClCompile Include="ThirdParty\imgui\imgui_impl_dx12.cpp">
       <Filter>ThirdParty\imgui</Filter>
     </ClCompile>
+    <ClCompile Include="Ui\ImguiTypeArithmetics.cpp">
+      <Filter>Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="Windows\SelectPathDialog.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui\Misc\AssetNameFilter.cpp">
+      <Filter>Ui\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="Windows\Application.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui\Core\UiLayoutElement.cpp">
+      <Filter>Ui\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui\Elements\GridLayout.cpp">
+      <Filter>Ui\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui\User\PropertyCompositeElement.cpp">
+      <Filter>Ui\User</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui\Core\UiBuilderImpl.cpp">
+      <Filter>Ui\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui\Core\UiElement.cpp">
+      <Filter>Ui\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui\BasicFrontends\SetVisibilityFrontend.cpp">
+      <Filter>Ui\BasicFrontends</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Version.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="AssetTypes\ProjectAsset.cpp">
+      <Filter>AssetTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\CreateProject.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Globals.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui\User\CreateProjectDialog.cpp">
+      <Filter>Ui\User</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui\User\StartupProjectDialog.cpp">
+      <Filter>Ui\User</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window\Windows\Window.hpp">
@@ -45,9 +90,6 @@
     </ClInclude>
     <ClInclude Include="Types\Dimensions2D.hpp">
       <Filter>Types</Filter>
-    </ClInclude>
-    <ClInclude Include="Windows\App.hpp">
-      <Filter>Windows</Filter>
     </ClInclude>
     <ClInclude Include="Rendering\SceneRenderer.hpp">
       <Filter>Rendering</Filter>
@@ -82,6 +124,96 @@
     <ClInclude Include="Rendering\UiRenderer.hpp">
       <Filter>Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="Ui\ImguiTypeArithmetics.hpp">
+      <Filter>Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Windows\SelectPathDialog.hpp">
+      <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Core\StringInputTarget.hpp">
+      <Filter>Ui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Misc\AssetNameFilter.hpp">
+      <Filter>Ui\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Core\Slot.hpp">
+      <Filter>Ui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Windows\Application.hpp">
+      <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Core\UiElement.hpp">
+      <Filter>Ui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Core\UiBuilder.hpp">
+      <Filter>Ui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Core\UiFrontend.hpp">
+      <Filter>Ui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Core\UiAccessElement.hpp">
+      <Filter>Ui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Core\UiLayoutElement.hpp">
+      <Filter>Ui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Elements\ButtonElement.hpp">
+      <Filter>Ui\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Elements\EqualColumnsLayout.hpp">
+      <Filter>Ui\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Elements\GridLayout.hpp">
+      <Filter>Ui\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Elements\InputElement.hpp">
+      <Filter>Ui\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\User\PropertyCompositeElement.hpp">
+      <Filter>Ui\User</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\User\CreateProjectDialog.hpp">
+      <Filter>Ui\User</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Elements\TextElement.hpp">
+      <Filter>Ui\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Elements\WindowElement.hpp">
+      <Filter>Ui\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Elements\ModalElement.hpp">
+      <Filter>Ui\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Core\UiBuilderImpl.hpp">
+      <Filter>Ui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\User\StartupProjectDialog.hpp">
+      <Filter>Ui\User</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Core\UiDecorator.hpp">
+      <Filter>Ui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Core\ConstructionHelpers.hpp">
+      <Filter>Ui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\BasicFrontends\SetVisibilityFrontend.hpp">
+      <Filter>Ui\BasicFrontends</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CreateProject.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetTypes\ProjectAsset.hpp">
+      <Filter>AssetTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Version.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Globals.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\User\StringInputTargetImpl.hpp">
+      <Filter>Ui\User</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Window">
@@ -104,6 +236,30 @@
     </Filter>
     <Filter Include="ThirdParty\imgui">
       <UniqueIdentifier>{ddbbf907-7515-4c0a-b81f-98ba47aef966}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ui">
+      <UniqueIdentifier>{dcf19b90-d69e-4b31-b294-a47cf0afb6e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ui\Core">
+      <UniqueIdentifier>{0dd49621-d539-4645-95dc-654e3afff5a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ui\Misc">
+      <UniqueIdentifier>{406f811a-3931-4f1b-9dbf-b604d1b2d6e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ui\Elements">
+      <UniqueIdentifier>{6428eaf6-fc2c-480a-9cce-7ba927dbdd8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ui\User">
+      <UniqueIdentifier>{55f997ca-b729-4675-b687-1fabf666dc05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ui\BasicFrontends">
+      <UniqueIdentifier>{7c47136c-f2fb-4a2c-944f-de9bc15f9651}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetTypes">
+      <UniqueIdentifier>{199a8530-a057-4c69-9ddf-2592f0b89f61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{bb721872-6a2a-44c3-a767-552c807a385b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

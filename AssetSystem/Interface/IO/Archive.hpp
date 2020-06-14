@@ -1,12 +1,11 @@
 #pragma once
+#include "Archivable.hpp"
 #include "Shared/InterfaceHelpers.hpp"
 #include <cstdint>
 
 
-namespace AssetSystem::IO
-{
-	class Archivable;
-	
+namespace assetSystem::io
+{	
 	class Archive
 	{
 		DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(Archive)
@@ -38,16 +37,7 @@ namespace AssetSystem::IO
 		
 	};
 
-
 	
-	class Archivable
-	{
-		DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(Archivable)
-					
-		public: virtual Archive &Serialize(Archive &archive) = 0;
-				
-	};
-
 
 	class ArchiveBase : public Archive
 	{

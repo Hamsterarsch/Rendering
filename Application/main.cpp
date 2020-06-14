@@ -1,22 +1,23 @@
-#include "Windows/App.hpp"
-#include "Shared/Exception/Exception.hpp"
+#include "Windows/Application.hpp"
 #include "Shared/Filesystem/Conversions.hpp"
 #include <fstream>
 #include <string>
 #include <filesystem>
+#include "Shared/Debugging.hpp"
 
-
-#include "AssetSystem/Interface/AssetSystem.hpp"
 
 int main()
 {
 	try
 	{		
-		Windows::App app{};
+		auto &app{ App::Windows::Application::Get() };
+		app.EnterLoop();
 		
 	}
 	catch(std::exception &e)
-	{				
+	{
+		Exception::DebugBreak();
+		
 		const auto directory{ Filesystem::Conversions::MakeExeRelative(L"Logs/") };
 		std::filesystem::create_directory(directory);
 		
@@ -32,7 +33,8 @@ int main()
 		return -1;		
 	}
 	catch(...)
-	{		
+	{
+		Exception::DebugBreak();
 		return -1;
 	}
 

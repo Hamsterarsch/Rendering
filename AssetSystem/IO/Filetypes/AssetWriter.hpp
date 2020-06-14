@@ -4,7 +4,7 @@
 #include <fstream>
 
 
-namespace AssetSystem::IO
+namespace assetSystem::io
 {
 	class AssetWriter final : public Writer
 	{

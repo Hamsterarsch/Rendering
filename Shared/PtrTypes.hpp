@@ -1,16 +1,29 @@
 #pragma once
 #include <memory>
 
-template<class T, class D = std::default_delete<T>>
-using UniquePtr = std::unique_ptr<T, D>;
 
-template<class T>
-using SharedPtr = std::shared_ptr<T>;
+template<class t, class t_deleter = std::default_delete<t>>
+using UniquePtr = std::unique_ptr<t, t_deleter>;
 
-template<class T, class ...Args>
-UniquePtr<T> MakeUnique(Args &&... args)
+
+template<class t>
+using SharedPtr = std::shared_ptr<t>;
+
+
+
+template<class t, class ...t_args>
+UniquePtr<t> MakeUnique(t_args &&... args)
 {
-	return std::make_unique<T>(std::forward<Args>(args)...);
+	return std::make_unique<t>(std::forward<t_args>(args)...);
 	
+}
+
+
+
+template<class t, class ...t_args>
+SharedPtr<t> MakeShared(t_args &&... args)
+{
+	return std::make_shared<t>(std::forward<t_args>(args)...);
+		
 }
 

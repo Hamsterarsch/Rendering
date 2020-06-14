@@ -30,7 +30,7 @@ namespace Renderer::DX12
 
 	
 	RendererFacadeImpl::RendererFacadeImpl(HWND outputWindow)
-		:
+		:		
 		resources{ Facade::MakeDeviceResources(D3D_FEATURE_LEVEL_12_0, enableDebugLayers, enableGpuValidation) },
 		commonQueue{ Facade::MakeQueue(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT) },
 		closeFence{ Facade::MakeFence(resources.get()) },
@@ -60,8 +60,8 @@ namespace Renderer::DX12
 		psoFactory{ resources.get(), depthStencilSettings, blendSettings, rasterizerSettings, vertexLayoutSettings },
 		signatureFactory{ resources.get() },
 		shaderFactory{ Facade::MakeShaderFactory(5, 1) },
-		descriptors{resources.get(), 1'000'000, 2048},		
-		commandProcessor{ *resources, *commonQueue, registry },
+		descriptors{ resources.get(), 524'288, 512 },		
+		commandProcessor{ *resources, *commonQueue, registry, counterFactory },
 		resourceViewFactory{ *resources, registry, descriptors }
 	{			
 		shaderFactory->AddIncludeDirectory(Filesystem::Conversions::MakeExeRelative("../Content/Shaders/Includes").c_str());
@@ -576,6 +576,52 @@ namespace Renderer::DX12
 
 
 	
+	void RendererFacadeImpl::SetWindowSurfaceToFullscreen(ResourceHandle::t_hash surface)
+	{
+		if(registry.IsWindowSurfaceReferenced(surface))
+		{
+			WaitForCommandsAndQueue();			
+		}
+
+		registry.GetSurface(surface)->GoFullscreen();
+		
+	}
+
+		void RendererFacadeImpl::WaitForCommandsAndQueue()
+		{
+			commandProcessor.WaitForIdle();
+			commandProcessor.SubmitAndWaitForGpuWork();
+		
+		}
+
+
+
+	void RendererFacadeImpl::SetWindowSurfaceToWindowed(ResourceHandle::t_hash surface)
+	{
+		if(registry.IsWindowSurfaceReferenced(surface))
+		{
+			WaitForCommandsAndQueue();			
+		}
+
+		registry.GetSurface(surface)->GoWindowed();
+		
+	}
+
+
+	
+	void RendererFacadeImpl::FitWindowSurfaceToWindow(ResourceHandle::t_hash surface)
+	{
+		if(registry.IsWindowSurfaceReferenced(surface))
+		{
+			WaitForCommandsAndQueue();			
+		}
+
+		registry.GetSurface(surface)->ResizeToWindow();
+		
+	}
+
+
+
 	UniquePtr<::Renderer::Commands::CommandFactory> RendererFacadeImpl::MakeCommandFactory()
 	{
 		return MakeUnique<Commands::DX12CommandFactory>(registry);
@@ -655,5 +701,12 @@ namespace Renderer::DX12
 		
 	}
 
+
+	
+	CounterFactory &RendererFacadeImpl::GetCounterFactory()
+	{
+		return counterFactory;
+		
+	}
 	
 }

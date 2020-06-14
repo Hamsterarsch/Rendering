@@ -1,9 +1,9 @@
 #pragma once
-#include "AssetSystem/IO/Archive.hpp"
+#include "IO/Archive.hpp"
 #include <string>
 
 
-namespace AssetSystem::IO
+namespace assetSystem::io
 {
 	class AssetArchiveTests
 	{

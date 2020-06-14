@@ -1,44 +1,57 @@
 #pragma once
-#include "AssetSystem/IO/Archive.hpp"
-#include "AssetSystem/Core/Assets/AssetSystemConfigAsset.hpp"
+#include "AssetSystemTypes.hpp"
+#include "IO/Archive.hpp"
+#include "Archivable.hpp"
 #include <filesystem>
 #include <unordered_map>
 
 
-namespace AssetSystem
+namespace assetSystem::core
 {
 	namespace fs = std::filesystem;
 	
-	class AssetRegistry : public IO::Archivable
-	{
-		private: static const char *assetExtension;
-
-		private: fs::path configDir;
-
-		private: Assets::AssetSystemConfigAsset config;
-
-		private: std::unordered_map<unsigned, fs::path> fileHandleMap;
+	class AssetRegistry : public Archivable
+	{		
+		private: fs::path projectAssetDirectory;
+				 		
+		private: std::unordered_map<AssetKey, fs::path> fileHandleMap;
 
 		private: struct ReferenceBucket
 		{
-			unsigned strongReferences;
-			unsigned weakReferences;
+			unsigned strongReferences{ 0 };
+			unsigned weakReferences{ 0 };
 			
 		};
 
-		private: std::unordered_map<unsigned, ReferenceBucket> references;
+		private: std::unordered_map<AssetKey, ReferenceBucket> references;
+				 		
+
 		
+		public: AssetRegistry(const char *projectAssetDirectory);
+
+			private: void DiscoverAssets(const fs::path &rootFolder);
+
+		public: void RegisterAsset(const fs::path &projectRelativePath);
+
+		public: static AssetKey MakeAssetKey(const std::string &projectRelativePath);
+
+		public: fs::path GetAbsoluteAssetPath(AssetKey assetKey) const;
+
+
+		public: void AddReference(AssetKey key);
+
+		public: void RemoveReference(AssetKey key);
+
+		public: bool IsUnreferenced(AssetKey key);
 		
-		public: AssetRegistry();
+		public: bool IsAssetKnown(AssetKey key) const;
 
-			private: void DiscoverAssets();
+		public: static AssetKey MakeAssetKey(const char *projectRelativePath);
 
-				private: void RegisterAsset(const fs::path &path);
-
-
-		IO::Archive& Serialize(IO::Archive& archive) override{ return archive; }
+		public: io::Archive &Serialize(io::Archive &archive) override{ return archive; }
 	};
 	
 	
 }
+
 

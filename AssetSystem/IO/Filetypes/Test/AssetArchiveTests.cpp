@@ -4,7 +4,7 @@
 #include <cassert>
 
 
-namespace AssetSystem::IO
+namespace assetSystem::io
 {
 	Archive &AssetArchiveTests::TestDataNested::Serialize(Archive &archive)
 	{

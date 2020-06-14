@@ -1,23 +1,16 @@
 #include "AssetSystem.hpp"
-
-
-#include "AssetSystem/IO/Filetypes/Test/AssetArchiveTests.hpp"
-#include "IO/Filetypes/AssetReader.hpp"
 #include "Core/AssetRegistry.hpp"
+#include "Core/AssetSystemImpl.hpp"
+#include "Core/AssetMemory.hpp"
 
 
-namespace AssetSystem
-{
-	
-	UniquePtr<AssetSystem> GetAssetSystem()
-	{
-		::AssetSystem::IO::AssetArchiveTests::Test();
-		AssetRegistry reg{};
+namespace assetSystem
+{	
+	UniquePtr<AssetSystem> MakeAssetSystem(const char *projectAssetFolder)
+	{			
+		return MakeUnique<core::AssetSystemImpl>( core::AssetRegistry{projectAssetFolder}, core::AssetMemory{} );
 		
-		return {};
 	}
-
-	
 
 	
 }

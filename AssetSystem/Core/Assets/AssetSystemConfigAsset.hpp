@@ -2,7 +2,7 @@
 #include <filesystem>
 
 
-namespace AssetSystem::Assets
+namespace assetSystem::Assets
 {
 	class AssetSystemConfigAsset
 	{

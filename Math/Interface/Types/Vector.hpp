@@ -51,7 +51,7 @@ namespace Math
 		};
 
 
-		public: constexpr VectorProxy() = default;
+		public: constexpr VectorProxy() : _internal{} {}
 		
 		public: template<class ...t_args> constexpr VectorProxy(t_args ...Args) : _internal{Args...} {}
 										
@@ -79,7 +79,7 @@ namespace Math
 		};
 
 
-		public: constexpr VectorProxy() = default;
+		public: constexpr VectorProxy() : _internal{} {}
 		
 		public: template<class ...t_args> constexpr VectorProxy(t_args ...Args) : _internal{Args...} {}
 										
@@ -107,7 +107,7 @@ namespace Math
 		};
 
 
-		public: constexpr VectorProxy() = default;
+		public: constexpr VectorProxy() : _internal{} {}
 		
 		public: template<class ...t_args> constexpr VectorProxy(t_args ...Args) : _internal{Args...} {}
 										

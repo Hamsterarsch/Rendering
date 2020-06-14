@@ -2,7 +2,7 @@
 #include <cstdint>
 
 
-namespace AssetSystem::IO
+namespace assetSystem::io
 {
 	inline bool IsBigEndianMachine()
 	{
