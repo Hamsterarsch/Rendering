@@ -249,6 +249,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AssetTypes\ProjectAsset.hpp" />
+    <ClInclude Include="Core\CreateProject.hpp" />
+    <ClInclude Include="Core\Globals.hpp" />
+    <ClInclude Include="Core\Version.hpp" />
     <ClInclude Include="Rendering\RendererMediator.hpp" />
     <ClInclude Include="Rendering\SceneRenderer.hpp" />
     <ClInclude Include="Rendering\UiRenderer.hpp" />
@@ -268,6 +272,7 @@
     <ClInclude Include="ThirdParty\imgui\imstb_textedit.h" />
     <ClInclude Include="ThirdParty\imgui\imstb_truetype.h" />
     <ClInclude Include="Types\Dimensions2D.hpp" />
+    <ClInclude Include="Ui\BasicFrontends\SetVisibilityFrontend.hpp" />
     <ClInclude Include="Ui\Core\ConstructionHelpers.hpp" />
     <ClInclude Include="Ui\Core\Slot.hpp" />
     <ClInclude Include="Ui\Core\StringInputTarget.hpp" />
@@ -290,11 +295,16 @@
     <ClInclude Include="Ui\User\CreateProjectDialog.hpp" />
     <ClInclude Include="Ui\User\PropertyCompositeElement.hpp" />
     <ClInclude Include="Ui\User\StartupProjectDialog.hpp" />
+    <ClInclude Include="Ui\User\StringInputTargetImpl.hpp" />
     <ClInclude Include="Windows\Application.hpp" />
     <ClInclude Include="Windows\SelectPathDialog.hpp" />
     <ClInclude Include="Window\Windows\Window.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AssetTypes\ProjectAsset.cpp" />
+    <ClCompile Include="Core\CreateProject.cpp" />
+    <ClCompile Include="Core\Globals.cpp" />
+    <ClCompile Include="Core\Version.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Rendering\RendererMediator.cpp" />
     <ClCompile Include="Rendering\SceneRenderer.cpp" />
@@ -313,13 +323,16 @@
     <ClCompile Include="ThirdParty\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="ThirdParty\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Types\Dimensions2D.cpp" />
+    <ClCompile Include="Ui\BasicFrontends\SetVisibilityFrontend.cpp" />
     <ClCompile Include="Ui\Core\UiElement.cpp" />
     <ClCompile Include="Ui\Core\UiLayoutElement.cpp" />
     <ClCompile Include="Ui\Core\UiBuilderImpl.cpp" />
     <ClCompile Include="Ui\Elements\GridLayout.cpp" />
     <ClCompile Include="Ui\ImguiTypeArithmetics.cpp" />
     <ClCompile Include="Ui\Misc\AssetNameFilter.cpp" />
+    <ClCompile Include="Ui\User\CreateProjectDialog.cpp" />
     <ClCompile Include="Ui\User\PropertyCompositeElement.cpp" />
+    <ClCompile Include="Ui\User\StartupProjectDialog.cpp" />
     <ClCompile Include="Windows\Application.cpp" />
     <ClCompile Include="Windows\SelectPathDialog.cpp" />
     <ClCompile Include="Window\Windows\Window.cpp" />

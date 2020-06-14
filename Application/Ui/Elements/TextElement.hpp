@@ -12,6 +12,8 @@ namespace App::Ui
 
 
 		public: TextElement(const char *text) : text{ text } {}
+
+		public: void SetText(const char *text) { this->text = text; }
 		
 		public: void RenderAndQueryInternal(Core::UiBuilder &builder) override
 		{			

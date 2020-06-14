@@ -3,62 +3,21 @@
 #include <fstream>
 #include <string>
 #include <filesystem>
-
-#include "AssetSystem.hpp"
-#include "IO/Archive.hpp"
-#include "AssetConstructOperationsHelper.hpp"
-
-class TestAsset final : public assetSystem::Asset
-{
-	public: int niceData{ 0 };
-	public: int niceData2{ 0 };
-	public: float floatyData{ 0 };
-	
-	public:	assetSystem::io::Archive &Serialize(assetSystem::io::Archive &archive) override
-	{
-		return archive
-		.Serialize("niceData1", niceData)
-		.Serialize("niceData2", niceData2)
-		.Serialize("floatyData", floatyData);
-				
-	}
-	
-};
-
+#include "Shared/Debugging.hpp"
 
 
 int main()
 {
 	try
-	{
-		auto aSys{ assetSystem::MakeAssetSystem("D:/test") };
-		aSys->RegisterAssetClass("test", MakeUnique<assetSystem::AssetConstructOperationsHelper<TestAsset>>());
-
-		TestAsset t;
-		t.niceData = 1;
-		t.niceData2 = 2;
-		t.floatyData = 0.4;
-
-		const char *assetPath{ "testAsset.test"};
-		if(aSys->DoesAssetExist(assetPath))
-		{
-			auto ap = aSys->GetAsset(assetPath);
-			auto ep = ap;
-			auto cp = std::move(ap);
-		}
-		else
-		{
-			auto ap = aSys->MakeAsset(assetPath, std::move(t));			
-		}
-		
-		
-		
+	{		
 		auto &app{ App::Windows::Application::Get() };
 		app.EnterLoop();
 		
 	}
 	catch(std::exception &e)
-	{				
+	{
+		Exception::DebugBreak();
+		
 		const auto directory{ Filesystem::Conversions::MakeExeRelative(L"Logs/") };
 		std::filesystem::create_directory(directory);
 		
@@ -74,7 +33,8 @@ int main()
 		return -1;		
 	}
 	catch(...)
-	{		
+	{
+		Exception::DebugBreak();
 		return -1;
 	}
 

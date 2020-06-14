@@ -109,7 +109,7 @@ namespace assetSystem::core
 			}
 			else
 			{
-				DebugBreak();
+				Exception::DebugBreak();
 				Exception::ThrowIfDebug
 				({
 					"You are trying to load an asset that is not registered with the asset registry.\

@@ -1,10 +1,15 @@
 #pragma once
 
 
-inline void DebugBreak()
+namespace Exception
 {
+	inline void DebugBreak()
+	{
 #ifdef _DEBUG
-	__debugbreak();
+		__debugbreak();
 #endif
+		
+	}
+
 	
 }

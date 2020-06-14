@@ -2,7 +2,8 @@
 #include <ShObjIdl_core.h>
 #include <wrl/client.h>
 
-
+#include <vector>
+#include <string>
 
 namespace App::Windows
 {
@@ -74,80 +75,107 @@ namespace App::Windows
 		return E_OUTOFMEMORY;
 		
 	}
+
 	
-	SelectPathDialog::SelectPathDialog()
+
+
+	SelectPathDialog::SelectPathDialog() : SelectPathDialog(nullptr, 0)		
 	{
-		CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
-		
-		Microsoft::WRL::ComPtr<IFileDialog> dialog{};
-		auto result
+	}
+	
+		SelectPathDialog::SelectPathDialog(const wchar_t **allowedFileExtensions, const unsigned numExtensions)
 		{
-			CoCreateInstance
-			(
-				CLSID_FileOpenDialog,
-				nullptr,
-				CLSCTX_INPROC_SERVER,
-				IID_PPV_ARGS(&dialog)
-			)
-		};
+			CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
+			
+			Microsoft::WRL::ComPtr<IFileDialog> dialog{};
+			auto result
+			{
+				CoCreateInstance
+				(
+					CLSID_FileOpenDialog,
+					nullptr,
+					CLSCTX_INPROC_SERVER,
+					IID_PPV_ARGS(&dialog)
+				)
+			};
+					
+			if(FAILED(result))
+			{
+				return;
 				
-		if(FAILED(result))
-		{
-			return;
+			}
+
+			
+			Microsoft::WRL::ComPtr<IFileDialogEvents> eh;
+			CreateInstance<FileDialogEventHandler>(IID_PPV_ARGS(&eh));
+			
+			DWORD cookie;		
+			if(FAILED( dialog->Advise(eh.Get(), &cookie) ))
+			{
+				return;
+			}
+			
+			FILEOPENDIALOGOPTIONS options;
+			if(FAILED( dialog->GetOptions(&options) ))
+			{
+				return;
+			}
+			
+
+			if(numExtensions > 0)
+			{
+				COMDLG_FILTERSPEC filter{};
+				filter.pszName = L"";
+
+				std::wstring filterPattern{};
+				for(auto extensionIndex{ 0 }; extensionIndex < numExtensions; ++extensionIndex)
+				{
+					((filterPattern += L"*.") += allowedFileExtensions[extensionIndex]) += L";";
+				}
+				filter.pszSpec = filterPattern.c_str();
+				
+				dialog->SetFileTypes(1, &filter);
+
+				if(FAILED(dialog->SetOptions(options | FOS_FILEMUSTEXIST)))
+				{
+					return;					
+				}
+			}
+			else
+			{
+				if(FAILED( dialog->SetOptions(options | FOS_PICKFOLDERS) ))
+				{
+					return;
+				}
+			}
+
+			if(FAILED( dialog->Show(nullptr) ))
+			{
+				return;
+			}
+
+			IShellItem *selected{ nullptr };
+			if(FAILED( dialog->GetResult(&selected) ))
+			{
+				return;
+			}
+
+
+			wchar_t *getResult;
+			if(FAILED( selected->GetDisplayName(SIGDN_FILESYSPATH, &getResult) ))
+			{
+				return;
+			}
+
+			selectedItem = std::filesystem::path{ getResult };
+			CoTaskMemFree(getResult);
+			selected->Release();
+
+			dialog->Unadvise(cookie);
+			
+			CoUninitialize();
 			
 		}
 
-		
-		Microsoft::WRL::ComPtr<IFileDialogEvents> eh;
-		CreateInstance<FileDialogEventHandler>(IID_PPV_ARGS(&eh));
-		
-		DWORD cookie;		
-		if(FAILED( dialog->Advise(eh.Get(), &cookie) ))
-		{
-			return;
-		}
-		
-		FILEOPENDIALOGOPTIONS options;
-		if(FAILED( dialog->GetOptions(&options) ))
-		{
-			return;
-		}
-
-		if(FAILED( dialog->SetOptions(options | FOS_PICKFOLDERS) ))
-		{
-			return;
-		}
-
-		//COMDLG_FILTERSPEC::
-		//dialog->SetFileTypes()
-		//set file type index
-		//set default extension
-
-		if(FAILED( dialog->Show(nullptr) ))
-		{
-			return;
-		}
-
-		IShellItem *selected;
-		if(FAILED( dialog->GetResult(&selected) ))
-		{
-			return;
-		}
-
-		wchar_t *getResult;
-		if(FAILED( selected->GetDisplayName(SIGDN_FILESYSPATH, &getResult) ))
-		{
-			return;
-		}
-
-		selectedItem = std::filesystem::path{ getResult };
-		CoTaskMemFree(getResult);
-		selected->Release();
-
-		dialog->Unadvise(cookie);
-		
-		CoUninitialize();
-		
-	}
-	
+			
 }

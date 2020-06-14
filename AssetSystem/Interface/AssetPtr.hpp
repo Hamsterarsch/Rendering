@@ -36,6 +36,10 @@ namespace assetSystem
 
 		public: bool IsInvalid() const;
 
+
+		public: Asset *GetAsset() { return asset; }
+
+		public: const Asset *GetAsset() const { return asset; }
 		
 		public: AssetKey GetKey() const { return key; }
 

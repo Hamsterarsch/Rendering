@@ -19,6 +19,12 @@ namespace App::Ui::Core
 		public: virtual bool CharacterIsForbidden(char character) const = 0;
 
 		public: virtual bool IsReadOnly() const = 0;
+
+		public: virtual void NotifyContentChanged() = 0;
+
+		public: virtual bool ContentWasChanged() const = 0;
+
+		public: virtual void ClearChangedState() = 0;
 		
 	};
 	

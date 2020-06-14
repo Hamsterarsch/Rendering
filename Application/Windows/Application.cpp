@@ -133,8 +133,7 @@ namespace App::Windows
 		
 			ImGui_ImplWin32_NewFrame();
 			ImGui::NewFrame();
-				
-		
+					
 			for(auto &&frontend : uiFrontends)
 			{
 				frontend->Update(builder);			

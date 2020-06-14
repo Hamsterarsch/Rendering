@@ -79,6 +79,16 @@ namespace App::Ui::Core
 
 
 	
+	UiBuilder &UiBuilderImpl::DeclareButtonDisabled()
+	{
+		userSettings.isButtonDisabled = true;
+
+		return *this;
+		
+	}
+
+
+
 	UiBuilder &UiBuilderImpl::LeaveWidget()
 	{
 		(*desctructionFuncStack.front())();
@@ -199,11 +209,29 @@ namespace App::Ui::Core
 	UiBuilder &UiBuilderImpl::MakeButton(bool *isPressed)
 	{	
 		const auto size{ ApplyDimensionsForTextTypeElements(userSettings.name.c_str()) };
+
+		ImGuiButtonFlags flags{};
+		if(userSettings.isButtonDisabled)
+		{
+			flags |= ImGuiButtonFlags_Disabled;			
+			ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled));
+
+			auto disabledButtonColor{ ImGui::GetStyleColorVec4(ImGuiCol_Button) };
+			disabledButtonColor.w = .5;
+			
+			ImGui::PushStyleColor(ImGuiCol_Button, disabledButtonColor);
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disabledButtonColor);
+		}
 		
-		const auto pressedResult{ ImGui::Button(userSettings.name.c_str(), size) }; //todo: check if apply for text elements changes button size
+		const auto pressedResult{ ImGui::ButtonEx(userSettings.name.c_str(), size, flags) };
 		if(isPressed)
 		{
 			*isPressed = pressedResult;
+		}
+
+		if(userSettings.isButtonDisabled)
+		{			
+			ImGui::PopStyleColor(3);
 		}
 
 		DoItemEpilogue();		
@@ -213,20 +241,23 @@ namespace App::Ui::Core
 
 		ImVec2 UiBuilderImpl::ApplyDimensionsForTextTypeElements(const char *text) const
 		{
-			ImVec2 size{ ImGui::GetStyle().FramePadding*2 + ImGui::CalcTextSize(text) };
-				
-			ApplyUserSizing(size.x, size.y);
+			auto defaultSize{ ImGui::GetContentRegionAvail() };
+			defaultSize.y = ImGui::GetFontSize() + ImGui::GetStyle().FramePadding.y*2;
 
-			SetNextItemSize(size.x, size.y);
+			auto usersDesiredSize{ defaultSize };
+			ApplyUserSizing(usersDesiredSize.x, usersDesiredSize.y);
+						
+			ImVec2 wrappedSize{ ImGui::GetStyle().FramePadding*2 + ImGui::CalcTextSize(text, nullptr, false, usersDesiredSize.x) };
+			SetNextItemSize(wrappedSize.x, wrappedSize.y);
 
-		
+
 			ImVec2 defaultPos{};
 			ApplyUserPositioning(defaultPos.x, defaultPos.y);
-			ApplyUserPivot(defaultPos.x, defaultPos.y, size.x, size.y);
+			ApplyUserPivot(defaultPos.x, defaultPos.y, wrappedSize.x, wrappedSize.y);
 					
 			ImGui::SetCursorPos(ImGui::GetCursorPos() + defaultPos);
 
-			return size;
+			return wrappedSize;
 		
 		}
 
@@ -248,10 +279,12 @@ namespace App::Ui::Core
 
 	UiBuilder &UiBuilderImpl::MakeText(const char *text)
 	{
-		ApplyDimensionsForTextTypeElements(text);
-
+		auto elementSize{ ApplyDimensionsForTextTypeElements(text) };
+				
 		ImGui::GetCurrentWindow()->DC.CurrLineTextBaseOffset = std::clamp(ImGui::GetCurrentWindow()->DC.CurrLineTextBaseOffset, ImGui::GetStyle().FramePadding.x, ImGui::GetCurrentWindow()->DC.CurrLineTextBaseOffset);
+		ImGui::PushTextWrapPos(ImGui::GetCursorPosX() + elementSize.x);
 		ImGui::Text(text);
+		ImGui::PopTextWrapPos();
 		
 		return *this;
 	}
@@ -271,6 +304,7 @@ namespace App::Ui::Core
 				{
 					out = 1;					
 				}
+				inputTarget->NotifyContentChanged();
 			}
 
 			if(data->Flags & ImGuiInputTextFlags_CallbackResize)
@@ -390,7 +424,7 @@ namespace App::Ui::Core
 		
 		ImGui::BeginChild
 		(
-			("col" + std::to_string(startColIndex+gridData.columnCount+colSpan) + "row" + std::to_string(startRowIndex+gridData.rowCount+rowSpan)).c_str(),
+			( "col"+std::to_string(startColIndex) + "_s"+std::to_string(colSpan)	+    "row"+std::to_string(startRowIndex) + "_s"+std::to_string(rowSpan) ).c_str(),
 			cellSize
 		);
 		desctructionFuncStack.push_front(&ImGui::EndChild);

@@ -1,12 +1,11 @@
 #include "AssetSystem/Core/AssetRegistry.hpp"
 #include "Shared/Filesystem/Conversions.hpp"
 #include "Shared/Hashing/CRC32.hpp"
+#include "AssetFileending.hpp"
 
 
 namespace assetSystem::core
-{
-	const char *AssetRegistry::assetExtension{ ".asset" };
-	
+{	
 	AssetRegistry::AssetRegistry(const char *projectAssetDirectory)		
 	{
 		std::string asString{ projectAssetDirectory };
@@ -24,7 +23,7 @@ namespace assetSystem::core
 		{			
 			for(auto &&entry : fs::recursive_directory_iterator{ rootFolder })
 			{
-				if(entry.is_regular_file() && entry.path().extension() == assetExtension)
+				if(entry.is_regular_file() && entry.path().extension() == GetAssetFileending())
 				{				
 					RegisterAsset(relative(entry, rootFolder));
 				}
@@ -35,10 +34,14 @@ namespace assetSystem::core
 			void AssetRegistry::RegisterAsset(const fs::path &projectRelativePath)
 			{
 				auto asString{ projectRelativePath.string() };
-				const auto extensionPos{ asString.find(assetExtension) };
-				asString.erase(extensionPos, asString.size() - extensionPos);
-		
-				fileHandleMap[MakeAssetKey(asString)] = asString;
+				const auto extensionPos{ asString.find(GetAssetFileending()) };
+				if(extensionPos != std::string::npos)
+				{
+					asString.erase(extensionPos, asString.size() - extensionPos);					
+				}
+
+				const auto key{ MakeAssetKey(asString) };
+				fileHandleMap.insert( {key, std::move(asString)} );
 		
 			}
 
@@ -52,7 +55,7 @@ namespace assetSystem::core
 				
 	fs::path AssetRegistry::GetAbsoluteAssetPath(const unsigned assetKey) const
 	{
-		return { projectAssetDirectory.string() + fileHandleMap.at(assetKey).string() + assetExtension };
+		return { projectAssetDirectory.string() + fileHandleMap.at(assetKey).string() + GetAssetFileending() };
 		
 	}
 

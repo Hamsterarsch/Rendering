@@ -11,6 +11,8 @@ namespace App::Ui
 		private: const char *name;
 
 		private: size_t isClickedTargetIndex;
+
+		public: bool isDisabled;
 				 
 
 		
@@ -18,12 +20,18 @@ namespace App::Ui
 			:
 			UiAccessElement{ frontend },
 			name{ name },
-			isClickedTargetIndex{ isClickedTargetIndex }			
+			isClickedTargetIndex{ isClickedTargetIndex },
+			isDisabled{ false }
 		{}
 
 		
 		public: void RenderAndQueryInternal(Core::UiBuilder &builder) override
 		{
+			if(isDisabled)
+			{
+				builder.DeclareButtonDisabled();
+			}
+			
 			builder
 			.DeclareName(name)
 			.MakeButton(GetFrontend().GetInputTargetBool(isClickedTargetIndex));

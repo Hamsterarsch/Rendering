@@ -62,6 +62,27 @@
     <ClCompile Include="Ui\Core\UiElement.cpp">
       <Filter>Ui\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Ui\BasicFrontends\SetVisibilityFrontend.cpp">
+      <Filter>Ui\BasicFrontends</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Version.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="AssetTypes\ProjectAsset.cpp">
+      <Filter>AssetTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\CreateProject.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Globals.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui\User\CreateProjectDialog.cpp">
+      <Filter>Ui\User</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui\User\StartupProjectDialog.cpp">
+      <Filter>Ui\User</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window\Windows\Window.hpp">
@@ -175,6 +196,24 @@
     <ClInclude Include="Ui\Core\ConstructionHelpers.hpp">
       <Filter>Ui\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Ui\BasicFrontends\SetVisibilityFrontend.hpp">
+      <Filter>Ui\BasicFrontends</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CreateProject.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetTypes\ProjectAsset.hpp">
+      <Filter>AssetTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Version.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Globals.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\User\StringInputTargetImpl.hpp">
+      <Filter>Ui\User</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Window">
@@ -212,6 +251,15 @@
     </Filter>
     <Filter Include="Ui\User">
       <UniqueIdentifier>{55f997ca-b729-4675-b687-1fabf666dc05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ui\BasicFrontends">
+      <UniqueIdentifier>{7c47136c-f2fb-4a2c-944f-de9bc15f9651}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetTypes">
+      <UniqueIdentifier>{199a8530-a057-4c69-9ddf-2592f0b89f61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{bb721872-6a2a-44c3-a767-552c807a385b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

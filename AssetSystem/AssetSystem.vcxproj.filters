@@ -36,6 +36,9 @@
     <ClCompile Include="Core\AssetMemory.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Core\AssetFileending.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">
@@ -125,6 +128,9 @@
       <Filter>Interface</Filter>
     </ClInclude>
     <ClInclude Include="Interface\AssetConstructOperationsHelper.hpp">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\AssetFileending.hpp">
       <Filter>Interface</Filter>
     </ClInclude>
   </ItemGroup>

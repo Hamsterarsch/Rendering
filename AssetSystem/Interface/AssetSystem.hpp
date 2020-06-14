@@ -36,6 +36,7 @@ namespace assetSystem
 		public: virtual void SerializeAsset(AssetPtr &assetPtr) = 0;
 
 		public: virtual void ReloadAsset(AssetPtr &assetPtr) = 0;
+
 		
 		
 		friend AssetPtr;

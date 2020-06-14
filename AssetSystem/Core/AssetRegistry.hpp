@@ -11,9 +11,7 @@ namespace assetSystem::core
 	namespace fs = std::filesystem;
 	
 	class AssetRegistry : public Archivable
-	{
-		private: static const char *assetExtension;
-				 
+	{		
 		private: fs::path projectAssetDirectory;
 				 		
 		private: std::unordered_map<AssetKey, fs::path> fileHandleMap;

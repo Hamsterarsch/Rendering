@@ -21,6 +21,7 @@ namespace App::Ui::Core
 			Math::Vector2 pivot{ .5, .5 };
 			float padding{ 0 };
 			ImGuiWindowFlags flagsWindow{ 0 };
+			bool isButtonDisabled{ false };
 		} userSettings;
 		
 		private: struct
@@ -48,6 +49,8 @@ namespace App::Ui::Core
 
 		public: UiBuilder &DeclareTabNocollapse() override;
 
+		public: UiBuilder &DeclareButtonDisabled() override;
+		
 				
 		public: UiBuilder &LeaveWidget() override;
 		
@@ -85,7 +88,7 @@ namespace App::Ui::Core
 		public: UiBuilder &MakeGrid(size_t columns, size_t rows) override;
 		
 		public: UiBuilder &MakeCell(size_t startColIndex, size_t startRowIndex, size_t colSpan = 1, size_t rowSpan = 1) override;
-							   		
+
 
 	};
 

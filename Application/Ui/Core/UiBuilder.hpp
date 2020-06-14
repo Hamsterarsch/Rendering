@@ -24,6 +24,8 @@ namespace App::Ui::Core
 
 		public: virtual UiBuilder &DeclareTabNocollapse() = 0;
 
+		public: virtual UiBuilder &DeclareButtonDisabled() = 0;
+
 		
 		public: virtual UiBuilder &LeaveWidget() = 0;
 		

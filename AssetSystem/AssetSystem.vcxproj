@@ -238,6 +238,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AssetSystem.cpp" />
+    <ClCompile Include="Core\AssetFileending.cpp" />
     <ClCompile Include="Core\AssetMemory.cpp" />
     <ClCompile Include="Core\AssetPtr.cpp" />
     <ClCompile Include="Core\AssetRegistry.cpp" />
@@ -264,6 +265,7 @@
     <ClInclude Include="Interface\Archivable.hpp" />
     <ClInclude Include="Interface\Asset.hpp" />
     <ClInclude Include="Interface\AssetConstructionOperations.hpp" />
+    <ClInclude Include="Interface\AssetFileending.hpp" />
     <ClInclude Include="Interface\AssetPtr.hpp" />
     <ClInclude Include="Interface\AssetSystem.hpp" />
     <ClInclude Include="Interface\AssetSystemExportHelper.hpp" />
