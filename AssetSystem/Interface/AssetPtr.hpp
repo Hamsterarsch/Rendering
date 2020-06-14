@@ -1,12 +1,15 @@
 #pragma once
-#include "AssetSystem.hpp"
+#include "AssetSystemExportHelper.hpp"
 #include "AssetSystemTypes.hpp"
 
 
 namespace assetSystem
-{	
-	class AssetPtr
-	{
+{
+	class AssetSystem;
+	class Asset;
+	
+	class ASSET_SYSTEM_DLLSPEC AssetPtr
+	{		
 		private: Asset *asset;
 
 		private: AssetKey key;
@@ -15,13 +18,9 @@ namespace assetSystem
 
 		
 
-		public: AssetPtr *operator->();
+		public: AssetPtr(const char *projectRelativePath, AssetSystem &system);
 
-		public: const AssetPtr *operator->() const;
-
-		public: AssetPtr(const char *relativePath, AssetSystem &system);
-		
-		public: AssetPtr(AssetKey key, AssetSystem &system);
+		public: AssetPtr(Asset &asset, AssetKey key, AssetSystem &system);
 							   		
 		public: AssetPtr(const AssetPtr &other);
 
@@ -37,8 +36,14 @@ namespace assetSystem
 
 		public: bool IsInvalid() const;
 
-				
-	};
+		
+		public: AssetKey GetKey() const { return key; }
 
+		public: Asset *operator->() { return asset; }
+
+		public: const Asset *operator->() const { return asset; }
+								
+	};
+	
 	
 }

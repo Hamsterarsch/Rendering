@@ -1,7 +1,7 @@
-#include "AssetSystem/IO/Archive.hpp"
+#include "IO/Archive.hpp"
 
 
-namespace assetSystem::IO
+namespace assetSystem::io
 {
 	Archive &ArchiveBase::Serialize(const char *propertyName, Archivable &archivable)
 	{

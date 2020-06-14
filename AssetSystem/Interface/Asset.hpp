@@ -1,17 +1,14 @@
 #pragma once
-#include "AssetSystemExportHelper.hpp"
-#include "LimitedReflection.hpp"
-#include <filesystem>
+#include "Archivable.hpp"
 
 
 namespace assetSystem
 {
-	class ASSET_SYSTEM_DLLSPEC Asset : Reflection::LimitedReflected
+	class ASSET_SYSTEM_DLLSPEC Asset : public Archivable
 	{
-		DEFINE_TYPE_INFO(Asset, LimitedReflected)
-
-		public: virtual std::filesystem::path GetSerializeSubfolder() const = 0;
-					
+		
+									
 	};
+
 	
 }

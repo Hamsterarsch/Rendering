@@ -1,31 +1,16 @@
 #include "AssetPtr.hpp"
+#include "AssetSystem.hpp"
 
 
 namespace assetSystem
 {
-	AssetPtr *AssetPtr::operator->()
-	{
-		return this;
-		
-	}
-
-
-
-	const AssetPtr *AssetPtr::operator->() const
-	{
-		return this;
-		
-	}
-
-
-
-	AssetPtr::AssetPtr(const char *relativePath, AssetSystem &system)
+	AssetPtr::AssetPtr(const char *projectRelativePath, AssetSystem &system)
 		:
 		asset{ nullptr },
 		key{ 0 },
 		assetSystem{ &system }
 	{
-		if(const auto loadInfo{ assetSystem->GetAsset(relativePath) }; loadInfo.asset)
+		if(const auto loadInfo{ assetSystem->GetAssetInternal(projectRelativePath) }; loadInfo.asset)
 		{
 			asset = loadInfo.asset;
 			key = loadInfo.key;						
@@ -34,18 +19,13 @@ namespace assetSystem
 	}
 
 
-
-	AssetPtr::AssetPtr(AssetKey key, AssetSystem &system)
+	
+	AssetPtr::AssetPtr(Asset &asset, const AssetKey key, AssetSystem &system)
 		:
-		asset{ nullptr },
+		asset{ &asset },
 		key{ key },
 		assetSystem{ &system }
 	{
-		if(auto *asset{ assetSystem->GetAsset(key) })
-		{
-			this->asset = asset;					
-		}		
-		
 	}
 
 
@@ -84,18 +64,21 @@ namespace assetSystem
 			
 		}
 
+		const auto pointToDifferentAssets{ this->key != rhs.key };
+		if(!this->IsInvalid() && pointToDifferentAssets)
+		{
+			assetSystem->RemoveReference(key);
+		}
+		
 		asset = rhs.asset;
 		key = rhs.key;
 		assetSystem = rhs.assetSystem;
 
-		if(this->IsInvalid())
+		if(!this->IsInvalid() && pointToDifferentAssets)
 		{
-			return *this;
-			
+			assetSystem->AddReference(key);			
 		}
-
-		assetSystem->AddReference(key);
-
+		
 		return *this;
 		
 	}
@@ -122,6 +105,11 @@ namespace assetSystem
 			
 		}
 
+		if(!this->IsInvalid() && this->key != rhs.key)
+		{
+			assetSystem->RemoveReference(key);
+		}
+		
 		asset = std::move(rhs.asset);
 		key = std::move(rhs.key);
 		assetSystem = std::move(rhs.assetSystem);

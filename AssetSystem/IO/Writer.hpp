@@ -1,8 +1,8 @@
 #pragma once
-#include "AssetSystem/IO/Archive.hpp"
+#include "IO/Archive.hpp"
 
 
-namespace assetSystem::IO
+namespace assetSystem::io
 {
 	class Writer : public ArchiveBase
 	{

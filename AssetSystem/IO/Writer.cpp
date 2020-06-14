@@ -3,12 +3,12 @@
 
 namespace assetSystem
 {
-	bool IO::Writer::IsWriting() const
+	bool io::Writer::IsWriting() const
 	{
 		return true;
 	}
 	
-	bool IO::Writer::IsReading() const
+	bool io::Writer::IsReading() const
 	{
 		return false;
 	}

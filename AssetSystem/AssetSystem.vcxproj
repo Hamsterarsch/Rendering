@@ -238,6 +238,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AssetSystem.cpp" />
+    <ClCompile Include="Core\AssetMemory.cpp" />
     <ClCompile Include="Core\AssetPtr.cpp" />
     <ClCompile Include="Core\AssetRegistry.cpp" />
     <ClCompile Include="Core\AssetSystemImpl.cpp" />
@@ -260,18 +261,21 @@
     <ClInclude Include="Core\AssetRegistry.hpp" />
     <ClInclude Include="Core\AssetSystemImpl.hpp" />
     <ClInclude Include="Core\Assets\AssetSystemConfigAsset.hpp" />
+    <ClInclude Include="Interface\Archivable.hpp" />
     <ClInclude Include="Interface\Asset.hpp" />
+    <ClInclude Include="Interface\AssetConstructionOperations.hpp" />
     <ClInclude Include="Interface\AssetPtr.hpp" />
     <ClInclude Include="Interface\AssetSystem.hpp" />
     <ClInclude Include="Interface\AssetSystemExportHelper.hpp" />
     <ClInclude Include="Interface\AssetSystemTypes.hpp" />
+    <ClInclude Include="Interface\AssetConstructOperationsHelper.hpp" />
+    <ClInclude Include="Interface\IO\Archive.hpp" />
     <ClInclude Include="Interface\LimitedReflection.hpp" />
     <ClInclude Include="IO\DiskConversions.hpp" />
     <ClInclude Include="IO\Filetypes\AssetArchiveConstants.hpp" />
     <ClInclude Include="IO\Filetypes\AssetReader.hpp" />
     <ClInclude Include="IO\Filetypes\AssetWriter.hpp" />
     <ClInclude Include="IO\Filetypes\JsonWriter.hpp" />
-    <ClInclude Include="IO\Archive.hpp" />
     <ClInclude Include="IO\Filetypes\Test\AssetArchiveTests.hpp" />
     <ClInclude Include="IO\Reader.hpp" />
     <ClInclude Include="IO\Writer.hpp" />

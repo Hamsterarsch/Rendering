@@ -4,20 +4,38 @@
 #include "Shared/PtrTypes.hpp"
 #include "Asset.hpp"
 
+#include "AssetConstructionOperations.hpp"
 
-namespace assetSystem
+
+namespace assetSystem::core
 {
 	class AssetMemory
 	{
-		private: std::unordered_map<AssetKey, UniquePtr<Asset>> assets;
+		struct AssetInfo
+		{
+			UniquePtr<char[]> memory;
+			AssetConstructionOperations *cOps;
+		};
+		
+		private: std::unordered_map<AssetKey, AssetInfo> assetsInfos;
 
+		private: std::unordered_map<std::string, UniquePtr<AssetConstructionOperations>> assetConstructOperations;
+		
+
+		public: void RegisterAssetClass(const char *classFileExtension, UniquePtr<AssetConstructionOperations> &&constructOperations);
 
 		
-		void StoreAsset(AssetKey assetKey, UniquePtr<Asset> &&asset) { assets[assetKey] = std::move(asset); }
+		public: Asset &MakeAsset(Asset &&assetData, AssetKey key, const char *classFileExtension);
+		
+			private: char *AllocateAssetMemory(AssetKey key, AssetConstructionOperations &cOps);
 
-		Asset &GetAsset(AssetKey assetKey) { return *assets.at(assetKey); }
+		public: Asset &MakeAsset(AssetKey key, const char *classFileExtension);
+		
+		public: Asset &GetAsset(AssetKey key);
 
-		void FreeAsset(AssetKey assetKey) { assets.erase(assetKey); }
+		public: void FreeAsset(AssetKey key);
+
+		public: bool IsAssetLoaded(AssetKey key) const;
 		
 	};
 	

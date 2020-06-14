@@ -33,6 +33,9 @@
     <ClCompile Include="Core\AssetPtr.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Core\AssetMemory.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">
@@ -53,6 +56,9 @@
     <Filter Include="Core\Assets">
       <UniqueIdentifier>{c23c8548-31ba-4f4a-bf80-d14e8d7a2af5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Interface\IO">
+      <UniqueIdentifier>{9d42432a-5a55-45db-ac13-258a62cebf81}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Interface\AssetSystemExportHelper.hpp">
@@ -69,9 +75,6 @@
     </ClInclude>
     <ClInclude Include="IO\Filetypes\JsonWriter.hpp">
       <Filter>IO\Filetypes</Filter>
-    </ClInclude>
-    <ClInclude Include="IO\Archive.hpp">
-      <Filter>IO</Filter>
     </ClInclude>
     <ClInclude Include="IO\Writer.hpp">
       <Filter>IO</Filter>
@@ -110,6 +113,18 @@
       <Filter>Interface</Filter>
     </ClInclude>
     <ClInclude Include="Interface\AssetSystemTypes.hpp">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\Archivable.hpp">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\IO\Archive.hpp">
+      <Filter>Interface\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\AssetConstructionOperations.hpp">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\AssetConstructOperationsHelper.hpp">
       <Filter>Interface</Filter>
     </ClInclude>
   </ItemGroup>

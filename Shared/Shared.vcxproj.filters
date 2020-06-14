@@ -28,6 +28,7 @@
     <ClInclude Include="Hashing\CRC32.hpp">
       <Filter>Hashing</Filter>
     </ClInclude>
+    <ClInclude Include="Debugging.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Exception">

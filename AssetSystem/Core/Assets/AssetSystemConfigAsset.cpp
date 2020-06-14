@@ -6,7 +6,7 @@ namespace assetSystem
 {
 	Assets::AssetSystemConfigAsset::AssetSystemConfigAsset(const std::filesystem::path &configDirectory)
 	{		
-		IO::AssetReader assetReader{ configDirectory.string() + "AssetSystemConfig.asset" };
+		io::AssetReader assetReader{ configDirectory.string() + "AssetSystemConfig.asset" };
 
 		const auto length{ assetReader.GetPropertySizeInBytes(assetDirectoryPropertyName) };
 		assetDirectory.resize(length);

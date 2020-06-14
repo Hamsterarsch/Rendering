@@ -1,47 +1,59 @@
 #pragma once
 #include "AssetSystemTypes.hpp"
-#include "AssetSystem/IO/Archive.hpp"
+#include "IO/Archive.hpp"
+#include "Archivable.hpp"
 #include <filesystem>
 #include <unordered_map>
 
 
-namespace assetSystem::Core
+namespace assetSystem::core
 {
 	namespace fs = std::filesystem;
 	
-	class AssetRegistry : public IO::Archivable
+	class AssetRegistry : public Archivable
 	{
 		private: static const char *assetExtension;
-
-		private: fs::path programDirectory;
-
+				 
 		private: fs::path projectAssetDirectory;
 				 		
 		private: std::unordered_map<AssetKey, fs::path> fileHandleMap;
 
 		private: struct ReferenceBucket
 		{
-			unsigned strongReferences;
-			unsigned weakReferences;
+			unsigned strongReferences{ 0 };
+			unsigned weakReferences{ 0 };
 			
 		};
 
 		private: std::unordered_map<AssetKey, ReferenceBucket> references;
-		
+				 		
 
 		
 		public: AssetRegistry(const char *projectAssetDirectory);
 
 			private: void DiscoverAssets(const fs::path &rootFolder);
 
-		public: void RegisterAsset(const fs::path &path);
+		public: void RegisterAsset(const fs::path &projectRelativePath);
 
-		public: fs::path GetAssetPath(AssetKey assetKey) const;
-						 		
+		public: static AssetKey MakeAssetKey(const std::string &projectRelativePath);
 
-		public: IO::Archive &Serialize(IO::Archive &archive) override{ return archive; }
+		public: fs::path GetAbsoluteAssetPath(AssetKey assetKey) const;
+
+
+		public: void AddReference(AssetKey key);
+
+		public: void RemoveReference(AssetKey key);
+
+		public: bool IsUnreferenced(AssetKey key);
+		
+		public: bool IsAssetKnown(AssetKey key) const;
+
+		public: static AssetKey MakeAssetKey(const char *projectRelativePath);
+
+		public: io::Archive &Serialize(io::Archive &archive) override{ return archive; }
 	};
 	
 	
 }
+
 
