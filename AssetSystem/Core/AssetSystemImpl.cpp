@@ -35,7 +35,10 @@ namespace assetSystem::core
 		auto &asset{ memory.MakeAsset(std::move(assetData), key, GetAssetClassExtension(projectRelativePath).c_str()) };
 
 		registry.RegisterAsset( projectRelativePath );
-		io::AssetWriter writer{ registry.GetAbsoluteAssetPath(key) };
+		
+		const auto absoluteAssetPath{ registry.GetAbsoluteAssetPath(key) };
+		create_directories(absoluteAssetPath.parent_path());
+		io::AssetWriter writer{ absoluteAssetPath };
 
 		asset.Serialize(writer);
 
