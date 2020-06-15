@@ -37,6 +37,8 @@ namespace App::Windows
 			private: void Update();
 
 		public: void ResizeMainWindow(int width, int height);
+
+		public: void NotifyProjectAvailable();
 		
 	};
 

@@ -2,7 +2,11 @@
 #include "Ui/Core/UiFrontend.hpp"
 #include "Ui/User/CreateProjectDialog.hpp"
 
+
 namespace App::Ui{ class TextElement; }
+
+namespace App::Windows{ class Application; }
+
 
 namespace App::Ui::User
 {	
@@ -14,19 +18,19 @@ namespace App::Ui::User
 
 		private: TextElement *errorDisplay;
 
+		private: Windows::Application *app;
 		
 		private: CreateProjectDialogFrontend dialogCreateProject;
+
 		
 
-		public: StartupProjectDialogFrontend();
+		public: StartupProjectDialogFrontend(Windows::Application &app);
 		
 		
 		public:	void Update(Core::UiBuilder &builder) override;
 						
 		bool *GetInputTargetBool(size_t index) override;
-		
-		
-		public: void NotifyAboutProjectCreation();
+			
 		
 	};
 	

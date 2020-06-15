@@ -9,18 +9,19 @@
 #include <filesystem>
 #include "Core/Globals.hpp"
 #include "Core/CreateProject.hpp"
+#include "Windows/Application.hpp"
 #include "Ui/User/StartupProjectDialog.hpp"
 
 
 namespace App::Ui::User
 {
-	CreateProjectDialogFrontend::CreateProjectDialogFrontend(StartupProjectDialogFrontend &parent)
+	CreateProjectDialogFrontend::CreateProjectDialogFrontend(Windows::Application &app)
 		:
 		closeDialog{ false },
 		shouldSelectFolder{ false },
 		shouldCreateProject{ false },
 		hasValidFolder{ false },
-		parent{ &parent },
+		app{ &app },
 		selectedFolder{ true }		
 	{
 		auto grid{ Element<GridLayout>(5, 3, 4) };			
@@ -137,7 +138,10 @@ namespace App::Ui::User
 		if(shouldCreateProject)
 		{
 			App::Core::globals.projectAssetSystem = App::Core::CreateProject(projectName.data.c_str(), selectedFolder.data.c_str());
-			parent->NotifyAboutProjectCreation();
+
+			app->NotifyProjectAvailable();
+			return;
+			
 		}
 		
 	}

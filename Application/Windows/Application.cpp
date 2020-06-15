@@ -74,7 +74,7 @@ namespace App::Windows
 
 			
 		
-			uiFrontends.push_back(MakeUnique<Ui::User::StartupProjectDialogFrontend>());
+			uiFrontends.push_back(MakeUnique<Ui::User::StartupProjectDialogFrontend>(*this));
 						
 			
 		}
@@ -144,5 +144,13 @@ namespace App::Windows
 		
 	}
 
+
+	
+	void Application::NotifyProjectAvailable()
+	{
+		uiFrontends.clear();
+		
+	}
+	
 	
 }

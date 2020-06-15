@@ -10,15 +10,17 @@
 #include "AssetSystem/Interface/AssetFileending.hpp"
 #include "Core/Globals.hpp"
 #include "Core/CreateProject.hpp"
+#include "Windows/Application.hpp"
 
 
 namespace App::Ui::User
 {
-	StartupProjectDialogFrontend::StartupProjectDialogFrontend()
+	StartupProjectDialogFrontend::StartupProjectDialogFrontend(Windows::Application &app)
 		:
 			showCreateProjectDialog{ false },
 			shouldOpenProject{ false },
-			dialogCreateProject{ *this }
+			dialogCreateProject{ app },
+			app{ &app }
 	{			
 		auto grid{ MakeUnique<GridLayout>(2, 2) };
 
@@ -91,9 +93,10 @@ namespace App::Ui::User
 					errorDisplay->SetIsHidden(false);
 				}
 				else
-				{
-					errorDisplay->SetIsHidden(true);
-					uiElements.clear();
+				{					
+					app->NotifyProjectAvailable();
+					return;
+					
 				}
 				
 			}
@@ -118,13 +121,5 @@ namespace App::Ui::User
 		
 	}
 	
-
-
-	void StartupProjectDialogFrontend::NotifyAboutProjectCreation()
-	{
-		uiElements.clear();
-		
-	}
-
 	
 }

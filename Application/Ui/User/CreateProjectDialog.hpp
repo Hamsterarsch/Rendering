@@ -11,6 +11,8 @@ namespace App::Ui
 	
 }
 
+namespace App::Windows{ class Application; }
+
 
 namespace App::Ui::User
 {
@@ -27,7 +29,7 @@ namespace App::Ui::User
 
 		private: bool hasValidFolder;
 
-		private: StartupProjectDialogFrontend *parent;
+		private: Windows::Application *app;
 		
 		private: TextElement *errorDisplay;
 
@@ -39,7 +41,7 @@ namespace App::Ui::User
 
 				
 
-		public: CreateProjectDialogFrontend(StartupProjectDialogFrontend &parent);
+		public: CreateProjectDialogFrontend(Windows::Application &app);
 		
 
 		public:	void Update(Core::UiBuilder &builder) override;
