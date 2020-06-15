@@ -63,9 +63,7 @@ namespace Renderer::DX12
 		descriptors{ resources.get(), 524'288, 512 },		
 		commandProcessor{ *resources, *commonQueue, registry, counterFactory },
 		resourceViewFactory{ *resources, registry, descriptors }
-	{			
-		shaderFactory->AddIncludeDirectory(Filesystem::Conversions::MakeExeRelative("../Content/Shaders/Includes").c_str());
-						
+	{							
 		commandProcessor.SubmitContextCommand(std::make_unique<Commands::BindDescriptorsContextCommand>(descriptors));
 		
 		/*
@@ -423,7 +421,15 @@ namespace Renderer::DX12
 		
 	}
 
+
 	
+	void RendererFacadeImpl::AddShaderIncludeDirectory(const char *absoluteDirectoryPath)
+	{
+		shaderFactory->AddIncludeDirectory(absoluteDirectoryPath);
+		
+	}
+
+
 
 	void RendererFacadeImpl::CompileVertexShader(const char *shader, size_t length, SerializationHook &serializer) const
 	{

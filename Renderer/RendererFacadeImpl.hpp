@@ -101,6 +101,8 @@ namespace Renderer::DX12
 
 		public: virtual DxPtr<ID3D12Resource> MakeReadbackBuffer(size_t sizeInBytes) override;
 
+
+		public: virtual void AddShaderIncludeDirectory(const char *absoluteDirectoryPath) override;
 		
 		public: virtual void CompileVertexShader(const char *shader, size_t length, SerializationHook &serializer) const override;
 

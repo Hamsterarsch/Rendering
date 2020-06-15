@@ -21,7 +21,9 @@ namespace Renderer
 
 
 	class RENDERER_DLLSPEC RendererFacade : public virtual MaintainsRenderResources
-	{		
+	{
+		public: virtual void AddShaderIncludeDirectory(const char *absoluteDirectoryPath) = 0;
+		
 		public: virtual void CompileVertexShader(const char *shader, size_t length, SerializationHook &serializer) const = 0;
 
 		public: virtual void CompilePixelShader(const char *shader, size_t length, SerializationHook &serializer) const = 0;
