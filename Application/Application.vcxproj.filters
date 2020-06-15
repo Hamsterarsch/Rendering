@@ -86,6 +86,9 @@
     <ClCompile Include="AssetTypes\ShaderAsset.cpp">
       <Filter>AssetTypes</Filter>
     </ClCompile>
+    <ClCompile Include="AssetTypes\CacheAsset.cpp">
+      <Filter>AssetTypes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window\Windows\Window.hpp">
@@ -218,6 +221,9 @@
       <Filter>Ui\User</Filter>
     </ClInclude>
     <ClInclude Include="AssetTypes\ShaderAsset.hpp">
+      <Filter>AssetTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetTypes\CacheAsset.hpp">
       <Filter>AssetTypes</Filter>
     </ClInclude>
   </ItemGroup>
