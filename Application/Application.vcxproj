@@ -294,6 +294,9 @@
     <ClInclude Include="Ui\Elements\WindowElement.hpp" />
     <ClInclude Include="Ui\ImguiTypeArithmetics.hpp" />
     <ClInclude Include="Ui\Misc\AssetNameFilter.hpp" />
+    <ClInclude Include="Ui\States\UiProjectFetchState.hpp" />
+    <ClInclude Include="Ui\States\UiState.hpp" />
+    <ClInclude Include="Ui\UiStateMachine.hpp" />
     <ClInclude Include="Ui\User\CreateProjectDialog.hpp" />
     <ClInclude Include="Ui\User\PropertyCompositeElement.hpp" />
     <ClInclude Include="Ui\User\StartupProjectDialog.hpp" />
@@ -334,6 +337,7 @@
     <ClCompile Include="Ui\Elements\GridLayout.cpp" />
     <ClCompile Include="Ui\ImguiTypeArithmetics.cpp" />
     <ClCompile Include="Ui\Misc\AssetNameFilter.cpp" />
+    <ClCompile Include="Ui\UiStateMachine.cpp" />
     <ClCompile Include="Ui\User\CreateProjectDialog.cpp" />
     <ClCompile Include="Ui\User\PropertyCompositeElement.cpp" />
     <ClCompile Include="Ui\User\StartupProjectDialog.cpp" />

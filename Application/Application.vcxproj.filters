@@ -89,6 +89,9 @@
     <ClCompile Include="AssetTypes\CacheAsset.cpp">
       <Filter>AssetTypes</Filter>
     </ClCompile>
+    <ClCompile Include="Ui\UiStateMachine.cpp">
+      <Filter>Ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window\Windows\Window.hpp">
@@ -226,6 +229,15 @@
     <ClInclude Include="AssetTypes\CacheAsset.hpp">
       <Filter>AssetTypes</Filter>
     </ClInclude>
+    <ClInclude Include="Ui\UiStateMachine.hpp">
+      <Filter>Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\States\UiState.hpp">
+      <Filter>Ui\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\States\UiProjectFetchState.hpp">
+      <Filter>Ui\States</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Window">
@@ -272,6 +284,9 @@
     </Filter>
     <Filter Include="Core">
       <UniqueIdentifier>{bb721872-6a2a-44c3-a767-552c807a385b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ui\States">
+      <UniqueIdentifier>{c7f63fec-ba2a-4ca0-984c-79e2451d3f62}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
