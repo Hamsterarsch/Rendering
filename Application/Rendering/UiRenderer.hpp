@@ -4,7 +4,7 @@
 
 namespace Renderer
 {
-	class SerializeContainer;
+	class SerializeTarget;
 	class RendererFacade;
 
 	namespace Commands
@@ -69,9 +69,9 @@ namespace App::Rendering
 
 			private: void CreateUiPipeline(::Renderer::RendererFacade &renderer);
 
-				private: static SerializeContainer CreateUiVertexShader(::Renderer::RendererFacade &renderer);
+				private: static SerializeTarget CreateUiVertexShader(::Renderer::RendererFacade &renderer);
 
-				private: static SerializeContainer CreateUiPixelShader(::Renderer::RendererFacade &renderer);
+				private: static SerializeTarget CreateUiPixelShader(::Renderer::RendererFacade &renderer);
 						 		
 
 		public: ~UiRenderer();

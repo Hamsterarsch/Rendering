@@ -7,7 +7,7 @@
 #include <vector>
 #include "RendererFacade.hpp"
 #include "Commands/CompositeCommand.hpp"
-#include "Resources/SerializationContainer.hpp"
+#include "Resources/SerializeTarget.hpp"
 #include "StateSettings/SamplerSpec.hpp"
 
 
@@ -36,7 +36,7 @@ namespace App::Rendering
 			samplerSpec.addressU = samplerSpec.addressV = samplerSpec.addressW = &AddressingTargets::AddressingModeWrap;
 			samplerSpec.filter = &FilterTargets::FilterMinMagMipLinear;
 
-			SerializeContainer root{};
+			SerializeTarget root{};
 			renderer.SerializeRootSignature(1, 1, 0, 0, &root, &samplerSpec, 1);
 			uiSignature = { &renderer, renderer.MakeRootSignature(root.GetData()) };
 		
@@ -95,7 +95,7 @@ namespace App::Rendering
 		
 		}
 
-			SerializeContainer UiRenderer::CreateUiVertexShader(::Renderer::RendererFacade &renderer)
+			SerializeTarget UiRenderer::CreateUiVertexShader(::Renderer::RendererFacade &renderer)
 			{			
 				static const char* vertexShader =
 				"cbuffer vertexBuffer : register(b2)\
@@ -125,13 +125,13 @@ namespace App::Rendering
 				  return output;\
 				}";
 
-				SerializeContainer vs{};
+				SerializeTarget vs{};
 				renderer.CompileVertexShader(vertexShader, strlen(vertexShader), &vs);
 				return vs;
 			
 			}
 
-			SerializeContainer UiRenderer::CreateUiPixelShader(::Renderer::RendererFacade &renderer)
+			SerializeTarget UiRenderer::CreateUiPixelShader(::Renderer::RendererFacade &renderer)
 			{
 				static const char *pixelShader =
 			    "struct PS_INPUT\
@@ -149,7 +149,7 @@ namespace App::Rendering
 			      return out_col; \
 			    }";
 
-				SerializeContainer ps{};
+				SerializeTarget ps{};
 				renderer.CompilePixelShader(pixelShader, strlen(pixelShader), &ps);
 
 				return ps;

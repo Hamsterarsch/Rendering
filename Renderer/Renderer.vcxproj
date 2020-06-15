@@ -295,7 +295,7 @@
     <ClInclude Include="Interface\Resources\MaintainsRenderResources.hpp" />
     <ClInclude Include="Interface\Resources\ResourceHandle.hpp" />
     <ClInclude Include="Interface\Resources\ResourceTypes.hpp" />
-    <ClInclude Include="Interface\Resources\SerializationContainer.hpp" />
+    <ClInclude Include="Interface\Resources\SerializeTarget.hpp" />
     <ClInclude Include="Interface\Resources\SerializationHook.hpp" />
     <ClInclude Include="Interface\ResourceViewFactory.hpp" />
     <ClInclude Include="Interface\StateSettings\BlendSettings.hpp" />
@@ -399,8 +399,7 @@
     <ClCompile Include="Resources\RootSignature\RootSignatureFactory.cpp" />
     <ClCompile Include="Resources\RootSignature\TableLayout.cpp" />
     <ClCompile Include="Resources\SerialFactory.cpp" />
-    <ClCompile Include="Resources\SerializationContainer.cpp" />
-    <ClCompile Include="Resources\SerializationHook.cpp" />
+    <ClCompile Include="Resources\SerializeTarget.cpp" />
     <ClCompile Include="StateSettings\AddressingTargetsImpl.cpp" />
     <ClCompile Include="StateSettings\BlendSettingsImpl.cpp" />
     <ClCompile Include="StateSettings\DepthStencilSettingsImpl.cpp" />

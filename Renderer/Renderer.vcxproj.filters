@@ -86,9 +86,6 @@
     <ClInclude Include="Interface\Resources\SerializationHook.hpp">
       <Filter>Interface\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Interface\Resources\SerializationContainer.hpp">
-      <Filter>Interface\Resources</Filter>
-    </ClInclude>
     <ClInclude Include="Resources\UsesReferences.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
@@ -311,6 +308,9 @@
     <ClInclude Include="Commands\IncreaseCounterCommand.hpp">
       <Filter>Commands</Filter>
     </ClInclude>
+    <ClInclude Include="Interface\Resources\SerializeTarget.hpp">
+      <Filter>Interface\Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -373,12 +373,6 @@
     </ClCompile>
     <ClCompile Include="Lighting\LightGrid\VolumeTileGrid.cpp">
       <Filter>Lighting\LightGrid</Filter>
-    </ClCompile>
-    <ClCompile Include="Resources\SerializationContainer.cpp">
-      <Filter>Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="Resources\SerializationHook.cpp">
-      <Filter>Resources</Filter>
     </ClCompile>
     <ClCompile Include="Resources\Registry.cpp">
       <Filter>Resources</Filter>
@@ -483,6 +477,9 @@
     <ClCompile Include="CounterFactoryImpl.cpp" />
     <ClCompile Include="Commands\IncreaseCounterCommand.cpp">
       <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources\SerializeTarget.cpp">
+      <Filter>Resources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

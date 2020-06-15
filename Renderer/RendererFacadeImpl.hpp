@@ -102,11 +102,11 @@ namespace Renderer::DX12
 		public: virtual DxPtr<ID3D12Resource> MakeReadbackBuffer(size_t sizeInBytes) override;
 
 		
-		public: virtual void CompileVertexShader(const char *shader, size_t length, SerializationHook *serializer) const override;
+		public: virtual void CompileVertexShader(const char *shader, size_t length, SerializationHook &serializer) const override;
 
-		public: virtual void CompilePixelShader(const char *shader, size_t length, SerializationHook *serializer) const override;
+		public: virtual void CompilePixelShader(const char *shader, size_t length, SerializationHook &serializer) const override;
 
-		public: virtual void CompileComputeShader(const char *shader, size_t length, SerializationHook *serializer) const override;
+		public: virtual void CompileComputeShader(const char *shader, size_t length, SerializationHook &serializer) const override;
 		
 
 		public: virtual void SerializeRootSignature
@@ -115,18 +115,12 @@ namespace Renderer::DX12
 			unsigned srvAmount,
 			unsigned uavAmount,
 			unsigned samplerAmount,
-			SerializationHook *serializer,
+			SerializationHook &serializer,			
 			const SamplerSpec *staticSamplers,
 			unsigned numStaticSamplers
 		)	override;
 
-		public: virtual size_t MakeRootSignature(const void *serializedData) override;
-							
-			private: static SIZE_T ExtractSizeFrom(const void *data);
-
-			private: static const unsigned char *ExtractSignatureFrom(const void *data);
-
-			private: static size_t ExtractSamplerCountFrom(const void *data, SIZE_T signatureSize);
+		public: virtual size_t MakeRootSignature(const void *serializedData, size_t dataSizeInBytes, unsigned samplerAmount) override;
 		
 		public: size_t MakePso(const ShaderList &shaders, size_t signatureHandle) override;
 							
