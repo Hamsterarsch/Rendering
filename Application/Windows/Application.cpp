@@ -1,24 +1,11 @@
-#include "Types/Dimensions2D.hpp"
-#include "DX12/Facade.hpp"
 #include "Windows/Application.hpp"
-
+#include "Types/Dimensions2D.hpp"
 #include "Shared/Filesystem/Conversions.hpp"
-#include <fstream>
-
-
-#include "ThirdParty/glm/mat4x4.hpp"
-#include "ThirdParty/glm/gtc/matrix_transform.hpp"
-#include "Resources/HandleWrapper.hpp"
-#include "Resources/SerializationContainer.hpp"
-
-#include "Rendering/RendererMediator.hpp"
-#include "StateSettings/SamplerSpec.hpp"
-#include "ThirdParty/imgui/imgui.h"
-#include "ThirdParty/imgui/imgui_impl_win32.h"
-#include "Ui/ImguiTypeArithmetics.hpp"
-
 #include "Ui/User/StartupProjectDialog.hpp"
 #include "Ui/Core/UiBuilderImpl.hpp"
+#include "ThirdParty/imgui/imgui_impl_win32.h"
+#include "Core/Globals.hpp"
+#include "Core/CreateProject.hpp"
 
 
 // Forward declare message handler from imgui_impl_win32.cpp
@@ -76,9 +63,9 @@ namespace App::Windows
 		{
 			rendererMediator.SetMainWindowSurface(mainWindowSurface);
 
-
+			bool hasVersionMismatch;
+			Core::globals.programAssetSystem = Core::LoadProject(Filesystem::Conversions::MakeExeRelative(L"../../ProgramContent/ProgramContent.proj.asset").c_str(), hasVersionMismatch);
 			
-
 			uiFrontends.push_back(MakeUnique<Ui::User::StartupProjectDialogFrontend>());
 						
 			
@@ -138,98 +125,7 @@ namespace App::Windows
 			{
 				frontend->Update(builder);			
 			}
-
-		/*
-			ImGui::SetNextWindowPos({0,0});			
-			ImGui::SetNextWindowSize(ImGui::GetWindowViewport()->Size);
-			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0);
-			ImGui::Begin("OuterWindow", nullptr, StaticWindowStyle | ImGuiWindowFlags_NoDecoration);
-			ImGui::PopStyleVar();
-		
-			auto outerSize{ ImGui::GetWindowSize() };
-			auto innerSize{ outerSize * ImVec2{.5f, .25f} };
-			
-			auto innerPos{ (outerSize - innerSize) / 2.f };
-			innerPos.y -= outerSize.y *.15f;
-		
-			ImGui::SetNextWindowSize(innerSize);
-			ImGui::SetNextWindowPos(innerPos);
-				ImGui::PushStyleColor(ImGuiCol_TitleBg, IM_COL32(100, 144, 133, 255));
-				ImGui::PushStyleColor(ImGuiCol_WindowBg, IM_COL32(30, 30, 30, 255));
-				ImGui::PushStyleVar(ImGuiStyleVar_WindowTitleAlign, {.5, .5});
-				ImGui::Begin("Open a project or create a new one to begin", nullptr, StaticWindowStyle);
-				ImGui::PopStyleVar();
-				ImGui::PopStyleColor(2);		
-
-					ImGui::Spacing();
-					ImGui::Spacing();
-					ImGui::Columns(2, nullptr, false);
-
-				const char *cnlabe{ "Create a new Project" };
-				if(ButtonCentered("Create New"))
-				{
-					ImGui::OpenPopup(cnlabe);		
-				}
-
-				if(ImGui::IsPopupOpen(cnlabe))
-				{
-					ImGui::PushStyleVar(ImGuiStyleVar_WindowTitleAlign, {.5, .5});
-					bool b{ true };
-					if(ImGui::BeginPopupModal(cnlabe, &b, StaticWindowStyle))
-					{						
-						ImGui::Spacing();						
-						ImGui::Text("Select a folder where the project should be created");
-												
-						static std::string path{};
-						if(ImGui::Button("Select Folder"))
-						{
-							::App::Windows::SelectPathDialog d{};
-							path = d.GetSelectedItem().string();
-							
-						}
-						const auto endPos{ ImGui::GetCursorPosX() + ImGui::GetItemRectSize().x };
-
-						ImGui::SameLine(endPos, 5);
-							ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-							ImGui::InputText(" ", path.data(), path.size(), ImGuiInputTextFlags_ReadOnly);
-													
-						
-						ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetStyle().FramePadding.x);
-						ImGui::Text("Project Name: ");
-						
-						ImGui::SameLine(endPos, 5);
-						ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-						static std::string str{};
-						ImGui::InputText("lablee", str.data(), str.capacity(), ImGuiInputTextFlags_CallbackResize | ImGuiInputTextFlags_CallbackCharFilter, &F, &str);
-
-						
-						ImGui::Spacing();
-						ImGui::Spacing();
-
-						if(ButtonCentered("Confirm", false))
-						{
-							int e = 1;//do stuff
-						}
-						
-						ImGui::EndPopup();
-					}
-					ImGui::PopStyleVar();
-				}
-		
-				ImGui::NextColumn();
-				if(ButtonCentered("Open Existing"))
-				{
-				}
 					
-				ImGui::End();
-		
-			ImGui::End();
-			
-
-
-		
-			ImGui::ShowDemoWindow();
-			*/
 		}
 
 
