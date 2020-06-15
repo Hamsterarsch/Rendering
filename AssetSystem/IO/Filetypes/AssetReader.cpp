@@ -56,7 +56,7 @@ namespace assetSystem::io
 				}		
 				auto propertyNameStart{ file.tellg() };
 				
-				if(SeekEofUntilToken('"'))
+				if(SeekEofUntilToken(AssetArchiveConstants::dataStartToken))
 				{
 					return;
 					
@@ -96,7 +96,7 @@ namespace assetSystem::io
 							return HandleObjectPropertyEnd();							
 						}
 
-						if(token == '"')
+						if(token == AssetArchiveConstants::dataStartToken)
 						{
 							return true;
 							
@@ -109,7 +109,7 @@ namespace assetSystem::io
 					{
 						PopCurrentObjectScope();
 
-						if(SeekEofUntilToken('"'))
+						if(SeekEofUntilToken(AssetArchiveConstants::dataStartToken))
 						{
 							return false;
 						}
@@ -132,7 +132,7 @@ namespace assetSystem::io
 						ProcessObjectProperty(std::move(propertyName));
 					}
 
-					if(propertyToken == '"')
+					if(propertyToken == AssetArchiveConstants::dataStartToken)
 					{
 						ProcessValueProperty(std::move(propertyName));
 					}
@@ -148,7 +148,7 @@ namespace assetSystem::io
 							(
 								character == std::ifstream::traits_type::eof()
 								|| character == '{'
-								|| character == '"'
+								|| character == AssetArchiveConstants::dataStartToken
 							)
 							{
 								return character;
@@ -185,7 +185,7 @@ namespace assetSystem::io
 								(
 									character == std::ifstream::traits_type::eof()
 									|| character == '}'
-									|| character == '"'
+									|| character == AssetArchiveConstants::dataStartToken
 								)
 								{
 									return character;
@@ -350,7 +350,7 @@ namespace assetSystem::io
 			const auto afterNamePos{ propertyMap.at(objectQualifiers + propertyName) };
 			file.seekg(afterNamePos);		
 		
-			SeekEofUntilToken('"');
+			SeekEofUntilToken(AssetArchiveConstants::dataStartToken);
 			file.get();
 		
 		}
@@ -382,7 +382,7 @@ namespace assetSystem::io
 						
 				const auto valueStart{ file.tellg() };
 
-				SeekEofUntilToken('"');
+				SeekEofUntilToken(AssetArchiveConstants::dataStartToken);
 				const auto valueEnd{ file.tellg() };
 		
 				file.seekg(valueStart);
