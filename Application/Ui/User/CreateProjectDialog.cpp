@@ -9,19 +9,18 @@
 #include <filesystem>
 #include "Core/Globals.hpp"
 #include "Core/CreateProject.hpp"
-#include "Windows/Application.hpp"
-#include "Ui/User/StartupProjectDialog.hpp"
+#include "Ui/States/UiCreateProjectState.hpp"
 
 
 namespace App::Ui::User
 {
-	CreateProjectDialogFrontend::CreateProjectDialogFrontend(Windows::Application &app)
+	CreateProjectDialogFrontend::CreateProjectDialogFrontend(States::UiCreateProjectState &parent)
 		:
 		closeDialog{ false },
 		shouldSelectFolder{ false },
 		shouldCreateProject{ false },
 		hasValidFolder{ false },
-		app{ &app },
+		parent{ &parent },
 		selectedFolder{ true }		
 	{
 		auto grid{ Element<GridLayout>(5, 3, 4) };			
@@ -84,8 +83,9 @@ namespace App::Ui::User
 				+= {{0, 0, 2}, std::move(errorElement)}
 		};
 								
-		uiElements.push_front(Element<ModalElement>("Create a new Project")  ->* Set{&ModalElement::size, {.5, .3}} += std::move(grid));
-					
+		uiElements.push_front(Element<ModalElement>("Create a new Project")  ->* Set{&ModalElement::size, {.5, .3}} += std::move(grid));							
+		uiElements.front()->SetIsHidden(false);
+		
 	}
 
 
@@ -94,7 +94,7 @@ namespace App::Ui::User
 	{
 		if(closeDialog)
 		{				
-			uiElements.front()->SetIsHidden(true);
+			parent->NotifyCreationAborted();
 			return;
 			
 		}
@@ -139,7 +139,7 @@ namespace App::Ui::User
 		{
 			App::Core::globals.projectAssetSystem = App::Core::CreateProject(projectName.data.c_str(), selectedFolder.data.c_str());
 
-			app->NotifyProjectAvailable();
+			parent->NotifyProjectCreated();
 			return;
 			
 		}
@@ -202,16 +202,7 @@ namespace App::Ui::User
 		return &projectName;
 		
 	}
-	
-	
 
-	void CreateProjectDialogFrontend::OpenDialog()
-	{
-		closeDialog = false;
-		uiElements.front()->SetIsHidden(false);
-		
-	}
-	
 	
 }
 

@@ -5,7 +5,7 @@
 
 namespace App::Ui{ class TextElement; }
 
-namespace App::Windows{ class Application; }
+namespace App::Ui::States{ class UiProjectFetchStartupState; }
 
 
 namespace App::Ui::User
@@ -18,13 +18,13 @@ namespace App::Ui::User
 
 		private: TextElement *errorDisplay;
 
-		private: Windows::Application *app;
+		private: States::UiProjectFetchStartupState *parent;
 		
-		private: CreateProjectDialogFrontend dialogCreateProject;
+		//private: CreateProjectDialogFrontend dialogCreateProject;
 
 		
 
-		public: StartupProjectDialogFrontend(Windows::Application &app);
+		public: StartupProjectDialogFrontend(States::UiProjectFetchStartupState &parent);
 		
 		
 		public:	void Update(Core::UiBuilder &builder) override;

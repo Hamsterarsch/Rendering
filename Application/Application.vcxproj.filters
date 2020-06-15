@@ -92,6 +92,15 @@
     <ClCompile Include="Ui\UiStateMachine.cpp">
       <Filter>Ui</Filter>
     </ClCompile>
+    <ClCompile Include="Ui\States\UiCreateProjectState.cpp">
+      <Filter>Ui\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui\States\UiProjectFetchStartupState.cpp">
+      <Filter>Ui\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui\States\UiProjectStartupState.cpp">
+      <Filter>Ui\States</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window\Windows\Window.hpp">
@@ -235,7 +244,13 @@
     <ClInclude Include="Ui\States\UiState.hpp">
       <Filter>Ui\States</Filter>
     </ClInclude>
-    <ClInclude Include="Ui\States\UiProjectFetchState.hpp">
+    <ClInclude Include="Ui\States\UiProjectFetchStartupState.hpp">
+      <Filter>Ui\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\States\UiCreateProjectState.hpp">
+      <Filter>Ui\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\States\UiProjectStartupState.hpp">
       <Filter>Ui\States</Filter>
     </ClInclude>
   </ItemGroup>

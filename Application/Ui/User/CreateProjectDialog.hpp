@@ -11,14 +11,11 @@ namespace App::Ui
 	
 }
 
-namespace App::Windows{ class Application; }
+namespace App::Ui::States{ class UiCreateProjectState; }
 
 
 namespace App::Ui::User
-{
-	class StartupProjectDialogFrontend;
-
-	
+{		
 	class CreateProjectDialogFrontend final : public Core::UiFrontend
 	{		
 		private: bool closeDialog;
@@ -29,7 +26,7 @@ namespace App::Ui::User
 
 		private: bool hasValidFolder;
 
-		private: Windows::Application *app;
+		private: States::UiCreateProjectState *parent;
 		
 		private: TextElement *errorDisplay;
 
@@ -41,7 +38,7 @@ namespace App::Ui::User
 
 				
 
-		public: CreateProjectDialogFrontend(Windows::Application &app);
+		public: CreateProjectDialogFrontend(States::UiCreateProjectState &parent);
 		
 
 		public:	void Update(Core::UiBuilder &builder) override;
@@ -54,8 +51,6 @@ namespace App::Ui::User
 			   		 		
 		Core::StringInputTarget *GetInputTargetString(size_t index) override;
 		
-
-		public: void OpenDialog();
 		
 	};
 	

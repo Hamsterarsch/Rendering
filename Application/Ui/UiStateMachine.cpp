@@ -1,11 +1,15 @@
 #include "Ui/UiStateMachine.hpp"
 #include "Ui/States/UiState.hpp"
+#include "States/UiProjectFetchStartupState.hpp"
 
 
 namespace App::Ui
 {
-	UiStateMachine::UiStateMachine(Windows::Application &app) : app{ &app }
+	UiStateMachine::UiStateMachine() : stackLevelsHaveChanged{ false }
 	{
+		PushStateLevel(MakeUnique<States::UiProjectFetchStartupState>(*this));
+		
+		
 	}
 
 
@@ -16,18 +20,78 @@ namespace App::Ui
 	
 	void UiStateMachine::Update(Core::UiBuilder &builder)
 	{
-		if(not currentState)
+		stackLevelsHaveChanged = false;
+		for(auto &&state : stateStack.front())
 		{
-			return;
-			
+			state.second->Update(builder);
+			if(stackLevelsHaveChanged)
+			{
+				break;
+			}
 		}
-			   		
-		if(auto newState{ currentState->Update(builder) })
+
+		if(not stackLevelsHaveChanged)
 		{
-			currentState = std::move(newState);
+			for(auto &&stateToErase : statesToRemove)
+			{
+				stateStack.front().erase(stateToErase);
+			}
+
+			stateStack.front().merge(statesToAdd);
+
+			//todo: add/remove anyway if levels were added or not ?
 		}
+		statesToRemove.clear();
+		statesToAdd.clear();
 		
 	}
 
+
 	
+	void UiStateMachine::PopAllStateLevels(UniquePtr<States::UiState> &&newState)
+	{
+		stateStack.clear();
+		PushStateLevel(std::move(newState));
+				
+	}
+	
+		void UiStateMachine::PushStateLevel(UniquePtr<States::UiState> &&state)
+		{
+			stateStack.emplace_front();
+			
+			auto *key{ state.get() };
+			stateStack.front().insert( { key, std::move(state) } );
+
+			stackLevelsHaveChanged = true;
+			
+		}
+
+
+
+	void UiStateMachine::PopStateLevel()
+	{
+		stateStack.pop_front();
+
+		stackLevelsHaveChanged = true;
+		
+	}
+
+
+
+	void UiStateMachine::AddState(UniquePtr<States::UiState> &&state)
+	{
+		auto *key{ state.get() }; 
+		statesToAdd.insert( {key, std::move(state)} );
+		
+	}
+
+
+
+	void UiStateMachine::RemoveState(States::UiState &state)
+	{		
+		statesToRemove.emplace(&state);
+		
+	}
+
+		
 }

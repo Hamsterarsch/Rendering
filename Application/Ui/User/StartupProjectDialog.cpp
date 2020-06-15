@@ -11,16 +11,16 @@
 #include "Core/Globals.hpp"
 #include "Core/CreateProject.hpp"
 #include "Windows/Application.hpp"
+#include "Ui/States/UiProjectFetchStartupState.hpp"
 
 
 namespace App::Ui::User
 {
-	StartupProjectDialogFrontend::StartupProjectDialogFrontend(Windows::Application &app)
+	StartupProjectDialogFrontend::StartupProjectDialogFrontend(States::UiProjectFetchStartupState &parent)
 		:
 			showCreateProjectDialog{ false },
-			shouldOpenProject{ false },
-			dialogCreateProject{ app },
-			app{ &app }
+			shouldOpenProject{ false },			
+			parent{ &parent }
 	{			
 		auto grid{ MakeUnique<GridLayout>(2, 2) };
 
@@ -70,7 +70,9 @@ namespace App::Ui::User
 		
 		if(showCreateProjectDialog)
 		{
-			dialogCreateProject.OpenDialog();
+			parent->NotifyOpenCreateProjectDialog();
+			return;
+			
 		}
 
 		if(shouldOpenProject)
@@ -94,7 +96,7 @@ namespace App::Ui::User
 				}
 				else
 				{					
-					app->NotifyProjectAvailable();
+					parent->NotifyProjectOpened();
 					return;
 					
 				}
@@ -103,9 +105,7 @@ namespace App::Ui::User
 			
 			
 		}
-		
-		dialogCreateProject.Update(builder);
-		
+				
 	}
 
 

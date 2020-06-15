@@ -2,7 +2,7 @@
 #include "Window/Windows/Window.hpp"
 #include "RendererFacade.hpp"
 #include "Rendering/RendererMediator.hpp"
-#include <vector>
+#include "Ui/UiStateMachine.hpp"
 
 
 namespace App::Ui::Core
@@ -23,7 +23,7 @@ namespace App::Windows
 		
 		private: Rendering::RendererMediator rendererMediator;
 
-		private: std::vector<UniquePtr<Ui::Core::UiFrontend>> uiFrontends;
+		private: Ui::UiStateMachine ui;
 
 		
 		
@@ -38,7 +38,6 @@ namespace App::Windows
 
 		public: void ResizeMainWindow(int width, int height);
 
-		public: void NotifyProjectAvailable();
 		
 	};
 

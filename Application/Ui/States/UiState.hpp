@@ -21,18 +21,7 @@ namespace App::Ui::States
 		public: UiState(UiStateMachine &parent) : parent{ &parent } {}		
 
 		
-		public: virtual UniquePtr<UiState> Update(Core::UiBuilder &builder) = 0;
-		
-	};
-
-
-	
-	class UiDefaultState final : public UiState
-	{
-		public: UiDefaultState(UiStateMachine &parent) : UiState{ parent } {}
-
-		
-		public: UniquePtr<UiState> Update(Core::UiBuilder &builder) override { return {}; }
+		public: virtual void Update(Core::UiBuilder &builder) = 0;
 		
 	};
 

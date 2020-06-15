@@ -71,11 +71,7 @@ namespace App::Windows
 
 			bool hasVersionMismatch;
 			Core::globals.programAssetSystem = Core::LoadProject(Filesystem::Conversions::MakeExeRelative(L"../../ProgramContent/ProgramContent.proj.asset").c_str(), hasVersionMismatch);
-
-			
-		
-			uiFrontends.push_back(MakeUnique<Ui::User::StartupProjectDialogFrontend>(*this));
-						
+									
 			
 		}
 
@@ -128,11 +124,9 @@ namespace App::Windows
 		
 			ImGui_ImplWin32_NewFrame();
 			ImGui::NewFrame();
-					
-			for(auto &&frontend : uiFrontends)
-			{
-				frontend->Update(builder);			
-			}
+
+			ui.Update(builder);
+			
 					
 		}
 
@@ -145,12 +139,6 @@ namespace App::Windows
 	}
 
 
-	
-	void Application::NotifyProjectAvailable()
-	{
-		uiFrontends.clear();
-		
-	}
 	
 	
 }

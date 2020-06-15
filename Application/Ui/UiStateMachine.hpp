@@ -1,8 +1,8 @@
 #pragma once
 #include "Shared/PtrTypes.hpp"
-
-
-namespace App::Windows{ class Application; }
+#include <forward_list>
+#include <unordered_map>
+#include <unordered_set>
 
 
 namespace App::Ui
@@ -13,13 +13,17 @@ namespace App::Ui
 	
 	class UiStateMachine
 	{
-		private: UniquePtr<States::UiState> currentState;
+		private: std::forward_list<std::unordered_map<States::UiState *, UniquePtr<States::UiState>>> stateStack;
 
-		private: Windows::Application *app;
+		private: std::unordered_map<States::UiState *, UniquePtr<States::UiState>> statesToAdd;
 
-
+		private: std::unordered_set<States::UiState *> statesToRemove;
 		
-		public: UiStateMachine(Windows::Application &app);
+		private: bool stackLevelsHaveChanged;
+		
+		
+		
+		public: UiStateMachine();
 
 		public: ~UiStateMachine();
 		
@@ -33,7 +37,18 @@ namespace App::Ui
 		
 		
 		public: void Update(Core::UiBuilder &builder);
+
+
+		public: void PopAllStateLevels(UniquePtr<States::UiState> &&newState);
 		
+		public: void PushStateLevel(UniquePtr<States::UiState> &&state);
+		
+		public: void PopStateLevel();
+
+		public: void AddState(UniquePtr<States::UiState> &&state);
+
+		public: void RemoveState(States::UiState &state);
+						
 	};
 
 	
