@@ -120,11 +120,11 @@ namespace App::Ui::Core
 		{
 			auto defaultWindowSize{ ImGui::GetWindowViewport()->Size * .5 };
 			ApplyUserSizing(defaultWindowSize.x, defaultWindowSize.y, true);
-			ImGui::SetNextWindowSize(defaultWindowSize, ImGuiCond_Once);
+			ImGui::SetNextWindowSize(defaultWindowSize, ImGuiCond_Appearing);
 
 			auto defaultWindowPos{ ImGui::GetWindowViewport()->Size * .5 };
 			ApplyUserPositioning(defaultWindowPos.x, defaultWindowPos.y, true);		
-			ImGui::SetNextWindowPos(defaultWindowPos, ImGuiCond_Once, {userSettings.pivot.x, userSettings.pivot.y});
+			ImGui::SetNextWindowPos(defaultWindowPos, ImGuiCond_Appearing, {userSettings.pivot.x, userSettings.pivot.y});
 			
 		}
 
@@ -192,11 +192,14 @@ namespace App::Ui::Core
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowTitleAlign, ImVec2{ .5, .5 });		
 
 		ApplyDimensionsForWindowTypeElements();
-		
-		ImGui::OpenPopup(userSettings.name.c_str());//ensure that begin always returns true. if you dont want to display the modal just dont call this function
+
+		if(not ImGui::IsPopupOpen(userSettings.name.c_str()))
+		{
+			ImGui::OpenPopup(userSettings.name.c_str());//ensure that begin always returns true. if you dont want to display the modal just dont call this function			
+		}
 		ImGui::BeginPopupModal(userSettings.name.c_str(), nullptr, userSettings.flagsWindow | ImGuiWindowFlags_NoResize);
 		desctructionFuncStack.push_front(&ImGui::EndPopup);
-
+		
 		ImGui::PopStyleVar();
 
 		DoItemEpilogue();
@@ -241,23 +244,19 @@ namespace App::Ui::Core
 
 		ImVec2 UiBuilderImpl::ApplyDimensionsForTextTypeElements(const char *text) const
 		{
-			auto defaultSize{ ImGui::GetContentRegionAvail() };
-			defaultSize.y = ImGui::GetFontSize() + ImGui::GetStyle().FramePadding.y*2;
-
+			auto defaultSize{ ImGui::CalcTextSize(text) +  ImGui::GetStyle().FramePadding*2 };
+			
 			auto usersDesiredSize{ defaultSize };
-			ApplyUserSizing(usersDesiredSize.x, usersDesiredSize.y);
-						
-			ImVec2 wrappedSize{ ImGui::GetStyle().FramePadding*2 + ImGui::CalcTextSize(text, nullptr, false, usersDesiredSize.x) };
-			SetNextItemSize(wrappedSize.x, wrappedSize.y);
-
-
+			ApplyUserSizing(usersDesiredSize.x, usersDesiredSize.y);						
+			SetNextItemSize(usersDesiredSize.x, usersDesiredSize.y);				
+			
 			ImVec2 defaultPos{};
 			ApplyUserPositioning(defaultPos.x, defaultPos.y);
-			ApplyUserPivot(defaultPos.x, defaultPos.y, wrappedSize.x, wrappedSize.y);
+			ApplyUserPivot(defaultPos.x, defaultPos.y, usersDesiredSize.x, usersDesiredSize.y);
 					
 			ImGui::SetCursorPos(ImGui::GetCursorPos() + defaultPos);
 
-			return wrappedSize;
+			return usersDesiredSize;
 		
 		}
 
@@ -279,10 +278,24 @@ namespace App::Ui::Core
 
 	UiBuilder &UiBuilderImpl::MakeText(const char *text)
 	{
-		auto elementSize{ ApplyDimensionsForTextTypeElements(text) };
+		auto defaultSize{ ImGui::GetContentRegionAvail() };
+		defaultSize.y = ImGui::GetFontSize() + ImGui::GetStyle().FramePadding.y*2;
+
+		auto usersDesiredSize{ defaultSize };
+		ApplyUserSizing(usersDesiredSize.x, usersDesiredSize.y);
+		
+		ImVec2 wrappedSize{ ImGui::GetStyle().FramePadding*2 + ImGui::CalcTextSize(text, nullptr, false, usersDesiredSize.x) };		
+		SetNextItemSize(wrappedSize.x, wrappedSize.y);				
+		
+		ImVec2 defaultPos{};
+		ApplyUserPositioning(defaultPos.x, defaultPos.y);
+		ApplyUserPivot(defaultPos.x, defaultPos.y, wrappedSize.x, wrappedSize.y);
 				
+		ImGui::SetCursorPos(ImGui::GetCursorPos() + defaultPos);
+
+		
 		ImGui::GetCurrentWindow()->DC.CurrLineTextBaseOffset = std::clamp(ImGui::GetCurrentWindow()->DC.CurrLineTextBaseOffset, ImGui::GetStyle().FramePadding.x, ImGui::GetCurrentWindow()->DC.CurrLineTextBaseOffset);
-		ImGui::PushTextWrapPos(ImGui::GetCursorPosX() + elementSize.x);
+		ImGui::PushTextWrapPos(ImGui::GetCursorPosX() + wrappedSize.x);
 		ImGui::Text(text);
 		ImGui::PopTextWrapPos();
 		
@@ -319,7 +332,7 @@ namespace App::Ui::Core
 	
 	UiBuilder &UiBuilderImpl::MakeTextInput(StringInputTarget &target)
 	{
-		ApplyDimensionsForTextTypeElements(" ");		
+		ApplyDimensionsForTextTypeElements(nullptr);		
 		
 		auto flags{ ImGuiInputTextFlags_CallbackResize | ImGuiInputTextFlags_CallbackCharFilter };
 		if(target.IsReadOnly())

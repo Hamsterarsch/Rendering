@@ -21,26 +21,29 @@ namespace Renderer
 
 
 	class RENDERER_DLLSPEC RendererFacade : public virtual MaintainsRenderResources
-	{		
-		public: virtual void CompileVertexShader(const char *shader, size_t length, SerializationHook *serializer) const = 0;
-					
-		public: virtual void CompilePixelShader(const char *shader, size_t length, SerializationHook *serializer) const = 0;
-					
-		public: virtual void CompileComputeShader(const char *shader, size_t length, SerializationHook *serializer) const = 0;
-					
+	{
+		public: virtual void AddShaderIncludeDirectory(const char *absoluteDirectoryPath) = 0;
+		
+		public: virtual void CompileVertexShader(const char *shader, size_t length, SerializationHook &serializer) const = 0;
+
+		public: virtual void CompilePixelShader(const char *shader, size_t length, SerializationHook &serializer) const = 0;
+
+		public: virtual void CompileComputeShader(const char *shader, size_t length, SerializationHook &serializer) const = 0;
+		
+
 		public: virtual void SerializeRootSignature
 		(
 			unsigned cbvAmount,
 			unsigned srvAmount,
 			unsigned uavAmount,
-			unsigned samplerAmount, 
-			SerializationHook *serializer,
+			unsigned samplerAmount,
+			SerializationHook &serializer,			
 			const SamplerSpec *staticSamplers,
 			unsigned numStaticSamplers
-		)	= 0;
-
+		) = 0;	
 
 		
+						
 		public: virtual ResourceHandle::t_hash MakeWindowsWindowSurface(HWND windowHandle) = 0;
 
 		public: virtual void SetWindowSurfaceToFullscreen(ResourceHandle::t_hash surface) = 0;

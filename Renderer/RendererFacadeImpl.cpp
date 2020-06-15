@@ -5,7 +5,7 @@
 #include "Resources/ResourceRegistry.hpp"
 #include "Resources/ResourceFactoryDeallocatable.hpp"
 #include "Resources/Descriptor/DescriptorMemory.hpp"
-#include "Interface/Resources/SerializationContainer.hpp"
+#include "Interface/Resources/SerializeTarget.hpp"
 #include "Utility/Alignment.hpp"
 #include "Commands/BindDescriptorsContextCommand.hpp"
 #include "Commands/UserContextCommandWrapper.hpp"
@@ -63,9 +63,7 @@ namespace Renderer::DX12
 		descriptors{ resources.get(), 524'288, 512 },		
 		commandProcessor{ *resources, *commonQueue, registry, counterFactory },
 		resourceViewFactory{ *resources, registry, descriptors }
-	{			
-		shaderFactory->AddIncludeDirectory(Filesystem::Conversions::MakeExeRelative("../Content/Shaders/Includes").c_str());
-						
+	{							
 		commandProcessor.SubmitContextCommand(std::make_unique<Commands::BindDescriptorsContextCommand>(descriptors));
 		
 		/*
@@ -423,37 +421,45 @@ namespace Renderer::DX12
 		
 	}
 
-	
 
-	void RendererFacadeImpl::CompileVertexShader(const char *shader, size_t length, SerializationHook *serializer) const
+	
+	void RendererFacadeImpl::AddShaderIncludeDirectory(const char *absoluteDirectoryPath)
+	{
+		shaderFactory->AddIncludeDirectory(absoluteDirectoryPath);
+		
+	}
+
+
+
+	void RendererFacadeImpl::CompileVertexShader(const char *shader, size_t length, SerializationHook &serializer) const
 	{
 		auto shaderBlob{ shaderFactory->MakeVertexShader(shader, length, "main")};
-
-		auto block{ serializer->BeginBlock(shaderBlob->GetBufferSize()) };
-		serializer->WriteToBlock(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize());			
+						
+		serializer.Resize(shaderBlob->GetBufferSize());
+		std::memcpy(serializer.GetData(), shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize());				
 		
 	}
 
 
 	
-	void RendererFacadeImpl::CompilePixelShader(const char *shader, size_t length, SerializationHook* serializer) const
+	void RendererFacadeImpl::CompilePixelShader(const char *shader, size_t length, SerializationHook &serializer) const
 	{
 		auto shaderBlob{ shaderFactory->MakePixelShader(shader, length, "main")};
 
-		auto block{ serializer->BeginBlock(shaderBlob->GetBufferSize()) };
-		serializer->WriteToBlock(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize());
+		serializer.Resize(shaderBlob->GetBufferSize());
+		std::memcpy(serializer.GetData(), shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize());	
 		
 	}
 
 
 
 	
-	void RendererFacadeImpl::CompileComputeShader(const char *shader, const size_t length, SerializationHook *serializer) const
+	void RendererFacadeImpl::CompileComputeShader(const char *shader, const size_t length, SerializationHook &serializer) const
 	{
 		auto shaderBlob{ shaderFactory->MakeComputeShader(shader, length, "main") };
 
-		auto block{ serializer->BeginBlock(shaderBlob->GetBufferSize() )};
-		serializer->WriteToBlock(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize());
+		serializer.Resize(shaderBlob->GetBufferSize());
+		std::memcpy(serializer.GetData(), shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize());	
 		
 	}
 
@@ -461,11 +467,11 @@ namespace Renderer::DX12
 
 	void RendererFacadeImpl::SerializeRootSignature
 	(
-		unsigned cbvAmount,
-		unsigned srvAmount, 
-		unsigned uavAmount,
-		unsigned samplerAmount, 
-		SerializationHook *serializer,
+		const unsigned cbvAmount,
+		const unsigned srvAmount, 
+		const unsigned uavAmount,
+		const unsigned samplerAmount, 
+		SerializationHook &serializer,
 		const SamplerSpec *staticSamplers,
 		const unsigned numStaticSamplers
 	)
@@ -473,26 +479,22 @@ namespace Renderer::DX12
 		auto signatureBlob{ signatureFactory.SerializeRootSignature(cbvAmount, srvAmount, uavAmount, samplerAmount, staticSamplers, numStaticSamplers) };
 		const auto signatureSize{ signatureBlob->GetBufferSize() };
 
-		auto block{ serializer->BeginBlock(sizeof signatureSize + signatureBlob->GetBufferSize() + sizeof samplerAmount) };
-		serializer->WriteToBlock(&signatureSize, sizeof signatureSize);
-		serializer->WriteToBlock(signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize());
-		
-		serializer->WriteToBlock(&samplerAmount, sizeof samplerAmount);
-		
+		serializer.Resize(signatureBlob->GetBufferSize());
+		std::memcpy(serializer.GetData(), signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize());
+				
 	}
 
 
 	
-	size_t RendererFacadeImpl::MakeRootSignature(const void *serializedData)
-	{
-		const auto size{ ExtractSizeFrom(serializedData) };
+	size_t RendererFacadeImpl::MakeRootSignature(const void *serializedData, const size_t dataSizeInBytes, const unsigned samplerAmount)
+	{		
 		auto signatureData
 		{
 			signatureFactory.MakeRootSignature
 			(
-				ExtractSignatureFrom(serializedData), 
-				size,
-				ExtractSamplerCountFrom(serializedData, size)
+				serializedData,
+				dataSizeInBytes,
+				samplerAmount
 			)
 		};
 					
@@ -500,29 +502,7 @@ namespace Renderer::DX12
 					
 	}
 
-		SIZE_T RendererFacadeImpl::ExtractSizeFrom(const void *data)
-		{
-			return *reinterpret_cast<const SIZE_T *>(data);
-		
-		}
-
-		const unsigned char *RendererFacadeImpl::ExtractSignatureFrom(const void *data)
-		{
-			return reinterpret_cast<const unsigned char *>(data) + sizeof SIZE_T;
-		
-		}
-
-		size_t RendererFacadeImpl::ExtractSamplerCountFrom(const void *data, const SIZE_T signatureSize)
-		{
-			return *reinterpret_cast<const size_t *>
-			(
-				reinterpret_cast<const unsigned char *>(data)
-				+ sizeof SIZE_T
-				+ signatureSize
-			);
-		
-		}
-
+	
 
 	
 	size_t RendererFacadeImpl::MakePso(const ShaderList &shaders, size_t signatureHandle)

@@ -7,7 +7,7 @@
 #include <vector>
 #include "RendererFacade.hpp"
 #include "Commands/CompositeCommand.hpp"
-#include "Resources/SerializationContainer.hpp"
+#include "Resources/SerializeTarget.hpp"
 #include "StateSettings/SamplerSpec.hpp"
 
 
@@ -36,9 +36,9 @@ namespace App::Rendering
 			samplerSpec.addressU = samplerSpec.addressV = samplerSpec.addressW = &AddressingTargets::AddressingModeWrap;
 			samplerSpec.filter = &FilterTargets::FilterMinMagMipLinear;
 
-			SerializeContainer root{};
-			renderer.SerializeRootSignature(1, 1, 0, 0, &root, &samplerSpec, 1);
-			uiSignature = { &renderer, renderer.MakeRootSignature(root.GetData()) };
+			SerializeTarget root{};
+			renderer.SerializeRootSignature(1, 1, 0, 0, root, &samplerSpec, 1);
+			uiSignature = { &renderer, renderer.MakeRootSignature(root.GetData(), root.GetSizeInBytes(), 0) };
 		
 		}
 
@@ -81,21 +81,21 @@ namespace App::Rendering
 			.AddLayoutElementDesc(&SemanticTargets::TargetColor, 0, &FormatTargets::R8G8B8A8_UNorm, (UINT)IM_OFFSETOF(ImDrawVert, col));
 
 
-			const auto vs{ CreateUiVertexShader(renderer) };
-			const auto ps{ CreateUiPixelShader(renderer) };
+			auto vs{ CreateUiVertexShader(renderer) };
+			auto ps{ CreateUiPixelShader(renderer) };
 		
 			ShaderList list{};
 			list.vs.data = vs.GetData();
-			list.vs.sizeInBytes = vs.GetSize();
+			list.vs.sizeInBytes = vs.GetSizeInBytes();
 			list.ps.data = ps.GetData();
-			list.ps.sizeInBytes = ps.GetSize();
+			list.ps.sizeInBytes = ps.GetSizeInBytes();
 		
 		
 			uiPso = { &renderer, renderer.MakePso(list, uiSignature) };
 		
 		}
 
-			SerializeContainer UiRenderer::CreateUiVertexShader(::Renderer::RendererFacade &renderer)
+			SerializeTarget UiRenderer::CreateUiVertexShader(::Renderer::RendererFacade &renderer)
 			{			
 				static const char* vertexShader =
 				"cbuffer vertexBuffer : register(b2)\
@@ -125,13 +125,13 @@ namespace App::Rendering
 				  return output;\
 				}";
 
-				SerializeContainer vs{};
-				renderer.CompileVertexShader(vertexShader, strlen(vertexShader), &vs);
+				SerializeTarget vs{};
+				renderer.CompileVertexShader(vertexShader, strlen(vertexShader), vs);
 				return vs;
 			
 			}
 
-			SerializeContainer UiRenderer::CreateUiPixelShader(::Renderer::RendererFacade &renderer)
+			SerializeTarget UiRenderer::CreateUiPixelShader(::Renderer::RendererFacade &renderer)
 			{
 				static const char *pixelShader =
 			    "struct PS_INPUT\
@@ -149,8 +149,8 @@ namespace App::Rendering
 			      return out_col; \
 			    }";
 
-				SerializeContainer ps{};
-				renderer.CompilePixelShader(pixelShader, strlen(pixelShader), &ps);
+				SerializeTarget ps{};
+				renderer.CompilePixelShader(pixelShader, strlen(pixelShader), ps);
 
 				return ps;
 			

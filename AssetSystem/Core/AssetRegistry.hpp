@@ -33,6 +33,8 @@ namespace assetSystem::core
 
 		public: void RegisterAsset(const fs::path &projectRelativePath);
 
+			private: static void ReplaceBackslashes(std::string &path);
+		
 		public: static AssetKey MakeAssetKey(const std::string &projectRelativePath);
 
 		public: fs::path GetAbsoluteAssetPath(AssetKey assetKey) const;

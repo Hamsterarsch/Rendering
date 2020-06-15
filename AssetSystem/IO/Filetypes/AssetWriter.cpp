@@ -46,7 +46,7 @@ namespace assetSystem::io
 		void AssetWriter::WritePropertyName(const char *propertyName)
 		{
 			WritePropertyDelimiters();
-			file << '\t' << subobjectTabs << '"' << propertyName << "\": ";
+			file << '\t' << subobjectTabs << AssetArchiveConstants::dataStartToken << propertyName << AssetArchiveConstants::dataStartToken << ": ";
 		
 		}
 
@@ -61,7 +61,7 @@ namespace assetSystem::io
 				
 		void AssetWriter::WritePropertyValue(const unsigned char *data, const size_t sizeInBytes, const size_t elementStrideInBytes, const bool isBinary)
 		{
-			file << '"';
+			file << AssetArchiveConstants::dataStartToken;
 		
 			if(isBinary)
 			{
@@ -81,7 +81,7 @@ namespace assetSystem::io
 				file.write(reinterpret_cast<const char *>(data), sizeInBytes);				
 			}
 		
-			file << '"';
+			file << AssetArchiveConstants::dataStartToken;
 			hasWrittenPropertyValue = true;
 		
 		}
@@ -132,9 +132,9 @@ namespace assetSystem::io
 	{
 		WritePropertyName(propertyName);
 				
-		file << '"';
+		file << AssetArchiveConstants::dataStartToken;
 		file << str;
-		file << '"';
+		file << AssetArchiveConstants::dataStartToken;
 		hasWrittenPropertyValue = true;
 
 		return *this;

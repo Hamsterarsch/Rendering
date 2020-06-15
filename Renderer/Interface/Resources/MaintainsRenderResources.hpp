@@ -14,7 +14,7 @@ namespace Renderer
 		
 		public: virtual size_t MakeBuffer(const void *data, size_t sizeInBytes) = 0;
 
-		public: virtual size_t MakeRootSignature(const void *serializedData) = 0;
+		public: virtual size_t MakeRootSignature(const void *serializedData, size_t dataSizeInBytes, unsigned samplerAmount) = 0;
 					
 		public: virtual size_t MakePso(const ShaderList &shaders, size_t signatureHandle) = 0;
 					

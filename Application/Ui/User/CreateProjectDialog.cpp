@@ -83,7 +83,7 @@ namespace App::Ui::User
 				+= {{0, 0, 2}, std::move(errorElement)}
 		};
 								
-		uiElements.push_front(Element<ModalElement>("Create a new Project") += std::move(grid));
+		uiElements.push_front(Element<ModalElement>("Create a new Project")  ->* Set{&ModalElement::size, {.5, .3}} += std::move(grid));
 					
 	}
 

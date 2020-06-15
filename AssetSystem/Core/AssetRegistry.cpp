@@ -40,10 +40,20 @@ namespace assetSystem::core
 					asString.erase(extensionPos, asString.size() - extensionPos);					
 				}
 
+				ReplaceBackslashes(asString);		
 				const auto key{ MakeAssetKey(asString) };
 				fileHandleMap.insert( {key, std::move(asString)} );
 		
 			}
+
+					void AssetRegistry::ReplaceBackslashes(std::string &path)
+					{
+						for(auto replacePos{ path.find_first_of('\\') }; replacePos != path.npos; replacePos = path.find_first_of('\\'))
+						{
+							path.at(replacePos) = '/';
+						}
+		
+					}
 
 				AssetKey AssetRegistry::MakeAssetKey(const std::string &projectRelativePath)
 				{
