@@ -1,15 +1,13 @@
 #pragma once
 #include "AssetSystem/Interface/Asset.hpp"
-#include "Renderer/Interface/Resources/SerializationHook.hpp"
+#include "Renderer/Interface/Resources/SerializeTarget.hpp"
 
 
 namespace App::Assets
 {
 	class CacheAsset final : public assetSystem::Asset
 	{
-		int dataSize{ 0 };
-		
-		UniquePtr<unsigned char[]> data;
+		Renderer::SerializeTarget data;
 
 
 		public: CacheAsset() = default;
@@ -17,9 +15,11 @@ namespace App::Assets
 		public: explicit CacheAsset(int sizeInBytes);
 
 		
-		public: int GetSize() const { return dataSize; }
+		public: int GetSizeInBytes() const { return data.GetSizeInBytes(); }
 		
-		public: unsigned char *GetData() { return data.get(); }
+		public: unsigned char *GetData() { return data.GetData(); }
+
+		public: Renderer::SerializationHook &GetHook() { return data; }
 							   		
 		
 		public: assetSystem::io::Archive &Serialize(assetSystem::io::Archive &archive) override;

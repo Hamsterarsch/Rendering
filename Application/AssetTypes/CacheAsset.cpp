@@ -1,25 +1,37 @@
 #include "AssetTypes/CacheAsset.hpp"
 #include "AssetSystem/Interface/IO/Archive.hpp"
+#include "Shared/Exception/Exception.hpp"
+
 
 
 namespace App::Assets
 {
-	CacheAsset::CacheAsset(const int sizeInBytes) : dataSize{ sizeInBytes }, data{ MakeUnique<unsigned char[]>(sizeInBytes) }
+	CacheAsset::CacheAsset(const int sizeInBytes)
 	{
+		data.Resize(sizeInBytes);
+		
 	}
 
 
 	
 	assetSystem::io::Archive &CacheAsset::Serialize(assetSystem::io::Archive &archive)
-	{
-		archive.Serialize("cacheSize", dataSize);
-
-		if(!data)
+	{		
+		if(data.GetSizeInBytes() > static_cast<unsigned>(std::numeric_limits<int>::max()))
 		{
-			data = MakeUnique<unsigned char[]>(dataSize);
+			throw Exception::Exception{"CacheAsset: cache size is to big" };
+			
+		}
+		int size{ static_cast<int>(data.GetSizeInBytes()) };
+		
+		archive.Serialize("cacheSize", size);
+
+		
+		if(data.GetSizeInBytes() < static_cast<unsigned>(size))//size can never be negative
+		{
+			data.Resize(static_cast<unsigned>(size));
 		}
 		
-		return archive.Serialize("cache", data.get(), dataSize, sizeof(unsigned char) );
+		return archive.Serialize("cache", data.GetData(), static_cast<unsigned>(size), sizeof(unsigned char) );
 						
 	}
 

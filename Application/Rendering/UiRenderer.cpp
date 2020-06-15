@@ -37,8 +37,8 @@ namespace App::Rendering
 			samplerSpec.filter = &FilterTargets::FilterMinMagMipLinear;
 
 			SerializeTarget root{};
-			renderer.SerializeRootSignature(1, 1, 0, 0, &root, &samplerSpec, 1);
-			uiSignature = { &renderer, renderer.MakeRootSignature(root.GetData()) };
+			renderer.SerializeRootSignature(1, 1, 0, 0, root, &samplerSpec, 1);
+			uiSignature = { &renderer, renderer.MakeRootSignature(root.GetData(), root.GetSizeInBytes(), 0) };
 		
 		}
 
@@ -81,14 +81,14 @@ namespace App::Rendering
 			.AddLayoutElementDesc(&SemanticTargets::TargetColor, 0, &FormatTargets::R8G8B8A8_UNorm, (UINT)IM_OFFSETOF(ImDrawVert, col));
 
 
-			const auto vs{ CreateUiVertexShader(renderer) };
-			const auto ps{ CreateUiPixelShader(renderer) };
+			auto vs{ CreateUiVertexShader(renderer) };
+			auto ps{ CreateUiPixelShader(renderer) };
 		
 			ShaderList list{};
 			list.vs.data = vs.GetData();
-			list.vs.sizeInBytes = vs.GetSize();
+			list.vs.sizeInBytes = vs.GetSizeInBytes();
 			list.ps.data = ps.GetData();
-			list.ps.sizeInBytes = ps.GetSize();
+			list.ps.sizeInBytes = ps.GetSizeInBytes();
 		
 		
 			uiPso = { &renderer, renderer.MakePso(list, uiSignature) };
@@ -126,7 +126,7 @@ namespace App::Rendering
 				}";
 
 				SerializeTarget vs{};
-				renderer.CompileVertexShader(vertexShader, strlen(vertexShader), &vs);
+				renderer.CompileVertexShader(vertexShader, strlen(vertexShader), vs);
 				return vs;
 			
 			}
@@ -150,7 +150,7 @@ namespace App::Rendering
 			    }";
 
 				SerializeTarget ps{};
-				renderer.CompilePixelShader(pixelShader, strlen(pixelShader), &ps);
+				renderer.CompilePixelShader(pixelShader, strlen(pixelShader), ps);
 
 				return ps;
 			

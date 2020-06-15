@@ -14,7 +14,13 @@ namespace App::Assets
 		public: ShaderAsset() = default;
 
 		public: ShaderAsset(const char *code) : shaderCode{ code } {}
+
+
 		
+		public: const char *GetCode() const { return shaderCode.c_str(); }
+
+		public: size_t GetShaderLength() const { return shaderCode.size(); }
+
 		public: assetSystem::io::Archive &Serialize(assetSystem::io::Archive &archive) override;
 				
 		public: static const char *GetAssetClassExtension();

@@ -9,6 +9,7 @@
 #include "AssetTypes/ShaderAsset.hpp"
 
 #include "AssetSystem/Interface/AssetConstructOperationsHelper.hpp"
+#include "AssetTypes/CacheAsset.hpp"
 
 
 // Forward declare message handler from imgui_impl_win32.cpp
@@ -64,14 +65,14 @@ namespace App::Windows
 				{ rendererMediator, *renderer }
 			}
 		{
+			renderer->AddShaderIncludeDirectory(Filesystem::Conversions::MakeExeRelative("../../Content/Shaders/Includes").c_str());
+		
 			rendererMediator.SetMainWindowSurface(mainWindowSurface);
 
 			bool hasVersionMismatch;
 			Core::globals.programAssetSystem = Core::LoadProject(Filesystem::Conversions::MakeExeRelative(L"../../ProgramContent/ProgramContent.proj.asset").c_str(), hasVersionMismatch);
 
-			Core::globals.programAssetSystem->RegisterAssetClass(Assets::ShaderAsset::GetAssetClassExtension(), MakeUnique<assetSystem::AssetConstructOperationsHelper<Assets::ShaderAsset>>());
-
-			auto s = Core::globals.programAssetSystem->GetAsset("Shaders/Lighting.shdr");
+			
 		
 			uiFrontends.push_back(MakeUnique<Ui::User::StartupProjectDialogFrontend>());
 						
