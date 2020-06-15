@@ -6,6 +6,9 @@
 #include "ThirdParty/imgui/imgui_impl_win32.h"
 #include "Core/Globals.hpp"
 #include "Core/CreateProject.hpp"
+#include "AssetTypes/ShaderAsset.hpp"
+
+#include "AssetSystem/Interface/AssetConstructOperationsHelper.hpp"
 
 
 // Forward declare message handler from imgui_impl_win32.cpp
@@ -65,7 +68,11 @@ namespace App::Windows
 
 			bool hasVersionMismatch;
 			Core::globals.programAssetSystem = Core::LoadProject(Filesystem::Conversions::MakeExeRelative(L"../../ProgramContent/ProgramContent.proj.asset").c_str(), hasVersionMismatch);
-			
+
+			Core::globals.programAssetSystem->RegisterAssetClass(Assets::ShaderAsset::GetAssetClassExtension(), MakeUnique<assetSystem::AssetConstructOperationsHelper<Assets::ShaderAsset>>());
+
+			auto s = Core::globals.programAssetSystem->GetAsset("Shaders/Lighting.shdr");
+		
 			uiFrontends.push_back(MakeUnique<Ui::User::StartupProjectDialogFrontend>());
 						
 			

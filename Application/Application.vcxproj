@@ -250,6 +250,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AssetTypes\ProjectAsset.hpp" />
+    <ClInclude Include="AssetTypes\ShaderAsset.hpp" />
     <ClInclude Include="Core\CreateProject.hpp" />
     <ClInclude Include="Core\Globals.hpp" />
     <ClInclude Include="Core\Version.hpp" />
@@ -302,6 +303,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssetTypes\ProjectAsset.cpp" />
+    <ClCompile Include="AssetTypes\ShaderAsset.cpp" />
     <ClCompile Include="Core\CreateProject.cpp" />
     <ClCompile Include="Core\Globals.cpp" />
     <ClCompile Include="Core\Version.cpp" />
