@@ -101,6 +101,9 @@
     <ClCompile Include="Ui\States\UiProjectStartupState.cpp">
       <Filter>Ui\States</Filter>
     </ClCompile>
+    <ClCompile Include="Ui\User\AssetBrowser.cpp">
+      <Filter>Ui\User</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window\Windows\Window.hpp">
@@ -252,6 +255,9 @@
     </ClInclude>
     <ClInclude Include="Ui\States\UiProjectStartupState.hpp">
       <Filter>Ui\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\User\AssetBrowser.hpp">
+      <Filter>Ui\User</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
