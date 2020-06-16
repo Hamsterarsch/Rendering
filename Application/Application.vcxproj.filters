@@ -107,6 +107,9 @@
     <ClCompile Include="AssetTypes\ImageAsset.cpp">
       <Filter>AssetTypes</Filter>
     </ClCompile>
+    <ClCompile Include="AssetFactories\ImageFactory.cpp">
+      <Filter>AssetFactories</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window\Windows\Window.hpp">
@@ -267,6 +270,9 @@
     </ClInclude>
     <ClInclude Include="AssetFactories\ImageFactory.hpp">
       <Filter>AssetFactories</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\stb_image.h">
+      <Filter>ThirdParty</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

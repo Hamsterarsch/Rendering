@@ -12,6 +12,10 @@
 #include "AssetTypes/CacheAsset.hpp"
 
 
+
+#include "AssetFactories/ImageFactory.hpp"
+		
+
 // Forward declare message handler from imgui_impl_win32.cpp
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -71,8 +75,11 @@ namespace App::Windows
 
 			bool hasVersionMismatch;
 			Core::globals.programAssetSystem = Core::LoadProject(Filesystem::Conversions::MakeExeRelative(L"../../ProgramContent/ProgramContent.proj.asset").c_str(), hasVersionMismatch);
-									
-			
+						
+			//auto a{ Assets::ImageFactory::MakeImage("C:\\Users\\Hamsterarsch\\Desktop\\IFyu3v.png") };
+			Core::globals.programAssetSystem->RegisterAssetClass(Assets::ImageAsset::GetAssetClassExtension(), MakeUnique<assetSystem::AssetConstructOperationsHelper<Assets::ImageAsset>>());
+			//Core::globals.programAssetSystem->MakeAsset("Images/test.img", std::move(a));
+			auto e = Core::globals.programAssetSystem->GetAsset("Images/test.img");
 		}
 
 	

@@ -275,6 +275,7 @@
     <ClInclude Include="ThirdParty\imgui\imstb_rectpack.h" />
     <ClInclude Include="ThirdParty\imgui\imstb_textedit.h" />
     <ClInclude Include="ThirdParty\imgui\imstb_truetype.h" />
+    <ClInclude Include="ThirdParty\stb_image.h" />
     <ClInclude Include="Types\Dimensions2D.hpp" />
     <ClInclude Include="Ui\BasicFrontends\SetVisibilityFrontend.hpp" />
     <ClInclude Include="Ui\Core\ConstructionHelpers.hpp" />
@@ -311,6 +312,7 @@
     <ClInclude Include="Window\Windows\Window.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AssetFactories\ImageFactory.cpp" />
     <ClCompile Include="AssetTypes\CacheAsset.cpp" />
     <ClCompile Include="AssetTypes\ImageAsset.cpp" />
     <ClCompile Include="AssetTypes\ProjectAsset.cpp" />
