@@ -274,6 +274,12 @@
     <ClInclude Include="ThirdParty\stb_image.h">
       <Filter>ThirdParty</Filter>
     </ClInclude>
+    <ClInclude Include="Core\ImageView.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Elements\ImageButtonElement.hpp">
+      <Filter>Ui\Elements</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Window">

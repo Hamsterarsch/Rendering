@@ -5,7 +5,7 @@
 #include <algorithm>
 #include "StringInputTarget.hpp"
 #include "ThirdParty/imgui/imgui_internal.h"
-#include "Shared/Exception/Exception.hpp"
+#include "Core/ImageView.hpp"
 
 
 namespace App::Ui::Core
@@ -373,6 +373,31 @@ namespace App::Ui::Core
 		ImGui::Checkbox(("##" + userSettings.name).c_str(), isChecked);
 
 		DoItemEpilogue();
+		return *this;
+		
+	}
+
+
+
+	UiBuilder &UiBuilderImpl::MakeImageButton(const App::Core::ImageView &image, bool *isPressed)
+	{		
+		const ImVec2 defaultSize{ 50, 50 };
+			
+		auto usersDesiredSize{ defaultSize };
+		ApplyUserSizing(usersDesiredSize.x, usersDesiredSize.y);						
+		SetNextItemSize(usersDesiredSize.x, usersDesiredSize.y);				
+		
+		ImVec2 defaultPos{};
+		ApplyUserPositioning(defaultPos.x, defaultPos.y);
+		ApplyUserPivot(defaultPos.x, defaultPos.y, usersDesiredSize.x, usersDesiredSize.y);
+				
+		//drawing impl does not change the handle so we can cast from const
+		const auto pressedResult{	ImGui::ImageButton(&const_cast<App::Core::ImageView &>(image).handle, usersDesiredSize, {image.uvMinX, image.uvMinY}, {image.uvMaxX, image.uvMaxY}) };
+		if(isPressed)
+		{
+			*isPressed = pressedResult;
+		}
+
 		return *this;
 		
 	}

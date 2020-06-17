@@ -3,6 +3,9 @@
 #include "Shared/InterfaceHelpers.hpp"
 
 
+namespace App::Core{ struct ImageView; }
+
+
 namespace App::Ui::Core
 {
 	class StringInputTarget;
@@ -37,9 +40,12 @@ namespace App::Ui::Core
 
 		public: virtual UiBuilder &MakeText(const char *text) = 0;
 
-		public: virtual UiBuilder &MakeTextInput(Core::StringInputTarget &target) = 0;
+		public: virtual UiBuilder &MakeTextInput(StringInputTarget &target) = 0;
 
 		public: virtual UiBuilder &MakeCheckbox(bool *isChecked) = 0;
+
+
+		public: virtual UiBuilder &MakeImageButton(const App::Core::ImageView &image) = 0;
 		
 		
 		public: virtual UiBuilder &MakeGrid(size_t columns, size_t rows) = 0;
