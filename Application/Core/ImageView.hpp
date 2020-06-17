@@ -6,11 +6,11 @@ namespace App::Core
 {
 	struct ImageView
 	{
-		Renderer::ResourceHandle handle;
+		Renderer::ResourceHandle descriptorHandle;
 		float uvMinX;
 		float uvMinY;
 		float uvMaxX;
-		float uvMaxy;		
+		float uvMaxY;		
 	};
 
 	

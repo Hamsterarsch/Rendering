@@ -6,6 +6,7 @@
 #include "ThirdParty/imgui/imgui.h"
 struct ImVec2;
 
+
 namespace App::Ui::Core
 {
 	class UiBuilderImpl final : public UiBuilder
@@ -83,6 +84,9 @@ namespace App::Ui::Core
 		public: UiBuilder &MakeTextInput(StringInputTarget& target) override;						
 		
 		public: UiBuilder &MakeCheckbox(bool* isChecked) override;
+
+		
+		public: UiBuilder &MakeImageButton(const App::Core::ImageView &image, bool *isPressed) override;
 
 		
 		public: UiBuilder &MakeGrid(size_t columns, size_t rows) override;

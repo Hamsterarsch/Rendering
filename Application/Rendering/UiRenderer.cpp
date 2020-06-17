@@ -3,7 +3,7 @@
 
 #include "ThirdParty/imgui/imgui.h"
 
-
+#include "Types/Matrix.hpp"
 #include <vector>
 #include "RendererFacade.hpp"
 #include "Commands/CompositeCommand.hpp"
@@ -13,12 +13,13 @@
 
 namespace App::Rendering
 {
-	UiRenderer::UiRenderer(RendererMediator &mediator, ::Renderer::RendererFacade &renderer) :
+	UiRenderer::UiRenderer(RendererMediator &mediator, RendererFacade &renderer) :
 		mediator{ &mediator },
 		imguiContext{ nullptr },
+		constantBufferSizeInBytes{ 0 },
 		submitDrawData{ nullptr },
 		vertexIndexBufferSizeInBytes{ 0 },
-		constantBufferSizeInBytes{ 0 }
+		fontTexWasOverwritten{ false }
 	{
 		IMGUI_CHECKVERSION();		
 		imguiContext = ImGui::CreateContext();
@@ -30,19 +31,25 @@ namespace App::Rendering
 					
 	}
 
-		void UiRenderer::CreateUiSignature(::Renderer::RendererFacade &renderer)
+		void UiRenderer::CreateUiSignature(RendererFacade &renderer)
 		{
+			static_assert(sizeof(float) == 4);
+		
+			renderer.GetSignatureSettings()			
+			.DeclareTable().AddTableRange(&DescriptorTargets::ConstantBuffer, 0, 1)
+			.DeclareTable().AddTableRange(&DescriptorTargets::ShaderResource, 0, 1);
+		
 			SamplerSpec samplerSpec{};
 			samplerSpec.addressU = samplerSpec.addressV = samplerSpec.addressW = &AddressingTargets::AddressingModeWrap;
 			samplerSpec.filter = &FilterTargets::FilterMinMagMipLinear;
 
 			SerializeTarget root{};
-			renderer.SerializeRootSignature(1, 1, 0, 0, root, &samplerSpec, 1);
+			renderer.SerializeRootSignature(root, &samplerSpec, 1);
 			uiSignature = { &renderer, renderer.MakeRootSignature(root.GetData(), root.GetSizeInBytes(), 0) };
 		
 		}
 
-		void UiRenderer::CreateUiFontTexture(::Renderer::RendererFacade &renderer)
+		void UiRenderer::CreateUiFontTexture(RendererFacade &renderer)
 		{
 			ImGuiIO &io{ ImGui::GetIO() };
 			unsigned char *pixels;
@@ -50,10 +57,15 @@ namespace App::Rendering
 			io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
 
 			uiFontTexture = { &renderer, renderer.MakeTexture(pixels, width, height) };
-		
+
+			auto &viewFactory{ mediator->Renderer().GetViewFactory() };
+			viewFactory.DeclareNewDescriptorBlock(uiSignature, 1, 1, 0);
+			viewFactory.CreateShaderResourceView(uiFontTexture, 1, &FormatTargets::R8G8B8A8_UNorm, 1, 0);
+			uiFontDescriptor = { &renderer, viewFactory.FinalizeDescriptorBlock() }; 
+			
 		}
 
-		void UiRenderer::CreateUiPipeline(::Renderer::RendererFacade &renderer)
+		void UiRenderer::CreateUiPipeline(RendererFacade &renderer)
 		{
 			renderer.GetDepthStencilSettings()
 			.SetEnableDepth(false);
@@ -205,16 +217,18 @@ namespace App::Rendering
 			uiSignature = std::move(other.uiSignature);
 			uiPso = std::move(other.uiPso);
 			uiFontTexture = std::move(other.uiFontTexture);
-			uiVertexIndexBuffer = std::move(other.uiVertexIndexBuffer);
 			uiConstantBuffer = std::move(other.uiConstantBuffer);
-			uiDescriptors = std::move(other.uiDescriptors);
+			uiVertexIndexBuffer = std::move(other.uiVertexIndexBuffer);
+			uiConstantBufferDescriptor = std::move(other.uiConstantBufferDescriptor);
+			constantBufferSizeInBytes = std::move(other.constantBufferSizeInBytes);
+			uiFontDescriptor = std::move(other.uiFontDescriptor);
 			submitDrawData = std::move(other.submitDrawData);
 			vertexIndexBufferSizeInBytes = std::move(other.vertexIndexBufferSizeInBytes);
 			lastSubmitDisplayPos = std::move(other.lastSubmitDisplayPos);
 			lastSubmitDisplaySize = std::move(other.lastSubmitDisplaySize);
-			constantBufferSizeInBytes = std::move(other.constantBufferSizeInBytes);		
 			drawRecordVertexOffset = std::move(other.drawRecordVertexOffset);
 			drawRecordIndexOffset = std::move(other.drawRecordIndexOffset);
+			fontTexWasOverwritten = std::move(other.fontTexWasOverwritten);
 		
 			other.Invalidate();
 
@@ -244,14 +258,20 @@ namespace App::Rendering
 		if(DrawDataIsEmpty())
 		{
 			auto uiReferenceDummy{ MakeUnique<Commands::CompositeCommand>() };
-			uiReferenceDummy->AddReferenceTo(uiFontTexture);
+
+			uiReferenceDummy->AddReferenceTo(uiFontTexture);						
+			if(uiFontDescriptor.IsValid())
+			{
+				uiReferenceDummy->AddReferenceTo(uiFontDescriptor);
+			}
+			
 			if(uiConstantBuffer.IsValid())
 			{
-				uiReferenceDummy->AddReferenceTo(uiConstantBuffer);				
+				uiReferenceDummy->AddReferenceTo(uiConstantBuffer);
 			}
-			if(uiDescriptors.IsValid())
+			if(uiConstantBufferDescriptor.IsValid())
 			{
-				uiReferenceDummy->AddReferenceTo(uiDescriptors);
+				uiReferenceDummy->AddReferenceTo(uiConstantBufferDescriptor);
 			}
 			
 			mediator->Renderer().SubmitCommand(std::move(uiReferenceDummy));			
@@ -259,11 +279,11 @@ namespace App::Rendering
 			
 		}
 		
-		CreateBufferWithUiVertexIndexData();
+		CreateBufferWithUiVertexIndexData();		
 		
 		if(TryToUpdateUiConstantBuffer())
 		{
-			CreateDescriptorBlockForUiResources();
+			CreateConstantBufferDescriptor();
 		}
 			   
 		SubmitUiRendererWork();	
@@ -329,8 +349,9 @@ namespace App::Rendering
 			    { (R+L)/(L-R),  (T+B)/(B-T),    0.5f,       1.0f },
 			};		    
 
-			constantBufferSizeInBytes = { sizeof(float) * 4 * 4 };
-			uiConstantBuffer = { &mediator->Renderer(), mediator->Renderer().MakeBuffer(&orthogonalProjection, constantBufferSizeInBytes) };
+			auto constantBufferContent = Math::Matrix::MakeOrthogonalProjection(L, R, T, B, 0, 1);
+			constantBufferSizeInBytes = sizeof constantBufferContent;
+			uiConstantBuffer = { &mediator->Renderer(), mediator->Renderer().MakeBuffer(&constantBufferContent, constantBufferSizeInBytes) };
 
 			return true;
 		
@@ -356,17 +377,19 @@ namespace App::Rendering
 		
 			}
 
-		void UiRenderer::CreateDescriptorBlockForUiResources()
-		{			
+
+	
+		void UiRenderer::CreateConstantBufferDescriptor()
+		{
 			auto &viewFactory{ mediator->Renderer().GetViewFactory() };
-			viewFactory.DeclareNewDescriptorBlock(uiSignature, 2, 0);
+			viewFactory.DeclareNewDescriptorBlock(uiSignature, 0, 1, 0);
 			viewFactory.CreateConstantBufferView(uiConstantBuffer, 1, constantBufferSizeInBytes);
-			viewFactory.CreateShaderResourceView(uiFontTexture, 1, &FormatTargets::R8G8B8A8_UNorm, 1, 0);
-			
-			uiDescriptors = { &mediator->Renderer(), viewFactory.FinalizeDescriptorBlock() };
+			uiConstantBufferDescriptor = { &mediator->Renderer(), viewFactory.FinalizeDescriptorBlock() };		
 		
 		}
 
+
+	
 		void UiRenderer::SubmitUiRendererWork()
 		{
 			auto &cmdFactory{ mediator->CommandFactory() };
@@ -374,7 +397,8 @@ namespace App::Rendering
 						
 			uiCommand->Add(cmdFactory.SetSignatureGraphics(uiSignature));
 			uiCommand->Add(cmdFactory.SetPipelineState(uiPso));
-			uiCommand->Add(cmdFactory.SetDescriptorBlockViewsGraphics(uiDescriptors));
+			uiCommand->Add(cmdFactory.SetDescriptorBlockViewsAsGraphicsTable(uiConstantBufferDescriptor, 0));
+			uiCommand->Add(cmdFactory.SetDescriptorBlockViewsAsGraphicsTable(uiFontDescriptor, 1));
 			uiCommand->Add(cmdFactory.SetVertexBuffer(uiVertexIndexBuffer, 0, submitDrawData->TotalVtxCount, sizeof(ImDrawVert)));
 			uiCommand->Add(cmdFactory.SetIndexBuffer
 			(
@@ -419,7 +443,7 @@ namespace App::Rendering
 						{
 							throw;
 						}
-
+						
 						const auto topLeftX{ drawCommand.ClipRect.x - clipOffset.x };
 						const auto topLeftY{ drawCommand.ClipRect.y - clipOffset.y };
 						targetCommand.Add(cmdFactory.SetScissorRect
@@ -430,6 +454,18 @@ namespace App::Rendering
 							drawCommand.ClipRect.w - clipOffset.y - topLeftY 
 						));
 
+						if(drawCommand.TextureId != nullptr)
+						{
+							auto *asDescriptorHandle{ reinterpret_cast<ResourceHandle *>(drawCommand.TextureId) };							
+							targetCommand.Add(cmdFactory.SetDescriptorBlockViewsAsGraphicsTable(*asDescriptorHandle, 1));
+							fontTexWasOverwritten = true;
+						}
+						else if(fontTexWasOverwritten)
+						{
+							targetCommand.Add(cmdFactory.SetDescriptorBlockViewsAsGraphicsTable(uiFontDescriptor, 1));
+							fontTexWasOverwritten = false;
+						}
+						
 						targetCommand.Add(cmdFactory.DrawIndexedInstanced
 						(
 							1,

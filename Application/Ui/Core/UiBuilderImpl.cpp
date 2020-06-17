@@ -392,7 +392,7 @@ namespace App::Ui::Core
 		ApplyUserPivot(defaultPos.x, defaultPos.y, usersDesiredSize.x, usersDesiredSize.y);
 				
 		//drawing impl does not change the handle so we can cast from const
-		const auto pressedResult{	ImGui::ImageButton(&const_cast<App::Core::ImageView &>(image).handle, usersDesiredSize, {image.uvMinX, image.uvMinY}, {image.uvMaxX, image.uvMaxY}) };
+		const auto pressedResult{	ImGui::ImageButton(&const_cast<App::Core::ImageView &>(image).descriptorHandle, usersDesiredSize, {image.uvMinX, image.uvMinY}, {image.uvMaxX, image.uvMaxY}) };
 		if(isPressed)
 		{
 			*isPressed = pressedResult;
