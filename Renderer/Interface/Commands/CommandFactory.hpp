@@ -59,6 +59,14 @@ namespace Renderer::Commands
 			size_t vertexStrideInBytes
 		) = 0;
 
+		public: virtual UniquePtr<Command> SetGraphicConstants
+		(
+			unsigned parameterIndex,
+			const unsigned &constantData,
+			unsigned numConstants,
+			unsigned offsetIntoConstants
+		) = 0;
+		
 
 		public: virtual UniquePtr<Command> SetScissorRect(float topLeftX, float topLeftY, float width, float height) = 0;
 				

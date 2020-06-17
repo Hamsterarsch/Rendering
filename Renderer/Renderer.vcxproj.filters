@@ -323,6 +323,9 @@
     <ClInclude Include="Commands\Basic\SetDescriptorBlockViewsAsGraphicsTableCommand.hpp">
       <Filter>Commands\Basic</Filter>
     </ClInclude>
+    <ClInclude Include="Commands\Basic\SetConstantsToGraphicsCommand.hpp">
+      <Filter>Commands\Basic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -497,6 +500,9 @@
       <Filter>StateSettings</Filter>
     </ClCompile>
     <ClCompile Include="Commands\Basic\SetDescriptorBlockViewsAsGraphicsTableCommand.cpp">
+      <Filter>Commands\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Basic\SetConstantsToGraphicsCommand.cpp">
       <Filter>Commands\Basic</Filter>
     </ClCompile>
   </ItemGroup>

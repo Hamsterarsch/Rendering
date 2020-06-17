@@ -60,7 +60,15 @@ namespace Renderer::DX12::Commands
 			size_t vertexStrideInBytes
 		) override;
 
+		UniquePtr<Renderer::Commands::Command> SetGraphicConstants
+		(
+			unsigned parameterIndex, 
+			const unsigned &constantData,
+			unsigned numConstants,
+			unsigned offsetIntoConstants
+		) override;
 
+		
 		public: UniquePtr<Renderer::Commands::Command> SetScissorRect(float topLeftX, float topLeftY, float width, float height) override;
 				
 		public: UniquePtr<Renderer::Commands::Command> SetViewport
@@ -83,7 +91,7 @@ namespace Renderer::DX12::Commands
 		) override;
 		
 		public: UniquePtr<Renderer::Commands::Command> IncreaseCounter(CounterFactory::CounterID id, size_t valueToIncreaseBy) override;
-		
+
 	};
 	
 	

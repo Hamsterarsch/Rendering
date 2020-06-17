@@ -176,7 +176,21 @@ namespace RHA::DX12
 		
 	}
 
+
 	
+	void CmdListImpl::RecordSetGraphicsConstants
+	(
+		const unsigned parameterIndex,
+		const unsigned numConstants,
+		const unsigned &constantData,
+		const unsigned constantOffsetIntoData
+	)
+	{
+		glist->SetGraphicsRoot32BitConstants(parameterIndex, numConstants, &constantData, constantOffsetIntoData);
+		
+	}
+
+
 
 	void CmdListImpl::RecordSetRenderTargets
 	(

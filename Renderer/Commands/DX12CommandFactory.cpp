@@ -11,6 +11,7 @@
 #include "Commands/Basic/SetViewportCommand.hpp"
 #include "Commands/Basic/DrawIndexedInstancedCommand.hpp"
 #include "Commands/IncreaseCounterCommand.hpp"
+#include "Basic/SetConstantsToGraphicsCommand.hpp"
 
 
 namespace Renderer::DX12::Commands
@@ -86,8 +87,20 @@ namespace Renderer::DX12::Commands
 		
 	}
 
+	UniquePtr<Renderer::Commands::Command> DX12CommandFactory::SetGraphicConstants
+	(
+		const unsigned parameterIndex,
+		const unsigned &constantData,
+		const unsigned numConstants,
+		const unsigned offsetIntoConstants
+	)
+	{
+		return MakeUnique<SetConstantsToGraphicsCommand>(parameterIndex, constantData, numConstants, offsetIntoConstants);
+		
+	}
 
-	
+
+
 	UniquePtr<::Renderer::Commands::Command> DX12CommandFactory::SetScissorRect
 	(
 		const float topLeftX,
