@@ -3,7 +3,7 @@
 #include "Resources/Descriptor/DescriptorMemory.hpp"
 #include "Shared/Exception/Exception.hpp"
 #include "Utility/Alignment.hpp"
-#include "StateSettings/TargetHelpers.hpp"
+#include "StateSettings/FormatTargetsImpl.hpp"
 
 
 namespace Renderer::DX12
@@ -211,7 +211,7 @@ namespace Renderer::DX12
 	{
 		D3D12_SHADER_RESOURCE_VIEW_DESC desc{};
 		desc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-		desc.Format = GetTargetValue<DXGI_FORMAT>(format);        
+		desc.Format = GetTargetValue(format);        
         desc.Texture2D.MipLevels = numMips;
         desc.Texture2D.MostDetailedMip = mostDetailedMip;
         desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;

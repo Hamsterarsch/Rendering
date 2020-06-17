@@ -58,11 +58,11 @@ namespace Renderer::DX12
 			)
 		},
 		psoFactory{ resources.get(), depthStencilSettings, blendSettings, rasterizerSettings, vertexLayoutSettings },
-		signatureFactory{ resources.get() },
+		signatureFactory{ resources.get(), signatureSettings },
 		shaderFactory{ Facade::MakeShaderFactory(5, 1) },
 		descriptors{ resources.get(), 524'288, 512 },		
 		commandProcessor{ *resources, *commonQueue, registry, counterFactory },
-		resourceViewFactory{ *resources, registry, descriptors }
+		resourceViewFactory{ registry, descriptors }
 	{							
 		commandProcessor.SubmitContextCommand(std::make_unique<Commands::BindDescriptorsContextCommand>(descriptors));
 		
@@ -467,18 +467,13 @@ namespace Renderer::DX12
 
 	void RendererFacadeImpl::SerializeRootSignature
 	(
-		const unsigned cbvAmount,
-		const unsigned srvAmount, 
-		const unsigned uavAmount,
-		const unsigned samplerAmount, 
 		SerializationHook &serializer,
 		const SamplerSpec *staticSamplers,
 		const unsigned numStaticSamplers
 	)
 	{
-		auto signatureBlob{ signatureFactory.SerializeRootSignature(cbvAmount, srvAmount, uavAmount, samplerAmount, staticSamplers, numStaticSamplers) };
-		const auto signatureSize{ signatureBlob->GetBufferSize() };
-
+		auto signatureBlob{ signatureFactory.SerializeRootSignature(staticSamplers, numStaticSamplers) };
+		
 		serializer.Resize(signatureBlob->GetBufferSize());
 		std::memcpy(serializer.GetData(), signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize());
 				
@@ -675,6 +670,14 @@ namespace Renderer::DX12
 
 
 	
+	RootSignatureSettings &RendererFacadeImpl::GetSignatureSettings()
+	{
+		return signatureSettings;		
+		
+	}
+
+
+
 	ResourceViewFactory &RendererFacadeImpl::GetViewFactory()
 	{
 		return resourceViewFactory;

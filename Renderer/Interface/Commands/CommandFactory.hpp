@@ -39,7 +39,7 @@ namespace Renderer::Commands
 		public: virtual UniquePtr<Command> SetPipelineState(ResourceHandle::t_hash pipeline) = 0;
 
 		
-		public: virtual UniquePtr<Command> SetDescriptorBlockViewsGraphics(ResourceHandle::t_hash descriptorBlock) = 0;
+		public: virtual UniquePtr<Command> SetDescriptorBlockViewsAsGraphicsTable(ResourceHandle::t_hash descriptorBlock, unsigned parameterIndex) = 0;
 
 		
 		public: virtual UniquePtr<Command> SetIndexBuffer

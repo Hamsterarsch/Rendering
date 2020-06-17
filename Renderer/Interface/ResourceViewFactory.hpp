@@ -14,7 +14,7 @@ namespace Renderer
 		DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(ResourceViewFactory)
 
 
-		public: virtual void DeclareNewDescriptorBlock(ResourceHandle::t_hash forSignature, size_t numViews, size_t numSamplers) = 0;
+		public: virtual void DeclareNewDescriptorBlock(ResourceHandle::t_hash forSignature, unsigned forTableIndex, size_t numViews, size_t numSamplers) = 0;
 		
 		
 		public: virtual void CreateShaderResourceView(ResourceHandle::t_hash forResource, size_t ordinal) = 0;
@@ -47,6 +47,9 @@ namespace Renderer
 
 
 		public: virtual ResourceHandle::t_hash FinalizeDescriptorBlock() = 0;
+
+
+		public: virtual ResourceHandle::t_hash CreateShaderResourceView(ResourceHandle::t_hash forResource, Format format, uint16_t numMips, uint16_t mostDetailedMip) = 0;
 		
 	};
 	

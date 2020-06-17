@@ -19,13 +19,15 @@ namespace Renderer::DX12
 		private: ReferenceAwareDescriptorAllocator currentAllocator;
 
 		private: ResourceHandle::t_hash forSignature;
+
+		private: unsigned currentTableIndex;
 		
 		
 		
-		public: ResourceViewFactoryImpl(RHA::DX12::DeviceResources &resources, ResourceRegistry &registry, DescriptorMemory &descriptors);
+		public: ResourceViewFactoryImpl(ResourceRegistry &registry, DescriptorMemory &descriptors);
 
 		
-		public: void DeclareNewDescriptorBlock(ResourceHandle::t_hash forSignature, size_t numViews, size_t numSamplers) override;
+		public: void DeclareNewDescriptorBlock(ResourceHandle::t_hash forSignature, unsigned forTableIndex, size_t numViews, size_t numSamplers) override;
 
 		
 		public: void CreateShaderResourceView(ResourceHandle::t_hash forResource, size_t ordinal) override;
@@ -92,9 +94,17 @@ namespace Renderer::DX12
 			ResourceHandle::t_hash counterResource
 		) override;
 
-		
 		public: ResourceHandle::t_hash FinalizeDescriptorBlock() override;
 
+		
+		public: ResourceHandle::t_hash CreateShaderResourceView
+		(
+			ResourceHandle::t_hash forResource,
+			Format format, 
+			uint16_t numMips, 
+			uint16_t mostDetailedMip
+		) override;
+		
 	};
 		
 	

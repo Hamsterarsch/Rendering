@@ -14,6 +14,7 @@
 #include "StateSettings/RasterizerSettings.hpp"
 #include "StateSettings/SamplerSpec.hpp"
 #include "ResourceViewFactory.hpp"
+#include "StateSettings/RootSignatureSettings.hpp"
 
 namespace Renderer
 {
@@ -33,10 +34,6 @@ namespace Renderer
 
 		public: virtual void SerializeRootSignature
 		(
-			unsigned cbvAmount,
-			unsigned srvAmount,
-			unsigned uavAmount,
-			unsigned samplerAmount,
 			SerializationHook &serializer,			
 			const SamplerSpec *staticSamplers,
 			unsigned numStaticSamplers
@@ -73,6 +70,8 @@ namespace Renderer
 
 		public: virtual VertexLayoutSettings &GetVertexLayoutSettings() = 0;
 
+		public: virtual RootSignatureSettings &GetSignatureSettings() = 0;
+		
 
 		public: virtual ResourceViewFactory &GetViewFactory() = 0;
 

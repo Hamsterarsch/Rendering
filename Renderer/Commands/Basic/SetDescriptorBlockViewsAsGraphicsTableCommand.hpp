@@ -4,13 +4,15 @@
 
 namespace Renderer::DX12::Commands
 {
-	class SetDescriptorBlockViewsGraphicsCommand final : public DX12Command
+	class SetDescriptorBlockViewsAsGraphicsTableCommand final : public DX12Command
 	{
 		private: ResourceHandle::t_hash descriptorBlock;
+
+		private: unsigned parameterIndex;
 		
 						 		
 		
-		public: SetDescriptorBlockViewsGraphicsCommand(ResourceHandle::t_hash descriptorBlock);
+		public: SetDescriptorBlockViewsAsGraphicsTableCommand(ResourceHandle::t_hash descriptorBlock, unsigned parameterIndex);
 		
 		
 		public:	void ExecuteOperationOnResourceReferences(UsesReferences &registry, void(UsesReferences:: *operation)(size_t)) override;

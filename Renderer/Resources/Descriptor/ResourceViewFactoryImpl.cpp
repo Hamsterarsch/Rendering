@@ -1,24 +1,25 @@
 #include "Resources/Descriptor/ResourceViewFactoryImpl.hpp"
 #include "Resources/ResourceRegistry.hpp"
 #include "StateSettings/FormatTargetsImpl.hpp"
-#include "StateSettings/TargetHelpers.hpp"
 
 
 namespace Renderer::DX12
 {
-	ResourceViewFactoryImpl::ResourceViewFactoryImpl(RHA::DX12::DeviceResources &resources, ResourceRegistry &registry, DescriptorMemory &descriptors) :
+	ResourceViewFactoryImpl::ResourceViewFactoryImpl(ResourceRegistry &registry, DescriptorMemory &descriptors) :
 		registry{ &registry },
-		memory{ &descriptors }
+		memory{ &descriptors },
+		currentTableIndex{ 0 }
 	{
 	}
 
 
 	
-	void ResourceViewFactoryImpl::DeclareNewDescriptorBlock(const ResourceHandle::t_hash forSignature, const size_t numViews, const size_t numSamplers)
+	void ResourceViewFactoryImpl::DeclareNewDescriptorBlock(const ResourceHandle::t_hash forSignature, unsigned forTableIndex, const size_t numViews, const size_t numSamplers)
 	{
 		this->forSignature = forSignature;
 		currentAllocator.allocator = memory->GetDescriptorAllocator(numViews, numSamplers);
 		currentAllocator.allocator.OpenNewTable();
+		currentTableIndex = forTableIndex;
 		
 	}
 
@@ -26,7 +27,7 @@ namespace Renderer::DX12
 	
 	void ResourceViewFactoryImpl::CreateShaderResourceView(const ResourceHandle::t_hash forResource, const size_t ordinal)
 	{
-		currentAllocator.allocator.CreateDefaultedSrv(registry->GetResource(forResource), registry->GetSignatureSrvOffset(forSignature, ordinal));
+		currentAllocator.allocator.CreateDefaultedSrv(registry->GetResource(forResource), registry->GetSignatureSrvOffset(forSignature, currentTableIndex, ordinal));
 		currentAllocator.AddReferenceTo(forResource);
 		
 	}
@@ -43,7 +44,7 @@ namespace Renderer::DX12
 		currentAllocator.allocator.CreateSrvBuffer
 		(
 			registry->GetResource(forResource),
-			registry->GetSignatureSrvOffset(forSignature, ordinal),
+			registry->GetSignatureSrvOffset(forSignature, currentTableIndex, ordinal),
 			firstIndex,
 			numElements,
 			elementStrideInBytes
@@ -66,10 +67,10 @@ namespace Renderer::DX12
 		currentAllocator.allocator.CreateSrvBufferFormatted
 		(
 			registry->GetResource(forResource),
-			registry->GetSignatureSrvOffset(forSignature, ordinal),
+			registry->GetSignatureSrvOffset(forSignature, currentTableIndex, ordinal),
 			firstIndex,
 			numElements,
-			GetTargetValue<DXGI_FORMAT>(format)
+			GetTargetValue(format)
 		);
 		currentAllocator.AddReferenceTo(forResource);
 		
@@ -89,7 +90,7 @@ namespace Renderer::DX12
 		currentAllocator.allocator.CreateSrvTex2D
 		(
 			registry->GetResource(forResource),
-			registry->GetSignatureSrvOffset(forSignature, ordinal),
+			registry->GetSignatureSrvOffset(forSignature, currentTableIndex, ordinal),
 			format,
 			numMips,
 			mostDetailedMip
@@ -107,7 +108,7 @@ namespace Renderer::DX12
 		const size_t sizeInBytes
 	)
 	{
-		currentAllocator.allocator.CreateCbv(registry->GetResource(forResource), registry->GetSignatureCbvOffset(forSignature, ordinal), sizeInBytes);
+		currentAllocator.allocator.CreateCbv(registry->GetResource(forResource), registry->GetSignatureCbvOffset(forSignature, currentTableIndex, ordinal), sizeInBytes);
 		currentAllocator.AddReferenceTo(forResource);
 		
 	}
@@ -134,7 +135,7 @@ namespace Renderer::DX12
 		currentAllocator.allocator.CreateUavBuffer
 		(
 			registry->GetResource(forResource),
-			registry->GetSignatureUavOffset(forSignature, ordinal),
+			registry->GetSignatureUavOffset(forSignature, currentTableIndex, ordinal),
 			firstIndex,
 			numElements,
 			elementStrideInBytes
@@ -157,10 +158,10 @@ namespace Renderer::DX12
 		currentAllocator.allocator.CreateUavBufferFormatted
 		(
 			registry->GetResource(forResource),
-			registry->GetSignatureUavOffset(forSignature, ordinal),
+			registry->GetSignatureUavOffset(forSignature, currentTableIndex, ordinal),
 			firstIndex,
 			numElements,
-			GetTargetValue<DXGI_FORMAT>(format)
+			GetTargetValue(format)
 		);
 		currentAllocator.AddReferenceTo(forResource);
 		
@@ -182,7 +183,7 @@ namespace Renderer::DX12
 		(
 			registry->GetResource(forResource), 
 			registry->GetResource(counterResource),
-			registry->GetSignatureUavOffset(forSignature, ordinal),
+			registry->GetSignatureUavOffset(forSignature, currentTableIndex, ordinal),
 			firstIndex,
 			numElements,
 			elementStrideInBytes
@@ -197,6 +198,31 @@ namespace Renderer::DX12
 	ResourceHandle::t_hash ResourceViewFactoryImpl::FinalizeDescriptorBlock()
 	{		
 		return registry->Register(std::move(currentAllocator));
+		
+	}
+
+
+	
+	ResourceHandle::t_hash ResourceViewFactoryImpl::CreateShaderResourceView
+	(
+		const ResourceHandle::t_hash forResource,
+		const Format format,
+		const uint16_t numMips,
+		const uint16_t mostDetailedMip
+	)
+	{
+		DeclareNewDescriptorBlock(0, 0, 1 , 0);
+		currentAllocator.allocator.CreateSrvTex2D
+		(
+			registry->GetResource(forResource),
+			0,
+			format,
+			numMips,
+			mostDetailedMip
+		);
+		currentAllocator.AddReferenceTo(forResource);
+
+		return FinalizeDescriptorBlock();
 		
 	}
 

@@ -1,5 +1,4 @@
 #include "StateSettings/FormatTargetsImpl.hpp"
-#include <d3d12.h>
 
 
 namespace Renderer::DX12

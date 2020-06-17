@@ -4,7 +4,7 @@
 
 namespace Renderer::DX12
 {
-	class AddressingTargetsImpl : public AddressingTargets
+	class AddressingTargetsImpl final : public AddressingTargets
 	{
 		public: const void *AddressingModeWrap() const override;
 		

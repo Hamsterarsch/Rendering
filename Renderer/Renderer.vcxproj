@@ -244,7 +244,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Commands\Basic\DrawIndexedInstancedCommand.hpp" />
-    <ClInclude Include="Commands\Basic\SetDescriptorBlockViewsGraphicsCommand.hpp" />
+    <ClInclude Include="Commands\Basic\SetDescriptorBlockViewsAsGraphicsTableCommand.hpp" />
     <ClInclude Include="Commands\Basic\SetIndexBufferCommand.hpp" />
     <ClInclude Include="Commands\Basic\SetPipelineStateCommand.hpp" />
     <ClInclude Include="Commands\Basic\SetSignatureGraphicsCommand.hpp" />
@@ -258,14 +258,56 @@
     <ClInclude Include="Commands\BindDescriptorsContextCommand.hpp" />
     <ClInclude Include="Commands\GlobalBufferContextCommand.hpp" />
     <ClInclude Include="Commands\IncreaseCounterCommand.hpp" />
-    <ClInclude Include="Commands\LightingContextCommand.hpp" />
-    <ClInclude Include="Commands\LightingSetup\AssignLightsToTilesCommand.hpp" />
-    <ClInclude Include="Commands\LightingSetup\BuildActiveTileListCommand.hpp" />
-    <ClInclude Include="Commands\LightingSetup\FlagActiveVolumeTilesCommand.hpp" />
-    <ClInclude Include="Commands\LightingSetup\GenerateActiveTileListCommand.hpp" />
+    <ClInclude Include="Commands\LightingContextCommand.hpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugOptimized|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugOptimized|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Commands\LightingSetup\AssignLightsToTilesCommand.hpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugOptimized|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugOptimized|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Commands\LightingSetup\BuildActiveTileListCommand.hpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugOptimized|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugOptimized|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Commands\LightingSetup\FlagActiveVolumeTilesCommand.hpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugOptimized|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugOptimized|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Commands\LightingSetup\GenerateActiveTileListCommand.hpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugOptimized|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugOptimized|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Commands\DX12Command.hpp" />
     <ClInclude Include="Commands\CompositeRecordCommand.hpp" />
-    <ClInclude Include="Commands\InitVolumeTileGridCommand.hpp" />
+    <ClInclude Include="Commands\InitVolumeTileGridCommand.hpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugOptimized|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugOptimized|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Commands\PrepareSurfaceForPresentCommand.h" />
     <ClInclude Include="Commands\BindSurfaceCommand.hpp" />
     <ClInclude Include="Commands\PrepareSurfaceForRenderingCommand.hpp" />
@@ -279,6 +321,8 @@
     <ClInclude Include="Commands\UserContextCommandWrapper.hpp" />
     <ClInclude Include="CounterFactoryImpl.hpp" />
     <ClInclude Include="Interface\CounterFactory.hpp" />
+    <ClInclude Include="Interface\StateSettings\DescriptorTargets.hpp" />
+    <ClInclude Include="Interface\StateSettings\RootSignatureSettings.hpp" />
     <ClInclude Include="RendererFacadeImpl.hpp" />
     <ClInclude Include="Helpers.hpp" />
     <ClInclude Include="Interface\Commands\Command.hpp" />
@@ -341,9 +385,11 @@
     <ClInclude Include="StateSettings\AddressingTargetsImpl.hpp" />
     <ClInclude Include="StateSettings\BlendSettingsImpl.hpp" />
     <ClInclude Include="StateSettings\DepthStencilSettingsImpl.hpp" />
+    <ClInclude Include="StateSettings\DescriptorTargetsImpl.hpp" />
     <ClInclude Include="StateSettings\FilterTargetsImpl.hpp" />
     <ClInclude Include="StateSettings\FormatTargetsImpl.hpp" />
     <ClInclude Include="StateSettings\RasterizerSettingsImpl.hpp" />
+    <ClInclude Include="StateSettings\RootSignatureSettingsImpl.hpp" />
     <ClInclude Include="StateSettings\SemanticTargetsImpl.hpp" />
     <ClInclude Include="StateSettings\TargetHelpers.hpp" />
     <ClInclude Include="StateSettings\VertexLayoutSettingsImpl.hpp" />
@@ -351,7 +397,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Commands\Basic\DrawIndexedInstancedCommand.cpp" />
-    <ClCompile Include="Commands\Basic\SetDescriptorBlockViewsGraphicsCommand.cpp" />
+    <ClCompile Include="Commands\Basic\SetDescriptorBlockViewsAsGraphicsTableCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetIndexBufferCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetPipelineStateCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetScissorRectCommand.cpp" />
@@ -360,14 +406,56 @@
     <ClCompile Include="Commands\Basic\SetViewportCommand.cpp" />
     <ClCompile Include="Commands\DX12CommandFactory.cpp" />
     <ClCompile Include="Commands\IncreaseCounterCommand.cpp" />
-    <ClCompile Include="Commands\InitVolumeTileGridCommand.cpp" />
+    <ClCompile Include="Commands\InitVolumeTileGridCommand.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugOptimized|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugOptimized|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Commands\CommandProcessorImpl.cpp" />
     <ClCompile Include="Commands\BindDescriptorsContextCommand.cpp" />
-    <ClCompile Include="Commands\LightingContextCommand.cpp" />
-    <ClCompile Include="Commands\LightingSetup\AssignLightsToTilesCommand.cpp" />
-    <ClCompile Include="Commands\LightingSetup\BuildActiveTileListCommand.cpp" />
-    <ClCompile Include="Commands\LightingSetup\FlagActiveVolumeTilesCommand.cpp" />
-    <ClCompile Include="Commands\LightingSetup\GenerateActiveTileListCommand.cpp" />
+    <ClCompile Include="Commands\LightingContextCommand.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugOptimized|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugOptimized|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Commands\LightingSetup\AssignLightsToTilesCommand.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugOptimized|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugOptimized|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Commands\LightingSetup\BuildActiveTileListCommand.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugOptimized|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugOptimized|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Commands\LightingSetup\FlagActiveVolumeTilesCommand.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugOptimized|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugOptimized|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Commands\LightingSetup\GenerateActiveTileListCommand.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugOptimized|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugOptimized|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Commands\BindPsoAndSignatureCommand.cpp" />
     <ClCompile Include="Commands\PresentSurfaceCommandOld.cpp" />
     <ClCompile Include="Commands\RenderMeshCommand.cpp" />
@@ -403,9 +491,11 @@
     <ClCompile Include="StateSettings\AddressingTargetsImpl.cpp" />
     <ClCompile Include="StateSettings\BlendSettingsImpl.cpp" />
     <ClCompile Include="StateSettings\DepthStencilSettingsImpl.cpp" />
+    <ClCompile Include="StateSettings\DescriptorTargetsImpl.cpp" />
     <ClCompile Include="StateSettings\FilterTargetsImpl.cpp" />
     <ClCompile Include="StateSettings\FormatTargetsImpl.cpp" />
     <ClCompile Include="StateSettings\RasterizerSettingsImpl.cpp" />
+    <ClCompile Include="StateSettings\RootSignatureSettingsImpl.cpp" />
     <ClCompile Include="StateSettings\SemanticTargetsImpl.cpp" />
     <ClCompile Include="StateSettings\VertexLayoutSettingsImpl.cpp" />
   </ItemGroup>

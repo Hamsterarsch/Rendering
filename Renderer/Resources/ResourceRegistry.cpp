@@ -193,36 +193,37 @@ namespace Renderer::DX12
 
 
 
-	size_t ResourceRegistry::GetSignatureCbvOffset(const ResourceHandle::t_hash handle, const size_t cbvOrdinal) 
+	size_t ResourceRegistry::GetSignatureCbvOffset(const ResourceHandle::t_hash signature, const unsigned tableIndex, const size_t cbvOrdinal) 
 	{
-		return GetSignatureOffset(handle, cbvOrdinal, &TableLayout::GetCbvOffset);
+		return GetSignatureOffset(signature, tableIndex, cbvOrdinal, &TableLayout::GetCbvOffset);
 		
 	}
 		   
 		size_t ResourceRegistry::GetSignatureOffset
 		(
-			const ResourceHandle::t_hash handle, 
+			const ResourceHandle::t_hash signature,  
+			const unsigned tableIndex,
 			const size_t ordinal,
 			size_t( TableLayout:: *const getter)(unsigned short) const
 		) 
 		{
-			return (registrySignature.Get(handle).layout.*getter)(ordinal);
+			return (registrySignature.Get(signature).layouts.at(tableIndex).*getter)(ordinal);
 		
 		}
 
 
 
-	size_t ResourceRegistry::GetSignatureSrvOffset(const ResourceHandle::t_hash handle, const size_t srvOrdinal) 
+	size_t ResourceRegistry::GetSignatureSrvOffset(const ResourceHandle::t_hash signature, const unsigned tableIndex, const size_t srvOrdinal) 
 	{
-		return GetSignatureOffset(handle, srvOrdinal, &TableLayout::GetSrvOffset);
+		return GetSignatureOffset(signature, tableIndex, srvOrdinal, &TableLayout::GetSrvOffset);
 		
 	}
 
 
 
-	size_t ResourceRegistry::GetSignatureUavOffset(const ResourceHandle::t_hash handle, const size_t uavOrdinal) 
+	size_t ResourceRegistry::GetSignatureUavOffset(const ResourceHandle::t_hash signature, const unsigned tableIndex, const size_t uavOrdinal) 
 	{
-		return GetSignatureOffset(handle, uavOrdinal, &TableLayout::GetUavOffset);
+		return GetSignatureOffset(signature, tableIndex, uavOrdinal, &TableLayout::GetUavOffset);
 		
 	}
 
