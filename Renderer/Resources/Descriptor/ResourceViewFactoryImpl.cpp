@@ -201,30 +201,5 @@ namespace Renderer::DX12
 		
 	}
 
-
-	
-	ResourceHandle::t_hash ResourceViewFactoryImpl::CreateShaderResourceView
-	(
-		const ResourceHandle::t_hash forResource,
-		const Format format,
-		const uint16_t numMips,
-		const uint16_t mostDetailedMip
-	)
-	{
-		DeclareNewDescriptorBlock(0, 0, 1 , 0);
-		currentAllocator.allocator.CreateSrvTex2D
-		(
-			registry->GetResource(forResource),
-			0,
-			format,
-			numMips,
-			mostDetailedMip
-		);
-		currentAllocator.AddReferenceTo(forResource);
-
-		return FinalizeDescriptorBlock();
-		
-	}
-
 	
 }

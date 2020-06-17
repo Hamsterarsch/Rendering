@@ -47,9 +47,6 @@ namespace Renderer
 
 
 		public: virtual ResourceHandle::t_hash FinalizeDescriptorBlock() = 0;
-
-
-		public: virtual ResourceHandle::t_hash CreateShaderResourceView(ResourceHandle::t_hash forResource, Format format, uint16_t numMips, uint16_t mostDetailedMip) = 0;
 		
 	};
 	

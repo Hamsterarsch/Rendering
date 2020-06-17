@@ -1,7 +1,6 @@
 #pragma once
 #include "ResourceViewFactory.hpp"
 #include "DescriptorMemory.hpp"
-#include "ContainsReferences.hpp"
 #include "ReferenceAwareDescriptorAllocator.hpp"
 
 
@@ -96,14 +95,6 @@ namespace Renderer::DX12
 
 		public: ResourceHandle::t_hash FinalizeDescriptorBlock() override;
 
-		
-		public: ResourceHandle::t_hash CreateShaderResourceView
-		(
-			ResourceHandle::t_hash forResource,
-			Format format, 
-			uint16_t numMips, 
-			uint16_t mostDetailedMip
-		) override;
 		
 	};
 		
