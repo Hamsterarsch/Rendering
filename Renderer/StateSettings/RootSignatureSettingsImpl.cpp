@@ -49,35 +49,6 @@ namespace Renderer::DX12
 	}
 
 
-
-	RootSignatureSettings &RootSignatureSettingsImpl::AddDescriptor(DescriptorTarget target, unsigned registerIndex)
-	{
-		D3D12_ROOT_PARAMETER1 desc{};
-		switch (GetTargetValue(target))
-		{
-			case D3D12_DESCRIPTOR_RANGE_TYPE_SRV:
-				desc.ParameterType = D3D12_ROOT_PARAMETER_TYPE_SRV;
-				break;
-			case D3D12_DESCRIPTOR_RANGE_TYPE_UAV:
-				desc.ParameterType = D3D12_ROOT_PARAMETER_TYPE_UAV;
-				break;			
-			case D3D12_DESCRIPTOR_RANGE_TYPE_CBV:
-				desc.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-				break;			
-			default: Exception::ThrowIfDebug({"RootSignatureSettings:: missing switch case"});
-		}
-		
-		desc.Descriptor.ShaderRegister = registerIndex;		
-		desc.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
-		desc.Descriptor.Flags = D3D12_ROOT_DESCRIPTOR_FLAG_DATA_STATIC_WHILE_SET_AT_EXECUTE;
-
-		current.parameters.emplace_back(desc);
-
-		return *this;
-		
-	}
-
-
 	
 	RootSignatureSettings &RootSignatureSettingsImpl::DeclareTable()
 	{

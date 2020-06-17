@@ -38,8 +38,6 @@ namespace Renderer::DX12
 
 		
 		public: RootSignatureSettings &AddConstant(unsigned registerIndex, unsigned num32BitConstants) override;
-		
-		public: RootSignatureSettings &AddDescriptor(DescriptorTarget target, unsigned registerIndex) override;
 				
 		public: RootSignatureSettings &DeclareTable() override;
 				
