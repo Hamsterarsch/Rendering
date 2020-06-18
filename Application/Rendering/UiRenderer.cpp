@@ -58,10 +58,14 @@ namespace App::Rendering
 
 			uiFontTexture = { &renderer, renderer.MakeTexture(pixels, width, height) };
 
-			auto &viewFactory{ mediator->Renderer().GetViewFactory() };
-			viewFactory.DeclareNewDescriptorBlock(uiSignature, 1, 1, 0);
-			viewFactory.CreateShaderResourceView(uiFontTexture, 1, &FormatTargets::R8G8B8A8_UNorm, 1, 0);
-			uiFontDescriptor = { &renderer, viewFactory.FinalizeDescriptorBlock() }; 
+			uiFontDescriptor = 
+			{
+				&renderer,			
+				mediator->Renderer().GetViewFactory()
+				.DeclareSpecificDescriptorBlock(uiSignature, 1, 1, 0)
+				.DeclareOrdinal(1).CreateShaderResourceView(uiFontTexture, &FormatTargets::R8G8B8A8_UNorm, 1, 0)
+				.FinalizeDescriptorBlock()
+			};		
 			
 		}
 
@@ -107,7 +111,7 @@ namespace App::Rendering
 		
 		}
 
-			SerializeTarget UiRenderer::CreateUiVertexShader(::Renderer::RendererFacade &renderer)
+			SerializeTarget UiRenderer::CreateUiVertexShader(RendererFacade &renderer)
 			{			
 				static const char* vertexShader =
 				"cbuffer vertexBuffer : register(b2)\
@@ -143,7 +147,7 @@ namespace App::Rendering
 			
 			}
 
-			SerializeTarget UiRenderer::CreateUiPixelShader(::Renderer::RendererFacade &renderer)
+			SerializeTarget UiRenderer::CreateUiPixelShader(RendererFacade &renderer)
 			{
 				static const char *pixelShader =
 			    "struct PS_INPUT\
@@ -382,8 +386,8 @@ namespace App::Rendering
 		void UiRenderer::CreateConstantBufferDescriptor()
 		{
 			auto &viewFactory{ mediator->Renderer().GetViewFactory() };
-			viewFactory.DeclareNewDescriptorBlock(uiSignature, 0, 1, 0);
-			viewFactory.CreateConstantBufferView(uiConstantBuffer, 1, constantBufferSizeInBytes);
+			viewFactory.DeclareSpecificDescriptorBlock(uiSignature, 0, 1, 0);
+			viewFactory.CreateConstantBufferView(uiConstantBuffer, constantBufferSizeInBytes);
 			uiConstantBufferDescriptor = { &mediator->Renderer(), viewFactory.FinalizeDescriptorBlock() };		
 		
 		}
