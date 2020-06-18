@@ -52,6 +52,8 @@ namespace Renderer::DX12
 	
 	RootSignatureSettings &RootSignatureSettingsImpl::DeclareTable()
 	{
+		FinalizeTableCreation();
+		
 		D3D12_ROOT_PARAMETER1 desc{};
 		desc.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 		
@@ -60,13 +62,23 @@ namespace Renderer::DX12
 
 		current.tableRanges.emplace_back();
 		current.currentTableRangesOrdinal = current.tableRanges.size();
-
+				
 		return *this;
 		
 	}
 
+		void RootSignatureSettingsImpl::FinalizeTableCreation()
+		{
+			if(not current.parameters.empty() and current.parameters.back().ParameterType == D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE)
+			{
+				current.parameters.back().DescriptorTable.pDescriptorRanges = current.tableRanges.at(current.currentTableRangesOrdinal-1).ranges.data();
+				current.parameters.back().DescriptorTable.NumDescriptorRanges = current.tableRanges.at(current.currentTableRangesOrdinal-1).ranges.size();
+			}
+		
+		}
 
-	
+
+
 	RootSignatureSettings &RootSignatureSettingsImpl::AddTableRange
 	(
 		DescriptorTarget target,
@@ -118,8 +130,10 @@ namespace Renderer::DX12
 	
 
 	
-	const std::vector<D3D12_ROOT_PARAMETER1> &RootSignatureSettingsImpl::GetParameters() const
+	const std::vector<D3D12_ROOT_PARAMETER1> &RootSignatureSettingsImpl::GetParameters()
 	{
+		FinalizeTableCreation();
+		
 		return current.parameters;	
 
 	}

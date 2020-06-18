@@ -18,13 +18,13 @@ namespace Renderer::DX12
 	{
 		private: RHA::DX12::DeviceResources *resources;
 
-		private: const RootSignatureSettingsImpl *settings;
+		private: RootSignatureSettingsImpl *settings;
 		
 		private: size_t offsetInDescriptorTable;
 
 
 
-		public: explicit RootSignatureFactory(RHA::DX12::DeviceResources *resources, const RootSignatureSettingsImpl &settings);			
+		public: RootSignatureFactory(RHA::DX12::DeviceResources *resources, RootSignatureSettingsImpl &settings);			
 
 		
 		public: DxPtr<ID3DBlob> SerializeRootSignature

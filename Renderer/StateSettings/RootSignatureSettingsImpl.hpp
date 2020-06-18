@@ -40,13 +40,15 @@ namespace Renderer::DX12
 		public: RootSignatureSettings &AddConstant(unsigned registerIndex, unsigned num32BitConstants) override;
 				
 		public: RootSignatureSettings &DeclareTable() override;
-				
+
+			private: void FinalizeTableCreation();
+		
 		public: RootSignatureSettings &AddTableRange(DescriptorTarget target, unsigned baseRegister, unsigned numDescriptorsInRange) override;
 		
 		RootSignatureSettings &AddSamplerTable(unsigned baseRegister, unsigned numSamplers) override;
 
 
-		public: const std::vector<D3D12_ROOT_PARAMETER1> &GetParameters() const;
+		public: const std::vector<D3D12_ROOT_PARAMETER1> &GetParameters();
 
 		RootSignatureSettings& DeclareDataVolatility() override { return *this; }
 		RootSignatureSettings& DeclareDescriptorVolatility() override { return *this; }

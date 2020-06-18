@@ -9,7 +9,7 @@
 namespace Renderer::DX12
 {
 
-	RootSignatureFactory::RootSignatureFactory(RHA::DX12::DeviceResources *resources, const RootSignatureSettingsImpl &settings) :
+	RootSignatureFactory::RootSignatureFactory(RHA::DX12::DeviceResources *resources, RootSignatureSettingsImpl &settings) :
 		resources{ resources },
 		settings{ &settings }
 	{
