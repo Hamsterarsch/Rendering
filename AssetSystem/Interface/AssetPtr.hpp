@@ -17,7 +17,8 @@ namespace assetSystem
 		private: AssetSystem *assetSystem;
 
 		
-
+		public: AssetPtr();
+		
 		public: AssetPtr(const char *projectRelativePath, AssetSystem &system);
 
 		public: AssetPtr(Asset &asset, AssetKey key, AssetSystem &system);
