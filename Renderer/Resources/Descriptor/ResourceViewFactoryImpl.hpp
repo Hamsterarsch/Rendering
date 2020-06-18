@@ -41,7 +41,7 @@ namespace Renderer::DX12
 		
 		public: ResourceViewFactory &CreateShaderResourceView(ResourceHandle::t_hash forResource) override;
 
-			private: size_t GetTableOffset(size_t(ResourceRegistry:: *getter)(ResourceHandle::t_hash, unsigned, size_t))
+			private: size_t GetTableOffset(size_t(ResourceRegistry:: *getter)(ResourceHandle::t_hash, unsigned, size_t));
 		
 		public: ResourceViewFactory &CreateShaderResourceView
 		(

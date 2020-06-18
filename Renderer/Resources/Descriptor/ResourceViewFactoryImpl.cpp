@@ -63,6 +63,8 @@ namespace Renderer::DX12
 
 		size_t ResourceViewFactoryImpl::GetTableOffset(size_t(ResourceRegistry::* getter)(ResourceHandle::t_hash, unsigned, size_t))
 		{
+			Exception::ThrowIfDebug(isBuildingSpecificDescriptor && currentOrdinal == 0, {"Renderer::ResourceViewFactory: When creating descriptors for specific descriptor blocks you have to declare an ordinal."} );
+		
 			return isBuildingSpecificDescriptor ? (*registry.*getter)(forSignature, currentTableIndex, currentOrdinal) : currentOffsetIntoTable++;
 		
 		}
