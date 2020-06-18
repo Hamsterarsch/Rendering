@@ -61,7 +61,7 @@ namespace App::Rendering
 			uiFontDescriptor = 
 			{
 				&renderer,			
-				mediator->Renderer().GetViewFactory()
+				renderer.GetViewFactory()
 				.DeclareSpecificDescriptorBlock(uiSignature, 1, 1, 0)
 				.DeclareOrdinal(1).CreateShaderResourceView(uiFontTexture, &FormatTargets::R8G8B8A8_UNorm, 1, 0)
 				.FinalizeDescriptorBlock()
@@ -114,7 +114,7 @@ namespace App::Rendering
 			SerializeTarget UiRenderer::CreateUiVertexShader(RendererFacade &renderer)
 			{			
 				static const char* vertexShader =
-				"cbuffer vertexBuffer : register(b2)\
+				"cbuffer vertexBuffer : register(b0)\
 				{\
 				  float4x4 ProjectionMatrix; \
 				};\
@@ -384,11 +384,15 @@ namespace App::Rendering
 
 	
 		void UiRenderer::CreateConstantBufferDescriptor()
-		{
-			auto &viewFactory{ mediator->Renderer().GetViewFactory() };
-			viewFactory.DeclareSpecificDescriptorBlock(uiSignature, 0, 1, 0);
-			viewFactory.CreateConstantBufferView(uiConstantBuffer, constantBufferSizeInBytes);
-			uiConstantBufferDescriptor = { &mediator->Renderer(), viewFactory.FinalizeDescriptorBlock() };		
+		{			
+			uiConstantBufferDescriptor = 
+			{
+				&mediator->Renderer(),
+				mediator->Renderer().GetViewFactory()
+				.DeclareSpecificDescriptorBlock(uiSignature, 0, 1, 0)
+				.DeclareOrdinal(1).CreateConstantBufferView(uiConstantBuffer, constantBufferSizeInBytes)
+				.FinalizeDescriptorBlock()
+			};
 		
 		}
 
@@ -460,7 +464,7 @@ namespace App::Rendering
 
 						if(drawCommand.TextureId != nullptr)
 						{
-							auto *asDescriptorHandle{ reinterpret_cast<ResourceHandle *>(drawCommand.TextureId) };							
+							auto *asDescriptorHandle{ reinterpret_cast<ResourceHandle::t_hash *>(drawCommand.TextureId) };							
 							targetCommand.Add(cmdFactory.SetDescriptorBlockViewsAsGraphicsTable(*asDescriptorHandle, 1));
 							fontTexWasOverwritten = true;
 						}
