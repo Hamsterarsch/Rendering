@@ -20,73 +20,79 @@ namespace Renderer::DX12
 		private: ResourceHandle::t_hash forSignature;
 
 		private: unsigned currentTableIndex;
-		
+
+		private: size_t currentOrdinal;
+
+		private: size_t currentOffsetIntoTable;
+
+		private: bool isBuildingSpecificDescriptor;
+
 		
 		
 		public: ResourceViewFactoryImpl(ResourceRegistry &registry, DescriptorMemory &descriptors);
 
 		
-		public: void DeclareNewDescriptorBlock(ResourceHandle::t_hash forSignature, unsigned forTableIndex, size_t numViews, size_t numSamplers) override;
+		public: ResourceViewFactory &DeclareDescriptorBlock(size_t numViews, size_t numSamplers) override;
+		
+		public: ResourceViewFactory &DeclareSpecificDescriptorBlock(ResourceHandle::t_hash forSignature, unsigned forTableIndex, size_t numViews, size_t numSamplers) override;
+		
+		public: ResourceViewFactory &DeclareOrdinal(size_t ordinal) override;
 
 		
-		public: void CreateShaderResourceView(ResourceHandle::t_hash forResource, size_t ordinal) override;
+		public: ResourceViewFactory &CreateShaderResourceView(ResourceHandle::t_hash forResource) override;
 
-		public: void CreateShaderResourceView
+			private: size_t GetTableOffset(size_t(ResourceRegistry:: *getter)(ResourceHandle::t_hash, unsigned, size_t))
+		
+		public: ResourceViewFactory &CreateShaderResourceView
 		(
 			ResourceHandle::t_hash forResource,
-			size_t ordinal,
 			size_t firstIndex,
-			size_t numElements, 
+			size_t numElements,
 			size_t elementStrideInBytes
 		) override;
 
-		public: void CreateShaderResourceView
+		public: ResourceViewFactory &CreateShaderResourceView
 		(
-			ResourceHandle::t_hash forResource, 
-			size_t ordinal,
+			ResourceHandle::t_hash forResource,
 			size_t firstIndex,
-			size_t numElements,			
+			size_t numElements,
 			Format format
 		) override;
 
-		public: void CreateShaderResourceView
+		public: ResourceViewFactory &CreateShaderResourceView
 		(
-			ResourceHandle::t_hash forResource, 
-			size_t ordinal,
+			ResourceHandle::t_hash forResource,
 			Format format,
 			uint16_t numMips,
 			uint16_t mostDetailedMip
 		) override;
 
 		
-		public: void CreateConstantBufferView(ResourceHandle::t_hash forResource, size_t ordinal, size_t sizeInBytes) override;
+		public: ResourceViewFactory &CreateConstantBufferView(ResourceHandle::t_hash forResource, size_t sizeInBytes) override;
 
 		
-		public: void CreateSampler(ResourceHandle::t_hash forResource, size_t ordinal, const SamplerSpec &specification) override;
+		public: ResourceViewFactory &CreateSampler(ResourceHandle::t_hash forResource, const SamplerSpec &specification) override;
 
 		
-		public: void CreateUnorderedAccessView
+		public: ResourceViewFactory &CreateUnorderedAccessView
 		(
 			ResourceHandle::t_hash forResource,
-			size_t ordinal,
 			size_t firstIndex,
 			size_t numElements,
 			size_t elementStrideInBytes
 		) override;
 
-		public: void CreateUnorderedAccessView
+		public: ResourceViewFactory &CreateUnorderedAccessView
 		(
 			ResourceHandle::t_hash forResource,
-			size_t ordinal,
 			size_t firstIndex,
-			size_t numElements,			
+			size_t numElements,
 			Format format
 		) override;
 
-		public: void CreateUnorderedAccessView
+		public: ResourceViewFactory &CreateUnorderedAccessView
 		(
 			ResourceHandle::t_hash forResource,
-			size_t ordinal,
 			size_t firstIndex,
 			size_t numElements,
 			size_t elementStrideInBytes,
@@ -95,7 +101,7 @@ namespace Renderer::DX12
 
 		public: ResourceHandle::t_hash FinalizeDescriptorBlock() override;
 
-		
+
 	};
 		
 	
