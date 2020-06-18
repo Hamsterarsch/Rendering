@@ -6,15 +6,14 @@
 
 namespace App::Assets
 {
-	ImageAsset::ImageAsset() : sizeInBytes{ 0 } {}
+	ImageAsset::ImageAsset() : data{} {}
 
 
 	
-	ImageAsset::ImageAsset(UniquePtr<unsigned char[]> &&rgbaData, size_t sizeInBytes, const char *absoluteSourceImagePath)
+	ImageAsset::ImageAsset(ImageData &&data, const char *absoluteSourceImagePath)
 		:
-		absoluteSourceImagePath{ absoluteSourceImagePath },
-		sizeInBytes{ sizeInBytes },
-		rgbaData{ std::move(rgbaData) }
+		data{ std::move(data) },
+		absoluteSourceImagePath{ absoluteSourceImagePath }
 	{
 	}
 
@@ -45,11 +44,8 @@ namespace App::Assets
 	{
 		std::filesystem::path path{ absoluteAssetFilePath };
 		path.replace_extension().replace_extension("png");
-		auto out{ ImageFactory::LoadImageData(path.string().c_str()) };
-
-		rgbaData = std::move(out.rgbaData);
-		sizeInBytes = out.sizeInBytes;
-		
+		data = ImageFactory::LoadImageData(path.string().c_str());
+				
 	}
 	
 	

@@ -9,11 +9,12 @@ namespace App::Assets
 	ImageAsset ImageFactory::MakeImage(const char *absoluteImagePath)
 	{
 		auto data{ LoadImageData(absoluteImagePath) };
-		return { std::move(data.rgbaData), data.sizeInBytes, absoluteImagePath };
+		
+		return ImageAsset{ std::move(data), absoluteImagePath };
 		
 	}
 
-		ImageFactory::ImageData ImageFactory::LoadImageData(const char* absoluteImagePath)
+		ImageData ImageFactory::LoadImageData(const char* absoluteImagePath)
 		{
 			ImageData outData{};
 

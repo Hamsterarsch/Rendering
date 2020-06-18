@@ -1,33 +1,42 @@
 #pragma once
 #include "Renderer/Interface/Resources/HandleWrapper.hpp"
 #include "AssetSystem/Interface/Asset.hpp"
-#include "Shared/PtrTypes.hpp"
+#include "AssetFactories/ImageData.hpp"
 #include <string>
 
 
 namespace App::Assets
-{		
+{
+	struct ImageData;
+	
+	
 	class ImageAsset final : public assetSystem::Asset
 	{
 		private: Renderer::HandleWrapper textureHandle;
 
+		private: ImageData data;
+
 		private: std::string absoluteSourceImagePath;
 		
-		private: size_t sizeInBytes;
 		
-		private: UniquePtr<unsigned char[]> rgbaData;
-		
-
 		public: ImageAsset();
 
-		public: ImageAsset(UniquePtr<unsigned char[]> &&rgbaData, size_t sizeInBytes, const char *absoluteSourceImagePath);
+		public: ImageAsset(ImageData &&data, const char *absoluteSourceImagePath);
 
 
-		void OnMakeAsset(const char* absoluteAssetFilePath) override;
+		public: void OnMakeAsset(const char *absoluteAssetFilePath) override;
 		
 		public: assetSystem::io::Archive &Serialize(assetSystem::io::Archive &archive) override;
 				
-		void OnAssetLoaded(const char* absoluteAssetFilePath) override;
+		public: void OnAssetLoaded(const char *absoluteAssetFilePath) override;
+
+
+		public: unsigned GetImageWidth() const { return data.width; }
+
+		public: unsigned GetImageHeight() const { return data.height; }
+
+		public: const unsigned char *GetImageData() const { return data.rgbaData.get(); }
+		
 		
 		public: static const char *GetAssetClassExtension();
 
