@@ -249,6 +249,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AssetFactories\ImageData.hpp" />
     <ClInclude Include="AssetFactories\ImageFactory.hpp" />
     <ClInclude Include="AssetTypes\CacheAsset.hpp" />
     <ClInclude Include="AssetTypes\ImageAsset.hpp" />

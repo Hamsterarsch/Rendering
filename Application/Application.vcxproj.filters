@@ -280,6 +280,9 @@
     <ClInclude Include="Ui\Elements\ImageButtonElement.hpp">
       <Filter>Ui\Elements</Filter>
     </ClInclude>
+    <ClInclude Include="AssetFactories\ImageData.hpp">
+      <Filter>AssetFactories</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Window">
