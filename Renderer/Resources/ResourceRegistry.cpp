@@ -4,8 +4,7 @@
 
 namespace Renderer::DX12
 {
-	ResourceRegistry::ResourceRegistry(const bool neverPurgePsoAndSignature) :
-		shouldPurgePsoAndSignature{ !neverPurgePsoAndSignature }
+	ResourceRegistry::ResourceRegistry() 		
 	{
 		registryDescriptor.SetOnEntityPurged([&r = registryResource](ReferenceAwareDescriptorAllocator &entity)
 		{
@@ -235,7 +234,8 @@ namespace Renderer::DX12
 		{
 			registryLight.Remove(handle);
 		}
-		
+
+		RemoveReference(handle);
 		handlesToRetire.push_front(handle);
 		
 	}
@@ -245,13 +245,9 @@ namespace Renderer::DX12
 	void ResourceRegistry::PurgeUnreferencedEntities()
 	{
 		registryDescriptor.PurgeUnreferencedEntities();
-		registryResource.PurgeUnreferencedEntities();
-		
-		if(shouldPurgePsoAndSignature)
-		{
-			registryPso.PurgeUnreferencedEntities();
-			registrySignature.PurgeUnreferencedEntities();				
-		}
+		registryResource.PurgeUnreferencedEntities();		
+		registryPso.PurgeUnreferencedEntities();
+		registrySignature.PurgeUnreferencedEntities();			
 					
 		handlesToRetire.remove_if([ &rorch = *this](const size_t &handle)
 		{

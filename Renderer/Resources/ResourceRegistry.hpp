@@ -33,10 +33,9 @@ namespace Renderer
 
 			private: std::forward_list<ResourceHandle::t_hash> handlesToRetire;
 
-			private: bool shouldPurgePsoAndSignature;
 
 			
-			public: explicit ResourceRegistry(bool neverPurgePsoAndSignature = true);
+			public: explicit ResourceRegistry();
 
 			public: bool IsHandleUnknown(ResourceHandle::t_hash handle)	const;
 

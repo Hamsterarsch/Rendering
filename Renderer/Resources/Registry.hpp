@@ -57,8 +57,8 @@ namespace Renderer
 				
 				
 				entities.insert( {handle, std::move(entity)} );
-				references.insert( {handle, 0} );
-				unreferenced.emplace(handle);
+				references.insert( {handle, 1} );
+				//unreferenced.emplace(handle);
 				
 			}
 
