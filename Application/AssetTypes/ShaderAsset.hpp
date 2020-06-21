@@ -1,19 +1,19 @@
 #pragma once
-#include "AssetSystem/Interface/Asset.hpp"
+#include "AssetTypes/AssetBase.hpp"
 #include <string>
 
 
 namespace App::Assets
 {
-	class ShaderAsset final : public assetSystem::Asset
+	class ShaderAsset final : public AssetBase<ShaderAsset>
 	{
 		private: std::string shaderCode;
 
 
 
-		public: ShaderAsset() = default;
+		public: ShaderAsset();
 
-		public: ShaderAsset(const char *code) : shaderCode{ code } {}
+		public: ShaderAsset(const char *code) :  AssetBase{ GetAssetClassExtension() }, shaderCode{ code } {}
 
 
 		
@@ -26,8 +26,8 @@ namespace App::Assets
 		public: static const char *GetAssetClassExtension();
 
 		public: static const wchar_t *GetAssetClassExtensionW();
-		
-		
+				
 	};
+	
 	
 }

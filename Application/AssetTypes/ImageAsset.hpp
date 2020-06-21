@@ -1,6 +1,6 @@
 #pragma once
+#include "AssetBase.hpp"
 #include "Renderer/Interface/Resources/HandleWrapper.hpp"
-#include "AssetSystem/Interface/Asset.hpp"
 #include "AssetFactories/ImageData.hpp"
 #include <string>
 
@@ -10,7 +10,7 @@ namespace App::Assets
 	struct ImageData;
 	
 	
-	class ImageAsset final : public assetSystem::Asset
+	class ImageAsset final : public AssetBase<ImageAsset>
 	{
 		private: Renderer::HandleWrapper textureHandle;
 

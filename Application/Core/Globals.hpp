@@ -14,14 +14,15 @@ namespace App::Core
 {
 	struct Globals
 	{
-		const Version programVersion;
+		private: UniquePtr<assetSystem::AssetSystem> programAssetSystem;
 
-		UniquePtr<assetSystem::AssetSystem> programAssetSystem;
+		public: const Version programVersion;
 
-		UniquePtr<assetSystem::AssetSystem> projectAssetSystem;
+		public: UniquePtr<assetSystem::AssetSystem> projectAssetSystem;
 
 		
-
+		friend assetSystem::AssetSystem &GetProgramAssets();
+			   		
 		Globals();
 
 		Globals(const Globals &) = delete;
@@ -35,7 +36,20 @@ namespace App::Core
 		~Globals();
 		
 	};
-
 	inline static Globals globals{};
+
+	
+	inline assetSystem::AssetSystem &GetProgramAssets()
+	{
+		return *globals.programAssetSystem;
+		
+	}
+
+	inline assetSystem::AssetSystem &GetProjectAssets()
+	{
+		return *globals.projectAssetSystem;
+		
+	}
+	
 	
 }

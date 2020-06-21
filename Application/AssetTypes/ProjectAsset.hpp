@@ -1,11 +1,11 @@
 #pragma once
-#include "AssetSystem/Interface/Asset.hpp"
+#include "AssetBase.hpp"
 #include "Core/Version.hpp"
 
 
 namespace App::Assets
 {
-	class ProjectAsset final : public assetSystem::Asset
+	class ProjectAsset final : public AssetBase<ProjectAsset>
 	{
 		private: Core::Version projectVersion;
 

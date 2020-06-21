@@ -1,6 +1,7 @@
 #pragma once
 #include "AssetSystemExportHelper.hpp"
 #include "AssetSystemTypes.hpp"
+#include <utility>
 
 
 namespace assetSystem

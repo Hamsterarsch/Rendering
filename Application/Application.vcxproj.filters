@@ -283,6 +283,12 @@
     <ClInclude Include="AssetFactories\ImageData.hpp">
       <Filter>AssetFactories</Filter>
     </ClInclude>
+    <ClInclude Include="AssetTypes\AssetRegistration.hpp">
+      <Filter>AssetTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetTypes\AssetBase.hpp">
+      <Filter>AssetTypes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Window">

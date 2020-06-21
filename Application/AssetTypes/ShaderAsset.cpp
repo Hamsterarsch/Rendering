@@ -4,6 +4,9 @@
 
 namespace App::Assets
 {
+	ShaderAsset::ShaderAsset() : AssetBase{ GetAssetClassExtension() } {}
+	
+
 	assetSystem::io::Archive &ShaderAsset::Serialize(assetSystem::io::Archive &archive)
 	{
 		int codeCharacterLength = shaderCode.size();

@@ -1,13 +1,15 @@
 #include "AssetTypes/CacheAsset.hpp"
 #include "AssetSystem/Interface/IO/Archive.hpp"
 #include "Shared/Exception/Exception.hpp"
-
+#include "AssetTypes/AssetRegistration.hpp"
 
 
 namespace App::Assets
 {
-	CacheAsset::CacheAsset(const int sizeInBytes)
-	{
+	CacheAsset::CacheAsset() : AssetBase{ GetAssetClassExtension() } {}
+
+	CacheAsset::CacheAsset(const int sizeInBytes) : AssetBase{ GetAssetClassExtension() }
+	{				
 		data.Resize(sizeInBytes);
 		
 	}
