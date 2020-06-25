@@ -1,4 +1,5 @@
 #include "AssetSystem/Core/AssetMemory.hpp"
+#include "Shared/Exception/Exception.hpp"
 
 
 namespace assetSystem::core
@@ -35,6 +36,8 @@ namespace assetSystem::core
 	
 	Asset &AssetMemory::MakeAsset(AssetKey key, const char *classFileExtension)
 	{
+		Exception::ThrowIfDebug(assetConstructOperations.find(classFileExtension) == assetConstructOperations.end(), {"An asset class must be registered before it can be constructed."});
+		
 		auto &cOps{ assetConstructOperations.at(classFileExtension) };
 		
 		return cOps->ConstructAsset(AllocateAssetMemory(key, *cOps));
