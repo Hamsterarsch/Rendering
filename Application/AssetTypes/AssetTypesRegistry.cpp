@@ -9,18 +9,18 @@ namespace App::Assets
 {	
 	AssetTypesRegistry::AssetTypesRegistry(Core::Application &app)
 	{
-		AddAssetInfo<ImageAsset>(app, "img", "Image Asset", "Images/Icons/TextureIcon.img");
-		AddAssetInfo<ShaderAsset>(app, "shdr", "Shader Asset", "Images/Icons/FileIcon.img");
+		AddAssetInfo<ImageAsset>(app, "Image Asset", "Images/Icons/TextureIcon.img");
+		AddAssetInfo<ShaderAsset>(app, "Shader Asset", "Images/Icons/FileIcon.img");
 				
 	}
 
 		template<class t_asset>
-		void AssetTypesRegistry::AddAssetInfo(Core::Application &app, const char *classExtension, const char *displayName, const char *iconImageAssetPath)
+		void AssetTypesRegistry::AddAssetInfo(Core::Application &app, const char *displayName, const char *iconImageAssetPath)
 		{
-			app.GetProgramAssets().RegisterAssetClass(classExtension, MakeUnique<assetSystem::AssetConstructOperationsHelper<t_asset>>());
-			app.GetProjectAssets().RegisterAssetClass(classExtension, MakeUnique<assetSystem::AssetConstructOperationsHelper<t_asset>>());
+			app.GetProgramAssets().RegisterAssetClass(t_asset::GetAssetClassExtension(), MakeUnique<assetSystem::AssetConstructOperationsHelper<t_asset>>());
+			app.GetProjectAssets().RegisterAssetClass(t_asset::GetAssetClassExtension(), MakeUnique<assetSystem::AssetConstructOperationsHelper<t_asset>>());
 		
-			assetClassInfos.insert( {classExtension, { app.GetProgramAssets().GetAsset(iconImageAssetPath), displayName }} );
+			assetClassInfos.insert( {t_asset::GetAssetClassExtension(), { app.GetProgramAssets().GetAsset(iconImageAssetPath), displayName }} );
 		
 		}
 

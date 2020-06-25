@@ -28,7 +28,7 @@ namespace App::Assets
 		
 		public: AssetTypesRegistry(App::Core::Application &app);
 
-		private: template<class t_asset> void AddAssetInfo(Core::Application &app, const char *classExtension, const char *displayName, const char *iconImageAssetPath);
+		private: template<class t_asset> void AddAssetInfo(Core::Application &app, const char *displayName, const char *iconImageAssetPath);
 
 		public: const char *GetAssetClassDisplayName(const char *classExtension) const;
 
