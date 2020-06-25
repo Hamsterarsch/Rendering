@@ -12,6 +12,7 @@
 #include "AssetTypes/AssetTypesRegistry.hpp"
 #include "AssetSystem.hpp"
 #include "Ui/UiStateMachine.hpp"
+#include "Ui/Elements/FloatLayout.hpp"
 
 
 
@@ -41,16 +42,19 @@ namespace App::Ui::User
 		iconFolder{ app.GetRenderer(), app.GetProgramAssets().GetAsset("Images/Icons/FolderIcon.img") },
 		iconFile{ app.GetRenderer(), app.GetProgramAssets().GetAsset("Images/Icons/FileIcon.img") },
 		iconTexture{ app.GetRenderer(), app.GetProgramAssets().GetAsset("Images/Icons/TextureIcon.img") },
-		shouldGoUp{ false }
+		shouldGoUp{ false },
+		shouldMakeNewAsset{ false }
 	{		
 		auto con{ Element<ItemGridLayout>(Math::Vector2{ 100, 100 }, 5, true) };
 		con->size = {1, 1};
 		content = con.get();
 				
 		uiElements.push_front((Element<WindowElement>("Asset Browser") += std::move(con))
-							  += Element<ButtonElement>(*this, 0, "Up")
+							  += (Element<FloatLayout>(5)
 							  ->* Set{&ButtonElement::pivot, {0, 1}}
-							  ->* Set{&ButtonElement::position, {0, 1}}
+							  ->* Set{&ButtonElement::position, {.01, .99}}
+							  += Element<ButtonElement>(*this, 0, "Up"))
+							  += Element<ButtonElement>(*this, 1, "New")
 		);
 		
 		DisplayCurrentPathContents();
@@ -110,7 +114,7 @@ namespace App::Ui::User
 					+=
 					{
 						{ 0,0, 1,2 },
-						Element<ImageButtonElement>(*this, itemList.size(), image)
+						Element<ImageButtonElement>(*this, itemList.size()+1, image)
 							->* Set{&ImageButtonElement::size, {0, 1} }
 							->* Set{&ImageButtonElement::position, {.5, 0}}
 							->* Set{&ImageButtonElement::pivot, {.5, 0}}
@@ -137,6 +141,11 @@ namespace App::Ui::User
 			return &shouldGoUp;
 			
 		}
+
+		if(index == 1)
+		{
+			return &shouldMakeNewAsset;
+		}
 		
 		return &itemList.at(index-1).wasClicked;
 		
@@ -146,6 +155,11 @@ namespace App::Ui::User
 	
 	void AssetBrowserFrontend::Update(Core::UiBuilder &builder)
 	{
+		if(shouldMakeNewAsset)
+		{
+			
+		}
+		
 		if(shouldGoUp)
 		{
 			if(currentPath != rootPath)

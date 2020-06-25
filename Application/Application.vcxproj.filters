@@ -113,6 +113,9 @@
     <ClCompile Include="AssetTypes\AssetTypesRegistry.cpp">
       <Filter>AssetTypes</Filter>
     </ClCompile>
+    <ClCompile Include="Ui\Elements\FloatLayout.cpp">
+      <Filter>Ui\Elements</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window\Windows\Window.hpp">
@@ -291,6 +294,9 @@
     </ClInclude>
     <ClInclude Include="Core\Application.hpp">
       <Filter>Ui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Elements\FloatLayout.hpp">
+      <Filter>Ui\Elements</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

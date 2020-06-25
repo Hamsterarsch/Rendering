@@ -49,6 +49,8 @@ namespace App::Ui::User
 
 		private: bool shouldGoUp;
 
+		private: bool shouldMakeNewAsset;
+
 				 		
 
 		
