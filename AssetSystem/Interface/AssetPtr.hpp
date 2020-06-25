@@ -51,5 +51,27 @@ namespace assetSystem
 								
 	};
 	
+
+	template<class t_asset>
+	class AssetPtrTyped : public AssetPtr
+	{
+		public: AssetPtrTyped() = default;
+
+		public: AssetPtrTyped(const AssetPtr &other) : AssetPtr{ other } {}
+
+		public: AssetPtrTyped(AssetPtr &&other) : AssetPtr{ std::move(other) } {}
+
+		
+		
+		public: t_asset *GetAsset(){ return reinterpret_cast<t_asset *>(AssetPtr::GetAsset()); }
+
+		public: const t_asset *GetAsset() const { return reinterpret_cast<const t_asset *>(AssetPtr::GetAsset()); }
+
+		public: t_asset *operator->() { return GetAsset(); }
+
+		public: const t_asset *operator->() const { return GetAsset(); }
+							   		
+	};
+	
 	
 }
