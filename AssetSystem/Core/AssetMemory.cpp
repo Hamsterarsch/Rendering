@@ -10,7 +10,10 @@ namespace assetSystem::core
 		UniquePtr<AssetConstructionOperations> &&constructOperations
 	)
 	{
-		assetConstructOperations.insert( {classFileExtension, std::move(constructOperations)} );
+		if(assetConstructOperations.find(classFileExtension) == assetConstructOperations.end())
+		{
+			assetConstructOperations.insert( {classFileExtension, std::move(constructOperations)} );			
+		}
 		
 	}
 
