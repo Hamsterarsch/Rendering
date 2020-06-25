@@ -1,5 +1,6 @@
 #pragma once
 #include "RendererExportHelper.hpp"
+#include "Renderer/Interface/Resources/ResourceHandle.hpp"
 
 
 namespace Renderer
@@ -8,7 +9,7 @@ namespace Renderer
 		
 	class RENDERER_DLLSPEC HandleWrapper
 	{
-		private: size_t handle;
+		private: ResourceHandle::t_hash handle;
 		
 		private: MaintainsRenderResources *retirementTarget;
 				 
@@ -16,7 +17,7 @@ namespace Renderer
 	
 		public: HandleWrapper();
 		
-		public: HandleWrapper(MaintainsRenderResources *retirementTarget, size_t handle);
+		public: HandleWrapper(MaintainsRenderResources *retirementTarget, ResourceHandle::t_hash handle);
 	
 		public: HandleWrapper(const HandleWrapper &) = delete;
 	
@@ -35,9 +36,11 @@ namespace Renderer
 		public: ~HandleWrapper();
 	
 		
-		public: operator size_t() const { return handle; }
+		public: operator ResourceHandle::t_hash() const { return handle; }
+
+		public: operator bool() const { return IsValid(); }
 	
-		public: size_t Get() const { return handle; }
+		public: ResourceHandle::t_hash Get() const { return handle; }
 		
 	};
 
