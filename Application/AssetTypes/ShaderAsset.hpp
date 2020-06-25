@@ -1,11 +1,11 @@
 #pragma once
-#include "AssetTypes/AssetBase.hpp"
+#include "Asset.hpp"
 #include <string>
 
 
 namespace App::Assets
 {
-	class ShaderAsset final : public AssetBase<ShaderAsset>
+	class ShaderAsset final : public assetSystem::Asset
 	{
 		private: std::string shaderCode;
 
@@ -13,7 +13,7 @@ namespace App::Assets
 
 		public: ShaderAsset();
 
-		public: ShaderAsset(const char *code) :  AssetBase{ GetAssetClassExtension() }, shaderCode{ code } {}
+		public: ShaderAsset(const char *code) : shaderCode{ code } {}
 
 
 		

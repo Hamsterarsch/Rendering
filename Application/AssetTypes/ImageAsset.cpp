@@ -7,13 +7,12 @@
 
 namespace App::Assets
 {
-	ImageAsset::ImageAsset() : AssetBase{ GetAssetClassExtension() }, data{} {}
+	ImageAsset::ImageAsset() : data{} {}
 
 
 	
 	ImageAsset::ImageAsset(ImageData &&data, const char *absoluteSourceImagePath)
-		:
-		AssetBase{ GetAssetClassExtension() },
+		:		
 		data{ std::move(data) },
 		absoluteSourceImagePath{ absoluteSourceImagePath }
 	{

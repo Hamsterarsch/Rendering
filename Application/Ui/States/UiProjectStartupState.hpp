@@ -2,7 +2,6 @@
 #include "Ui/States/UiState.hpp"
 #include "Ui/User/AssetBrowser.hpp"
 #include "Ui/UiStateMachine.hpp"
-#include "Windows/Application.hpp"
 
 
 namespace App::Ui::States
@@ -19,8 +18,7 @@ namespace App::Ui::States
 			assetBrowser
 			{
 				projectRootPath,
-				parent.GetApp().GetProgramAssets(),
-				parent.GetApp().GetRenderer()
+				parent.GetApp()
 			}
 		{}
 		

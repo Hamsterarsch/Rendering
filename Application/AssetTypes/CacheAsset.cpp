@@ -4,10 +4,8 @@
 
 
 namespace App::Assets
-{
-	CacheAsset::CacheAsset() : AssetBase{ GetAssetClassExtension() } {}
-
-	CacheAsset::CacheAsset(const int sizeInBytes) : AssetBase{ GetAssetClassExtension() }
+{	
+	CacheAsset::CacheAsset(const int sizeInBytes)
 	{				
 		data.Resize(sizeInBytes);
 		

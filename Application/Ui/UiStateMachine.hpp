@@ -5,7 +5,7 @@
 #include <unordered_set>
 
 
-namespace App::Windows { class Application; }
+namespace App::Core{ class Application; }
 
 
 namespace App::Ui
@@ -24,11 +24,11 @@ namespace App::Ui
 		
 		private: bool stackLevelsHaveChanged;
 
-		private: Windows::Application *app;		
+		private: App::Core::Application *app;		
 		
 
 		
-		public: UiStateMachine(Windows::Application &app);
+		public: UiStateMachine(App::Core::Application &app);
 
 		public: ~UiStateMachine();
 		
@@ -41,7 +41,7 @@ namespace App::Ui
 		public: UiStateMachine &operator=(const UiStateMachine &) = delete;
 		
 		
-		public: Windows::Application &GetApp() { return *app; }
+		public: App::Core::Application &GetApp() { return *app; }
 		
 		public: void Update(Core::UiBuilder &builder);
 

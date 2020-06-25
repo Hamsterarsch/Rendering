@@ -5,7 +5,7 @@
 
 namespace App::Ui
 {
-	UiStateMachine::UiStateMachine(Windows::Application &app)
+	UiStateMachine::UiStateMachine(App::Core::Application &app)
 		:
 		stackLevelsHaveChanged{ false },
 		app{ &app }

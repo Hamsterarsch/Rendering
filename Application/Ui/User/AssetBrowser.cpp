@@ -8,6 +8,11 @@
 #include "Ui/Elements/TextElement.hpp"
 #include "Ui/Elements/ButtonElement.hpp"
 
+#include "AssetFileending.hpp"
+#include "AssetTypes/AssetTypesRegistry.hpp"
+#include "AssetSystem.hpp"
+#include "Ui/UiStateMachine.hpp"
+
 
 
 namespace App::Ui::User
@@ -28,13 +33,14 @@ namespace App::Ui::User
 	}
 	
 
-	AssetBrowserFrontend::AssetBrowserFrontend(const char *initialAbsolutePath, assetSystem::AssetSystem &iconSource, Renderer::RendererFacade &iconTarget)
+	AssetBrowserFrontend::AssetBrowserFrontend(const char *initialAbsolutePath, App::Core::Application &app)
 		:
+		app{ &app },
 		currentPath{ std::filesystem::path{initialAbsolutePath}.parent_path() },
 		rootPath{ currentPath },
-		iconFolder{ iconTarget, iconSource.GetAsset("Images/Icons/FolderIcon.img") },
-		iconFile{ iconTarget, iconSource.GetAsset("Images/Icons/FileIcon.img") },
-		iconTexture{ iconTarget, iconSource.GetAsset("Images/Icons/TextureIcon.img") },
+		iconFolder{ app.GetRenderer(), app.GetProgramAssets().GetAsset("Images/Icons/FolderIcon.img") },
+		iconFile{ app.GetRenderer(), app.GetProgramAssets().GetAsset("Images/Icons/FileIcon.img") },
+		iconTexture{ app.GetRenderer(), app.GetProgramAssets().GetAsset("Images/Icons/TextureIcon.img") },
 		shouldGoUp{ false }
 	{		
 		auto con{ Element<ItemGridLayout>(Math::Vector2{ 100, 100 }, 5, true) };
@@ -59,7 +65,7 @@ namespace App::Ui::User
 			for(auto &&entry : std::filesystem::directory_iterator{ currentPath })
 			{
 				auto path{ entry.path() };
-				if(entry.is_regular_file() && path.extension() == ".asset")
+				if(entry.is_regular_file() && path.extension() == assetSystem::GetAssetFileending())
 				{
 					AddDisplay(path, iconFile.view);
 					continue;
@@ -67,7 +73,7 @@ namespace App::Ui::User
 				}
 
 				if(entry.is_directory())
-				{
+				{					
 					AddDisplay(path, iconFolder.view);
 					continue;
 					
@@ -80,13 +86,25 @@ namespace App::Ui::User
 			{		
 				itemList.emplace_back(absolutePath);				
 
-				auto displayName
+				std::string displayName;
+				const auto isDirectory{ is_directory(itemList.back().path) };
+				if(isDirectory)
 				{
-					is_directory(itemList.back().path) ?
-					relative(itemList.back().path, itemList.back().path.parent_path()).string()
-					:
-					itemList.back().path.filename().replace_extension("").replace_extension("").string()
-				};
+					displayName = relative(itemList.back().path, itemList.back().path.parent_path()).string();
+				}
+				else
+				{
+					auto nameWithExtension{ itemList.back().path.filename().replace_extension("") };
+
+					if(app->GetAssetTypes().IsHiddenAssetType(nameWithExtension.extension().string().c_str()))
+					{
+						return;
+						
+					}
+					
+					displayName = nameWithExtension.replace_extension("").string();
+				}
+		
 		
 				content->AddChild(Element<GridLayout>(1, 3)
 					+=
@@ -162,12 +180,19 @@ namespace App::Ui::User
 						currentPath = item.path;
 						DisplayCurrentPathContents();
 						return;
+						
 					}
-
-					int e = 1;//invoke editor handling;
+										
+					if(auto editor{ app->GetAssetTypes().GetAssetEditor(item.path.string().c_str()) })
+					{
+						app->GetUiStateMachine().AddState(std::move(editor));
+					}					
 					return;
+					
 				}
 			}
 		
 		}
+
+	
 }

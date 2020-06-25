@@ -4,6 +4,7 @@
 #include "AssetPtr.hpp"
 #include "AssetTypes/ImageAsset.hpp"
 #include "Core/ImageView.hpp"
+#include "Core/Application.hpp"
 
 
 namespace App::Ui::Core { class UiLayoutElement; }
@@ -13,6 +14,8 @@ namespace App::Ui::User
 {
 	class AssetBrowserFrontend final : public Core::UiFrontend
 	{
+		private: App::Core::Application *app;
+		
 		private: std::filesystem::path currentPath;
 
 		private: std::filesystem::path rootPath;
@@ -45,10 +48,11 @@ namespace App::Ui::User
 		private: std::vector<Item> itemList;
 
 		private: bool shouldGoUp;
+
 				 		
 
 		
-		public: AssetBrowserFrontend(const char *initialAbsolutePath, assetSystem::AssetSystem &iconSource, Renderer::RendererFacade &iconTarget);
+		public: AssetBrowserFrontend(const char *initialAbsolutePath, App::Core::Application &app);
 
 			private: void DisplayCurrentPathContents();
 

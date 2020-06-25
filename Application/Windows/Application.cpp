@@ -78,6 +78,8 @@ namespace App::Windows
 	void Application::SetProjectAssets(UniquePtr<assetSystem::AssetSystem> &&assets)
 	{
 		projectAssets = std::move(assets);
+
+		assetTypesRegistry = Assets::AssetTypesRegistry{ *this };
 		
 	}
 

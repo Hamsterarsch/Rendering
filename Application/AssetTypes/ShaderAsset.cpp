@@ -4,7 +4,7 @@
 
 namespace App::Assets
 {
-	ShaderAsset::ShaderAsset() : AssetBase{ GetAssetClassExtension() } {}
+	ShaderAsset::ShaderAsset() {}
 	
 
 	assetSystem::io::Archive &ShaderAsset::Serialize(assetSystem::io::Archive &archive)

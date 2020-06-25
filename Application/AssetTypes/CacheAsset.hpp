@@ -1,16 +1,16 @@
 #pragma once
 #include "Renderer/Interface/Resources/SerializeTarget.hpp"
-#include "AssetTypes/AssetBase.hpp"
+#include "Asset.hpp"
 
 
 namespace App::Assets
 {	
-	class CacheAsset final : public AssetBase<CacheAsset>
+	class CacheAsset final : public assetSystem::Asset
 	{
 		Renderer::SerializeTarget data;
 
 
-		public: CacheAsset();
+		public: CacheAsset() = default;
 
 		public: explicit CacheAsset(int sizeInBytes);
 
