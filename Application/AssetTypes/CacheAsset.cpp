@@ -1,7 +1,6 @@
 #include "AssetTypes/CacheAsset.hpp"
 #include "AssetSystem/Interface/IO/Archive.hpp"
 #include "Shared/Exception/Exception.hpp"
-#include "AssetTypes/AssetRegistration.hpp"
 
 
 namespace App::Assets

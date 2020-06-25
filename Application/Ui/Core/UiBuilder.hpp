@@ -29,6 +29,13 @@ namespace App::Ui::Core
 
 		public: virtual UiBuilder &DeclareButtonDisabled() = 0;
 
+
+		public: virtual Math::Vector2 GetContentRegion() = 0;
+
+		public: virtual void SetCursorPos(const Math::Vector2 &position) = 0;
+
+		public: virtual Math::Vector2 GetCursorPos() const = 0;
+
 		
 		public: virtual UiBuilder &LeaveWidget() = 0;
 		

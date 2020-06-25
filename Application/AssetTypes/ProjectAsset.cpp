@@ -4,7 +4,7 @@
 
 namespace App::Assets
 {
-	ProjectAsset::ProjectAsset() : AssetBase{ GetAssetClassExtension() }, projectVersion{ 0, 0, 0 }
+	ProjectAsset::ProjectAsset() : projectVersion{ 0, 0, 0 }
 	{
 	}
 

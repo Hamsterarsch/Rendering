@@ -88,11 +88,49 @@ namespace App::Ui::Core
 	}
 
 
+	
+	Math::Vector2 UiBuilderImpl::GetContentRegion()
+	{
+		const auto region{ ImGui::GetContentRegionAvail() };
+
+		return { region.x, region.y };
+		
+	}
+
+
+	
+	void UiBuilderImpl::SetCursorPos(const Math::Vector2 &position)
+	{
+		auto cursor{ ImGui::GetCursorPos() };
+		cursor.x += position.x;
+		cursor.y += position.y;
+
+		ImGui::SetCursorPos(cursor);
+		
+	}
+
+	Math::Vector2 UiBuilderImpl::GetCursorPos() const
+	{
+		const auto query{ ImGui::GetCursorPos() };
+		
+		Math::Vector2 cursor;
+		cursor.x = query.x;
+		cursor.y = query.y;
+
+		return cursor;
+		
+	}
+
+
 
 	UiBuilder &UiBuilderImpl::LeaveWidget()
 	{
-		(*desctructionFuncStack.front())();
-		desctructionFuncStack.pop_front();
+		(*widgetLeftInfo.front().leaveFunction)();
+		if(widgetLeftInfo.front().restoreCursorPos.x >= 0)
+		{
+			ImGui::SetCursorPos(widgetLeftInfo.front().restoreCursorPos);			
+		}
+		widgetLeftInfo.pop_front();
 
 		return *this;
 		
@@ -106,8 +144,8 @@ namespace App::Ui::Core
 
 		ApplyDimensionsForWindowTypeElements();
 		
+		widgetLeftInfo.emplace_front(&ImGui::End, ImVec2{-1, -1,});
 		ImGui::Begin(userSettings.name.c_str(), isOpenTarget, userSettings.flagsWindow);
-		desctructionFuncStack.push_front(&ImGui::End);
 				
 		ImGui::PopStyleVar();
 
@@ -198,7 +236,7 @@ namespace App::Ui::Core
 			ImGui::OpenPopup(userSettings.name.c_str());//ensure that begin always returns true. if you dont want to display the modal just dont call this function			
 		}
 		ImGui::BeginPopupModal(userSettings.name.c_str(), nullptr, userSettings.flagsWindow | ImGuiWindowFlags_NoResize);
-		desctructionFuncStack.push_front(&ImGui::EndPopup);
+		widgetLeftInfo.emplace_front(&ImGui::EndPopup, ImGui::GetCursorPos());
 		
 		ImGui::PopStyleVar();
 
@@ -225,8 +263,10 @@ namespace App::Ui::Core
 			ImGui::PushStyleColor(ImGuiCol_Button, disabledButtonColor);
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disabledButtonColor);
 		}
-		
+
+		const auto cursor{ ImGui::GetCursorPos() };
 		const auto pressedResult{ ImGui::ButtonEx(userSettings.name.c_str(), size, flags) };
+		ImGui::SetCursorPos(cursor);
 		if(isPressed)
 		{
 			*isPressed = pressedResult;
@@ -279,12 +319,12 @@ namespace App::Ui::Core
 	UiBuilder &UiBuilderImpl::MakeText(const char *text)
 	{
 		auto defaultSize{ ImGui::GetContentRegionAvail() };
-		defaultSize.y = ImGui::GetFontSize() + ImGui::GetStyle().FramePadding.y*2;
+		defaultSize.y = ImGui::GetFontSize();
 
 		auto usersDesiredSize{ defaultSize };
 		ApplyUserSizing(usersDesiredSize.x, usersDesiredSize.y);
 		
-		ImVec2 wrappedSize{ ImGui::GetStyle().FramePadding*2 + ImGui::CalcTextSize(text, nullptr, false, usersDesiredSize.x) };		
+		ImVec2 wrappedSize{ ImGui::CalcTextSize(text, nullptr, false, usersDesiredSize.x) };		
 		SetNextItemSize(wrappedSize.x, wrappedSize.y);				
 		
 		ImVec2 defaultPos{};
@@ -296,10 +336,13 @@ namespace App::Ui::Core
 		
 		ImGui::GetCurrentWindow()->DC.CurrLineTextBaseOffset = std::clamp(ImGui::GetCurrentWindow()->DC.CurrLineTextBaseOffset, ImGui::GetStyle().FramePadding.x, ImGui::GetCurrentWindow()->DC.CurrLineTextBaseOffset);
 		ImGui::PushTextWrapPos(ImGui::GetCursorPosX() + wrappedSize.x);
+		const auto cursor{ ImGui::GetCursorPos() };
 		ImGui::Text(text);
+		ImGui::SetCursorPos(cursor);
 		ImGui::PopTextWrapPos();
 		
 		return *this;
+		
 	}
 
 
@@ -340,6 +383,7 @@ namespace App::Ui::Core
 			flags |= ImGuiInputTextFlags_ReadOnly;
 		}
 		
+		const auto cursor{ ImGui::GetCursorPos() };
 		ImGuiStringInputTargetAdapter::inputTarget = &target;		
 		ImGui::InputText
 		(
@@ -349,6 +393,7 @@ namespace App::Ui::Core
 			flags,
 			&ImGuiStringInputTargetAdapter::InputTextCallback
 		);
+		ImGui::SetCursorPos(cursor);
 		
 		DoItemEpilogue();
 		return *this;
@@ -369,9 +414,10 @@ namespace App::Ui::Core
 		
 		ImGui::SetCursorPos(ImGui::GetCursorPos() + defaultPos);
 
-		
+		const auto cursor{ ImGui::GetCursorPos() };
 		ImGui::Checkbox(("##" + userSettings.name).c_str(), isChecked);
-
+		ImGui::SetCursorPos(cursor);
+		
 		DoItemEpilogue();
 		return *this;
 		
@@ -384,7 +430,18 @@ namespace App::Ui::Core
 		const ImVec2 defaultSize{ 50, 50 };
 			
 		auto usersDesiredSize{ defaultSize };
-		ApplyUserSizing(usersDesiredSize.x, usersDesiredSize.y);						
+		ApplyUserSizing(usersDesiredSize.x, usersDesiredSize.y);
+
+		if(usersDesiredSize.x == defaultSize.x && usersDesiredSize.y != defaultSize.y)
+		{
+			usersDesiredSize.x = usersDesiredSize.y;
+		}
+
+		if(usersDesiredSize.y == defaultSize.y && usersDesiredSize.x != defaultSize.x)
+		{
+			usersDesiredSize.y = usersDesiredSize.x;
+		}
+		
 		SetNextItemSize(usersDesiredSize.x, usersDesiredSize.y);				
 		
 		ImVec2 defaultPos{};
@@ -392,19 +449,26 @@ namespace App::Ui::Core
 		ApplyUserPivot(defaultPos.x, defaultPos.y, usersDesiredSize.x, usersDesiredSize.y);
 				
 		//drawing impl does not change the handle so we can cast from const
-		const auto pressedResult{	ImGui::ImageButton(&const_cast<App::Core::ImageView &>(image).descriptorHandle, usersDesiredSize, {image.uvMinX, image.uvMinY}, {image.uvMaxX, image.uvMaxY}) };
+		const auto cursor{ ImGui::GetCursorPos() };
+
+		ImGui::SetCursorPos(defaultPos);
+		const auto pressedResult{	ImGui::ImageButton(&const_cast<App::Core::ImageView &>(image).descriptorHandle, usersDesiredSize, {image.uvMinX, image.uvMinY}, {image.uvMaxX, image.uvMaxY}, 0) };
+		
+		ImGui::SetCursorPos(cursor);
+		
 		if(isPressed)
 		{
 			*isPressed = pressedResult;
 		}
 
+		DoItemEpilogue();
 		return *this;
 		
 	}
 	
 
 	
-	UiBuilder &UiBuilderImpl::MakeGrid(const size_t columns, const size_t rows)
+	UiBuilder &UiBuilderImpl::MakeGrid(const size_t columns, const size_t rows)//todo move this code to grid layout classes
 	{
 		gridData.columnCount = columns;
 		gridData.rowCount = rows;
@@ -416,7 +480,8 @@ namespace App::Ui::Core
 		ApplyUserPositioning(defaultPos.x, defaultPos.y);
 		ApplyUserPivot(defaultPos.x, defaultPos.y, defaultGridSize.x, defaultGridSize.y);
 
-		ImGui::SetCursorPos(ImGui::GetCursorPos() + defaultPos);
+		const auto cursor{ ImGui::GetCursorPos() };
+		ImGui::SetCursorPos(cursor + defaultPos);
 		
 		
 		gridData.colWidth = defaultGridSize.x / columns;
@@ -424,9 +489,9 @@ namespace App::Ui::Core
 
 		gridData.cellPadding = userSettings.padding;
 				
-		ImGui::BeginChild(userSettings.name.c_str());
-		desctructionFuncStack.push_front(&ImGui::EndChild);
-
+		widgetLeftInfo.emplace_front(&ImGui::EndChild, cursor);
+		ImGui::BeginChild(userSettings.name.c_str(), defaultGridSize);
+		
 		DoItemEpilogue();		
 		return *this;
 		
@@ -459,13 +524,14 @@ namespace App::Ui::Core
 			gridData.colWidth * colSpan - gridData.cellPadding*2,
 			gridData.rowHeight * rowSpan - gridData.cellPadding*2
 		};
+
 		
+		widgetLeftInfo.emplace_front(&ImGui::EndChild, ImVec2{});
 		ImGui::BeginChild
 		(
 			( "col"+std::to_string(startColIndex) + "_s"+std::to_string(colSpan)	+    "row"+std::to_string(startRowIndex) + "_s"+std::to_string(rowSpan) ).c_str(),
 			cellSize
 		);
-		desctructionFuncStack.push_front(&ImGui::EndChild);
 
 		DoItemEpilogue();
 		return *this;

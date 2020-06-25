@@ -11,9 +11,11 @@ namespace App::Ui::Core
 		private: std::vector<UniquePtr<UiElement>> children;
 
 
+
+		public: void ClearChildren() { children.clear(); }
 		
 		protected: size_t GetChildCount() const { return children.size(); }
-		
+				
 		public: void AddChild(UniquePtr<UiElement> &&child);
 
 		protected: virtual void OnChildAdded(UiElement &child) {}

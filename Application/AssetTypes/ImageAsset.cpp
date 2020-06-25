@@ -2,6 +2,7 @@
 #include "AssetSystem/Interface/IO/Archive.hpp"
 #include <filesystem>
 #include "AssetFactories/ImageFactory.hpp"
+#include "RendererFacade.hpp"
 
 
 namespace App::Assets
@@ -48,7 +49,28 @@ namespace App::Assets
 		data = ImageFactory::LoadImageData(path.string().c_str());
 				
 	}
+
+
 	
+	void ImageAsset::UploadToRenderer(Renderer::RendererFacade &renderer)
+	{
+		if(not textureHandle)
+		{
+			textureHandle = { &renderer, renderer.MakeTexture(data.rgbaData.get(), data.width, data.height) };
+
+		    srvDescriptor =
+			{
+				&renderer,
+				renderer.GetViewFactory()
+				.DeclareDescriptorBlock(1, 0)
+				.CreateShaderResourceView(textureHandle, &Renderer::FormatTargets::R8G8B8A8_UNorm, 1, 0)
+				.FinalizeDescriptorBlock()
+			};			
+		}
+		
+	}
+
+
 	
 	const char *ImageAsset::GetAssetClassExtension()
 	{

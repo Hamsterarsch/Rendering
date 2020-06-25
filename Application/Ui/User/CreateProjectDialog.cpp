@@ -7,9 +7,10 @@
 #include "Ui/Elements/ModalElement.hpp"
 #include "Ui/Core/ConstructionHelpers.hpp"
 #include <filesystem>
-#include "Core/Globals.hpp"
 #include "Core/CreateProject.hpp"
 #include "Ui/States/UiCreateProjectState.hpp"
+#include "Ui/UiStateMachine.hpp"
+#include "Windows/Application.hpp"
 
 
 namespace App::Ui::User
@@ -137,9 +138,17 @@ namespace App::Ui::User
 		
 		if(shouldCreateProject)
 		{
-			App::Core::globals.projectAssetSystem = App::Core::CreateProject(projectName.data.c_str(), selectedFolder.data.c_str());
+			parent->GetParent().GetApp().SetProjectAssets
+			(
+				CreateProject
+				(
+					projectName.data.c_str(),
+					selectedFolder.data.c_str(),
+					parent->GetParent().GetApp().GetProgramVersion()
+				)
+			);
 
-			parent->NotifyProjectCreated();
+			parent->NotifyProjectCreated(selectedFolder.data.c_str());
 			return;
 			
 		}

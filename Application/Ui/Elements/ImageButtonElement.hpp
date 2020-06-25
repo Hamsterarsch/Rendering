@@ -7,7 +7,7 @@
 
 namespace App::Ui
 {	
-	class ButtonElement : public Core::UiAccessElement
+	class ImageButtonElement : public Core::UiAccessElement
 	{
 		private: size_t isClickedTargetIndex;
 
@@ -17,7 +17,7 @@ namespace App::Ui
 				 
 
 		
-		public: ButtonElement(Core::UiFrontend &frontend, size_t isClickedTargetIndex, const App::Core::ImageView &image)
+		public: ImageButtonElement(Core::UiFrontend &frontend, size_t isClickedTargetIndex, const App::Core::ImageView &image)
 			:
 			UiAccessElement{ frontend },			
 			isClickedTargetIndex{ isClickedTargetIndex },

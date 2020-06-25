@@ -15,7 +15,7 @@ namespace App::Ui::States
 		
 		public: void Update(Core::UiBuilder &builder) override;
 
-		public: void NotifyProjectCreated();
+		public: void NotifyProjectCreated(const char *projectAssetPath);
 
 		public: void NotifyCreationAborted();
 		

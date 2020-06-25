@@ -1,8 +1,8 @@
 #pragma once
 #include "AssetSystem/Interface/Asset.hpp"
 #include "AssetConstructOperationsHelper.hpp"
-#include "Core/Globals.hpp"
 #include "AssetSystem.hpp"
+#include "Windows/Application.hpp"
 
 
 namespace App::Assets
@@ -16,8 +16,9 @@ namespace App::Assets
 		{
 			if(not wasRegistered)
 			{
-				Core::GetProgramAssets().RegisterAssetClass(classExtension, MakeUnique<assetSystem::AssetConstructOperationsHelper<t_subclass>>());
-				Core::GetProjectAssets().RegisterAssetClass(classExtension, MakeUnique<assetSystem::AssetConstructOperationsHelper<t_subclass>>());
+				
+				Windows::Application::Get().GetProgramAssets().RegisterAssetClass(classExtension, MakeUnique<assetSystem::AssetConstructOperationsHelper<t_subclass>>());
+				Windows::Application::Get().GetProgramAssets().RegisterAssetClass(classExtension, MakeUnique<assetSystem::AssetConstructOperationsHelper<t_subclass>>());
 				wasRegistered = true;				
 			}
 			

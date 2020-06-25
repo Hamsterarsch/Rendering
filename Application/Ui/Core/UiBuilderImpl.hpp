@@ -11,8 +11,18 @@ namespace App::Ui::Core
 {
 	class UiBuilderImpl final : public UiBuilder
 	{
-		private: std::forward_list<void(*)()> desctructionFuncStack;
-				 		
+		private: struct WidgetLeftStruct
+		{
+			void(*leaveFunction)();
+			ImVec2 restoreCursorPos;
+
+			WidgetLeftStruct(void(*f)(), const ImVec2 &cursor) : leaveFunction{ f }, restoreCursorPos{ cursor } {}
+			
+		};
+		
+		private: std::forward_list<WidgetLeftStruct> widgetLeftInfo;
+
+		
 		
 		private: struct
 		{
@@ -51,6 +61,13 @@ namespace App::Ui::Core
 		public: UiBuilder &DeclareTabNocollapse() override;
 
 		public: UiBuilder &DeclareButtonDisabled() override;
+
+
+		public: Math::Vector2 GetContentRegion() override;
+		
+		public: void SetCursorPos(const Math::Vector2 &position) override;
+		
+		public: Math::Vector2 GetCursorPos() const override;
 		
 				
 		public: UiBuilder &LeaveWidget() override;

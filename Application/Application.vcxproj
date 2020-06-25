@@ -252,13 +252,11 @@
     <ClInclude Include="AssetFactories\ImageData.hpp" />
     <ClInclude Include="AssetFactories\ImageFactory.hpp" />
     <ClInclude Include="AssetTypes\AssetBase.hpp" />
-    <ClInclude Include="AssetTypes\AssetRegistration.hpp" />
     <ClInclude Include="AssetTypes\CacheAsset.hpp" />
     <ClInclude Include="AssetTypes\ImageAsset.hpp" />
     <ClInclude Include="AssetTypes\ProjectAsset.hpp" />
     <ClInclude Include="AssetTypes\ShaderAsset.hpp" />
     <ClInclude Include="Core\CreateProject.hpp" />
-    <ClInclude Include="Core\Globals.hpp" />
     <ClInclude Include="Core\ImageView.hpp" />
     <ClInclude Include="Core\Version.hpp" />
     <ClInclude Include="Rendering\RendererMediator.hpp" />
@@ -297,6 +295,7 @@
     <ClInclude Include="Ui\Elements\GridLayout.hpp" />
     <ClInclude Include="Ui\Elements\ImageButtonElement.hpp" />
     <ClInclude Include="Ui\Elements\InputElement.hpp" />
+    <ClInclude Include="Ui\Elements\ItemGridLayout.hpp" />
     <ClInclude Include="Ui\Elements\ModalElement.hpp" />
     <ClInclude Include="Ui\Elements\TextElement.hpp" />
     <ClInclude Include="Ui\Elements\WindowElement.hpp" />
@@ -323,7 +322,6 @@
     <ClCompile Include="AssetTypes\ProjectAsset.cpp" />
     <ClCompile Include="AssetTypes\ShaderAsset.cpp" />
     <ClCompile Include="Core\CreateProject.cpp" />
-    <ClCompile Include="Core\Globals.cpp" />
     <ClCompile Include="Core\Version.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Rendering\RendererMediator.cpp" />
@@ -348,6 +346,7 @@
     <ClCompile Include="Ui\Core\UiLayoutElement.cpp" />
     <ClCompile Include="Ui\Core\UiBuilderImpl.cpp" />
     <ClCompile Include="Ui\Elements\GridLayout.cpp" />
+    <ClCompile Include="Ui\Elements\ItemGridLayout.cpp" />
     <ClCompile Include="Ui\ImguiTypeArithmetics.cpp" />
     <ClCompile Include="Ui\Misc\AssetNameFilter.cpp" />
     <ClCompile Include="Ui\States\UiCreateProjectState.cpp" />

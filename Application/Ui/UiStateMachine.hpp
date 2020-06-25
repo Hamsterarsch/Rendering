@@ -5,12 +5,15 @@
 #include <unordered_set>
 
 
+namespace App::Windows { class Application; }
+
+
 namespace App::Ui
 {
 	namespace States{ class UiState; }
 	namespace Core{ class UiBuilder; }
-	
-	
+
+		
 	class UiStateMachine
 	{
 		private: std::forward_list<std::unordered_map<States::UiState *, UniquePtr<States::UiState>>> stateStack;
@@ -20,10 +23,12 @@ namespace App::Ui
 		private: std::unordered_set<States::UiState *> statesToRemove;
 		
 		private: bool stackLevelsHaveChanged;
+
+		private: Windows::Application *app;		
 		
+
 		
-		
-		public: UiStateMachine();
+		public: UiStateMachine(Windows::Application &app);
 
 		public: ~UiStateMachine();
 		
@@ -35,6 +40,8 @@ namespace App::Ui
 
 		public: UiStateMachine &operator=(const UiStateMachine &) = delete;
 		
+		
+		public: Windows::Application &GetApp() { return *app; }
 		
 		public: void Update(Core::UiBuilder &builder);
 
@@ -48,6 +55,8 @@ namespace App::Ui
 		public: void AddState(UniquePtr<States::UiState> &&state);
 
 		public: void RemoveState(States::UiState &state);
+
+
 						
 	};
 

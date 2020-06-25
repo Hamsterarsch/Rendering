@@ -12,9 +12,9 @@ namespace App::Ui::States
 		
 	}
 
-	void UiProjectFetchStartupState::NotifyProjectOpened()
+	void UiProjectFetchStartupState::NotifyProjectOpened(const char *projectAssetPath)
 	{
-		parent->PopAllStateLevels(MakeUnique<UiProjectStartupState>(*parent));
+		parent->PopAllStateLevels(MakeUnique<UiProjectStartupState>(*parent, projectAssetPath));
 		
 	}
 

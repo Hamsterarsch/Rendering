@@ -1,6 +1,12 @@
 #pragma once
 #include "Ui/Core/UiFrontend.hpp"
 #include <filesystem>
+#include "AssetPtr.hpp"
+#include "AssetTypes/ImageAsset.hpp"
+#include "Core/ImageView.hpp"
+
+
+namespace App::Ui::Core { class UiLayoutElement; }
 
 
 namespace App::Ui::User
@@ -9,15 +15,50 @@ namespace App::Ui::User
 	{
 		private: std::filesystem::path currentPath;
 
+		private: std::filesystem::path rootPath;
+
+		private: struct IconInfo
+		{
+			assetSystem::AssetPtrTyped<Assets::ImageAsset> image;			
+			App::Core::ImageView view;
+
+			IconInfo(Renderer::RendererFacade &uploadTarget, assetSystem::AssetPtrTyped<Assets::ImageAsset> &&image);
+		};
 		
+		private: IconInfo iconFolder;
+
+		private: IconInfo iconFile;
+
+		private: IconInfo iconTexture;
+
+		private: Core::UiLayoutElement *content;
+
+		private: struct Item
+		{
+			bool wasClicked;
+			std::filesystem::path path;			
+
+			Item(const std::filesystem::path &path);
+			
+		};
 		
-		public: AssetBrowserFrontend(const char *initialAbsolutePath);
+		private: std::vector<Item> itemList;
+
+		private: bool shouldGoUp;
+				 		
+
+		
+		public: AssetBrowserFrontend(const char *initialAbsolutePath, assetSystem::AssetSystem &iconSource, Renderer::RendererFacade &iconTarget);
 
 			private: void DisplayCurrentPathContents();
 
-				private: void AddFolderDisplay(const std::filesystem::path &absolutePath);
+				private: void AddDisplay(const std::filesystem::path &absolutePath, const App::Core::ImageView &image);
+		
+		public: bool *GetInputTargetBool(size_t index) override;
 
-				private: void AddFileDisplay(const std::filesystem::path &absolutePath);
+		public: void Update(Core::UiBuilder &builder) override;
+
+			private: void ProcessLatestIconInputs();
 		
 	};
 	

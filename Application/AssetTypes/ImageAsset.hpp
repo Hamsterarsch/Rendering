@@ -5,6 +5,8 @@
 #include <string>
 
 
+namespace Renderer{ class RendererFacade; }
+
 namespace App::Assets
 {
 	struct ImageData;
@@ -13,6 +15,8 @@ namespace App::Assets
 	class ImageAsset final : public AssetBase<ImageAsset>
 	{
 		private: Renderer::HandleWrapper textureHandle;
+
+		private: Renderer::HandleWrapper srvDescriptor;
 
 		private: ImageData data;
 
@@ -36,6 +40,11 @@ namespace App::Assets
 		public: unsigned GetImageHeight() const { return data.height; }
 
 		public: const unsigned char *GetImageData() const { return data.rgbaData.get(); }
+
+		public: Renderer::ResourceHandle::t_hash GetDescriptorHandle() const { return srvDescriptor.Get(); }
+
+
+		public: void UploadToRenderer(Renderer::RendererFacade &renderer);
 		
 		
 		public: static const char *GetAssetClassExtension();

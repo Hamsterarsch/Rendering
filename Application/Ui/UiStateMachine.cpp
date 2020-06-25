@@ -5,11 +5,13 @@
 
 namespace App::Ui
 {
-	UiStateMachine::UiStateMachine() : stackLevelsHaveChanged{ false }
+	UiStateMachine::UiStateMachine(Windows::Application &app)
+		:
+		stackLevelsHaveChanged{ false },
+		app{ &app }
 	{
 		PushStateLevel(MakeUnique<States::UiProjectFetchStartupState>(*this));
-		
-		
+				
 	}
 
 

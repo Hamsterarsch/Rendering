@@ -13,9 +13,9 @@ namespace App::Ui::States
 
 
 
-	void UiCreateProjectState::NotifyProjectCreated()
+	void UiCreateProjectState::NotifyProjectCreated(const char *projectAssetPath)
 	{
-		parent->PopAllStateLevels(MakeUnique<UiProjectStartupState>(*parent));
+		parent->PopAllStateLevels(MakeUnique<UiProjectStartupState>(*parent, projectAssetPath));
 		
 	}
 

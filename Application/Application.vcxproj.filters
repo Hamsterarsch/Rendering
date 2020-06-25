@@ -74,9 +74,6 @@
     <ClCompile Include="Core\CreateProject.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Globals.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
     <ClCompile Include="Ui\User\CreateProjectDialog.cpp">
       <Filter>Ui\User</Filter>
     </ClCompile>
@@ -109,6 +106,9 @@
     </ClCompile>
     <ClCompile Include="AssetFactories\ImageFactory.cpp">
       <Filter>AssetFactories</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui\Elements\ItemGridLayout.cpp">
+      <Filter>Ui\Elements</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -235,9 +235,6 @@
     <ClInclude Include="Core\Version.hpp">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Globals.hpp">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="Ui\User\StringInputTargetImpl.hpp">
       <Filter>Ui\User</Filter>
     </ClInclude>
@@ -283,11 +280,11 @@
     <ClInclude Include="AssetFactories\ImageData.hpp">
       <Filter>AssetFactories</Filter>
     </ClInclude>
-    <ClInclude Include="AssetTypes\AssetRegistration.hpp">
-      <Filter>AssetTypes</Filter>
-    </ClInclude>
     <ClInclude Include="AssetTypes\AssetBase.hpp">
       <Filter>AssetTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Elements\ItemGridLayout.hpp">
+      <Filter>Ui\Elements</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

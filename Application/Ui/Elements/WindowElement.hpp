@@ -15,11 +15,13 @@ namespace App::Ui
 
 		private: size_t isOpenTargetIndex;
 
+		private: Math::Vector2 contentArea;
+		
 		public: bool isNocollapse;
 
 		public: bool isStatic;
 
-
+				
 		
 		public: WindowElement(Core::UiFrontend &frontend, size_t isOpenTargetIndex, const char *title)	: WindowElement{ title }			
 		{
@@ -41,6 +43,10 @@ namespace App::Ui
 		}
 
 		
+
+		public: float GetContentWidth() const { return contentArea.x; }
+
+		public: float GetContentHeight() const { return contentArea.y; }
 		
 		protected: void OnPreRenderAndQueryChildren(Core::UiBuilder &builder) override
 		{
@@ -69,7 +75,7 @@ namespace App::Ui
 			builder.LeaveWidget();
 			
 		}
-		
+				   					 				  		
 	};
 
 	

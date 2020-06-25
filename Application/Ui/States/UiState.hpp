@@ -18,7 +18,9 @@ namespace App::Ui::States
 
 
 		
-		public: UiState(UiStateMachine &parent) : parent{ &parent } {}		
+		public: UiState(UiStateMachine &parent) : parent{ &parent } {}
+
+		public: UiStateMachine &GetParent() { return *parent; }
 
 		
 		public: virtual void Update(Core::UiBuilder &builder) = 0;
