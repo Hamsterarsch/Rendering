@@ -309,6 +309,7 @@
     <ClInclude Include="Ui\States\UiState.hpp" />
     <ClInclude Include="Ui\UiStateMachine.hpp" />
     <ClInclude Include="Ui\User\AssetBrowser.hpp" />
+    <ClInclude Include="Ui\User\AssetCreationDialog.hpp" />
     <ClInclude Include="Ui\User\CreateProjectDialog.hpp" />
     <ClInclude Include="Ui\User\PropertyCompositeElement.hpp" />
     <ClInclude Include="Ui\User\StartupProjectDialog.hpp" />
@@ -358,6 +359,7 @@
     <ClCompile Include="Ui\States\UiProjectStartupState.cpp" />
     <ClCompile Include="Ui\UiStateMachine.cpp" />
     <ClCompile Include="Ui\User\AssetBrowser.cpp" />
+    <ClCompile Include="Ui\User\AssetCreationDialog.cpp" />
     <ClCompile Include="Ui\User\CreateProjectDialog.cpp" />
     <ClCompile Include="Ui\User\PropertyCompositeElement.cpp" />
     <ClCompile Include="Ui\User\StartupProjectDialog.cpp" />

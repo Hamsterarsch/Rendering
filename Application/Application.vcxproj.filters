@@ -116,6 +116,9 @@
     <ClCompile Include="Ui\Elements\FloatLayout.cpp">
       <Filter>Ui\Elements</Filter>
     </ClCompile>
+    <ClCompile Include="Ui\User\AssetCreationDialog.cpp">
+      <Filter>Ui\User</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window\Windows\Window.hpp">
@@ -297,6 +300,9 @@
     </ClInclude>
     <ClInclude Include="Ui\Elements\FloatLayout.hpp">
       <Filter>Ui\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\User\AssetCreationDialog.hpp">
+      <Filter>Ui\User</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
