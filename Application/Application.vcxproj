@@ -306,6 +306,7 @@
     <ClInclude Include="Ui\States\UiProjectStartupState.hpp" />
     <ClInclude Include="Ui\States\UiCreateProjectState.hpp" />
     <ClInclude Include="Ui\States\UiProjectFetchStartupState.hpp" />
+    <ClInclude Include="Ui\States\UiSimpleState.hpp" />
     <ClInclude Include="Ui\States\UiState.hpp" />
     <ClInclude Include="Ui\UiStateMachine.hpp" />
     <ClInclude Include="Ui\User\AssetBrowser.hpp" />

@@ -13,6 +13,8 @@
 #include "AssetSystem.hpp"
 #include "Ui/UiStateMachine.hpp"
 #include "Ui/Elements/FloatLayout.hpp"
+#include "Ui/States/UiSimpleState.hpp"
+#include "AssetCreationDialog.hpp"
 
 
 
@@ -40,8 +42,6 @@ namespace App::Ui::User
 		currentPath{ std::filesystem::path{initialAbsolutePath}.parent_path() },
 		rootPath{ currentPath },
 		iconFolder{ app.GetRenderer(), app.GetProgramAssets().GetAsset("Images/Icons/FolderIcon.img") },
-		iconFile{ app.GetRenderer(), app.GetProgramAssets().GetAsset("Images/Icons/FileIcon.img") },
-		iconTexture{ app.GetRenderer(), app.GetProgramAssets().GetAsset("Images/Icons/TextureIcon.img") },
 		shouldGoUp{ false },
 		shouldMakeNewAsset{ false }
 	{		
@@ -68,45 +68,42 @@ namespace App::Ui::User
 		
 			for(auto &&entry : std::filesystem::directory_iterator{ currentPath })
 			{
-				auto path{ entry.path() };
-				if(entry.is_regular_file() && path.extension() == assetSystem::GetAssetFileending())
-				{
-					AddDisplay(path, iconFile.view);
-					continue;
-					
-				}
-
-				if(entry.is_directory())
-				{					
-					AddDisplay(path, iconFolder.view);
-					continue;
-					
-				}				
+				AddDisplay(entry);				
 			}
 		
 		}
 
-			void AssetBrowserFrontend::AddDisplay(const std::filesystem::path &absolutePath, const App::Core::ImageView &image)
-			{		
+			void AssetBrowserFrontend::AddDisplay(const std::filesystem::directory_entry &entry)
+			{
+				auto absolutePath{ entry.path() };
 				itemList.emplace_back(absolutePath);				
 
 				std::string displayName;
-				const auto isDirectory{ is_directory(itemList.back().path) };
-				if(isDirectory)
+				App::Core::ImageView icon;
+				if(entry.is_directory())
 				{
 					displayName = relative(itemList.back().path, itemList.back().path.parent_path()).string();
+					icon = iconFolder.view;
 				}
-				else
+				else if(entry.is_regular_file() && absolutePath.extension() == assetSystem::GetAssetFileending())
 				{
-					auto nameWithExtension{ itemList.back().path.filename().replace_extension("") };
-
-					if(app->GetAssetTypes().IsHiddenAssetType(nameWithExtension.extension().string().c_str()))
+					auto nameWithAssetExtension{ itemList.back().path.filename().replace_extension("") };
+					auto assetExtension{ nameWithAssetExtension.extension().string() };
+					assetExtension.erase(0, 1);
+					
+					if(app->GetAssetTypes().IsHiddenAssetType(assetExtension.c_str()))
 					{
 						return;
 						
 					}
 					
-					displayName = nameWithExtension.replace_extension("").string();
+					displayName = nameWithAssetExtension.replace_extension("").string();
+					icon = app->GetAssetTypes().GetAssetIcon(assetExtension.c_str());
+				}
+				else
+				{
+					return;
+					
 				}
 		
 		
@@ -114,7 +111,7 @@ namespace App::Ui::User
 					+=
 					{
 						{ 0,0, 1,2 },
-						Element<ImageButtonElement>(*this, itemList.size()+1, image)
+						Element<ImageButtonElement>(*this, itemList.size()+1, icon)
 							->* Set{&ImageButtonElement::size, {0, 1} }
 							->* Set{&ImageButtonElement::position, {.5, 0}}
 							->* Set{&ImageButtonElement::pivot, {.5, 0}}
@@ -147,19 +144,14 @@ namespace App::Ui::User
 			return &shouldMakeNewAsset;
 		}
 		
-		return &itemList.at(index-1).wasClicked;
+		return &itemList.at(index-2).wasClicked;
 		
 	}
 
 
 	
 	void AssetBrowserFrontend::Update(Core::UiBuilder &builder)
-	{
-		if(shouldMakeNewAsset)
-		{
-			
-		}
-		
+	{		
 		if(shouldGoUp)
 		{
 			if(currentPath != rootPath)
@@ -172,14 +164,24 @@ namespace App::Ui::User
 		{
 			ProcessLatestIconInputs();			
 		}		
+
 		
 		if(not RenderAndQueryInputForUiElements(builder))
 		{
 			return;
 			
 		}
-		
 
+		
+		if(shouldMakeNewAsset)
+		{
+			auto state{ MakeUnique<States::UiSimpleState>(app->GetUiStateMachine()) };
+			state->AddFrontend(MakeUnique<AssetCreationDialogFrontend>(*app));
+			
+			app->GetUiStateMachine().PushStateLevel(std::move(state));
+			return;
+			
+		}
 		
 	}
 

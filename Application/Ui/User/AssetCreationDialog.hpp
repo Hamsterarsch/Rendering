@@ -12,7 +12,7 @@ namespace App::Ui::User
 		private: App::Core::Application *app;
 		
 		
-		AssetCreationDialogFrontend(App::Core::Application &app);
+		public: AssetCreationDialogFrontend(App::Core::Application &app);
 		
 		public: void Update(Core::UiBuilder& builder) override;
 		

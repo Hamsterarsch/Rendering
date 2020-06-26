@@ -30,10 +30,6 @@ namespace App::Ui::User
 		
 		private: IconInfo iconFolder;
 
-		private: IconInfo iconFile;
-
-		private: IconInfo iconTexture;
-
 		private: Core::UiLayoutElement *content;
 
 		private: struct Item
@@ -58,7 +54,7 @@ namespace App::Ui::User
 
 			private: void DisplayCurrentPathContents();
 
-				private: void AddDisplay(const std::filesystem::path &absolutePath, const App::Core::ImageView &image);
+				private: void AddDisplay(const std::filesystem::directory_entry &entry);
 		
 		public: bool *GetInputTargetBool(size_t index) override;
 

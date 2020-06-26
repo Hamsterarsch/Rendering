@@ -304,6 +304,9 @@
     <ClInclude Include="Ui\User\AssetCreationDialog.hpp">
       <Filter>Ui\User</Filter>
     </ClInclude>
+    <ClInclude Include="Ui\States\UiSimpleState.hpp">
+      <Filter>Ui\States</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Window">
