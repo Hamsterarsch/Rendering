@@ -10,14 +10,15 @@ namespace App::Ui
 	{
 		private: const char *title;
 
+		public: float padding;
 		
 
 
 		public: ModalElement(const char *title)
 			: 
-			title{ title }			
-		{
-		 	SetIsHidden(true);
+			title{ title },
+			padding{}
+		{		 	
 			size = { .3, .3 };
 			pivot = { .5, .5 };
 			
@@ -28,7 +29,8 @@ namespace App::Ui
 		protected: void OnPreRenderAndQueryChildren(Core::UiBuilder &builder) override
 		{						
 			builder
-			.DeclareName(title)			
+			.DeclareName(title)
+			.DeclarePadding(padding)
 			.MakeModal();
 
 		}

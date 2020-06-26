@@ -13,8 +13,9 @@ namespace App::Ui::Core
 	{		
 		private: std::forward_list<void(*)()> widgetLeveFunct;
 
-		private: Math::Vector2 lastItemPos;
+		private: std::forward_list<Math::Vector2> lastItemPosStack;
 		
+
 		
 		private: struct
 		{
@@ -55,7 +56,7 @@ namespace App::Ui::Core
 		public: UiBuilder &DeclareButtonDisabled() override;
 
 						
-		public: Math::Vector2 GetItemPos() const override { return lastItemPos; }
+		public: Math::Vector2 GetItemPos() const override;
 		
 		public: Math::Vector2 GetItemSize() const override;
 
@@ -78,7 +79,7 @@ namespace App::Ui::Core
 
 				private: void ApplyUserPositioning(float &positionX, float &positionY, bool forWindow = false) const;
 
-				private: void ApplyUserPivot(float &positionX, float &positionY, float itemWidth, float itemHeight);
+			private: void OnBeginCanvas();
 		
 			private: void DoItemEpilogue();
 							
@@ -89,6 +90,8 @@ namespace App::Ui::Core
 			private: ImVec2 ApplyDimensionsForTextTypeElements(const char *text) ;
 
 				private: static void SetNextItemSize(float width, float height);
+
+				private: void ApplyUserPivot(float &positionX, float &positionY, float itemWidth, float itemHeight);
 		
 		public: UiBuilder &MakeText(const char* text) override;
 		
@@ -99,13 +102,18 @@ namespace App::Ui::Core
 		
 		public: UiBuilder &MakeImageButton(const App::Core::ImageView &image, bool *isPressed) override;
 
+
+		//imgui exposing functions
 		
 		public: UiBuilder &MakeGrid(size_t columns, size_t rows) override;
+
 		
 		public: UiBuilder &MakeCell(size_t startColIndex, size_t startRowIndex, size_t colSpan = 1, size_t rowSpan = 1) override;
+
+		
 
 
 	};
 
-
+	
 }
