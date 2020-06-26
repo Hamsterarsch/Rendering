@@ -272,9 +272,6 @@
     <ClInclude Include="Commands\Basic\SetSignatureGraphicsCommand.hpp">
       <Filter>Commands\Basic</Filter>
     </ClInclude>
-    <ClInclude Include="Commands\Basic\SetDescriptorBlockViewsGraphicsCommand.hpp">
-      <Filter>Commands\Basic</Filter>
-    </ClInclude>
     <ClInclude Include="Interface\Commands\CompositeCommand.hpp">
       <Filter>Interface\Commands</Filter>
     </ClInclude>
@@ -310,6 +307,24 @@
     </ClInclude>
     <ClInclude Include="Interface\Resources\SerializeTarget.hpp">
       <Filter>Interface\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\StateSettings\RootSignatureSettings.hpp">
+      <Filter>Interface\StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\StateSettings\DescriptorTargets.hpp">
+      <Filter>Interface\StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="StateSettings\RootSignatureSettingsImpl.hpp">
+      <Filter>StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="StateSettings\DescriptorTargetsImpl.hpp">
+      <Filter>StateSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\Basic\SetDescriptorBlockViewsAsGraphicsTableCommand.hpp">
+      <Filter>Commands\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\Basic\SetConstantsToGraphicsCommand.hpp">
+      <Filter>Commands\Basic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -464,9 +479,6 @@
     <ClCompile Include="Commands\Basic\SetIndexBufferCommand.cpp">
       <Filter>Commands\Basic</Filter>
     </ClCompile>
-    <ClCompile Include="Commands\Basic\SetDescriptorBlockViewsGraphicsCommand.cpp">
-      <Filter>Commands\Basic</Filter>
-    </ClCompile>
     <ClCompile Include="Interface\Commands\CompositeCommand.cpp">
       <Filter>Interface\Commands</Filter>
     </ClCompile>
@@ -480,6 +492,18 @@
     </ClCompile>
     <ClCompile Include="Resources\SerializeTarget.cpp">
       <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="StateSettings\RootSignatureSettingsImpl.cpp">
+      <Filter>StateSettings</Filter>
+    </ClCompile>
+    <ClCompile Include="StateSettings\DescriptorTargetsImpl.cpp">
+      <Filter>StateSettings</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Basic\SetDescriptorBlockViewsAsGraphicsTableCommand.cpp">
+      <Filter>Commands\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Basic\SetConstantsToGraphicsCommand.cpp">
+      <Filter>Commands\Basic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

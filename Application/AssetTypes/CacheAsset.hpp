@@ -1,10 +1,10 @@
 #pragma once
-#include "AssetSystem/Interface/Asset.hpp"
 #include "Renderer/Interface/Resources/SerializeTarget.hpp"
+#include "Asset.hpp"
 
 
 namespace App::Assets
-{
+{	
 	class CacheAsset final : public assetSystem::Asset
 	{
 		Renderer::SerializeTarget data;

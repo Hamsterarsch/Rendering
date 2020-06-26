@@ -8,17 +8,18 @@
 #include "Windows/SelectPathDialog.hpp"
 #include "AssetTypes/ProjectAsset.hpp"
 #include "AssetSystem/Interface/AssetFileending.hpp"
-#include "Core/Globals.hpp"
 #include "Core/CreateProject.hpp"
+#include "Windows/Application.hpp"
+#include "Ui/States/UiProjectFetchStartupState.hpp"
 
 
 namespace App::Ui::User
 {
-	StartupProjectDialogFrontend::StartupProjectDialogFrontend()
+	StartupProjectDialogFrontend::StartupProjectDialogFrontend(States::UiProjectFetchStartupState &parent)
 		:
 			showCreateProjectDialog{ false },
-			shouldOpenProject{ false },
-			dialogCreateProject{ *this }
+			shouldOpenProject{ false },			
+			parent{ &parent }
 	{			
 		auto grid{ MakeUnique<GridLayout>(2, 2) };
 
@@ -68,7 +69,9 @@ namespace App::Ui::User
 		
 		if(showCreateProjectDialog)
 		{
-			dialogCreateProject.OpenDialog();
+			parent->NotifyOpenCreateProjectDialog();
+			return;
+			
 		}
 
 		if(shouldOpenProject)
@@ -82,27 +85,32 @@ namespace App::Ui::User
 			const auto path{ dialog.GetSelectedItem() };
 			if(!path.empty())
 			{
-				bool hasProjectVersionMismatch{ false };
-				App::Core::globals.projectAssetSystem = App::Core::LoadProject(path, hasProjectVersionMismatch);
+				parent->GetParent().GetApp().SetProjectAssets
+				(
+					LoadProject
+					(
+						path,
+						parent->GetParent().GetApp().GetProgramVersion()
+					)
+				);
 
-				if(hasProjectVersionMismatch)
+				if(parent->GetParent().GetApp().ProjectAssetsAreInvalid())
 				{
 					errorDisplay->SetText("The selected project was created with a different version of the program. Please use the correct program version to open the project.");
 					errorDisplay->SetIsHidden(false);
 				}
 				else
-				{
-					errorDisplay->SetIsHidden(true);
-					uiElements.clear();
+				{					
+					parent->NotifyProjectOpened(path.string().c_str());
+					return;
+					
 				}
 				
 			}
 			
 			
 		}
-		
-		dialogCreateProject.Update(builder);
-		
+				
 	}
 
 
@@ -118,13 +126,5 @@ namespace App::Ui::User
 		
 	}
 	
-
-
-	void StartupProjectDialogFrontend::NotifyAboutProjectCreation()
-	{
-		uiElements.clear();
-		
-	}
-
 	
 }

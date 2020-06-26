@@ -74,9 +74,6 @@
     <ClCompile Include="Core\CreateProject.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Globals.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
     <ClCompile Include="Ui\User\CreateProjectDialog.cpp">
       <Filter>Ui\User</Filter>
     </ClCompile>
@@ -88,6 +85,39 @@
     </ClCompile>
     <ClCompile Include="AssetTypes\CacheAsset.cpp">
       <Filter>AssetTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui\UiStateMachine.cpp">
+      <Filter>Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui\States\UiCreateProjectState.cpp">
+      <Filter>Ui\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui\States\UiProjectFetchStartupState.cpp">
+      <Filter>Ui\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui\States\UiProjectStartupState.cpp">
+      <Filter>Ui\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui\User\AssetBrowser.cpp">
+      <Filter>Ui\User</Filter>
+    </ClCompile>
+    <ClCompile Include="AssetTypes\ImageAsset.cpp">
+      <Filter>AssetTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="AssetFactories\ImageFactory.cpp">
+      <Filter>AssetFactories</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui\Elements\ItemGridLayout.cpp">
+      <Filter>Ui\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="AssetTypes\AssetTypesRegistry.cpp">
+      <Filter>AssetTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui\Elements\FloatLayout.cpp">
+      <Filter>Ui\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui\User\AssetCreationDialog.cpp">
+      <Filter>Ui\User</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -214,9 +244,6 @@
     <ClInclude Include="Core\Version.hpp">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Globals.hpp">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="Ui\User\StringInputTargetImpl.hpp">
       <Filter>Ui\User</Filter>
     </ClInclude>
@@ -225,6 +252,57 @@
     </ClInclude>
     <ClInclude Include="AssetTypes\CacheAsset.hpp">
       <Filter>AssetTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\UiStateMachine.hpp">
+      <Filter>Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\States\UiState.hpp">
+      <Filter>Ui\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\States\UiProjectFetchStartupState.hpp">
+      <Filter>Ui\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\States\UiCreateProjectState.hpp">
+      <Filter>Ui\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\States\UiProjectStartupState.hpp">
+      <Filter>Ui\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\User\AssetBrowser.hpp">
+      <Filter>Ui\User</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetTypes\ImageAsset.hpp">
+      <Filter>AssetTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetFactories\ImageFactory.hpp">
+      <Filter>AssetFactories</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\stb_image.h">
+      <Filter>ThirdParty</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\ImageView.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Elements\ImageButtonElement.hpp">
+      <Filter>Ui\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetFactories\ImageData.hpp">
+      <Filter>AssetFactories</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Elements\ItemGridLayout.hpp">
+      <Filter>Ui\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetTypes\AssetTypesRegistry.hpp">
+      <Filter>AssetTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Application.hpp">
+      <Filter>Ui\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Elements\FloatLayout.hpp">
+      <Filter>Ui\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\User\AssetCreationDialog.hpp">
+      <Filter>Ui\User</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -272,6 +350,12 @@
     </Filter>
     <Filter Include="Core">
       <UniqueIdentifier>{bb721872-6a2a-44c3-a767-552c807a385b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ui\States">
+      <UniqueIdentifier>{c7f63fec-ba2a-4ca0-984c-79e2451d3f62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AssetFactories">
+      <UniqueIdentifier>{2e71534a-ef8b-499f-8032-af9bed6b874d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

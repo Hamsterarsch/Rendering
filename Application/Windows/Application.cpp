@@ -1,15 +1,15 @@
 #include "Windows/Application.hpp"
 #include "Types/Dimensions2D.hpp"
 #include "Shared/Filesystem/Conversions.hpp"
-#include "Ui/User/StartupProjectDialog.hpp"
 #include "Ui/Core/UiBuilderImpl.hpp"
 #include "ThirdParty/imgui/imgui_impl_win32.h"
-#include "Core/Globals.hpp"
 #include "Core/CreateProject.hpp"
-#include "AssetTypes/ShaderAsset.hpp"
 
-#include "AssetSystem/Interface/AssetConstructOperationsHelper.hpp"
-#include "AssetTypes/CacheAsset.hpp"
+#include "AssetConstructOperationsHelper.hpp"
+#include "AssetTypes/ImageAsset.hpp"
+
+
+
 
 
 // Forward declare message handler from imgui_impl_win32.cpp
@@ -45,7 +45,6 @@ namespace App::Windows
 	    return ::DefWindowProc(hWnd, msg, wParam, lParam);
 	}
 
-
 	
 	Application &Application::Get()
 	{
@@ -63,23 +62,28 @@ namespace App::Windows
 				*renderer,
 				{ rendererMediator, {1,1} },
 				{ rendererMediator, *renderer }
-			}
+			},
+			programVersion{ 0, 0, 0 },
+			programAssets{ LoadProject(Filesystem::Conversions::MakeExeRelative("../../ProgramContent/ProgramContent.proj.asset"), programVersion) },
+			ui{ *this }
 		{
 			renderer->AddShaderIncludeDirectory(Filesystem::Conversions::MakeExeRelative("../../Content/Shaders/Includes").c_str());
-		
+			programAssets->RegisterAssetClass("img", MakeUnique<assetSystem::AssetConstructOperationsHelper<Assets::ImageAsset>>());
 			rendererMediator.SetMainWindowSurface(mainWindowSurface);
-
-			bool hasVersionMismatch;
-			Core::globals.programAssetSystem = Core::LoadProject(Filesystem::Conversions::MakeExeRelative(L"../../ProgramContent/ProgramContent.proj.asset").c_str(), hasVersionMismatch);
-
-			
-		
-			uiFrontends.push_back(MakeUnique<Ui::User::StartupProjectDialogFrontend>());
-						
 			
 		}
 
-	
+
+
+	void Application::SetProjectAssets(UniquePtr<assetSystem::AssetSystem> &&assets)
+	{
+		projectAssets = std::move(assets);
+
+		assetTypesRegistry = Assets::AssetTypesRegistry{ *this };
+		
+	}
+
+
 	
 	void Application::EnterLoop()
 	{
@@ -129,10 +133,8 @@ namespace App::Windows
 			ImGui_ImplWin32_NewFrame();
 			ImGui::NewFrame();
 					
-			for(auto &&frontend : uiFrontends)
-			{
-				frontend->Update(builder);			
-			}
+			ui.Update(builder);
+			
 					
 		}
 
@@ -144,5 +146,7 @@ namespace App::Windows
 		
 	}
 
+
+	
 	
 }

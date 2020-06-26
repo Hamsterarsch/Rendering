@@ -4,13 +4,14 @@
 #include "Commands/Surface/PresentSurfaceCommand.hpp"
 #include "Commands/Basic/SetSignatureGraphicsCommand.hpp"
 #include "Commands/Basic/SetPipelineStateCommand.hpp"
-#include "Commands/Basic/SetDescriptorBlockViewsGraphicsCommand.hpp"
+#include "Commands/Basic/SetDescriptorBlockViewsAsGraphicsTableCommand.hpp"
 #include "Commands/Basic/SetIndexBufferCommand.hpp"
 #include "Commands/Basic/SetVertexBufferCommand.hpp"
 #include "Commands/Basic/SetScissorRectCommand.hpp"
 #include "Commands/Basic/SetViewportCommand.hpp"
 #include "Commands/Basic/DrawIndexedInstancedCommand.hpp"
 #include "Commands/IncreaseCounterCommand.hpp"
+#include "Basic/SetConstantsToGraphicsCommand.hpp"
 
 
 namespace Renderer::DX12::Commands
@@ -51,9 +52,9 @@ namespace Renderer::DX12::Commands
 
 
 	
-	UniquePtr<::Renderer::Commands::Command> DX12CommandFactory::SetDescriptorBlockViewsGraphics(const ResourceHandle::t_hash descriptorBlock)
+	UniquePtr<::Renderer::Commands::Command> DX12CommandFactory::SetDescriptorBlockViewsAsGraphicsTable(const ResourceHandle::t_hash descriptorBlock, const unsigned parameterIndex)
 	{
-		return MakeUnique<SetDescriptorBlockViewsGraphicsCommand>(descriptorBlock);
+		return MakeUnique<SetDescriptorBlockViewsAsGraphicsTableCommand>(descriptorBlock, parameterIndex);
 		
 	}
 
@@ -86,8 +87,20 @@ namespace Renderer::DX12::Commands
 		
 	}
 
+	UniquePtr<Renderer::Commands::Command> DX12CommandFactory::SetGraphicConstants
+	(
+		const unsigned parameterIndex,
+		const unsigned &constantData,
+		const unsigned numConstants,
+		const unsigned offsetIntoConstants
+	)
+	{
+		return MakeUnique<SetConstantsToGraphicsCommand>(parameterIndex, constantData, numConstants, offsetIntoConstants);
+		
+	}
 
-	
+
+
 	UniquePtr<::Renderer::Commands::Command> DX12CommandFactory::SetScissorRect
 	(
 		const float topLeftX,

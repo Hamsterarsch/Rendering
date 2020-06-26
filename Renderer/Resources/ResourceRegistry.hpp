@@ -33,10 +33,9 @@ namespace Renderer
 
 			private: std::forward_list<ResourceHandle::t_hash> handlesToRetire;
 
-			private: bool shouldPurgePsoAndSignature;
 
 			
-			public: explicit ResourceRegistry(bool neverPurgePsoAndSignature = true);
+			public: explicit ResourceRegistry();
 
 			public: bool IsHandleUnknown(ResourceHandle::t_hash handle)	const;
 
@@ -75,13 +74,13 @@ namespace Renderer
 			public: bool IsWindowSurfaceReferenced(ResourceHandle::t_hash handle) const;
 					
 			
-			public: size_t GetSignatureCbvOffset(ResourceHandle::t_hash handle, size_t cbvOrdinal);
+			public: size_t GetSignatureCbvOffset(ResourceHandle::t_hash signature, unsigned tableIndex, size_t cbvOrdinal);
 
-				private: size_t GetSignatureOffset(ResourceHandle::t_hash handle, size_t ordinal, size_t (TableLayout:: *getter)(unsigned short) const);
+				private: size_t GetSignatureOffset(ResourceHandle::t_hash signature, unsigned tableIndex, size_t ordinal, size_t (TableLayout:: *getter)(unsigned short) const);
 			
-			public: size_t GetSignatureSrvOffset(ResourceHandle::t_hash handle, size_t srvOrdinal);
+			public: size_t GetSignatureSrvOffset(ResourceHandle::t_hash signature, unsigned tableIndex, size_t srvOrdinal);
 			
-			public: size_t GetSignatureUavOffset(ResourceHandle::t_hash handle, size_t uavOrdinal);
+			public: size_t GetSignatureUavOffset(ResourceHandle::t_hash signature, unsigned tableIndex, size_t uavOrdinal);
 
 
 			public: void RetireHandle(ResourceHandle::t_hash handle);

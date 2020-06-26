@@ -35,12 +35,21 @@ namespace Math
 		const float nearDistance,
 		const float farDistance
 	)
-	{
-		
+	{		
 		return Matrix{ glm::perspectiveFovLH_ZO(verticalFovRadians, screenWidth, screenHeight, nearDistance, farDistance) };
 		
 	}
 
+
+	
+	Matrix Matrix::MakeOrthogonalProjection(float left, float screenWidth, float top, float screenHeight, float nearDistance, float farDistance)
+	{
+		return Matrix{ glm::orthoLH_ZO(left, screenWidth, screenHeight, top, nearDistance, farDistance) };
+		
+	}
+
+
+	
 
 	Matrix Matrix::Inverse() const
 	{

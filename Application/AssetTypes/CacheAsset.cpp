@@ -3,11 +3,10 @@
 #include "Shared/Exception/Exception.hpp"
 
 
-
 namespace App::Assets
-{
+{	
 	CacheAsset::CacheAsset(const int sizeInBytes)
-	{
+	{				
 		data.Resize(sizeInBytes);
 		
 	}

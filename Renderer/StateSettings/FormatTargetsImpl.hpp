@@ -1,5 +1,7 @@
 #pragma once
+#include "StateSettings/TargetHelpers.hpp"
 #include "StateSettings/FormatTargets.hpp"
+#include <d3d12.h>
 
 
 namespace Renderer::DX12
@@ -20,6 +22,8 @@ namespace Renderer::DX12
 		public: static const FormatTargetsImpl &Get();
 
 	};
+
+	template<> struct FormatMapping<FormatTargets>{ using mapping = FormatTargetsImpl; using t_dataDeref = DXGI_FORMAT; };
 	
 	
 }

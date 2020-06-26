@@ -38,6 +38,8 @@ namespace assetSystem::core
 		
 		const auto absoluteAssetPath{ registry.GetAbsoluteAssetPath(key) };
 		create_directories(absoluteAssetPath.parent_path());
+		asset.OnMakeAsset(absoluteAssetPath.string().c_str());
+		
 		io::AssetWriter writer{ absoluteAssetPath };
 
 		asset.Serialize(writer);
@@ -108,7 +110,8 @@ namespace assetSystem::core
 
 				const auto filePath{ registry.GetAbsoluteAssetPath(info.key) };
 				io::AssetReader reader{ filePath };
-				info.asset->Serialize(reader);				
+				info.asset->Serialize(reader);
+				info.asset->OnAssetLoaded(filePath.string().c_str());
 			}
 			else
 			{

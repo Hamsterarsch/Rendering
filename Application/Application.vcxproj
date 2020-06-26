@@ -249,11 +249,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AssetFactories\ImageData.hpp" />
+    <ClInclude Include="AssetFactories\ImageFactory.hpp" />
+    <ClInclude Include="AssetTypes\AssetTypesRegistry.hpp" />
     <ClInclude Include="AssetTypes\CacheAsset.hpp" />
+    <ClInclude Include="AssetTypes\ImageAsset.hpp" />
     <ClInclude Include="AssetTypes\ProjectAsset.hpp" />
     <ClInclude Include="AssetTypes\ShaderAsset.hpp" />
+    <ClInclude Include="Core\Application.hpp" />
     <ClInclude Include="Core\CreateProject.hpp" />
-    <ClInclude Include="Core\Globals.hpp" />
+    <ClInclude Include="Core\ImageView.hpp" />
     <ClInclude Include="Core\Version.hpp" />
     <ClInclude Include="Rendering\RendererMediator.hpp" />
     <ClInclude Include="Rendering\SceneRenderer.hpp" />
@@ -273,6 +278,7 @@
     <ClInclude Include="ThirdParty\imgui\imstb_rectpack.h" />
     <ClInclude Include="ThirdParty\imgui\imstb_textedit.h" />
     <ClInclude Include="ThirdParty\imgui\imstb_truetype.h" />
+    <ClInclude Include="ThirdParty\stb_image.h" />
     <ClInclude Include="Types\Dimensions2D.hpp" />
     <ClInclude Include="Ui\BasicFrontends\SetVisibilityFrontend.hpp" />
     <ClInclude Include="Ui\Core\ConstructionHelpers.hpp" />
@@ -287,13 +293,23 @@
     <ClInclude Include="Ui\Core\UiBuilderImpl.hpp" />
     <ClInclude Include="Ui\Elements\ButtonElement.hpp" />
     <ClInclude Include="Ui\Elements\EqualColumnsLayout.hpp" />
+    <ClInclude Include="Ui\Elements\FloatLayout.hpp" />
     <ClInclude Include="Ui\Elements\GridLayout.hpp" />
+    <ClInclude Include="Ui\Elements\ImageButtonElement.hpp" />
     <ClInclude Include="Ui\Elements\InputElement.hpp" />
+    <ClInclude Include="Ui\Elements\ItemGridLayout.hpp" />
     <ClInclude Include="Ui\Elements\ModalElement.hpp" />
     <ClInclude Include="Ui\Elements\TextElement.hpp" />
     <ClInclude Include="Ui\Elements\WindowElement.hpp" />
     <ClInclude Include="Ui\ImguiTypeArithmetics.hpp" />
     <ClInclude Include="Ui\Misc\AssetNameFilter.hpp" />
+    <ClInclude Include="Ui\States\UiProjectStartupState.hpp" />
+    <ClInclude Include="Ui\States\UiCreateProjectState.hpp" />
+    <ClInclude Include="Ui\States\UiProjectFetchStartupState.hpp" />
+    <ClInclude Include="Ui\States\UiState.hpp" />
+    <ClInclude Include="Ui\UiStateMachine.hpp" />
+    <ClInclude Include="Ui\User\AssetBrowser.hpp" />
+    <ClInclude Include="Ui\User\AssetCreationDialog.hpp" />
     <ClInclude Include="Ui\User\CreateProjectDialog.hpp" />
     <ClInclude Include="Ui\User\PropertyCompositeElement.hpp" />
     <ClInclude Include="Ui\User\StartupProjectDialog.hpp" />
@@ -303,11 +319,13 @@
     <ClInclude Include="Window\Windows\Window.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AssetFactories\ImageFactory.cpp" />
+    <ClCompile Include="AssetTypes\AssetTypesRegistry.cpp" />
     <ClCompile Include="AssetTypes\CacheAsset.cpp" />
+    <ClCompile Include="AssetTypes\ImageAsset.cpp" />
     <ClCompile Include="AssetTypes\ProjectAsset.cpp" />
     <ClCompile Include="AssetTypes\ShaderAsset.cpp" />
     <ClCompile Include="Core\CreateProject.cpp" />
-    <ClCompile Include="Core\Globals.cpp" />
     <ClCompile Include="Core\Version.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Rendering\RendererMediator.cpp" />
@@ -331,9 +349,17 @@
     <ClCompile Include="Ui\Core\UiElement.cpp" />
     <ClCompile Include="Ui\Core\UiLayoutElement.cpp" />
     <ClCompile Include="Ui\Core\UiBuilderImpl.cpp" />
+    <ClCompile Include="Ui\Elements\FloatLayout.cpp" />
     <ClCompile Include="Ui\Elements\GridLayout.cpp" />
+    <ClCompile Include="Ui\Elements\ItemGridLayout.cpp" />
     <ClCompile Include="Ui\ImguiTypeArithmetics.cpp" />
     <ClCompile Include="Ui\Misc\AssetNameFilter.cpp" />
+    <ClCompile Include="Ui\States\UiCreateProjectState.cpp" />
+    <ClCompile Include="Ui\States\UiProjectFetchStartupState.cpp" />
+    <ClCompile Include="Ui\States\UiProjectStartupState.cpp" />
+    <ClCompile Include="Ui\UiStateMachine.cpp" />
+    <ClCompile Include="Ui\User\AssetBrowser.cpp" />
+    <ClCompile Include="Ui\User\AssetCreationDialog.cpp" />
     <ClCompile Include="Ui\User\CreateProjectDialog.cpp" />
     <ClCompile Include="Ui\User\PropertyCompositeElement.cpp" />
     <ClCompile Include="Ui\User\StartupProjectDialog.cpp" />

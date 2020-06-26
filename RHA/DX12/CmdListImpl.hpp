@@ -51,6 +51,14 @@ namespace RHA::DX12
 
 		public: void RecordSetComputeSignatureTable(unsigned parameterIndex, D3D12_GPU_DESCRIPTOR_HANDLE startAddress) override;
 
+		public: void RecordSetGraphicsConstants
+		(
+			unsigned parameterIndex,
+			unsigned numConstants,
+			const unsigned &constantData,
+			unsigned constantOffsetIntoData
+		) override;
+
 		
 		public: void RecordSetRenderTargets
 		(

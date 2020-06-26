@@ -12,9 +12,12 @@ namespace assetSystem
 
 namespace App::Core
 {
-	UniquePtr<assetSystem::AssetSystem> CreateProject(const char *projectName, const char *projectAssetFolder);
+	class Version;
 
-	UniquePtr<assetSystem::AssetSystem> LoadProject(std::filesystem::path absoluteProjectAssetFilePath, bool &hasVersionMismatch);
+	
+	UniquePtr<assetSystem::AssetSystem> CreateProject(const char *projectName, const char *projectAssetFolder, const Version &programVersion);
+
+	UniquePtr<assetSystem::AssetSystem> LoadProject(std::filesystem::path absoluteProjectAssetFilePath, const Version &programVersion);
 
 	
 }

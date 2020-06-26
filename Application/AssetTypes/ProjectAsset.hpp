@@ -1,5 +1,5 @@
 #pragma once
-#include "AssetSystem/Interface/Asset.hpp"
+#include "Asset.hpp"
 #include "Core/Version.hpp"
 
 

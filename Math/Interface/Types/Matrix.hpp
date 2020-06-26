@@ -24,6 +24,8 @@ namespace Math
 
 		public: static Matrix MakeProjection(float verticalFovRadians, float screenWidth, float screenHeight, float nearDistance, float farDistance);
 
+		public: static Matrix MakeOrthogonalProjection(float left, float screenWidth, float top, float screenHeight, float nearDistance, float farDistance);
+		
 
 		public: Matrix Inverse() const;
 		

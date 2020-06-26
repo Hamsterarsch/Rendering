@@ -9,7 +9,7 @@ namespace assetSystem::core
 	AssetRegistry::AssetRegistry(const char *projectAssetDirectory)		
 	{
 		std::string asString{ projectAssetDirectory };
-		if(asString.back() != '/' || asString.back() != '\\')
+		if(asString.back() != '/' && asString.back() != '\\')
 		{
 			asString.append("/");
 		}		

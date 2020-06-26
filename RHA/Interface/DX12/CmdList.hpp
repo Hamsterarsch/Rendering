@@ -48,6 +48,14 @@ namespace RHA
 			public: virtual void RecordSetComputeSignatureCbv(unsigned parameterIndex, D3D12_GPU_VIRTUAL_ADDRESS bufferAddress) = 0;
 
 			public: virtual void RecordSetComputeSignatureTable(unsigned parameterIndex, D3D12_GPU_DESCRIPTOR_HANDLE startAddress) = 0;
+
+			public: virtual void RecordSetGraphicsConstants
+			(
+				unsigned parameterIndex,
+				unsigned numConstants,
+				const unsigned &constantData,
+				unsigned constantOffsetIntoData
+			) = 0;
 			
 			
 			public: virtual void RecordSetRenderTargets
@@ -111,8 +119,8 @@ namespace RHA
 				size_t offsetOntoIndexValue,
 				size_t offsetOntoIndexValueForPerInstanceData
 			) = 0;
-
-			
+					
+						
 			public: virtual void StopRecording() = 0;
 
 			public: virtual void StartRecording(CmdAllocator *allocator) = 0;

@@ -5,7 +5,7 @@
 #include <algorithm>
 #include "StringInputTarget.hpp"
 #include "ThirdParty/imgui/imgui_internal.h"
-#include "Shared/Exception/Exception.hpp"
+#include "Core/ImageView.hpp"
 
 
 namespace App::Ui::Core
@@ -21,7 +21,7 @@ namespace App::Ui::Core
 	UiBuilder &UiBuilderImpl::DeclareSize(const Math::Vector2 &size)
 	{
 		userSettings.size = size;
-
+				
 		return *this;
 		
 	}
@@ -88,11 +88,31 @@ namespace App::Ui::Core
 	}
 
 
+	
+	Math::Vector2 UiBuilderImpl::GetItemSize() const
+	{
+		const auto query{ ImGui::GetItemRectSize() };
+
+		return { query.x, query.y };
+		
+	}
+
+
+	
+	Math::Vector2 UiBuilderImpl::GetContentRegion()
+	{
+		const auto region{ ImGui::GetContentRegionAvail() };
+
+		return { region.x, region.y };
+		
+	}
+
+
 
 	UiBuilder &UiBuilderImpl::LeaveWidget()
 	{
-		(*desctructionFuncStack.front())();
-		desctructionFuncStack.pop_front();
+		(*widgetLeveFunct.front())();
+		widgetLeveFunct.pop_front();
 
 		return *this;
 		
@@ -101,13 +121,15 @@ namespace App::Ui::Core
 
 
 	UiBuilder &UiBuilderImpl::MakeTab(bool *isOpenTarget)
-	{		
+	{
+		//DoItemPrologue();
+		
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowTitleAlign, ImVec2{ .5, .5 });		
 
 		ApplyDimensionsForWindowTypeElements();
 		
+		widgetLeveFunct.emplace_front(&ImGui::End);
 		ImGui::Begin(userSettings.name.c_str(), isOpenTarget, userSettings.flagsWindow);
-		desctructionFuncStack.push_front(&ImGui::End);
 				
 		ImGui::PopStyleVar();
 
@@ -115,6 +137,13 @@ namespace App::Ui::Core
 		return *this;
 		
 	}
+
+		void UiBuilderImpl::DoItemPrologue()
+		{
+			ImGui::SetCursorPos( ImGui::GetCursorStartPos());									
+			
+		
+		}
 
 		void UiBuilderImpl::ApplyDimensionsForWindowTypeElements() const
 		{
@@ -172,23 +201,26 @@ namespace App::Ui::Core
 						
 			}
 
-			void UiBuilderImpl::ApplyUserPivot(float &positionX, float &positionY, float itemWidth, float itemHeight) const
+			void UiBuilderImpl::ApplyUserPivot(float &positionX, float &positionY, float itemWidth, float itemHeight) 
 			{
 				positionX -= itemWidth * userSettings.pivot.x;
 				positionY -= itemHeight * userSettings.pivot.y;
-			
+				lastItemPos = Math::Vector2{positionX, positionY};
+		
 			}
 
 		void UiBuilderImpl::DoItemEpilogue()
 		{
 			userSettings = decltype(userSettings){};
-		
+					
 		}
 
 
 
 	UiBuilder &UiBuilderImpl::MakeModal()
 	{		
+		DoItemPrologue();
+
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowTitleAlign, ImVec2{ .5, .5 });		
 
 		ApplyDimensionsForWindowTypeElements();
@@ -198,7 +230,7 @@ namespace App::Ui::Core
 			ImGui::OpenPopup(userSettings.name.c_str());//ensure that begin always returns true. if you dont want to display the modal just dont call this function			
 		}
 		ImGui::BeginPopupModal(userSettings.name.c_str(), nullptr, userSettings.flagsWindow | ImGuiWindowFlags_NoResize);
-		desctructionFuncStack.push_front(&ImGui::EndPopup);
+		widgetLeveFunct.emplace_front(&ImGui::EndPopup);
 		
 		ImGui::PopStyleVar();
 
@@ -210,9 +242,11 @@ namespace App::Ui::Core
 	
 	
 	UiBuilder &UiBuilderImpl::MakeButton(bool *isPressed)
-	{	
+	{		
+		DoItemPrologue();
+		
+		
 		const auto size{ ApplyDimensionsForTextTypeElements(userSettings.name.c_str()) };
-
 		ImGuiButtonFlags flags{};
 		if(userSettings.isButtonDisabled)
 		{
@@ -227,6 +261,7 @@ namespace App::Ui::Core
 		}
 		
 		const auto pressedResult{ ImGui::ButtonEx(userSettings.name.c_str(), size, flags) };
+		
 		if(isPressed)
 		{
 			*isPressed = pressedResult;
@@ -242,7 +277,7 @@ namespace App::Ui::Core
 		
 	}
 
-		ImVec2 UiBuilderImpl::ApplyDimensionsForTextTypeElements(const char *text) const
+		ImVec2 UiBuilderImpl::ApplyDimensionsForTextTypeElements(const char *text)
 		{
 			auto defaultSize{ ImGui::CalcTextSize(text) +  ImGui::GetStyle().FramePadding*2 };
 			
@@ -278,13 +313,15 @@ namespace App::Ui::Core
 
 	UiBuilder &UiBuilderImpl::MakeText(const char *text)
 	{
+		DoItemPrologue();
+
 		auto defaultSize{ ImGui::GetContentRegionAvail() };
-		defaultSize.y = ImGui::GetFontSize() + ImGui::GetStyle().FramePadding.y*2;
+		defaultSize.y = ImGui::GetFontSize();
 
 		auto usersDesiredSize{ defaultSize };
 		ApplyUserSizing(usersDesiredSize.x, usersDesiredSize.y);
 		
-		ImVec2 wrappedSize{ ImGui::GetStyle().FramePadding*2 + ImGui::CalcTextSize(text, nullptr, false, usersDesiredSize.x) };		
+		ImVec2 wrappedSize{ ImGui::CalcTextSize(text, nullptr, false, usersDesiredSize.x) };		
 		SetNextItemSize(wrappedSize.x, wrappedSize.y);				
 		
 		ImVec2 defaultPos{};
@@ -300,6 +337,7 @@ namespace App::Ui::Core
 		ImGui::PopTextWrapPos();
 		
 		return *this;
+		
 	}
 
 
@@ -332,6 +370,8 @@ namespace App::Ui::Core
 	
 	UiBuilder &UiBuilderImpl::MakeTextInput(StringInputTarget &target)
 	{
+		DoItemPrologue();
+
 		ApplyDimensionsForTextTypeElements(nullptr);		
 		
 		auto flags{ ImGuiInputTextFlags_CallbackResize | ImGuiInputTextFlags_CallbackCharFilter };
@@ -359,6 +399,8 @@ namespace App::Ui::Core
 
 	UiBuilder &UiBuilderImpl::MakeCheckbox(bool *isChecked)
 	{
+		DoItemPrologue();
+
 		ImVec2 defaultSize{ ImGui::GetFrameHeight(), ImGui::GetFrameHeight() };
 		ApplyUserSizing(defaultSize.x, defaultSize.y);
 		SetNextItemSize(defaultSize.x, defaultSize.y);
@@ -369,8 +411,50 @@ namespace App::Ui::Core
 		
 		ImGui::SetCursorPos(ImGui::GetCursorPos() + defaultPos);
 
-		
 		ImGui::Checkbox(("##" + userSettings.name).c_str(), isChecked);
+		
+		DoItemEpilogue();
+		return *this;
+		
+	}
+
+
+
+	UiBuilder &UiBuilderImpl::MakeImageButton(const App::Core::ImageView &image, bool *isPressed)
+	{	
+	DoItemPrologue();
+	
+		const ImVec2 defaultSize{ 50, 50 };
+			
+		auto usersDesiredSize{ defaultSize };
+		ApplyUserSizing(usersDesiredSize.x, usersDesiredSize.y);
+
+		if(usersDesiredSize.x == defaultSize.x && usersDesiredSize.y != defaultSize.y)
+		{
+			usersDesiredSize.x = usersDesiredSize.y;
+		}
+
+		if(usersDesiredSize.y == defaultSize.y && usersDesiredSize.x != defaultSize.x)
+		{
+			usersDesiredSize.y = usersDesiredSize.x;
+		}
+		
+		SetNextItemSize(usersDesiredSize.x, usersDesiredSize.y);				
+		
+		ImVec2 defaultPos{};
+		ApplyUserPositioning(defaultPos.x, defaultPos.y);
+		ApplyUserPivot(defaultPos.x, defaultPos.y, usersDesiredSize.x, usersDesiredSize.y);
+				
+
+		ImGui::SetCursorPos(defaultPos);
+		//drawing impl does not change the handle so we can cast from const
+		const auto pressedResult{	ImGui::ImageButton(&const_cast<App::Core::ImageView &>(image).descriptorHandle, usersDesiredSize, {image.uvMinX, image.uvMinY}, {image.uvMaxX, image.uvMaxY}, 0) };
+		
+		
+		if(isPressed)
+		{
+			*isPressed = pressedResult;
+		}
 
 		DoItemEpilogue();
 		return *this;
@@ -379,8 +463,10 @@ namespace App::Ui::Core
 	
 
 	
-	UiBuilder &UiBuilderImpl::MakeGrid(const size_t columns, const size_t rows)
+	UiBuilder &UiBuilderImpl::MakeGrid(const size_t columns, const size_t rows)//todo move this code to grid layout classes
 	{
+		DoItemPrologue();
+
 		gridData.columnCount = columns;
 		gridData.rowCount = rows;
 
@@ -390,7 +476,7 @@ namespace App::Ui::Core
 		ImVec2 defaultPos{};
 		ApplyUserPositioning(defaultPos.x, defaultPos.y);
 		ApplyUserPivot(defaultPos.x, defaultPos.y, defaultGridSize.x, defaultGridSize.y);
-
+				
 		ImGui::SetCursorPos(ImGui::GetCursorPos() + defaultPos);
 		
 		
@@ -399,9 +485,9 @@ namespace App::Ui::Core
 
 		gridData.cellPadding = userSettings.padding;
 				
-		ImGui::BeginChild(userSettings.name.c_str());
-		desctructionFuncStack.push_front(&ImGui::EndChild);
-
+		widgetLeveFunct.emplace_front(&ImGui::EndChild);
+		ImGui::BeginChild(userSettings.name.c_str(), defaultGridSize);
+		
 		DoItemEpilogue();		
 		return *this;
 		
@@ -411,6 +497,8 @@ namespace App::Ui::Core
 	
 	UiBuilder &UiBuilderImpl::MakeCell(const size_t startColIndex, const size_t startRowIndex, const size_t colSpan, const size_t rowSpan)
 	{
+		DoItemPrologue();
+
 		const ImVec2 cellOffset
 		{
 			gridData.colWidth * startColIndex + gridData.cellPadding,
@@ -434,13 +522,14 @@ namespace App::Ui::Core
 			gridData.colWidth * colSpan - gridData.cellPadding*2,
 			gridData.rowHeight * rowSpan - gridData.cellPadding*2
 		};
+
 		
+		widgetLeveFunct.emplace_front(&ImGui::EndChild);
 		ImGui::BeginChild
 		(
 			( "col"+std::to_string(startColIndex) + "_s"+std::to_string(colSpan)	+    "row"+std::to_string(startRowIndex) + "_s"+std::to_string(rowSpan) ).c_str(),
 			cellSize
 		);
-		desctructionFuncStack.push_front(&ImGui::EndChild);
 
 		DoItemEpilogue();
 		return *this;

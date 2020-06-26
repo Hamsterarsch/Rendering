@@ -1,34 +1,32 @@
 #pragma once
 #include "DxPtrTypes.hpp"
 #include "Resources/RootSignature/TableLayout.hpp"
+#include <vector>
 
 
-namespace Renderer
+namespace Renderer::DX12
 {
-	namespace DX12
+	struct RootSignatureData
 	{
-		struct RootSignatureData
+		DxPtr<ID3D12RootSignature> signature;
+		size_t samplerAmount;
+		std::vector<TableLayout> layouts;
+
+		RootSignatureData(const D3D12_ROOT_SIGNATURE_DESC1 &signatureDesc) :
+			signature{ nullptr },
+			samplerAmount{ 0 }				
 		{
-			DxPtr<ID3D12RootSignature> signature;
-			size_t samplerAmount;
-			TableLayout layout;
-
-			RootSignatureData(const D3D12_ROOT_SIGNATURE_DESC1 &signatureDesc) :
-				signature{ nullptr },
-				samplerAmount{ 0 },
-				layout
+			for(unsigned parameterIndex{ 0 }; parameterIndex < signatureDesc.NumParameters; ++parameterIndex)
+			{
+				if(signatureDesc.pParameters[parameterIndex].ParameterType == D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE)
 				{
-					signatureDesc.NumParameters > 2 && signatureDesc.pParameters[2].ParameterType == D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE
-					? &signatureDesc.pParameters[2].DescriptorTable
-					: nullptr
+					layouts.emplace_back(&signatureDesc.pParameters[parameterIndex].DescriptorTable);
 				}
-			{				
 			}
+							
+		}
 
-		};
-
-		
-	}
+	};
 
 	
 }

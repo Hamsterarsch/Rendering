@@ -1,5 +1,5 @@
 #pragma once
-#include "AssetSystem/Interface/Asset.hpp"
+#include "Asset.hpp"
 #include <string>
 
 
@@ -11,7 +11,7 @@ namespace App::Assets
 
 
 
-		public: ShaderAsset() = default;
+		public: ShaderAsset();
 
 		public: ShaderAsset(const char *code) : shaderCode{ code } {}
 
@@ -26,8 +26,8 @@ namespace App::Assets
 		public: static const char *GetAssetClassExtension();
 
 		public: static const wchar_t *GetAssetClassExtensionW();
-		
-		
+				
 	};
+	
 	
 }

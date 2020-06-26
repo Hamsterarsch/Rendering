@@ -14,6 +14,7 @@
 #include "StateSettings/DepthStencilSettingsImpl.hpp"
 #include "StateSettings/VertexLayoutSettingsImpl.hpp"
 #include "StateSettings/RasterizerSettingsImpl.hpp"
+#include "StateSettings/RootSignatureSettingsImpl.hpp"
 #include "Resources/Descriptor/ResourceViewFactoryImpl.hpp"
 #include "CounterFactoryImpl.hpp"
 
@@ -64,6 +65,8 @@ namespace Renderer::DX12
 		private: RasterizerSettingsImpl rasterizerSettings;
 		
 		private: PsoFactory psoFactory;
+
+		private: RootSignatureSettingsImpl signatureSettings;
 		
 		private: RootSignatureFactory signatureFactory;
 		
@@ -113,10 +116,6 @@ namespace Renderer::DX12
 
 		public: virtual void SerializeRootSignature
 		(
-			unsigned cbvAmount,
-			unsigned srvAmount,
-			unsigned uavAmount,
-			unsigned samplerAmount,
 			SerializationHook &serializer,			
 			const SamplerSpec *staticSamplers,
 			unsigned numStaticSamplers
@@ -147,7 +146,7 @@ namespace Renderer::DX12
 		public: void FitWindowSurfaceToWindow(ResourceHandle::t_hash surface) override;
 
 		
-		public: UniquePtr<::Renderer::Commands::CommandFactory> MakeCommandFactory() override;
+		public: UniquePtr<Renderer::Commands::CommandFactory> MakeCommandFactory() override;
 
 		public: void SubmitCommand(UniquePtr<::Renderer::Commands::Command> &&command) override;
 
@@ -166,11 +165,13 @@ namespace Renderer::DX12
 		
 		public: VertexLayoutSettings &GetVertexLayoutSettings() override;
 
+		public: RootSignatureSettings &GetSignatureSettings() override;
+		
 		
 		public: ResourceViewFactory &GetViewFactory() override;
 
 		public: CounterFactory &GetCounterFactory() override;
-							   		
+
 	};
 
 

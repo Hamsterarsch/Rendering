@@ -43,6 +43,8 @@ namespace Renderer
 			
 			public: t_get Get(ResourceHandle::t_hash handle) 
 			{
+				Exception::ThrowIfDebug(entities.find(handle) == entities.end(), { "Renderer::Registry: The specified resource is not available in this registry on get." });
+				
 				return accessor(entities.at(handle));
 				
 			}			
@@ -51,21 +53,21 @@ namespace Renderer
 			
 			public: void Register(ResourceHandle::t_hash handle, t_entity &&entity) 
 			{
-				if(entities.find(handle) != entities.end())
-				{
-					ThrowIfDebug(Exception::Exception{ "Registry: tried to register a handle that was already registered" });
-				}
+				Exception::ThrowIfDebug(entities.find(handle) != entities.end(), { "Renderer::Registry: Tried to register a handle that was already registered." });
+				
 				
 				entities.insert( {handle, std::move(entity)} );
-				references.insert( {handle, 0} );
-				unreferenced.emplace(handle);
+				references.insert( {handle, 1} );
+				//unreferenced.emplace(handle);
 				
 			}
 
 
 			
 			public: virtual void AddReference(ResourceHandle::t_hash handle) override
-			{				
+			{
+				Exception::ThrowIfDebug(entities.find(handle) == entities.end(), { "Renderer::Registry: The specified resource is not available in this registry on reference addition. Please ensure that the reference was not purged previously." });
+				
 				auto &counter{ references.at(handle) };
 
 				if(counter == 0)
@@ -81,6 +83,8 @@ namespace Renderer
 			
 			public: virtual void RemoveReference(ResourceHandle::t_hash handle) override
 			{
+				Exception::ThrowIfDebug(entities.find(handle) == entities.end(), { "Renderer::Registry: The specified resource is not available in this registry on reference removal." });
+				
 				auto &counter{ references.at(handle) };
 
 				if(counter == 1)

@@ -2,6 +2,7 @@
 #include "Resources/HandleWrapper.hpp"
 
 
+
 namespace Renderer
 {
 	class SerializeTarget;
@@ -37,11 +38,15 @@ namespace App::Rendering
 
 		private: HandleWrapper uiFontTexture;
 		
+		private: HandleWrapper uiFontDescriptor;
+		
 		private: HandleWrapper uiVertexIndexBuffer;
 
 		private: HandleWrapper uiConstantBuffer;
 
-		private: HandleWrapper uiDescriptors;
+		private: HandleWrapper uiConstantBufferDescriptor;
+
+		private: unsigned constantBufferSizeInBytes;
 
 		private: ImDrawData *submitDrawData;
 
@@ -53,25 +58,24 @@ namespace App::Rendering
 			float y{ 0 };
 		} lastSubmitDisplayPos, lastSubmitDisplaySize;
 
-		private: size_t constantBufferSizeInBytes;
-
 		private: unsigned drawRecordVertexOffset;
 		
 		private: unsigned drawRecordIndexOffset;
-		
+
+		private: bool fontTexWasOverwritten;
 
 		
-		public: UiRenderer(RendererMediator &mediator, ::Renderer::RendererFacade &renderer);
+		public: UiRenderer(RendererMediator &mediator, RendererFacade &renderer);
 
-			private: void CreateUiSignature(::Renderer::RendererFacade &renderer);
+			private: void CreateUiSignature(RendererFacade &renderer);
 		
-			private: void CreateUiFontTexture(::Renderer::RendererFacade &renderer);
+			private: void CreateUiFontTexture(RendererFacade &renderer);
 
-			private: void CreateUiPipeline(::Renderer::RendererFacade &renderer);
+			private: void CreateUiPipeline(RendererFacade &renderer);
 
-				private: static SerializeTarget CreateUiVertexShader(::Renderer::RendererFacade &renderer);
+				private: static SerializeTarget CreateUiVertexShader(RendererFacade &renderer);
 
-				private: static SerializeTarget CreateUiPixelShader(::Renderer::RendererFacade &renderer);
+				private: static SerializeTarget CreateUiPixelShader(RendererFacade &renderer);
 						 		
 
 		public: ~UiRenderer();
@@ -99,7 +103,7 @@ namespace App::Rendering
 
 				private: bool ConstantBufferValuesHaveNotChanged();
 
-			private: void CreateDescriptorBlockForUiResources();
+			private: void CreateConstantBufferDescriptor();
 
 			private: void SubmitUiRendererWork();
 

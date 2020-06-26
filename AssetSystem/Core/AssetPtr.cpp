@@ -4,6 +4,10 @@
 
 namespace assetSystem
 {
+	AssetPtr::AssetPtr() : asset{ nullptr }, key{ 0 }, assetSystem { nullptr } {}
+
+
+	
 	AssetPtr::AssetPtr(const char *projectRelativePath, AssetSystem &system)
 		:
 		asset{ nullptr },
