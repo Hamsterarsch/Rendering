@@ -129,6 +129,11 @@ namespace App::Ui::Core
 
 		lastItemPosStack.pop_front();
 
+		if(isGridCanvas.front())
+		{
+			gridInfos.pop_front();
+		}
+		isGridCanvas.pop_front();
 
 		return *this;
 		
@@ -222,6 +227,7 @@ namespace App::Ui::Core
 		void UiBuilderImpl::OnBeginCanvas()
 		{
 			lastItemPosStack.emplace_front();
+			isGridCanvas.emplace_front(false);
 		
 		}
 
@@ -443,6 +449,42 @@ namespace App::Ui::Core
 	}
 
 
+	
+	UiBuilder &UiBuilderImpl::MakeImage(const App::Core::ImageView &image)
+	{
+		DoItemPrologue();
+	
+		const ImVec2 defaultSize{ 50, 50 };
+			
+		auto usersDesiredSize{ defaultSize };
+		ApplyUserSizing(usersDesiredSize.x, usersDesiredSize.y);
+
+		if(usersDesiredSize.x == defaultSize.x && usersDesiredSize.y != defaultSize.y)
+		{
+			usersDesiredSize.x = usersDesiredSize.y;
+		}
+
+		if(usersDesiredSize.y == defaultSize.y && usersDesiredSize.x != defaultSize.x)
+		{
+			usersDesiredSize.y = usersDesiredSize.x;
+		}
+		
+		SetNextItemSize(usersDesiredSize.x, usersDesiredSize.y);				
+		
+		ImVec2 defaultPos{};
+		ApplyUserPositioning(defaultPos.x, defaultPos.y);
+		ApplyUserPivot(defaultPos.x, defaultPos.y, usersDesiredSize.x, usersDesiredSize.y);
+		ImGui::SetCursorPos(defaultPos);
+		
+		ImGui::Image(&const_cast<App::Core::ImageView &>(image).descriptorHandle, defaultSize, {image.uvMinX, image.uvMinY}, {image.uvMaxX, image.uvMaxY});
+
+		DoItemEpilogue();
+
+		return *this;
+		
+	}
+
+
 
 	UiBuilder &UiBuilderImpl::MakeImageButton(const App::Core::ImageView &image, bool *isPressed)
 	{	
@@ -468,9 +510,8 @@ namespace App::Ui::Core
 		ImVec2 defaultPos{};
 		ApplyUserPositioning(defaultPos.x, defaultPos.y);
 		ApplyUserPivot(defaultPos.x, defaultPos.y, usersDesiredSize.x, usersDesiredSize.y);
-				
-
 		ImGui::SetCursorPos(defaultPos);
+		
 		//drawing impl does not change the handle so we can cast from const
 		const auto pressedResult{	ImGui::ImageButton(&const_cast<App::Core::ImageView &>(image).descriptorHandle, usersDesiredSize, {image.uvMinX, image.uvMinY}, {image.uvMaxX, image.uvMaxY}, 0) };
 		
@@ -491,8 +532,10 @@ namespace App::Ui::Core
 	{
 		DoItemPrologue();
 
-		gridData.columnCount = columns;
-		gridData.rowCount = rows;
+		gridInfos.emplace_front();
+		
+		gridInfos.front().columnCount = columns;
+		gridInfos.front().rowCount = rows;
 
 		ImVec2 defaultGridSize{ ImGui::GetContentRegionAvail() };
 		ApplyUserSizing(defaultGridSize.x, defaultGridSize.y);
@@ -504,14 +547,15 @@ namespace App::Ui::Core
 		ImGui::SetCursorPos(ImGui::GetCursorPos() + defaultPos);
 		
 		
-		gridData.colWidth = defaultGridSize.x / columns;
-		gridData.rowHeight = defaultGridSize.y / rows;
+		gridInfos.front().colWidth = defaultGridSize.x / columns;
+		gridInfos.front().rowHeight = defaultGridSize.y / rows;
 
-		gridData.cellPadding = userSettings.padding;
+		gridInfos.front().cellPadding = userSettings.padding;
 				
 		widgetLeveFunct.emplace_front(&ImGui::EndChild);
 		ImGui::BeginChild(userSettings.name.c_str(), defaultGridSize);
 		OnBeginCanvas();
+		isGridCanvas.front() = true;
 		
 		DoItemEpilogue();		
 		return *this;
@@ -526,8 +570,8 @@ namespace App::Ui::Core
 
 		const ImVec2 cellOffset
 		{
-			gridData.colWidth * startColIndex + gridData.cellPadding,
-			gridData.rowHeight * startRowIndex + gridData.cellPadding
+			gridInfos.front().colWidth * startColIndex + gridInfos.front().cellPadding,
+			gridInfos.front().rowHeight * startRowIndex + gridInfos.front().cellPadding
 		};
 		ImGui::SetCursorPos(cellOffset);
 		
@@ -544,8 +588,8 @@ namespace App::Ui::Core
 	
 		const ImVec2 cellSize
 		{
-			gridData.colWidth * colSpan - gridData.cellPadding*2,
-			gridData.rowHeight * rowSpan - gridData.cellPadding*2
+			gridInfos.front().colWidth * colSpan - gridInfos.front().cellPadding*2,
+			gridInfos.front().rowHeight * rowSpan - gridInfos.front().cellPadding*2
 		};
 
 		

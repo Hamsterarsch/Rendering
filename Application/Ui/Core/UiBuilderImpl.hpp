@@ -14,6 +14,8 @@ namespace App::Ui::Core
 		private: std::forward_list<void(*)()> widgetLeveFunct;
 
 		private: std::forward_list<Math::Vector2> lastItemPosStack;
+
+		private: std::forward_list<bool> isGridCanvas;
 		
 
 		
@@ -28,14 +30,16 @@ namespace App::Ui::Core
 			bool isButtonDisabled{ false };
 		} userSettings;
 		
-		private: struct
+		private: struct GridInfo
 		{
 			unsigned columnCount;
 			unsigned rowCount;
 			float colWidth;
 			float rowHeight;
 			float cellPadding{ 0 };
-		} gridData;
+		};
+
+		private: std::forward_list<GridInfo> gridInfos;
 				 	
 				 		
 
@@ -99,6 +103,8 @@ namespace App::Ui::Core
 		
 		public: UiBuilder &MakeCheckbox(bool* isChecked) override;
 
+
+		public: UiBuilder &MakeImage(const App::Core::ImageView &image) override;
 		
 		public: UiBuilder &MakeImageButton(const App::Core::ImageView &image, bool *isPressed) override;
 
