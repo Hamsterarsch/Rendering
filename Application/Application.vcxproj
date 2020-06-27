@@ -296,6 +296,7 @@
     <ClInclude Include="Ui\Elements\FloatLayout.hpp" />
     <ClInclude Include="Ui\Elements\GridLayout.hpp" />
     <ClInclude Include="Ui\Elements\ImageButtonElement.hpp" />
+    <ClInclude Include="Ui\Elements\ImageElement.hpp" />
     <ClInclude Include="Ui\Elements\InputElement.hpp" />
     <ClInclude Include="Ui\Elements\ItemGridLayout.hpp" />
     <ClInclude Include="Ui\Elements\ModalElement.hpp" />

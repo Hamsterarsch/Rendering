@@ -307,6 +307,9 @@
     <ClInclude Include="Ui\States\UiSimpleState.hpp">
       <Filter>Ui\States</Filter>
     </ClInclude>
+    <ClInclude Include="Ui\Elements\ImageElement.hpp">
+      <Filter>Ui\Elements</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Window">
