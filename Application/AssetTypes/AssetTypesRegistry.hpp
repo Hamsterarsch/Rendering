@@ -40,7 +40,7 @@ namespace App::Assets
 		
 		public: size_t GetNumberAssetTypes() const { return assetClassInfos.size(); }
 
-		public: Core::ImageView GetAssetIcon(size_t index) const { return assetClassInfos.at(index).iconView; }
+		public: const Core::ImageView &GetAssetIcon(size_t index) const { return assetClassInfos.at(index).iconView; }
 		
 		public: bool IsHiddenAssetType(size_t index) const;
 
