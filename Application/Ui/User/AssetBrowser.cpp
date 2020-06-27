@@ -176,7 +176,7 @@ namespace App::Ui::User
 		if(shouldMakeNewAsset)
 		{
 			auto state{ MakeUnique<States::UiSimpleState>(app->GetUiStateMachine()) };
-			state->AddFrontend(MakeUnique<AssetCreationDialogFrontend>(*app));
+			state->AddFrontend(MakeUnique<AssetCreationDialogFrontend>(*app, currentPath.string()));
 			
 			app->GetUiStateMachine().PushStateLevel(std::move(state));
 			return;

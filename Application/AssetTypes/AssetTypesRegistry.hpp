@@ -16,12 +16,14 @@ namespace App::Assets
 		private: struct AssetClassInfo
 		{
 			using EditorProvider = UniquePtr<Core::Prototype<Ui::States::UiState>>;
+			using DefaultAssetProvider = UniquePtr<Core::Prototype<assetSystem::Asset>>;
 			
 			assetSystem::AssetPtrTyped<ImageAsset> displayIcon;
 			const char *displayName;
 			const char *extension;
+			DefaultAssetProvider defaultAsset;
 			EditorProvider assetEditor;
-			EditorProvider assetImportDialog;			
+			EditorProvider assetImportDialog;
 			Core::ImageView iconView;
 
 			AssetClassInfo
@@ -30,6 +32,7 @@ namespace App::Assets
 				const assetSystem::AssetPtrTyped<ImageAsset> &icon,
 				const char *displayName,
 				const char *extension,
+				DefaultAssetProvider &&defaultAsset,
 				EditorProvider &&assetEditor,
 				EditorProvider &&importDialog
 			);
@@ -64,9 +67,15 @@ namespace App::Assets
 		
 		public: bool IsHiddenAssetType(size_t index) const;
 
+		public: bool IsUserCreatableType(size_t index) const;
+
 		public: const char *GetAssetTypeDisplayName(size_t index) const;
 
 		public: UniquePtr<Ui::States::UiState> GetAssetImportDialog(size_t index) const;
+
+		public: UniquePtr<assetSystem::Asset> GetDefaultAssetOfType(size_t index) const;
+
+		public: const char *GetAssetClassExtension(size_t index) const;
 		
 
 		public: UniquePtr<Ui::States::UiState> GetAssetEditor(const char *assetAbsolutePath) const;

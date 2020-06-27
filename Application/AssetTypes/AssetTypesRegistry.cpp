@@ -4,6 +4,7 @@
 #include "AssetSystem.hpp"
 #include "AssetConstructOperationsHelper.hpp"
 #include "ProjectAsset.hpp"
+#include "AssetFileending.hpp"
 
 
 
@@ -27,6 +28,17 @@ namespace App::Assets
 		
 	};
 
+	template<class t_asset>
+	class PrototypeAsset final : public Core::Prototype<assetSystem::Asset>
+	{
+		public: UniquePtr<assetSystem::Asset> Clone() const override
+		{
+			return MakeUnique<t_asset>();
+			
+		}
+		
+	};
+
 	
 
 	
@@ -36,6 +48,7 @@ namespace App::Assets
 		const assetSystem::AssetPtrTyped<ImageAsset> &icon,
 		const char *displayName,
 		const char *extension,
+		DefaultAssetProvider &&defaultAsset,
 		EditorProvider &&assetEditor,
 		EditorProvider &&importDialog
 	)
@@ -43,6 +56,7 @@ namespace App::Assets
 		displayIcon{ icon },
 		displayName{ displayName },
 		extension{ extension },
+		defaultAsset{ std::move(defaultAsset) },
 		assetEditor{ std::move(assetEditor) },
 		assetImportDialog{ std::move(importDialog) }
 	{
@@ -72,7 +86,16 @@ namespace App::Assets
 			app.GetProgramAssets().RegisterAssetClass(t_asset::GetAssetClassExtension(), MakeUnique<assetSystem::AssetConstructOperationsHelper<t_asset>>());
 			app.GetProjectAssets().RegisterAssetClass(t_asset::GetAssetClassExtension(), MakeUnique<assetSystem::AssetConstructOperationsHelper<t_asset>>());
 		
-			assetClassInfos.emplace_back(app, app.GetProgramAssets().GetAsset(iconImageAssetPath), displayName, t_asset::GetAssetClassExtension(), std::move(assetEditor), std::move(importDialog));					
+			assetClassInfos.emplace_back
+			(
+				app,
+				app.GetProgramAssets().GetAsset(iconImageAssetPath),
+				displayName,
+				t_asset::GetAssetClassExtension(),
+				MakeUnique<PrototypeAsset<t_asset>>(),
+				std::move(assetEditor),
+				std::move(importDialog)
+			);					
 			assetClassMap.insert( {t_asset::GetAssetClassExtension(), assetClassInfos.size()-1} );
 		
 		}
@@ -85,8 +108,19 @@ namespace App::Assets
 		
 	}
 
-
 	
+	bool AssetTypesRegistry::IsUserCreatableType(size_t index) const
+	{
+		if(std::strcmp(assetClassInfos.at(index).extension, ProjectAsset::GetAssetClassExtension()) == 0)
+		{
+			return false;
+		}
+		return true;
+		
+	}
+
+
+
 	const char *AssetTypesRegistry::GetAssetTypeDisplayName(const size_t index) const
 	{
 		return assetClassInfos.at(index).displayName;
@@ -103,6 +137,26 @@ namespace App::Assets
 			
 		}
 		return {};
+		
+	}
+
+
+	
+	UniquePtr<assetSystem::Asset> AssetTypesRegistry::GetDefaultAssetOfType(const size_t index) const
+	{
+		if(assetClassInfos.at(index).defaultAsset)
+		{
+			return assetClassInfos.at(index).defaultAsset->Clone();
+		}
+		return {};
+		
+	}
+
+
+	
+	const char *AssetTypesRegistry::GetAssetClassExtension(const size_t index) const
+	{
+		return assetClassInfos.at(index).extension;
 		
 	}
 
