@@ -310,6 +310,9 @@
     <ClInclude Include="Ui\Elements\ImageElement.hpp">
       <Filter>Ui\Elements</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Prototype.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Window">

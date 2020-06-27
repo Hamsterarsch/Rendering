@@ -6,19 +6,45 @@
 #include "ProjectAsset.hpp"
 
 
+
+
 namespace App::Assets
 {
+	template<class t_editor>
+	class PrototypeUiState final : public Core::Prototype<Ui::States::UiState>
+	{
+		private: Ui::UiStateMachine *parent;
+
+		
+		
+		public: PrototypeUiState(Ui::UiStateMachine &parent) : parent{ &parent } {}
+		
+		public: UniquePtr<Ui::States::UiState> Clone() const override
+		{
+			return MakeUnique<t_editor>(*parent);
+			
+		}
+		
+	};
+
+	
+
+	
 	AssetTypesRegistry::AssetClassInfo::AssetClassInfo
 	(
 		Core::Application &app,
 		const assetSystem::AssetPtrTyped<ImageAsset> &icon,
 		const char *displayName,
-		const char *extension
+		const char *extension,
+		EditorProvider &&assetEditor,
+		EditorProvider &&importDialog
 	)
 		:
 		displayIcon{ icon },
 		displayName{ displayName },
-		extension{ extension }			
+		extension{ extension },
+		assetEditor{ std::move(assetEditor) },
+		assetImportDialog{ std::move(importDialog) }
 	{
 		displayIcon->UploadToRenderer(app.GetRenderer());
 		iconView.descriptorHandle = displayIcon->GetDescriptorHandle();
@@ -27,26 +53,33 @@ namespace App::Assets
 
 	AssetTypesRegistry::AssetTypesRegistry(Core::Application &app)
 	{
-		AddAssetInfo<ImageAsset>(app, "Image Asset", "Images/Icons/TextureIcon.img");
-		AddAssetInfo<ProjectAsset>(app, "Project Asset", "Images/Icons/FileIcon.img");
-		AddAssetInfo<ShaderAsset>(app, "Shader Asset", "Images/Icons/FileIcon.img");
+		AddAssetInfo<ImageAsset>(app, "Image Asset", "Images/Icons/TextureIcon.img", {});
+		AddAssetInfo<ProjectAsset>(app, "Project Asset", "Images/Icons/FileIcon.img", {});
+		AddAssetInfo<ShaderAsset>(app, "Shader Asset", "Images/Icons/FileIcon.img", {});
 				
 	}
 
 		template<class t_asset>
-		void AssetTypesRegistry::AddAssetInfo(Core::Application &app, const char *displayName, const char *iconImageAssetPath)
+		void AssetTypesRegistry::AddAssetInfo
+		(
+			Core::Application &app,
+			const char *displayName,
+			const char *iconImageAssetPath,
+			AssetClassInfo::EditorProvider &&assetEditor,
+			AssetClassInfo::EditorProvider &&importDialog
+		)
 		{
 			app.GetProgramAssets().RegisterAssetClass(t_asset::GetAssetClassExtension(), MakeUnique<assetSystem::AssetConstructOperationsHelper<t_asset>>());
 			app.GetProjectAssets().RegisterAssetClass(t_asset::GetAssetClassExtension(), MakeUnique<assetSystem::AssetConstructOperationsHelper<t_asset>>());
 		
-			assetClassInfos.emplace_back(app, app.GetProgramAssets().GetAsset(iconImageAssetPath), displayName, t_asset::GetAssetClassExtension());					
+			assetClassInfos.emplace_back(app, app.GetProgramAssets().GetAsset(iconImageAssetPath), displayName, t_asset::GetAssetClassExtension(), std::move(assetEditor), std::move(importDialog));					
 			assetClassMap.insert( {t_asset::GetAssetClassExtension(), assetClassInfos.size()-1} );
 		
 		}
 
 
 
-	bool AssetTypesRegistry::IsHiddenAssetType(size_t index) const
+	bool AssetTypesRegistry::IsHiddenAssetType(const size_t index) const
 	{
 		return hiddenAssetTypes.find(assetClassInfos.at(index).extension) != hiddenAssetTypes.end();
 		
@@ -54,7 +87,7 @@ namespace App::Assets
 
 
 	
-	const char *AssetTypesRegistry::GetAssetTypeDisplayName(size_t index) const
+	const char *AssetTypesRegistry::GetAssetTypeDisplayName(const size_t index) const
 	{
 		return assetClassInfos.at(index).displayName;
 		
@@ -62,21 +95,31 @@ namespace App::Assets
 
 
 	
-	UniquePtr<Ui::States::UiState> AssetTypesRegistry::GetAssetEditor(const char* assetAbsolutePath) const
+	UniquePtr<Ui::States::UiState> AssetTypesRegistry::GetAssetImportDialog(const size_t index) const
+	{
+		if(assetClassInfos.at(index).assetImportDialog)
+		{
+			return assetClassInfos.at(index).assetImportDialog->Clone();
+			
+		}
+		return {};
+		
+	}
+
+
+
+	UniquePtr<Ui::States::UiState> AssetTypesRegistry::GetAssetEditor(const char *assetAbsolutePath) const
 	{
 		std::filesystem::path path{ assetAbsolutePath };
 		auto assetClass{ path.replace_extension("").extension().string() };
 
-		if(assetClass == "shdr")
+		const auto &provider{ assetClassInfos.at(assetClassMap.at(assetClass)).assetEditor };
+		if(provider)
 		{
-			return {};
+			return provider->Clone();
 			
 		}
-		else
-		{
-			return {};
-			
-		}	
+		return {};
 		
 	}
 

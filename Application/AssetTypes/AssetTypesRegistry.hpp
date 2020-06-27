@@ -6,6 +6,7 @@
 #include "Ui/States/UiState.hpp"
 #include "Core/Application.hpp"
 #include "Core/ImageView.hpp"
+#include "Core/Prototype.hpp"
 
 
 namespace App::Assets
@@ -14,12 +15,24 @@ namespace App::Assets
 	{
 		private: struct AssetClassInfo
 		{
+			using EditorProvider = UniquePtr<Core::Prototype<Ui::States::UiState>>;
+			
 			assetSystem::AssetPtrTyped<ImageAsset> displayIcon;
 			const char *displayName;
 			const char *extension;
+			EditorProvider assetEditor;
+			EditorProvider assetImportDialog;			
 			Core::ImageView iconView;
 
-			AssetClassInfo(Core::Application &app, const assetSystem::AssetPtrTyped<ImageAsset> &icon, const char *displayName, const char *extension);
+			AssetClassInfo
+			(
+				Core::Application &app,
+				const assetSystem::AssetPtrTyped<ImageAsset> &icon,
+				const char *displayName,
+				const char *extension,
+				EditorProvider &&assetEditor,
+				EditorProvider &&importDialog
+			);
 										
 		};
 		
@@ -35,7 +48,14 @@ namespace App::Assets
 		
 		public: AssetTypesRegistry(Core::Application &app);
 
-			private: template<class t_asset> void AddAssetInfo(Core::Application &app, const char *displayName, const char *iconImageAssetPath);
+			private: template<class t_asset> void AddAssetInfo
+			(
+				Core::Application &app,
+				const char *displayName,
+				const char *iconImageAssetPath,
+				AssetClassInfo::EditorProvider &&assetEditor,
+				AssetClassInfo::EditorProvider &&importDialog = {}
+			);
 
 		
 		public: size_t GetNumberAssetTypes() const { return assetClassInfos.size(); }
@@ -45,6 +65,8 @@ namespace App::Assets
 		public: bool IsHiddenAssetType(size_t index) const;
 
 		public: const char *GetAssetTypeDisplayName(size_t index) const;
+
+		public: UniquePtr<Ui::States::UiState> GetAssetImportDialog(size_t index) const;
 		
 
 		public: UniquePtr<Ui::States::UiState> GetAssetEditor(const char *assetAbsolutePath) const;
