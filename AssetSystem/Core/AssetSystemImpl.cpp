@@ -8,6 +8,14 @@
 
 namespace assetSystem::core
 {
+	AssetSystemImpl::AssetSystemImpl(AssetRegistry &&registry, AssetMemory &&memory)
+		:
+		registry{ std::move(registry) },
+		memory{ std::move(memory) }
+	{}
+
+
+	
 	void AssetSystemImpl::RegisterAssetClass
 	(
 		const char *classFileExtension,
@@ -17,24 +25,25 @@ namespace assetSystem::core
 		memory.RegisterAssetClass(classFileExtension, std::move(constructOperations));
 		
 	}
-
-	AssetSystemImpl::AssetSystemImpl(AssetRegistry &&registry, AssetMemory &&memory)
-		:
-		registry{ std::move(registry) },
-		memory{ std::move(memory) }
-	{}
-
+	
 
 	
-	AssetPtr AssetSystemImpl::MakeAsset(const char* projectRelativePath, Asset &&assetData)
+	AssetPtr AssetSystemImpl::MakeAsset(const char *path, Asset &&assetData)
 	{
-		const auto key{ AssetRegistry::MakeAssetKey(projectRelativePath) };
+		std::filesystem::path fpath{ path };
+		if(fpath.is_absolute())
+		{
+			fpath = relative(path, registry.GetAssetDirectory());
+		}
+		const auto projectRelativePath{ fpath.string() };
+		
+		const auto key{ AssetRegistry::MakeAssetKey(projectRelativePath.c_str()) };
 		
 		Exception::ThrowIfDebug(registry.IsAssetKnown(key), {"You are trying to create an asset under a path already in use by an existing asset. To serialize existing assets, please use SerializeAsset"});
 
-		auto &asset{ memory.MakeAsset(std::move(assetData), key, GetAssetClassExtension(projectRelativePath).c_str()) };
+		auto &asset{ memory.MakeAsset(std::move(assetData), key, GetAssetClassExtension(path).c_str()) };
 
-		registry.RegisterAsset( projectRelativePath );
+		registry.RegisterAsset(fpath);
 		
 		const auto absoluteAssetPath{ registry.GetAbsoluteAssetPath(key) };
 		create_directories(absoluteAssetPath.parent_path());

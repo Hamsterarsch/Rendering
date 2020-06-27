@@ -11,13 +11,15 @@ namespace assetSystem::core
 		private: AssetRegistry registry;
 
 		private: AssetMemory memory;
-				 
-		public:	void RegisterAssetClass(const char* classFileExtension, UniquePtr<AssetConstructionOperations> &&constructOperations) override;
-		
-		public: AssetSystemImpl(AssetRegistry &&registry, AssetMemory &&memory);
+
 
 		
-		public:	AssetPtr MakeAsset(const char *projectRelativePath, Asset &&assetData) override;
+		public: AssetSystemImpl(AssetRegistry &&registry, AssetMemory &&memory);
+		
+
+		public:	void RegisterAssetClass(const char* classFileExtension, UniquePtr<AssetConstructionOperations> &&constructOperations) override;
+		
+		public:	AssetPtr MakeAsset(const char *path, Asset &&assetData) override;
 
 			private: static std::string GetAssetClassExtension(const char *projectRelativePath);
 		
