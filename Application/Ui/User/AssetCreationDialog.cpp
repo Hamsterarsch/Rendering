@@ -76,11 +76,13 @@ namespace App::Ui::User
 	
 	void AssetCreationDialogFrontend::Update(Core::UiBuilder &builder)
 	{
-		if(not RenderAndQueryInputForUiElements(builder))
+		if(shouldAbort)
 		{
+			app->GetUiStateMachine().PopStateLevel();
 			return;
-		}
-
+			
+		}		
+		
 		if(creationConfirmed)
 		{
 			if(auto importDialog{ app->GetAssetTypes().GetAssetImportDialog(selectedTypeIndex) })
@@ -102,11 +104,9 @@ namespace App::Ui::User
 												
 		}
 		
-		if(shouldAbort)
+		if(not RenderAndQueryInputForUiElements(builder))
 		{
-			app->GetUiStateMachine().PopStateLevel();
 			return;
-			
 		}
 
 		for(auto &&state : assetTypesStates)
