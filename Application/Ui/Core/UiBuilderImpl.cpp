@@ -13,7 +13,7 @@ namespace App::Ui::Core
 	UiBuilderImpl::UiBuilderImpl()
 	{
 		ImGui::GetStyle().WindowPadding = { 0,0 };
-		
+				
 	}
 
 	
@@ -89,8 +89,21 @@ namespace App::Ui::Core
 
 
 	
-	Math::Vector2 UiBuilderImpl::GetItemSize() const
+	Math::Vector2 UiBuilderImpl::GetItemPos() const
 	{
+		if(lastItemPosStack.empty())
+		{
+			return {};
+		}
+
+		return lastItemPosStack.front();
+		
+	}
+
+
+
+	Math::Vector2 UiBuilderImpl::GetItemSize() const
+	{		
 		const auto query{ ImGui::GetItemRectSize() };
 
 		return { query.x, query.y };
@@ -114,6 +127,14 @@ namespace App::Ui::Core
 		(*widgetLeveFunct.front())();
 		widgetLeveFunct.pop_front();
 
+		lastItemPosStack.pop_front();
+
+		if(isGridCanvas.front())
+		{
+			gridInfos.pop_front();
+		}
+		isGridCanvas.pop_front();
+
 		return *this;
 		
 	}
@@ -125,13 +146,15 @@ namespace App::Ui::Core
 		//DoItemPrologue();
 		
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowTitleAlign, ImVec2{ .5, .5 });		
-
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, {userSettings.padding, userSettings.padding});
+		
 		ApplyDimensionsForWindowTypeElements();
 		
 		widgetLeveFunct.emplace_front(&ImGui::End);
 		ImGui::Begin(userSettings.name.c_str(), isOpenTarget, userSettings.flagsWindow);
-				
-		ImGui::PopStyleVar();
+		OnBeginCanvas();
+		
+		ImGui::PopStyleVar(2);
 
 		DoItemEpilogue();				
 		return *this;
@@ -201,13 +224,12 @@ namespace App::Ui::Core
 						
 			}
 
-			void UiBuilderImpl::ApplyUserPivot(float &positionX, float &positionY, float itemWidth, float itemHeight) 
-			{
-				positionX -= itemWidth * userSettings.pivot.x;
-				positionY -= itemHeight * userSettings.pivot.y;
-				lastItemPos = Math::Vector2{positionX, positionY};
+		void UiBuilderImpl::OnBeginCanvas()
+		{
+			lastItemPosStack.emplace_front();
+			isGridCanvas.emplace_front(false);
 		
-			}
+		}
 
 		void UiBuilderImpl::DoItemEpilogue()
 		{
@@ -219,20 +241,22 @@ namespace App::Ui::Core
 
 	UiBuilder &UiBuilderImpl::MakeModal()
 	{		
-		DoItemPrologue();
+		//DoItemPrologue();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowTitleAlign, ImVec2{ .5, .5 });		
-
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, {userSettings.padding, userSettings.padding});
+		
 		ApplyDimensionsForWindowTypeElements();
 
 		if(not ImGui::IsPopupOpen(userSettings.name.c_str()))
 		{
 			ImGui::OpenPopup(userSettings.name.c_str());//ensure that begin always returns true. if you dont want to display the modal just dont call this function			
 		}
-		ImGui::BeginPopupModal(userSettings.name.c_str(), nullptr, userSettings.flagsWindow | ImGuiWindowFlags_NoResize);
+		ImGui::BeginPopupModal(userSettings.name.c_str(), nullptr, userSettings.flagsWindow | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
 		widgetLeveFunct.emplace_front(&ImGui::EndPopup);
+		OnBeginCanvas();
 		
-		ImGui::PopStyleVar();
+		ImGui::PopStyleVar(2);
 
 		DoItemEpilogue();
 		return *this;
@@ -244,8 +268,7 @@ namespace App::Ui::Core
 	UiBuilder &UiBuilderImpl::MakeButton(bool *isPressed)
 	{		
 		DoItemPrologue();
-		
-		
+				
 		const auto size{ ApplyDimensionsForTextTypeElements(userSettings.name.c_str()) };
 		ImGuiButtonFlags flags{};
 		if(userSettings.isButtonDisabled)
@@ -260,8 +283,7 @@ namespace App::Ui::Core
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disabledButtonColor);
 		}
 		
-		const auto pressedResult{ ImGui::ButtonEx(userSettings.name.c_str(), size, flags) };
-		
+		const auto pressedResult{ ImGui::ButtonEx(userSettings.name.c_str(), size, flags) };		
 		if(isPressed)
 		{
 			*isPressed = pressedResult;
@@ -309,7 +331,15 @@ namespace App::Ui::Core
 				
 			}
 
+			void UiBuilderImpl::ApplyUserPivot(float &positionX, float &positionY, float itemWidth, float itemHeight) 
+			{
+				positionX -= itemWidth * userSettings.pivot.x;
+				positionY -= itemHeight * userSettings.pivot.y;
+				lastItemPosStack.front() = Math::Vector2{positionX, positionY};
+		
+			}
 
+	
 
 	UiBuilder &UiBuilderImpl::MakeText(const char *text)
 	{
@@ -419,10 +449,10 @@ namespace App::Ui::Core
 	}
 
 
-
-	UiBuilder &UiBuilderImpl::MakeImageButton(const App::Core::ImageView &image, bool *isPressed)
-	{	
-	DoItemPrologue();
+	
+	UiBuilder &UiBuilderImpl::MakeImage(const App::Core::ImageView &image)
+	{
+		DoItemPrologue();
 	
 		const ImVec2 defaultSize{ 50, 50 };
 			
@@ -444,9 +474,44 @@ namespace App::Ui::Core
 		ImVec2 defaultPos{};
 		ApplyUserPositioning(defaultPos.x, defaultPos.y);
 		ApplyUserPivot(defaultPos.x, defaultPos.y, usersDesiredSize.x, usersDesiredSize.y);
-				
-
 		ImGui::SetCursorPos(defaultPos);
+		
+		ImGui::Image(&const_cast<App::Core::ImageView &>(image).descriptorHandle, defaultSize, {image.uvMinX, image.uvMinY}, {image.uvMaxX, image.uvMaxY});
+
+		DoItemEpilogue();
+
+		return *this;
+		
+	}
+
+
+
+	UiBuilder &UiBuilderImpl::MakeImageButton(const App::Core::ImageView &image, bool *isPressed)
+	{	
+		DoItemPrologue();
+	
+		const ImVec2 defaultSize{ 50, 50 };
+			
+		auto usersDesiredSize{ defaultSize };
+		ApplyUserSizing(usersDesiredSize.x, usersDesiredSize.y);
+
+		if(usersDesiredSize.x == defaultSize.x && usersDesiredSize.y != defaultSize.y)
+		{
+			usersDesiredSize.x = usersDesiredSize.y;
+		}
+
+		if(usersDesiredSize.y == defaultSize.y && usersDesiredSize.x != defaultSize.x)
+		{
+			usersDesiredSize.y = usersDesiredSize.x;
+		}
+		
+		SetNextItemSize(usersDesiredSize.x, usersDesiredSize.y);				
+		
+		ImVec2 defaultPos{};
+		ApplyUserPositioning(defaultPos.x, defaultPos.y);
+		ApplyUserPivot(defaultPos.x, defaultPos.y, usersDesiredSize.x, usersDesiredSize.y);
+		ImGui::SetCursorPos(defaultPos);
+		
 		//drawing impl does not change the handle so we can cast from const
 		const auto pressedResult{	ImGui::ImageButton(&const_cast<App::Core::ImageView &>(image).descriptorHandle, usersDesiredSize, {image.uvMinX, image.uvMinY}, {image.uvMaxX, image.uvMaxY}, 0) };
 		
@@ -467,8 +532,10 @@ namespace App::Ui::Core
 	{
 		DoItemPrologue();
 
-		gridData.columnCount = columns;
-		gridData.rowCount = rows;
+		gridInfos.emplace_front();
+		
+		gridInfos.front().columnCount = columns;
+		gridInfos.front().rowCount = rows;
 
 		ImVec2 defaultGridSize{ ImGui::GetContentRegionAvail() };
 		ApplyUserSizing(defaultGridSize.x, defaultGridSize.y);
@@ -480,13 +547,15 @@ namespace App::Ui::Core
 		ImGui::SetCursorPos(ImGui::GetCursorPos() + defaultPos);
 		
 		
-		gridData.colWidth = defaultGridSize.x / columns;
-		gridData.rowHeight = defaultGridSize.y / rows;
+		gridInfos.front().colWidth = defaultGridSize.x / columns;
+		gridInfos.front().rowHeight = defaultGridSize.y / rows;
 
-		gridData.cellPadding = userSettings.padding;
+		gridInfos.front().cellPadding = userSettings.padding;
 				
 		widgetLeveFunct.emplace_front(&ImGui::EndChild);
 		ImGui::BeginChild(userSettings.name.c_str(), defaultGridSize);
+		OnBeginCanvas();
+		isGridCanvas.front() = true;
 		
 		DoItemEpilogue();		
 		return *this;
@@ -501,8 +570,8 @@ namespace App::Ui::Core
 
 		const ImVec2 cellOffset
 		{
-			gridData.colWidth * startColIndex + gridData.cellPadding,
-			gridData.rowHeight * startRowIndex + gridData.cellPadding
+			gridInfos.front().colWidth * startColIndex + gridInfos.front().cellPadding,
+			gridInfos.front().rowHeight * startRowIndex + gridInfos.front().cellPadding
 		};
 		ImGui::SetCursorPos(cellOffset);
 		
@@ -519,8 +588,8 @@ namespace App::Ui::Core
 	
 		const ImVec2 cellSize
 		{
-			gridData.colWidth * colSpan - gridData.cellPadding*2,
-			gridData.rowHeight * rowSpan - gridData.cellPadding*2
+			gridInfos.front().colWidth * colSpan - gridInfos.front().cellPadding*2,
+			gridInfos.front().rowHeight * rowSpan - gridInfos.front().cellPadding*2
 		};
 
 		
@@ -530,11 +599,12 @@ namespace App::Ui::Core
 			( "col"+std::to_string(startColIndex) + "_s"+std::to_string(colSpan)	+    "row"+std::to_string(startRowIndex) + "_s"+std::to_string(rowSpan) ).c_str(),
 			cellSize
 		);
-
+		OnBeginCanvas();
+		
 		DoItemEpilogue();
 		return *this;
 	
 	}
 
-	
+
 }

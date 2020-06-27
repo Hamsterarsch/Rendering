@@ -259,6 +259,7 @@
     <ClInclude Include="Core\Application.hpp" />
     <ClInclude Include="Core\CreateProject.hpp" />
     <ClInclude Include="Core\ImageView.hpp" />
+    <ClInclude Include="Core\Prototype.hpp" />
     <ClInclude Include="Core\Version.hpp" />
     <ClInclude Include="Rendering\RendererMediator.hpp" />
     <ClInclude Include="Rendering\SceneRenderer.hpp" />
@@ -296,6 +297,7 @@
     <ClInclude Include="Ui\Elements\FloatLayout.hpp" />
     <ClInclude Include="Ui\Elements\GridLayout.hpp" />
     <ClInclude Include="Ui\Elements\ImageButtonElement.hpp" />
+    <ClInclude Include="Ui\Elements\ImageElement.hpp" />
     <ClInclude Include="Ui\Elements\InputElement.hpp" />
     <ClInclude Include="Ui\Elements\ItemGridLayout.hpp" />
     <ClInclude Include="Ui\Elements\ModalElement.hpp" />
@@ -306,6 +308,7 @@
     <ClInclude Include="Ui\States\UiProjectStartupState.hpp" />
     <ClInclude Include="Ui\States\UiCreateProjectState.hpp" />
     <ClInclude Include="Ui\States\UiProjectFetchStartupState.hpp" />
+    <ClInclude Include="Ui\States\UiSimpleState.hpp" />
     <ClInclude Include="Ui\States\UiState.hpp" />
     <ClInclude Include="Ui\UiStateMachine.hpp" />
     <ClInclude Include="Ui\User\AssetBrowser.hpp" />

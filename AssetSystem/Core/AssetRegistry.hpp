@@ -31,6 +31,9 @@ namespace assetSystem::core
 
 			private: void DiscoverAssets(const fs::path &rootFolder);
 
+		
+		public: fs::path GetAssetDirectory() const { return projectAssetDirectory; }
+		
 		public: void RegisterAsset(const fs::path &projectRelativePath);
 
 			private: static void ReplaceBackslashes(std::string &path);
@@ -38,6 +41,7 @@ namespace assetSystem::core
 		public: static AssetKey MakeAssetKey(const std::string &projectRelativePath);
 
 		public: fs::path GetAbsoluteAssetPath(AssetKey assetKey) const;
+
 
 
 		public: void AddReference(AssetKey key);

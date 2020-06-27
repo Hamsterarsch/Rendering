@@ -26,7 +26,7 @@ namespace assetSystem
 		public: virtual void RegisterAssetClass(const char *classFileExtension, UniquePtr<AssetConstructionOperations> &&constructOperations) = 0;
 
 
-		
+				
 		public: virtual AssetPtr MakeAsset(const char *projectRelativePath, Asset &&assetData) = 0;
 
 		public: virtual AssetPtr GetAsset(const char *projectRelativePath) = 0;
