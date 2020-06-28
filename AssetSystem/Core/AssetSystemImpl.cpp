@@ -4,6 +4,7 @@
 #include "Shared/Debugging.hpp"
 #include "Shared/Exception/Exception.hpp"
 #include "IO/Filetypes/AssetWriter.hpp"
+#include "AssetFileending.hpp"
 
 
 namespace assetSystem::core
@@ -29,21 +30,14 @@ namespace assetSystem::core
 
 	
 	AssetPtr AssetSystemImpl::MakeAsset(const char *path, Asset &&assetData)
-	{
-		std::filesystem::path fpath{ path };
-		if(fpath.is_absolute())
-		{
-			fpath = relative(path, registry.GetAssetDirectory());
-		}
-		const auto projectRelativePath{ fpath.string() };
-		
+	{		
+		auto projectRelativePath{ EnsureProjectRelativePath(path) };		
 		const auto key{ AssetRegistry::MakeAssetKey(projectRelativePath.c_str()) };
 		
 		Exception::ThrowIfDebug(registry.IsAssetKnown(key), {"You are trying to create an asset under a path already in use by an existing asset. To serialize existing assets, please use SerializeAsset"});
 
 		auto &asset{ memory.MakeAsset(std::move(assetData), key, GetAssetClassExtension(path).c_str()) };
-
-		registry.RegisterAsset(fpath);
+		registry.RegisterAsset(std::move(projectRelativePath));
 		
 		const auto absoluteAssetPath{ registry.GetAbsoluteAssetPath(key) };
 		create_directories(absoluteAssetPath.parent_path());
@@ -57,10 +51,35 @@ namespace assetSystem::core
 		
 	}
 
+		std::string AssetSystemImpl::EnsureProjectRelativePath(const char *path) const 
+		{					
+			std::filesystem::path filepath{ path };
+			if(filepath.is_absolute())
+			{
+				filepath = relative(path, registry.GetAssetDirectory());				
+			}
+
+			if(filepath.extension() == GetAssetFileending())
+			{
+				filepath.replace_extension();
+			}
+
+			auto stringPath{  filepath.string() };
+		
+			for(auto pos{ stringPath.find_first_of('\\') }; pos != stringPath.npos; pos = stringPath.find_first_of('\\'))
+			{
+				stringPath.at(pos) = '/';				
+			}
+					
+			return stringPath;
+		
+		}
+
 		std::string AssetSystemImpl::GetAssetClassExtension(const char *projectRelativePath)
 		{
 			const std::string relativePathAsString{ projectRelativePath };
 			const auto offsetToExtension{ relativePathAsString.find_first_of('.') };
+		
 			return relativePathAsString.substr(offsetToExtension+1, relativePathAsString.size() - (offsetToExtension+1));
 		
 		}
@@ -103,8 +122,10 @@ namespace assetSystem::core
 
 	
 
-	LoadedAssetInfo AssetSystemImpl::GetAssetInternal(const char *projectRelativePath)
+	LoadedAssetInfo AssetSystemImpl::GetAssetInternal(const char *path)
 	{
+		const auto projectRelativePath{ EnsureProjectRelativePath(path) };
+		
 		LoadedAssetInfo info{ nullptr, AssetRegistry::MakeAssetKey(projectRelativePath) };
 		
 		if(memory.IsAssetLoaded(info.key))
@@ -115,7 +136,7 @@ namespace assetSystem::core
 		{
 			if(registry.IsAssetKnown(info.key))
 			{				
-				info.asset = &memory.MakeAsset(info.key, GetAssetClassExtension(projectRelativePath).c_str());
+				info.asset = &memory.MakeAsset(info.key, GetAssetClassExtension(projectRelativePath.c_str()).c_str());
 
 				const auto filePath{ registry.GetAbsoluteAssetPath(info.key) };
 				io::AssetReader reader{ filePath };

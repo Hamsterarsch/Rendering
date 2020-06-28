@@ -21,6 +21,8 @@ namespace assetSystem::core
 		
 		public:	AssetPtr MakeAsset(const char *path, Asset &&assetData) override;
 
+			private: std::string EnsureProjectRelativePath(const char *path) const;
+		
 			private: static std::string GetAssetClassExtension(const char *projectRelativePath);
 		
 		public: AssetPtr GetAsset(const char *projectRelativePath) override;
