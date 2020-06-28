@@ -139,5 +139,21 @@ namespace assetSystem
 		
 	}
 
+
+	
+	void AssetPtr::SaveToDisk()
+	{
+		assetSystem->SerializeAsset(*this);
+		
+	}
+
+
+	
+	void AssetPtr::LoadFromDisk()
+	{
+		assetSystem->ReloadAsset(*this);
+		
+	}
+
 	
 }

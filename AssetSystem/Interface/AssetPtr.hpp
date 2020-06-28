@@ -48,6 +48,10 @@ namespace assetSystem
 		public: Asset *operator->() { return asset; }
 
 		public: const Asset *operator->() const { return asset; }
+
+		public: void SaveToDisk();
+
+		public: void LoadFromDisk();
 								
 	};
 	
