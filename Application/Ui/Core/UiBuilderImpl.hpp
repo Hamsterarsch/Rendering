@@ -99,7 +99,7 @@ namespace App::Ui::Core
 		
 		public: UiBuilder &MakeText(const char* text) override;
 		
-		public: UiBuilder &MakeTextInput(StringInputTarget& target) override;						
+		public: UiBuilder &MakeTextInput(StringInputTarget& target, bool isMultiline) override;						
 		
 		public: UiBuilder &MakeCheckbox(bool* isChecked) override;
 

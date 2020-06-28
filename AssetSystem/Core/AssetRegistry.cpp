@@ -25,24 +25,23 @@ namespace assetSystem::core
 			{
 				if(entry.is_regular_file() && entry.path().extension() == GetAssetFileending())
 				{				
-					RegisterAsset(relative(entry, rootFolder));
+					RegisterAsset(relative(entry, rootFolder).string());
 				}
 			}
 		
 		}
 
-			void AssetRegistry::RegisterAsset(const fs::path &projectRelativePath)
-			{
-				auto asString{ projectRelativePath.string() };
-				const auto extensionPos{ asString.find(GetAssetFileending()) };
+			void AssetRegistry::RegisterAsset(std::string &&projectRelativePath)
+			{				
+				const auto extensionPos{ projectRelativePath.find(GetAssetFileending()) };
 				if(extensionPos != std::string::npos)
 				{
-					asString.erase(extensionPos, asString.size() - extensionPos);					
+					projectRelativePath.erase(extensionPos, projectRelativePath.size() - extensionPos);					
 				}
 
-				ReplaceBackslashes(asString);		
-				const auto key{ MakeAssetKey(asString) };
-				fileHandleMap.insert( {key, std::move(asString)} );
+				ReplaceBackslashes(projectRelativePath);		
+				const auto key{ MakeAssetKey(projectRelativePath) };
+				fileHandleMap.insert( {key, std::move(projectRelativePath)} );
 		
 			}
 

@@ -398,27 +398,50 @@ namespace App::Ui::Core
 		
 	};
 	
-	UiBuilder &UiBuilderImpl::MakeTextInput(StringInputTarget &target)
+	UiBuilder &UiBuilderImpl::MakeTextInput(StringInputTarget &target, const bool isMultiline)
 	{
 		DoItemPrologue();
-
-		ApplyDimensionsForTextTypeElements(nullptr);		
-		
+				
 		auto flags{ ImGuiInputTextFlags_CallbackResize | ImGuiInputTextFlags_CallbackCharFilter };
 		if(target.IsReadOnly())
 		{
 			flags |= ImGuiInputTextFlags_ReadOnly;
 		}
-		
-		ImGuiStringInputTargetAdapter::inputTarget = &target;		
-		ImGui::InputText
-		(
-			userSettings.name.c_str(),
-			target.GetBuffer(),
-			target.GetCapacity(),
-			flags,
-			&ImGuiStringInputTargetAdapter::InputTextCallback
-		);
+				
+		ImGuiStringInputTargetAdapter::inputTarget = &target;
+		if(isMultiline)
+		{
+			ImVec2 defaultSize{ ImGui::GetContentRegionAvail() };
+			ApplyUserSizing(defaultSize.x, defaultSize.y);
+			SetNextItemSize(defaultSize.x, defaultSize.y);
+
+			ImVec2 defaultPos{};
+			ApplyUserPositioning(defaultPos.x, defaultPos.y);
+			ApplyUserPivot(defaultPos.x, defaultPos.y, defaultSize.x, defaultSize.y);			
+			ImGui::SetCursorPos(ImGui::GetCursorPos() + defaultPos);
+			
+			ImGui::InputTextMultiline
+			(
+				userSettings.name.c_str(),
+				target.GetBuffer(),
+				target.GetCapacity(),
+				defaultSize,
+				flags,
+				&ImGuiStringInputTargetAdapter::InputTextCallback
+			);			
+		}
+		else
+		{			
+			ApplyDimensionsForTextTypeElements(nullptr);		
+			ImGui::InputText
+			(
+				userSettings.name.c_str(),
+				target.GetBuffer(),
+				target.GetCapacity(),
+				flags,
+				&ImGuiStringInputTargetAdapter::InputTextCallback
+			);
+		}
 		
 		DoItemEpilogue();
 		return *this;

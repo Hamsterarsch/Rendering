@@ -119,6 +119,9 @@
     <ClCompile Include="Ui\User\AssetCreationDialog.cpp">
       <Filter>Ui\User</Filter>
     </ClCompile>
+    <ClCompile Include="Ui\User\ShaderEditor.cpp">
+      <Filter>Ui\User</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window\Windows\Window.hpp">
@@ -312,6 +315,15 @@
     </ClInclude>
     <ClInclude Include="Core\Prototype.hpp">
       <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\User\ShaderEditor.hpp">
+      <Filter>Ui\User</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\States\UiEditorState.hpp">
+      <Filter>Ui\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Misc\SerializationFilter.hpp">
+      <Filter>Ui\Misc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

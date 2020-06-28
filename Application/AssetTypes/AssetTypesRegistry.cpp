@@ -5,29 +5,13 @@
 #include "AssetConstructOperationsHelper.hpp"
 #include "ProjectAsset.hpp"
 #include "AssetFileending.hpp"
+#include "Ui/User/ShaderEditor.hpp"
 
 
 
 
 namespace App::Assets
 {
-	template<class t_editor>
-	class PrototypeUiState final : public Core::Prototype<Ui::States::UiState>
-	{
-		private: Ui::UiStateMachine *parent;
-
-		
-		
-		public: PrototypeUiState(Ui::UiStateMachine &parent) : parent{ &parent } {}
-		
-		public: UniquePtr<Ui::States::UiState> Clone() const override
-		{
-			return MakeUnique<t_editor>(*parent);
-			
-		}
-		
-	};
-
 	template<class t_asset>
 	class PrototypeAsset final : public Core::Prototype<assetSystem::Asset>
 	{
@@ -50,7 +34,7 @@ namespace App::Assets
 		const char *extension,
 		DefaultAssetProvider &&defaultAsset,
 		EditorProvider &&assetEditor,
-		EditorProvider &&importDialog
+		ImportProvider &&importDialog
 	)
 		:
 		displayIcon{ icon },
@@ -65,11 +49,11 @@ namespace App::Assets
 	}
 	
 
-	AssetTypesRegistry::AssetTypesRegistry(Core::Application &app)
+	AssetTypesRegistry::AssetTypesRegistry(Core::Application &app) : app{ &app }
 	{
 		AddAssetInfo<ImageAsset>(app, "Image Asset", "Images/Icons/TextureIcon.img", {});
 		AddAssetInfo<ProjectAsset>(app, "Project Asset", "Images/Icons/FileIcon.img", {});
-		AddAssetInfo<ShaderAsset>(app, "Shader Asset", "Images/Icons/FileIcon.img", {});
+		AddAssetInfo<ShaderAsset>(app, "Shader Asset", "Images/Icons/FileIcon.img", MakeUnique<PrototypeEditor<Ui::User::ShaderEditorFrontend>>());
 				
 	}
 
@@ -80,7 +64,7 @@ namespace App::Assets
 			const char *displayName,
 			const char *iconImageAssetPath,
 			AssetClassInfo::EditorProvider &&assetEditor,
-			AssetClassInfo::EditorProvider &&importDialog
+			AssetClassInfo::ImportProvider &&importDialog
 		)
 		{
 			app.GetProgramAssets().RegisterAssetClass(t_asset::GetAssetClassExtension(), MakeUnique<assetSystem::AssetConstructOperationsHelper<t_asset>>());
@@ -162,15 +146,17 @@ namespace App::Assets
 
 
 
-	UniquePtr<Ui::States::UiState> AssetTypesRegistry::GetAssetEditor(const char *assetAbsolutePath) const
+	UniquePtr<Ui::States::UiState> AssetTypesRegistry::MakeAssetEditor(const char *assetAbsolutePath, const assetSystem::AssetPtr &assetToEdit) const
 	{
-		std::filesystem::path path{ assetAbsolutePath };
-		auto assetClass{ path.replace_extension("").extension().string() };
+		std::filesystem::path path{ assetAbsolutePath };		
+		auto assetClass{ path.replace_extension("").extension().string().erase(0, 1) };
+				
+		auto assetName{ path.filename().replace_extension().string() };
 
 		const auto &provider{ assetClassInfos.at(assetClassMap.at(assetClass)).assetEditor };
 		if(provider)
 		{
-			return provider->Clone();
+			return provider->Clone(app->GetUiStateMachine(), std::move(assetName), assetToEdit);
 			
 		}
 		return {};

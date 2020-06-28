@@ -21,6 +21,8 @@ namespace App::Assets
 
 		public: size_t GetShaderLength() const { return shaderCode.size(); }
 
+		public: void SetCode(const std::string &code) { shaderCode = code; }
+
 		public: assetSystem::io::Archive &Serialize(assetSystem::io::Archive &archive) override;
 				
 		public: static const char *GetAssetClassExtension();

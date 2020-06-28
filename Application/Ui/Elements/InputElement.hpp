@@ -50,12 +50,19 @@ namespace App::Ui
 	{		
 		private: size_t targetIndex;
 
+		private: bool isMultiline;
 		
+
 		
 		public: InputElement(t_frontend_param frontend, size_t targetIndex, const char *name)
+			: InputElement{ frontend, targetIndex, false, name }
+		{}
+		
+		public: InputElement(t_frontend_param frontend, size_t targetIndex, bool isMultiline, const char *name)
 			:
 			InputElementBase{ frontend, name },
-			targetIndex{ targetIndex }
+			targetIndex{ targetIndex },
+			isMultiline{ isMultiline }
 		{}
 
 		
@@ -66,7 +73,7 @@ namespace App::Ui
 	inline void InputElement<Core::StringInputTarget>::RenderAndQueryInternal(Core::UiBuilder &builder)
 	{		
 		builder		
-		.MakeTextInput(*GetFrontend().GetInputTargetString(targetIndex));
+		.MakeTextInput(*GetFrontend().GetInputTargetString(targetIndex), isMultiline);
 	
 	}
 

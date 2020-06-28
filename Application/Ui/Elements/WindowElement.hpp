@@ -9,7 +9,7 @@ namespace App::Ui
 {
 	class WindowElement final : public Core::UiLayoutElement
 	{
-		private: const char *title;
+		private: std::string title;
 
 		private: Core::UiFrontend *frontend;
 
@@ -43,10 +43,11 @@ namespace App::Ui
 		}
 
 		
-
 		public: float GetContentWidth() const { return contentArea.x; }
 
 		public: float GetContentHeight() const { return contentArea.y; }
+
+		public: void SetTitle(const char *title) { this->title = title; }
 		
 		protected: void OnPreRenderAndQueryChildren(Core::UiBuilder &builder) override
 		{
@@ -63,7 +64,7 @@ namespace App::Ui
 			bool *isOpenTarget{ frontend ? frontend->GetInputTargetBool(isOpenTargetIndex) : nullptr };
 			
 			builder
-			.DeclareName(title)							
+			.DeclareName(title.c_str())							
 			.MakeTab(isOpenTarget);
 			
 		}

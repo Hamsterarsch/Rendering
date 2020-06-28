@@ -9,10 +9,11 @@ namespace App::Assets
 
 	assetSystem::io::Archive &ShaderAsset::Serialize(assetSystem::io::Archive &archive)
 	{
-		int codeCharacterLength = shaderCode.size();
-		archive.Serialize("codeLength", codeCharacterLength);
-		shaderCode.resize(codeCharacterLength);
-		
+		if(archive.IsReading())
+		{
+			shaderCode.resize(archive.GetPropertySizeInBytes("code"));
+		}
+				
 		return archive.Serialize("code", shaderCode.data());
 		
 	}

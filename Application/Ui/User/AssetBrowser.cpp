@@ -176,7 +176,7 @@ namespace App::Ui::User
 		if(shouldMakeNewAsset)
 		{
 			auto state{ MakeUnique<States::UiSimpleState>(app->GetUiStateMachine()) };
-			state->AddFrontend(MakeUnique<AssetCreationDialogFrontend>(*app, currentPath.string()));
+			state->SetFrontend(MakeUnique<AssetCreationDialogFrontend>(*app, currentPath.string()));
 			
 			app->GetUiStateMachine().PushStateLevel(std::move(state));
 			return;
@@ -199,7 +199,7 @@ namespace App::Ui::User
 						
 					}
 										
-					if(auto editor{ app->GetAssetTypes().GetAssetEditor(item.path.string().c_str()) })
+					if(auto editor{ app->GetAssetTypes().MakeAssetEditor(item.path.string().c_str(), app->GetProjectAssets().GetAsset(item.path.string().c_str())) })
 					{
 						app->GetUiStateMachine().AddState(std::move(editor));
 					}					

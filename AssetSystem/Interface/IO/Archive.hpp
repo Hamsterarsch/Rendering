@@ -27,6 +27,8 @@ namespace assetSystem::io
 
 		public: virtual bool IsReading() const = 0;
 
+		public: virtual size_t GetPropertySizeInBytes(const char *propertyName) = 0;
+
 		public: virtual bool IsInvalid() const = 0;
 
 		public: virtual void Close() = 0;

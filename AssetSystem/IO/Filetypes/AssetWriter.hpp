@@ -41,6 +41,8 @@ namespace assetSystem::io
 
 		public: Archive &Serialize(const char *propertyName, char *str) override;
 
+		size_t GetPropertySizeInBytes(const char *propertyName) override { return 0; }
+		
 		
 		public: bool IsInvalid() const override;
 
@@ -49,7 +51,7 @@ namespace assetSystem::io
 		public: Archive &EnterSubobject(const char *propertyName) override;
 		
 		public: Archive &LeaveSubobject() override;
-		
+
 	};
 
 	

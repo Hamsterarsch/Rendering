@@ -7,7 +7,7 @@
 namespace assetSystem::io
 {
 	AssetWriter::AssetWriter(const std::filesystem::path &filepath) :
-		file{ filepath, std::ios_base::out | std::ios_base::trunc },
+		file{ filepath, std::ios_base::out | std::ios_base::trunc | std::ios_base::binary },
 		hasWrittenPropertyValue{ false }
 	{				
 		if(IsInvalid())
