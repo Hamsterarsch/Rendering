@@ -34,7 +34,7 @@ namespace assetSystem::core
 		
 		public: fs::path GetAssetDirectory() const { return projectAssetDirectory; }
 		
-		public: void RegisterAsset(const fs::path &projectRelativePath);
+		public: void RegisterAsset(std::string &&projectRelativePath);
 
 			private: static void ReplaceBackslashes(std::string &path);
 		
