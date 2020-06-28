@@ -48,7 +48,7 @@ namespace App::Ui::Core
 
 		public: virtual UiBuilder &MakeText(const char *text) = 0;
 
-		public: virtual UiBuilder &MakeTextInput(StringInputTarget &target) = 0;
+		public: virtual UiBuilder &MakeTextInput(StringInputTarget &target, bool isMultiline) = 0;
 
 		public: virtual UiBuilder &MakeCheckbox(bool *isChecked) = 0;
 
