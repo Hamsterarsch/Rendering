@@ -36,6 +36,8 @@ namespace App::Ui::Core
 
 		public: virtual Math::Vector2 GetContentRegion() = 0;
 
+		public: virtual bool IsRelativeSize(float value) const = 0;
+
 
 		
 		public: virtual UiBuilder &LeaveWidget() = 0;

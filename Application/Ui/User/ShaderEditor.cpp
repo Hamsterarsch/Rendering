@@ -10,7 +10,7 @@
 
 
 namespace App::Ui::User
-{
+{	
 	ShaderEditorFrontend::ShaderEditorFrontend(States::UiState &parent, std::string &&shaderName, const assetSystem::AssetPtr &shaderToEdit)
 		:
 		parent{ &parent },
@@ -19,16 +19,16 @@ namespace App::Ui::User
 		hasUnsavedChanges{ false },
 		shouldSave{ false },
 		shouldAbort{ false }
-	{
-
+	{		
 		codeToEdit.data = std::string{this->shaderToEdit->GetCode(), this->shaderToEdit->GetShaderLength() };
 		auto window
 		{		
 			Element<WindowElement>(this->shaderName.c_str())->*Set{&WindowElement::size,{.75,.75}}
-			<< Element<InputElement<Core::StringInputTarget>>(*this, 0, true, "shaderCodeInput")->*Set{&Core::UiElement::size,{1,.9}}
-			<< (Element<FloatLayout>(5, true, false)->*Set{&FloatLayout::pivot,{1,1}}->*Set{&FloatLayout::position,{1, 1}}->*Set{&FloatLayout::size,{0,.1}}
-				<< Element<ButtonElement>(*this, 0, "Save")
-				<< Element<ButtonElement>(*this, 1, "Close"))
+			<< (Element<FloatLayout>(5, true, true)->*Set{&FloatLayout::position, {1,1}}->*Set{&FloatLayout::pivot,{1,1}}
+				<< (Element<FloatLayout>(5, true, false)->*Set{&FloatLayout::pivot,{1,1}}->*Set{&FloatLayout::position,{1, 1}}
+					<< Element<ButtonElement>(*this, 0, "Save")
+					<< Element<ButtonElement>(*this, 1, "Close"))
+				<< Element<InputElement<Core::StringInputTarget>>(*this, 0, true, "shaderCodeInput")->*Set{&Core::UiElement::size,{1,1}})
 		};
 		this->window = window.get();
 		uiElements.emplace_front(std::move(window));

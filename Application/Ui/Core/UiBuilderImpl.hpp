@@ -65,6 +65,8 @@ namespace App::Ui::Core
 		public: Math::Vector2 GetItemSize() const override;
 
 		public: Math::Vector2 GetContentRegion() override;
+
+		public: bool IsRelativeSize(float value) const override;
 		
 				
 		public: UiBuilder &LeaveWidget() override;

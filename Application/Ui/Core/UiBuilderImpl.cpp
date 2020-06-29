@@ -120,6 +120,12 @@ namespace App::Ui::Core
 		
 	}
 
+	bool UiBuilderImpl::IsRelativeSize(float value) const
+	{
+		return value <= 1 && value > 0;
+		
+	}
+
 
 
 	UiBuilder &UiBuilderImpl::LeaveWidget()
