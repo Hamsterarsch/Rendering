@@ -8,9 +8,9 @@ namespace App::Ui
 {	
 	class ButtonElement : public Core::UiAccessElement
 	{
-		private: const char *name;
+		protected: const char *name;
 
-		private: size_t isClickedTargetIndex;
+		protected: size_t isClickedTargetIndex;
 
 		public: bool isDisabled;
 				 
@@ -40,5 +40,41 @@ namespace App::Ui
 						
 	};
 
+
+	class ToggleButtonElement final : public ButtonElement
+	{
+		private: bool isToggledOn;
+		
+		
+
+		public: ToggleButtonElement(Core::UiFrontend &frontend, size_t isClickedTargetIndex, const char *name)
+			:
+			ButtonElement{ frontend, isClickedTargetIndex, name },
+			isToggledOn{ false }
+		{}
+
+							   				 
+		void RenderAndQueryInternal(Core::UiBuilder &builder) override
+		{
+			if(isDisabled)
+			{
+				builder.DeclareButtonDisabled();
+			}
+
+			bool isPressed;			
+			builder
+			.DeclareName(name)
+			.MakeButton(&isPressed);
+
+			isToggledOn ^= isPressed;
+			if(auto *out{ GetFrontend().GetInputTargetBool(isClickedTargetIndex)})
+			{
+				*out = isToggledOn;
+			}
+			
+		}
+		
+	};
+	
 	   	
 }
