@@ -1,10 +1,10 @@
 #pragma once
-#include "Ui/Core/UiLayoutElement.hpp"
+#include "Ui/Core/UiLayoutElementBasic.hpp"
 
 
 namespace App::Ui
 {
-	class FloatLayout final : public Core::UiLayoutElement
+	class FloatLayout final : public Core::UiLayoutElementBasic
 	{
 		private: bool invertDirection;
 		

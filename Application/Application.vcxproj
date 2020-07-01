@@ -292,6 +292,7 @@
     <ClInclude Include="Ui\Core\UiLayoutElement.hpp" />
     <ClInclude Include="Ui\Core\UiBuilder.hpp" />
     <ClInclude Include="Ui\Core\UiBuilderImpl.hpp" />
+    <ClInclude Include="Ui\Core\UiLayoutElementBasic.hpp" />
     <ClInclude Include="Ui\Elements\ButtonElement.hpp" />
     <ClInclude Include="Ui\Elements\EqualColumnsLayout.hpp" />
     <ClInclude Include="Ui\Elements\FloatLayout.hpp" />
@@ -302,6 +303,7 @@
     <ClInclude Include="Ui\Elements\ItemGridLayout.hpp" />
     <ClInclude Include="Ui\Elements\ModalElement.hpp" />
     <ClInclude Include="Ui\Elements\TextElement.hpp" />
+    <ClInclude Include="Ui\Elements\TreeLayout.hpp" />
     <ClInclude Include="Ui\Elements\WindowElement.hpp" />
     <ClInclude Include="Ui\ImguiTypeArithmetics.hpp" />
     <ClInclude Include="Ui\Misc\AssetNameFilter.hpp" />
@@ -353,7 +355,7 @@
     <ClCompile Include="Types\Dimensions2D.cpp" />
     <ClCompile Include="Ui\BasicFrontends\SetVisibilityFrontend.cpp" />
     <ClCompile Include="Ui\Core\UiElement.cpp" />
-    <ClCompile Include="Ui\Core\UiLayoutElement.cpp" />
+    <ClCompile Include="Ui\Core\UiLayoutElementBasic.cpp" />
     <ClCompile Include="Ui\Core\UiBuilderImpl.cpp" />
     <ClCompile Include="Ui\Elements\FloatLayout.cpp" />
     <ClCompile Include="Ui\Elements\GridLayout.cpp" />
