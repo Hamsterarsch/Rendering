@@ -7,6 +7,7 @@
 #include "Ui/Elements/ButtonElement.hpp"
 #include "Ui/States/UiState.hpp"
 #include "Ui/UiStateMachine.hpp"
+#include "Ui/Elements/TextElement.hpp"
 
 
 namespace App::Ui::User
@@ -23,7 +24,14 @@ namespace App::Ui::User
 		codeToEdit.data = std::string{this->shaderToEdit->GetCode(), this->shaderToEdit->GetShaderLength() };
 		auto window
 		{		
-			Element<WindowElement>(this->shaderName.c_str())->*Set{&WindowElement::size,{.75,.75}}
+			Element<WindowElement>(this->shaderName.c_str())
+			->*Set{&WindowElement::size,{.75,.75}}
+			->*Set
+			{
+				&WindowElement::tabChild,
+				Element<WindowElement>("ShaderResourceNodes") << Element<TextElement>("Shader Resources")->*Set{&TextElement::pivot, {.5,0}}->*Set{&TextElement::position, {.5,0}}
+			}
+			->*Set{&WindowElement::tabChildSizeInPercent, .25f}
 			<< (Element<FloatLayout>(5, true, true)->*Set{&FloatLayout::position, {1,1}}->*Set{&FloatLayout::pivot,{1,1}}
 				<< (Element<FloatLayout>(5, true, false)->*Set{&FloatLayout::pivot,{1,1}}->*Set{&FloatLayout::position,{1, 1}}
 					<< Element<ButtonElement>(*this, 0, "Save")
@@ -31,6 +39,7 @@ namespace App::Ui::User
 				<< Element<InputElement<Core::StringInputTarget>>(*this, 0, true, "shaderCodeInput")->*Set{&Core::UiElement::size,{1,1}})
 		};
 		this->window = window.get();
+				
 		uiElements.emplace_front(std::move(window));
 		
 	}
