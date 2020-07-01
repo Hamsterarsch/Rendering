@@ -6,14 +6,16 @@
 #include "StringInputTarget.hpp"
 #include "ThirdParty/imgui/imgui_internal.h"
 #include "Core/ImageView.hpp"
+#include "Shared/Exception/Exception.hpp"
 
 
 namespace App::Ui::Core
 {
-	UiBuilderImpl::UiBuilderImpl()
+	UiBuilderImpl::UiBuilderImpl() : childTabDock{ 0 }, tabChildSize{ .25 }, isTabChildDirectionRight{ true }
 	{
 		ImGui::GetStyle().WindowPadding = { 0,0 };
-				
+		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+		
 	}
 
 	
@@ -79,6 +81,36 @@ namespace App::Ui::Core
 
 
 	
+	UiBuilder &UiBuilderImpl::DeclareTabChildDirectionRight()
+	{
+		isTabChildDirectionRight = true;
+
+		return *this;
+		
+	}
+
+
+	
+	UiBuilder &UiBuilderImpl::DeclareTabChildDirectionDown()
+	{
+		isTabChildDirectionRight = false;
+
+		return *this;
+		
+	}
+
+
+	
+	UiBuilder &UiBuilderImpl::DeclareTabChildSize(const float percentIntoDeclaredDirection)
+	{
+		tabChildSize = std::clamp(percentIntoDeclaredDirection, 0.f, 1.f);
+
+		return *this;
+		
+	}
+
+
+
 	UiBuilder &UiBuilderImpl::DeclareButtonDisabled()
 	{
 		userSettings.isButtonDisabled = true;
@@ -110,15 +142,22 @@ namespace App::Ui::Core
 		
 	}
 
-
 	
+
 	Math::Vector2 UiBuilderImpl::GetContentRegion()
 	{
-		const auto region{ ImGui::GetContentRegionAvail() };
+		const auto region{ GetWindowContentRegion() };
 
 		return { region.x, region.y };
 		
 	}
+		ImVec2 UiBuilderImpl::GetWindowContentRegion()
+		{
+			return ImGui::GetContentRegionMaxAbs() - ImGui::GetCurrentWindow()->DC.CursorStartPos;
+		
+		}
+
+	
 
 	bool UiBuilderImpl::IsRelativeSize(float value) const
 	{
@@ -130,9 +169,13 @@ namespace App::Ui::Core
 
 	UiBuilder &UiBuilderImpl::LeaveWidget()
 	{
-		(*widgetLeveFunct.front())();
-		widgetLeveFunct.pop_front();
-
+		auto t = widgetLeaveInfos.front().leaveFuncts.size();
+		for(auto itr{ widgetLeaveInfos.front().leaveFuncts.rbegin() }; itr != widgetLeaveInfos.front().leaveFuncts.rend(); ++itr)
+		{
+			(*itr)();
+		}		
+		widgetLeaveInfos.pop_front();			
+	
 		lastItemPosStack.pop_front();
 
 		if(isGridCanvas.front())
@@ -155,13 +198,25 @@ namespace App::Ui::Core
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, {userSettings.padding, userSettings.padding});
 		
 		ApplyDimensionsForWindowTypeElements();
-		
-		widgetLeveFunct.emplace_front(&ImGui::End);
-		ImGui::Begin(userSettings.name.c_str(), isOpenTarget, userSettings.flagsWindow);
+
+		ImGuiWindowFlags baseFlags{ ImGuiWindowFlags_NoSavedSettings };
+		if(childTabDock <= 0)
+		{
+			baseFlags |= ImGuiWindowFlags_NoDocking;
+		}
+
+		ImGui::Begin(userSettings.name.c_str(), isOpenTarget,  userSettings.flagsWindow | baseFlags );		
+		widgetLeaveInfos.emplace_front(&ImGui::End);
 		OnBeginCanvas();
+
+		if(childTabDock > 0)
+		{
+			ImGui::DockBuilderDockWindow(userSettings.name.c_str(), childTabDock);
+			childTabDock = 0;
+		}
 		
 		ImGui::PopStyleVar(2);
-
+		
 		DoItemEpilogue();				
 		return *this;
 		
@@ -175,7 +230,7 @@ namespace App::Ui::Core
 		}
 
 		void UiBuilderImpl::ApplyDimensionsForWindowTypeElements() const
-		{
+		{		
 			auto defaultWindowSize{ ImGui::GetWindowViewport()->Size * .5 };
 			ApplyUserSizing(defaultWindowSize.x, defaultWindowSize.y, true);
 			ImGui::SetNextWindowSize(defaultWindowSize, ImGuiCond_Appearing);
@@ -188,7 +243,7 @@ namespace App::Ui::Core
 
 			void UiBuilderImpl::ApplyUserSizing(float &width, float &height, const bool forWindow) const
 			{
-				const auto availableRegion{ forWindow ? ImGui::GetWindowViewport()->Size : ImGui::GetContentRegionAvail() };
+				const auto availableRegion{ forWindow ? ImGui::GetWindowViewport()->Size : GetWindowContentRegion() };
 			
 				if(ShouldNotUseDefaultValue(userSettings.size.x))
 				{
@@ -216,7 +271,7 @@ namespace App::Ui::Core
 
 			void UiBuilderImpl::ApplyUserPositioning(float &positionX, float &positionY, const bool forWindow) const
 			{
-				const auto availableRegion{ forWindow ? ImGui::GetWindowViewport()->Size : ImGui::GetContentRegionAvail() };
+				const auto availableRegion{ forWindow ? ImGui::GetWindowViewport()->Size : GetWindowContentRegion() };
 			
 				if(ShouldNotUseDefaultValue(userSettings.position.x))
 				{
@@ -244,7 +299,60 @@ namespace App::Ui::Core
 		}
 
 
+	
+	UiBuilder &UiBuilderImpl::MakeTabWithChild(bool *isOpenTarget)
+	{
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowTitleAlign, ImVec2{ .5, .5 });		
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, {userSettings.padding, userSettings.padding});
+		
+		ApplyDimensionsForWindowTypeElements();
 
+		
+		ImGui::Begin((userSettings.name + "##Dockwrapper").c_str(), isOpenTarget, userSettings.flagsWindow | ImGuiWindowFlags_NoSavedSettings);
+		widgetLeaveInfos.emplace_front(&ImGui::End);
+		if(childTabDock > 0)
+		{
+			ImGui::DockBuilderDockWindow((userSettings.name + "##Dockwrapper").c_str(), childTabDock);
+			childTabDock = 0;
+		}
+				
+		const ImGuiID id{ ImGui::GetID(userSettings.name.c_str()) };		
+		ImGui::DockSpace(id, GetWindowContentRegion(), ImGuiDockNodeFlags_AutoHideTabBar | ImGuiDockNodeFlags_NoTabBar);
+		
+		ImGui::Begin(userSettings.name.c_str(), isOpenTarget, userSettings.flagsWindow | ImGuiWindowFlags_NoSavedSettings);
+		ImGui::DockBuilderDockWindow(userSettings.name.c_str(), id);		
+		if(ImGui::GetCurrentWindow()->Flags & ImGuiWindowFlags_ChildWindow)
+		{
+			widgetLeaveInfos.front().leaveFuncts.emplace_back(&ImGui::EndChild);			
+		}
+		else
+		{
+			widgetLeaveInfos.front().leaveFuncts.emplace_back(&ImGui::End);			
+		}
+		OnBeginCanvas();
+		
+				
+		auto *dock{ ImGui::DockBuilderGetNode(id) };
+		if(!dock->IsSplitNode())
+		{
+			const ImGuiDir splitDir{ isTabChildDirectionRight ? ImGuiDir_Right : ImGuiDir_Down };			
+			ImGui::DockBuilderSplitNode(dock->ID, splitDir, tabChildSize, nullptr, nullptr);
+
+		}			
+		tabChildSize = .25;
+		isTabChildDirectionRight = true;
+		childTabDock = dock->ChildNodes[1]->ID;
+		
+		
+		ImGui::PopStyleVar(2);
+
+		DoItemEpilogue();	
+		return *this;
+		
+	}
+
+
+	
 	UiBuilder &UiBuilderImpl::MakeModal()
 	{		
 		//DoItemPrologue();
@@ -258,8 +366,8 @@ namespace App::Ui::Core
 		{
 			ImGui::OpenPopup(userSettings.name.c_str());//ensure that begin always returns true. if you dont want to display the modal just dont call this function			
 		}
-		ImGui::BeginPopupModal(userSettings.name.c_str(), nullptr, userSettings.flagsWindow | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
-		widgetLeveFunct.emplace_front(&ImGui::EndPopup);
+		ImGui::BeginPopupModal(userSettings.name.c_str(), nullptr, userSettings.flagsWindow | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoSavedSettings);
+		widgetLeaveInfos.emplace_front(&ImGui::EndPopup);
 		OnBeginCanvas();
 		
 		ImGui::PopStyleVar(2);
@@ -351,7 +459,7 @@ namespace App::Ui::Core
 	{
 		DoItemPrologue();
 
-		auto defaultSize{ ImGui::GetContentRegionAvail() };
+		auto defaultSize{ GetWindowContentRegion() };
 		defaultSize.y = ImGui::GetFontSize();
 
 		auto usersDesiredSize{ defaultSize };
@@ -417,7 +525,7 @@ namespace App::Ui::Core
 		ImGuiStringInputTargetAdapter::inputTarget = &target;
 		if(isMultiline)
 		{
-			ImVec2 defaultSize{ ImGui::GetContentRegionAvail() };
+			ImVec2 defaultSize{ GetWindowContentRegion() };
 			ApplyUserSizing(defaultSize.x, defaultSize.y);
 			SetNextItemSize(defaultSize.x, defaultSize.y);
 
@@ -566,7 +674,7 @@ namespace App::Ui::Core
 		gridInfos.front().columnCount = columns;
 		gridInfos.front().rowCount = rows;
 
-		ImVec2 defaultGridSize{ ImGui::GetContentRegionAvail() };
+		ImVec2 defaultGridSize{ GetWindowContentRegion() };
 		ApplyUserSizing(defaultGridSize.x, defaultGridSize.y);
 
 		ImVec2 defaultPos{};
@@ -581,8 +689,9 @@ namespace App::Ui::Core
 
 		gridInfos.front().cellPadding = userSettings.padding;
 				
-		widgetLeveFunct.emplace_front(&ImGui::EndChild);
+		
 		ImGui::BeginChild(userSettings.name.c_str(), defaultGridSize);
+		widgetLeaveInfos.emplace_front(&ImGui::EndChild);
 		OnBeginCanvas();
 		isGridCanvas.front() = true;
 		
@@ -622,12 +731,13 @@ namespace App::Ui::Core
 		};
 
 		
-		widgetLeveFunct.emplace_front(&ImGui::EndChild);
+
 		ImGui::BeginChild
 		(
 			( "col"+std::to_string(startColIndex) + "_s"+std::to_string(colSpan)	+    "row"+std::to_string(startRowIndex) + "_s"+std::to_string(rowSpan) ).c_str(),
 			cellSize
 		);
+		widgetLeaveInfos.emplace_front(&ImGui::EndChild);
 		OnBeginCanvas();
 		
 		DoItemEpilogue();

@@ -4,18 +4,35 @@
 
 
 #include "ThirdParty/imgui/imgui.h"
+#include <vector>
 struct ImVec2;
 
 
 namespace App::Ui::Core
 {
 	class UiBuilderImpl final : public UiBuilder
-	{		
-		private: std::forward_list<void(*)()> widgetLeveFunct;
+	{	
+		private: struct WidgetLeaveInfo
+		{
+			std::vector<void(*)()> leaveFuncts;
 
+			public: WidgetLeaveInfo() = default;
+			
+			public: WidgetLeaveInfo(void(*leaveFunct)()) : leaveFuncts{ leaveFunct } {};
+			
+		};
+		
+		private: std::forward_list<WidgetLeaveInfo> widgetLeaveInfos;
+		
 		private: std::forward_list<Math::Vector2> lastItemPosStack;
 
 		private: std::forward_list<bool> isGridCanvas;
+
+		private: unsigned childTabDock;
+
+		private: float tabChildSize;
+
+		private: bool isTabChildDirectionRight;
 		
 
 		
@@ -28,6 +45,7 @@ namespace App::Ui::Core
 			float padding{ 0 };
 			ImGuiWindowFlags flagsWindow{ 0 };
 			bool isButtonDisabled{ false };
+					
 		} userSettings;
 		
 		private: struct GridInfo
@@ -57,6 +75,12 @@ namespace App::Ui::Core
 
 		public: UiBuilder &DeclareTabNocollapse() override;
 
+		public: UiBuilder &DeclareTabChildDirectionRight() override;
+
+		public: UiBuilder &DeclareTabChildDirectionDown() override;
+
+		public: UiBuilder &DeclareTabChildSize(float percentIntoDeclaredDirection) override;
+		
 		public: UiBuilder &DeclareButtonDisabled() override;
 
 						
@@ -65,6 +89,8 @@ namespace App::Ui::Core
 		public: Math::Vector2 GetItemSize() const override;
 
 		public: Math::Vector2 GetContentRegion() override;
+
+			private: static ImVec2 GetWindowContentRegion();
 
 		public: bool IsRelativeSize(float value) const override;
 		
@@ -88,7 +114,9 @@ namespace App::Ui::Core
 			private: void OnBeginCanvas();
 		
 			private: void DoItemEpilogue();
-							
+
+		public: UiBuilder &MakeTabWithChild(bool *isOpenTarget) override;
+				
 		public: UiBuilder &MakeModal() override;
 		
 		public: UiBuilder &MakeButton(bool *isPressed) override;

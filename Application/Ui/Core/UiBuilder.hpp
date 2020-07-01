@@ -9,6 +9,7 @@ namespace App::Core{ struct ImageView; }
 namespace App::Ui::Core
 {
 	class StringInputTarget;
+
 		
 	class UiBuilder
 	{
@@ -27,6 +28,12 @@ namespace App::Ui::Core
 
 		public: virtual UiBuilder &DeclareTabNocollapse() = 0;
 
+		public: virtual UiBuilder &DeclareTabChildDirectionRight() = 0;
+
+		public: virtual UiBuilder &DeclareTabChildDirectionDown() = 0;
+
+		public: virtual UiBuilder &DeclareTabChildSize(float percentIntoDeclaredDirection) = 0;
+
 		public: virtual UiBuilder &DeclareButtonDisabled() = 0;
 
 
@@ -43,6 +50,8 @@ namespace App::Ui::Core
 		public: virtual UiBuilder &LeaveWidget() = 0;
 		
 		public: virtual UiBuilder &MakeTab(bool *isOpenTarget) = 0;
+
+		public: virtual UiBuilder &MakeTabWithChild(bool *isOpenTarget) = 0;
 				
 		public: virtual UiBuilder &MakeModal() = 0;
 
