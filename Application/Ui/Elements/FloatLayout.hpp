@@ -19,8 +19,10 @@ namespace App::Ui
 		public: FloatLayout(float itemPadding, bool invertDirection, bool isVertical) : invertDirection{ invertDirection }, itemPadding{ itemPadding }, isVertical{ isVertical } {}
 
 		
-		protected: void OnPreRenderAndQueryChild(Core::UiBuilder& builder, size_t childIndex, UiElement& child) override;
+		protected: void OnChildAdded(UiElement &child) override;
 		
+		protected: void OnPreRenderAndQueryChild(Core::UiBuilder& builder, size_t childIndex, UiElement& child) override;
+
 	};
 
 	

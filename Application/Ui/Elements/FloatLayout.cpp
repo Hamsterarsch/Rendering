@@ -4,7 +4,25 @@
 
 
 namespace App::Ui
-{	
+{
+	struct FloatSlot final : public Slot
+	{
+		Math::Vector2 initialSize;
+
+		FloatSlot(const Math::Vector2 &initialSize) : initialSize{ initialSize } {}
+		
+	};
+
+
+	
+	void FloatLayout::OnChildAdded(UiElement &child)
+	{
+		child.SetSlot(MakeUnique<FloatSlot>(child.size));
+		
+	}
+
+
+	
 	void FloatLayout::OnPreRenderAndQueryChild(Core::UiBuilder &builder, const size_t childIndex, UiElement &child)
 	{		
 		child.position = position;
@@ -38,32 +56,34 @@ namespace App::Ui
 
 		if(isVertical)
 		{
-			if(builder.IsRelativeSize(child.size.y))
-			{
+			const auto initialSizeY{ reinterpret_cast<FloatSlot *>(child.GetSlot())->initialSize.y };
+			if(builder.IsRelativeSize(initialSizeY))
+			{				
 				if(invertDirection)
 				{
-					child.size.y *= builder.GetItemPos().y - itemPadding;
+					child.size.y = initialSizeY * (builder.GetItemPos().y - itemPadding);
 					child.size.y = std::clamp(child.size.y, 0.f, std::abs(child.size.y));
 				}
 				else
 				{
-					child.size.y *= builder.GetContentRegion().y - (builder.GetItemPos().y + itemPadding);
+					child.size.y = initialSizeY * builder.GetContentRegion().y - (builder.GetItemPos().y + itemPadding);
 					child.size.y = std::clamp(child.size.y, 0.f, std::abs(child.size.y));
 				}
 			}			
 		}
 		else
 		{
-			if(builder.IsRelativeSize(child.size.x))
+			const auto initialSizeX{ reinterpret_cast<FloatSlot *>(child.GetSlot())->initialSize.x };
+			if(builder.IsRelativeSize(initialSizeX))
 			{
 				if(invertDirection)
 				{
-					child.size.x *= builder.GetItemPos().x - itemPadding;
+					child.size.x = initialSizeX * (builder.GetItemPos().x - itemPadding);
 					child.size.x = std::clamp(child.size.x, 0.f, std::abs(child.size.x));
 				}
 				else
 				{
-					child.size.x *= builder.GetContentRegion().x - (builder.GetItemPos().x + itemPadding);
+					child.size.x = initialSizeX * builder.GetContentRegion().x - (builder.GetItemPos().x + itemPadding);
 					child.size.x = std::clamp(child.size.x, 0.f, std::abs(child.size.x));
 				}
 			}
