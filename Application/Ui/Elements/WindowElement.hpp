@@ -16,10 +16,18 @@ namespace App::Ui
 		private: size_t isOpenTargetIndex;
 
 		private: Math::Vector2 contentArea;
+
+		public: UniquePtr<WindowElement> tabChild;
+
+		public: bool isVerticalTabChild;
+
+		public: float tabChildSizeInPercent;
 		
 		public: bool isNocollapse;
 
 		public: bool isStatic;
+
+		
 
 				
 		
@@ -34,7 +42,9 @@ namespace App::Ui
 			:		
 			title{ title },
 			frontend{ nullptr },
-			isOpenTargetIndex{ 0 },			
+			isOpenTargetIndex{ 0 },
+			isVerticalTabChild{ false },
+			tabChildSizeInPercent{ .5 },
 			isNocollapse{ false },
 			isStatic{ false }
 		{
@@ -60,21 +70,43 @@ namespace App::Ui
 			{
 				builder.DeclareTabStatic();
 			}
-
-			bool *isOpenTarget{ frontend ? frontend->GetInputTargetBool(isOpenTargetIndex) : nullptr };
-			
-			builder
-			.DeclareName(title.c_str())							
-			.MakeTab(isOpenTarget);
-			
+											
+			builder.DeclareName(title.c_str());
+						
+			if(tabChild)
+			{
+				builder.DeclareTabChildSize(tabChildSizeInPercent);
+				if(isVerticalTabChild)
+				{
+					builder.DeclareTabChildDirectionDown();
+				}
+				
+				builder.MakeTabWithChild(GetOpenTarget());				
+			}
+			else
+			{
+				builder.MakeTab(GetOpenTarget());
+			}
+						
 		}
+
+			private: bool *GetOpenTarget()
+			{
+				return frontend ? frontend->GetInputTargetBool(isOpenTargetIndex) : nullptr;
+				
+			}
 
 
 		
 		protected: void OnPostRenderAndQueryChildren(Core::UiBuilder &builder) override
-		{
+		{			
 			builder.LeaveWidget();
-			
+
+			if(tabChild)
+			{
+				tabChild->RenderAndQueryInput(builder);
+			}
+						
 		}
 				   					 				  		
 	};
