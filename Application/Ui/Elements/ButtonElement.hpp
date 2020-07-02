@@ -47,10 +47,10 @@ namespace App::Ui
 		
 		
 
-		public: ToggleButtonElement(Core::UiFrontend &frontend, size_t isClickedTargetIndex, const char *name)
+		public: ToggleButtonElement(Core::UiFrontend &frontend, size_t isClickedTargetIndex, const char *name, bool startsToggleOn)
 			:
 			ButtonElement{ frontend, isClickedTargetIndex, name },
-			isToggledOn{ false }
+			isToggledOn{ startsToggleOn }
 		{}
 
 							   				 
