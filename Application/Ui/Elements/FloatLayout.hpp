@@ -4,14 +4,16 @@
 
 namespace App::Ui
 {
-	class FloatLayout final : public Core::UiLayoutElementBasic
+	class FloatLayout final : public Core::UiLayoutElement
 	{
+		private: std::vector<UniquePtr<UiElement>> children;
+		
 		private: bool invertDirection;
 		
 		public: float itemPadding;
 
 		public: bool isVertical;
-
+				
 
 
 		public: FloatLayout(float itemPadding, bool isVertical = false) : FloatLayout{itemPadding, false, isVertical} {}
@@ -19,9 +21,17 @@ namespace App::Ui
 		public: FloatLayout(float itemPadding, bool invertDirection, bool isVertical) : invertDirection{ invertDirection }, itemPadding{ itemPadding }, isVertical{ isVertical } {}
 
 		
-		protected: void OnChildAdded(UiElement &child) override;
+		public: void ClearChildren() override { children.clear(); }
 		
-		protected: void OnPreRenderAndQueryChild(Core::UiBuilder& builder, size_t childIndex, UiElement& child) override;
+		public:	void AddChild(UniquePtr<UiElement>&& child) override;
+
+			protected: void OnChildAdded(UiElement &child);
+		
+		protected: void RenderAndQueryInternal(Core::UiBuilder& builder) override;
+
+			private: void OnPreRenderAndQueryChild(Core::UiBuilder& builder, size_t childIndex, UiElement& child) const;		
+
+		public: void RemoveLastChild();
 
 	};
 

@@ -14,16 +14,34 @@ namespace App::Ui
 	};
 
 
-	
-	void FloatLayout::OnChildAdded(UiElement &child)
+
+	void FloatLayout::AddChild(UniquePtr<UiElement>&& child)
 	{
-		child.SetSlot(MakeUnique<FloatSlot>(child.size));
+		OnChildAdded(*children.emplace_back(std::move(child)));
+		
+	}
+
+		void FloatLayout::OnChildAdded(UiElement &child)
+		{
+			child.SetSlot(MakeUnique<FloatSlot>(child.size));
+			
+		}
+
+
+	
+	void FloatLayout::RenderAndQueryInternal(Core::UiBuilder &builder)
+	{
+		for(size_t childIndex{ 0 }; childIndex < children.size(); ++childIndex)
+		{
+			OnPreRenderAndQueryChild(builder, childIndex, *children.at(childIndex));
+			children.at(childIndex)->RenderAndQueryInput(builder);
+		}
 		
 	}
 
 
-	
-	void FloatLayout::OnPreRenderAndQueryChild(Core::UiBuilder &builder, const size_t childIndex, UiElement &child)
+
+	void FloatLayout::OnPreRenderAndQueryChild(Core::UiBuilder &builder, const size_t childIndex, UiElement &child) const
 	{		
 		child.position = position;
 		child.pivot = pivot;
@@ -90,6 +108,13 @@ namespace App::Ui
 		}
 						
 	}
-
+	
+	
+	void FloatLayout::RemoveLastChild()
+	{
+		children.pop_back();
+		
+	}
+	
 	
 }
