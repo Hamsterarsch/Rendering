@@ -122,6 +122,9 @@
     <ClCompile Include="Ui\Core\UiLayoutElementBasic.cpp">
       <Filter>Ui\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Ui\Elements\TreeLayout.cpp">
+      <Filter>Ui\Elements</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window\Windows\Window.hpp">

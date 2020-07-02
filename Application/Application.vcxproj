@@ -360,6 +360,7 @@
     <ClCompile Include="Ui\Elements\FloatLayout.cpp" />
     <ClCompile Include="Ui\Elements\GridLayout.cpp" />
     <ClCompile Include="Ui\Elements\ItemGridLayout.cpp" />
+    <ClCompile Include="Ui\Elements\TreeLayout.cpp" />
     <ClCompile Include="Ui\ImguiTypeArithmetics.cpp" />
     <ClCompile Include="Ui\Misc\AssetNameFilter.cpp" />
     <ClCompile Include="Ui\States\UiCreateProjectState.cpp" />
