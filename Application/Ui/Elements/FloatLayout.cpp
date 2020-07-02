@@ -5,11 +5,11 @@
 
 namespace App::Ui
 {
-	struct FloatSlot final : public Slot
+	class FloatSlot final : public Slot
 	{
-		Math::Vector2 initialSize;
+		public: Math::Vector2 initialSize;
 
-		FloatSlot(const Math::Vector2 &initialSize) : initialSize{ initialSize } {}
+		public: FloatSlot(const Math::Vector2 &initialSize) : initialSize{ initialSize } {}
 		
 	};
 
