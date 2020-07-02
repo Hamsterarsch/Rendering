@@ -24,7 +24,7 @@ namespace App::Ui::User
 		parent{ &parent },
 		selectedFolder{ true }		
 	{
-		auto grid{ Element<GridLayout>(5, 3, 4) };			
+		auto grid{ Element<GridLayout>(5, 3, 4)->*Set{&GridLayout::size, {1,1}} };			
 		
 		grid += 
 		{
@@ -73,7 +73,7 @@ namespace App::Ui::User
 		grid +=	
 		{
 			{0,2, 5},
-			Element<GridLayout>(2, 2, 3) += {{0, 1}, std::move(confirmButton)}
+				Element<GridLayout>(2, 2, 3)->*Set{&GridLayout::size, {1,1}} += {{0, 1}, std::move(confirmButton)}
 				+=
 				{
 					{1, 1}, Element<ButtonElement>(*this, 0, "Abort")

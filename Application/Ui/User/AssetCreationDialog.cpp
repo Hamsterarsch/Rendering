@@ -34,7 +34,7 @@ namespace App::Ui::User
 			}						
 			assetTypesStates.emplace_back(typeIndex);
 			
-			typesLayout->AddChild((Element<GridLayout>(4, 1)
+			typesLayout->AddChild((Element<GridLayout>(4, 1)->*Set{&GridLayout::size, {1,1}}
 							+= 
 							{
 								{0,0, 1}, Element<ImageElement>(app.GetAssetTypes().GetAssetIcon(typeIndex))
@@ -56,8 +56,8 @@ namespace App::Ui::User
 		uiElements.push_front
 		(
 			Element<ModalElement>("Create Asset") ->*Set{&ModalElement::padding, 5.f}
-			+= Element<GridLayout>(2, 6)
-			+= { {0,0, 2,2}, Element<GridLayout>(3,1)
+			+= Element<GridLayout>(2, 6)->*Set{&GridLayout::size, {1,1}}
+			+= { {0,0, 2,2}, Element<GridLayout>(3,1)->*Set{&GridLayout::size, {1,1}}
 							+= {{0,0}, Element<TextElement>("Asset Name:")->*Set{&TextElement::position, {.5,.5}}->*Set{&TextElement::pivot, {.5,.5}} }
 							+= {{1,0, 2}, Element<InputElement<Core::StringInputTarget>>(*this, 0, "assetNameInput")
 											->*Set{&Core::UiElement::pivot,{0,.5}}
