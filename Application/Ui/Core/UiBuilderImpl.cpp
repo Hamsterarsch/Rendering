@@ -243,8 +243,10 @@ namespace App::Ui::Core
 
 			void UiBuilderImpl::ApplyUserSizing(float &width, float &height, const bool forWindow) const
 			{
-				const auto availableRegion{ forWindow ? ImGui::GetWindowViewport()->Size : GetWindowContentRegion() };
-			
+				auto availableRegion{ forWindow ? ImGui::GetWindowViewport()->Size : GetWindowContentRegion() };
+				availableRegion.x -= userSettings.position.x;
+		        availableRegion.y -= userSettings.position.y;
+		
 				if(ShouldNotUseDefaultValue(userSettings.size.x))
 				{
 					width = GetRelativeOrAbsoluteValue(userSettings.size.x, availableRegion.x);				
@@ -674,7 +676,10 @@ namespace App::Ui::Core
 		gridInfos.front().columnCount = columns;
 		gridInfos.front().rowCount = rows;
 
-		ImVec2 defaultGridSize{ GetWindowContentRegion() };
+		ImVec2 defaultGridSize{ 100, ImGui::GetStyle().WindowMinSize.y };
+		//defaultGridSize.x -= userSettings.position.x;
+		//defaultGridSize.y -= userSettings.position.y;
+		
 		ApplyUserSizing(defaultGridSize.x, defaultGridSize.y);
 
 		ImVec2 defaultPos{};
@@ -682,15 +687,14 @@ namespace App::Ui::Core
 		ApplyUserPivot(defaultPos.x, defaultPos.y, defaultGridSize.x, defaultGridSize.y);
 				
 		ImGui::SetCursorPos(ImGui::GetCursorPos() + defaultPos);
-		
-		
+				
 		gridInfos.front().colWidth = defaultGridSize.x / columns;
 		gridInfos.front().rowHeight = defaultGridSize.y / rows;
 
 		gridInfos.front().cellPadding = userSettings.padding;
 				
 		
-		ImGui::BeginChild(userSettings.name.c_str(), defaultGridSize);
+		ImGui::BeginChild(userSettings.name.c_str(), defaultGridSize, false, ImGuiWindowFlags_AlwaysAutoResize);
 		widgetLeaveInfos.emplace_front(&ImGui::EndChild);
 		OnBeginCanvas();
 		isGridCanvas.front() = true;
