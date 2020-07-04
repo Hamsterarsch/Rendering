@@ -37,6 +37,8 @@ namespace assetSystem::io
 
 		public: Archive &Serialize(const char *propertyName, int32_t &data) override;
 
+		public: Archive &Serialize(const char *propertyName, uint32_t &data) override;
+		
 		public: Archive &Serialize(const char *propertyName, float &data) override;
 
 		public: Archive &Serialize(const char *propertyName, char *str) override;

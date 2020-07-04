@@ -4,7 +4,7 @@
 
 
 namespace assetSystem::io
-{
+{//todo: catch eofs with exception
 	AssetReader::AssetReader(const std::filesystem::path &filepath) :
 		file{ filepath, std::ios_base::in | std::ios_base::binary }
 	{
@@ -76,7 +76,7 @@ namespace assetSystem::io
 			}
 
 				bool AssetReader::SeekNextPropertyStart()
-				{					
+				{		
 					while(true)
 					{
 						if(file.peek() == std::ifstream::traits_type::eof())
@@ -130,6 +130,8 @@ namespace assetSystem::io
 					if(propertyToken == '{')
 					{
 						ProcessObjectProperty(std::move(propertyName));
+						return;
+						
 					}
 
 					if(propertyToken == AssetArchiveConstants::dataStartToken)
@@ -204,12 +206,18 @@ namespace assetSystem::io
 					void AssetReader::ProcessValueProperty(std::string&& propertyName)
 					{
 						propertyMap.insert( { objectQualifiers + std::move(propertyName), 1+currentPropertyNameEnd} );
+	
 						SeekToTokenAfterPropertyValue();
 		
 					}
 
 						void AssetReader::SeekToTokenAfterPropertyValue()
 						{
+							if(SkipValueSection() == std::ifstream::traits_type::eof())
+							{
+								return;
+							}
+								
 							while(true)
 							{
 								const auto character{ GetNonBinaryDataFromFile() };
@@ -231,6 +239,24 @@ namespace assetSystem::io
 							}
 		
 						}
+
+							char AssetReader::SkipValueSection()
+							{
+								while(true)
+								{
+									const auto character{ GetNonBinaryDataFromFile() };
+									if(character == std::ifstream::traits_type::eof())
+									{
+										return character;										
+									}
+
+									if(character == AssetArchiveConstants::dataStartToken)
+									{
+										return character;
+									}									
+								}
+		
+							}
 
 							char AssetReader::GetNonBinaryDataFromFile()
 							{
@@ -389,6 +415,16 @@ namespace assetSystem::io
 				return valueEnd - valueStart;
 		
 			}
+
+
+	
+	Archive &AssetReader::Serialize(const char *propertyName, uint32_t &data)
+	{
+		data = static_cast<unsigned>(std::stoul(ReadPropertyValue(propertyName)));
+
+		return *this;
+		
+	}
 
 
 

@@ -28,8 +28,7 @@ namespace assetSystem::io
 				private: void ProcessNextProperty();
 
 					private: bool SeekNextPropertyStart();
-
-
+							 							 
 						private: bool HandleObjectPropertyEnd();
 
 					private: void ProcessProperty(std::string &&propertyName);
@@ -45,6 +44,8 @@ namespace assetSystem::io
 						private: void ProcessValueProperty(std::string &&propertyName);
 
 							private: void SeekToTokenAfterPropertyValue();
+		
+								private: char SkipValueSection();
 
 								private: char GetNonBinaryDataFromFile();
 
@@ -70,6 +71,8 @@ namespace assetSystem::io
 			private: std::string ReadPropertyValue(const char *propertyName);
 
 				private: size_t SeekNonBinaryPropertyValueStartAndLength(const char *propertyName);
+
+		public: Archive &Serialize(const char *propertyName, uint32_t &data) override;
 						 		
 		public: Archive &Serialize(const char *propertyName, float &data) override;
 		
@@ -85,7 +88,7 @@ namespace assetSystem::io
 		public: Archive &EnterSubobject(const char *propertyName) override;
 		
 		public: Archive &LeaveSubobject() override;
-		
+						
 	};
 
 	
