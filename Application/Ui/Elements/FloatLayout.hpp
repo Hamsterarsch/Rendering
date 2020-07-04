@@ -1,5 +1,6 @@
 #pragma once
-#include "Ui/Core/UiLayoutElementBasic.hpp"
+#include "Ui/Core/UiLayoutElement.hpp"
+#include <vector>
 
 
 namespace App::Ui
@@ -23,7 +24,7 @@ namespace App::Ui
 		
 		public: void ClearChildren() override { children.clear(); }
 		
-		public:	void AddChild(UniquePtr<UiElement>&& child) override;
+		public:	void AddChild(UniquePtr<UiElement> &&child) override;
 
 			protected: void OnChildAdded(UiElement &child);
 		

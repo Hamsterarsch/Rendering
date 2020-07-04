@@ -72,11 +72,16 @@ namespace App::Ui
 			}			
 		}
 
+		if(childIndex == 0)
+		{
+			return;
+		}
+
 		if(isVertical)
 		{
 			const auto initialSizeY{ reinterpret_cast<FloatSlot *>(child.GetSlot())->initialSize.y };
 			if(builder.IsRelativeSize(initialSizeY))
-			{				
+			{
 				if(invertDirection)
 				{
 					child.size.y = initialSizeY * (builder.GetItemPos().y - itemPadding);
@@ -112,7 +117,10 @@ namespace App::Ui
 	
 	void FloatLayout::RemoveLastChild()
 	{
-		children.pop_back();
+		if(not children.empty())
+		{
+			children.pop_back();			
+		}
 		
 	}
 	
