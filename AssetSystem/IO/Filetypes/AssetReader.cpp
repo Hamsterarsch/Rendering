@@ -1,6 +1,7 @@
 #include "AssetSystem/IO/Filetypes/AssetReader.hpp"
 #include "AssetSystem/IO/Filetypes/AssetArchiveConstants.hpp"
 #include "IO/DiskConversions.hpp"
+#include "Shared/Exception/Exception.hpp"
 
 
 namespace assetSystem::io
@@ -44,7 +45,12 @@ namespace assetSystem::io
 		void AssetReader::BuildPropertyMap()
 		{
 			ProcessNextProperty();
-		
+					   
+			if(file.eof())
+			{
+				file.clear();
+			}
+					
 		}
 
 			void AssetReader::ProcessNextProperty()
@@ -110,7 +116,7 @@ namespace assetSystem::io
 						PopCurrentObjectScope();
 
 						if(SeekEofUntilToken(AssetArchiveConstants::dataStartToken))
-						{
+						{							
 							return false;
 						}
 						file.get();
@@ -374,8 +380,9 @@ namespace assetSystem::io
 		void AssetReader::SeekPropertyValueStart(const char *propertyName)
 		{
 			const auto afterNamePos{ propertyMap.at(objectQualifiers + propertyName) };
-			file.seekg(afterNamePos);		
 		
+			file.seekg(afterNamePos);		
+
 			SeekEofUntilToken(AssetArchiveConstants::dataStartToken);
 			file.get();
 		
@@ -442,7 +449,7 @@ namespace assetSystem::io
 	{
 		const auto valueLength{ SeekNonBinaryPropertyValueStartAndLength(propertyName) };				
 		file.read(str, valueLength);
-		
+
 		return *this;
 		
 	}
