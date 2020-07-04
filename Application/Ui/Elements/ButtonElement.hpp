@@ -8,7 +8,7 @@ namespace App::Ui
 {	
 	class ButtonElement : public Core::UiAccessElement
 	{
-		protected: const char *name;
+		protected: std::string name;
 
 		protected: size_t isClickedTargetIndex;
 
@@ -33,7 +33,7 @@ namespace App::Ui
 			}
 			
 			builder
-			.DeclareName(name)
+			.DeclareName(name.c_str())
 			.MakeButton(GetFrontend().GetInputTargetBool(isClickedTargetIndex));
 						
 		}
@@ -63,7 +63,7 @@ namespace App::Ui
 
 			bool isPressed;			
 			builder
-			.DeclareName(name)
+			.DeclareName(name.c_str())
 			.MakeButton(&isPressed);
 
 			isToggledOn ^= isPressed;
