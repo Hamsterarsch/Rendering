@@ -45,6 +45,7 @@ namespace App::Ui::Core
 			float padding{ 0 };
 			ImGuiWindowFlags flagsWindow{ 0 };
 			bool isButtonDisabled{ false };
+			bool isReadonlyInput{ false };
 					
 		} userSettings;
 		
@@ -126,6 +127,8 @@ namespace App::Ui::Core
 				private: static void SetNextItemSize(float width, float height);
 
 				private: void ApplyUserPivot(float &positionX, float &positionY, float itemWidth, float itemHeight);
+
+				private: static void SetDrawCursorPos(const ImVec2 &pos);
 		
 		public: UiBuilder &MakeText(const char* text) override;
 		
@@ -142,9 +145,22 @@ namespace App::Ui::Core
 		//imgui exposing functions
 		
 		public: UiBuilder &MakeGrid(size_t columns, size_t rows) override;
-
 		
 		public: UiBuilder &MakeCell(size_t startColIndex, size_t startRowIndex, size_t colSpan = 1, size_t rowSpan = 1) override;
+
+		public: UiBuilder &DeclareReadonlyInput() override;
+		
+		public: UiBuilder &MakeInputInt(int &data) override;
+
+			private: ImVec2 ApplyInputWidgetDimensions();
+
+			private: ImGuiInputTextFlags GetInputFlags() const;
+		
+		public: UiBuilder &MakeInputFloat(float &data) override;
+
+		public: UiBuilder &MakeInputFloat4(float data[4]) override;
+
+		public: UiBuilder &MakeInputUnsigned(unsigned &data) override;
 
 		
 

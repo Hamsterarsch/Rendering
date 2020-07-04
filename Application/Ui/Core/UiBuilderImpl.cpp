@@ -427,7 +427,7 @@ namespace App::Ui::Core
 			ApplyUserPositioning(defaultPos.x, defaultPos.y);
 			ApplyUserPivot(defaultPos.x, defaultPos.y, usersDesiredSize.x, usersDesiredSize.y);
 					
-			ImGui::SetCursorPos(ImGui::GetCursorPos() + defaultPos);
+			SetDrawCursorPos(defaultPos);
 
 			return usersDesiredSize;
 		
@@ -455,7 +455,13 @@ namespace App::Ui::Core
 		
 			}
 
-	
+			void UiBuilderImpl::SetDrawCursorPos(const ImVec2 &pos)
+			{
+				ImGui::SetCursorPos(ImGui::GetCursorPos() + pos);
+		
+			}
+
+
 
 	UiBuilder &UiBuilderImpl::MakeText(const char *text)
 	{
@@ -474,7 +480,7 @@ namespace App::Ui::Core
 		ApplyUserPositioning(defaultPos.x, defaultPos.y);
 		ApplyUserPivot(defaultPos.x, defaultPos.y, wrappedSize.x, wrappedSize.y);
 				
-		ImGui::SetCursorPos(ImGui::GetCursorPos() + defaultPos);
+		SetDrawCursorPos(defaultPos);
 
 		
 		ImGui::GetCurrentWindow()->DC.CurrLineTextBaseOffset = std::clamp(ImGui::GetCurrentWindow()->DC.CurrLineTextBaseOffset, ImGui::GetStyle().FramePadding.x, ImGui::GetCurrentWindow()->DC.CurrLineTextBaseOffset);
@@ -534,7 +540,7 @@ namespace App::Ui::Core
 			ImVec2 defaultPos{};
 			ApplyUserPositioning(defaultPos.x, defaultPos.y);
 			ApplyUserPivot(defaultPos.x, defaultPos.y, defaultSize.x, defaultSize.y);			
-			ImGui::SetCursorPos(ImGui::GetCursorPos() + defaultPos);
+			SetDrawCursorPos(defaultPos);
 			
 			ImGui::InputTextMultiline
 			(
@@ -578,7 +584,7 @@ namespace App::Ui::Core
 		ApplyUserPositioning(defaultPos.x, defaultPos.y);
 		ApplyUserPivot(defaultPos.x, defaultPos.y, defaultSize.x, defaultSize.y);
 		
-		ImGui::SetCursorPos(ImGui::GetCursorPos() + defaultPos);
+		SetDrawCursorPos(defaultPos);
 
 		ImGui::Checkbox(("##" + userSettings.name).c_str(), isChecked);
 		
@@ -613,7 +619,7 @@ namespace App::Ui::Core
 		ImVec2 defaultPos{};
 		ApplyUserPositioning(defaultPos.x, defaultPos.y);
 		ApplyUserPivot(defaultPos.x, defaultPos.y, usersDesiredSize.x, usersDesiredSize.y);
-		ImGui::SetCursorPos(defaultPos);
+		SetDrawCursorPos(defaultPos);
 		
 		ImGui::Image(&const_cast<App::Core::ImageView &>(image).descriptorHandle, defaultSize, {image.uvMinX, image.uvMinY}, {image.uvMaxX, image.uvMaxY});
 
@@ -649,7 +655,7 @@ namespace App::Ui::Core
 		ImVec2 defaultPos{};
 		ApplyUserPositioning(defaultPos.x, defaultPos.y);
 		ApplyUserPivot(defaultPos.x, defaultPos.y, usersDesiredSize.x, usersDesiredSize.y);
-		ImGui::SetCursorPos(defaultPos);
+		SetDrawCursorPos(defaultPos);
 		
 		//drawing impl does not change the handle so we can cast from const
 		const auto pressedResult{	ImGui::ImageButton(&const_cast<App::Core::ImageView &>(image).descriptorHandle, usersDesiredSize, {image.uvMinX, image.uvMinY}, {image.uvMaxX, image.uvMaxY}, 0) };
@@ -676,17 +682,14 @@ namespace App::Ui::Core
 		gridInfos.front().columnCount = columns;
 		gridInfos.front().rowCount = rows;
 
-		ImVec2 defaultGridSize{ 100, ImGui::GetStyle().WindowMinSize.y };
-		//defaultGridSize.x -= userSettings.position.x;
-		//defaultGridSize.y -= userSettings.position.y;
-		
+		ImVec2 defaultGridSize{ 100, ImGui::GetFontSize() + ImGui::GetStyle().FramePadding.y*3 };		
 		ApplyUserSizing(defaultGridSize.x, defaultGridSize.y);
 
 		ImVec2 defaultPos{};
 		ApplyUserPositioning(defaultPos.x, defaultPos.y);
 		ApplyUserPivot(defaultPos.x, defaultPos.y, defaultGridSize.x, defaultGridSize.y);
 				
-		ImGui::SetCursorPos(ImGui::GetCursorPos() + defaultPos);
+		SetDrawCursorPos(defaultPos);
 				
 		gridInfos.front().colWidth = defaultGridSize.x / columns;
 		gridInfos.front().rowHeight = defaultGridSize.y / rows;
@@ -694,7 +697,7 @@ namespace App::Ui::Core
 		gridInfos.front().cellPadding = userSettings.padding;
 				
 		
-		ImGui::BeginChild(userSettings.name.c_str(), defaultGridSize, false, ImGuiWindowFlags_AlwaysAutoResize);
+		ImGui::BeginChild(userSettings.name.c_str(), defaultGridSize, false);
 		widgetLeaveInfos.emplace_front(&ImGui::EndChild);
 		OnBeginCanvas();
 		isGridCanvas.front() = true;
@@ -715,7 +718,7 @@ namespace App::Ui::Core
 			gridInfos.front().colWidth * startColIndex + gridInfos.front().cellPadding,
 			gridInfos.front().rowHeight * startRowIndex + gridInfos.front().cellPadding
 		};
-		ImGui::SetCursorPos(cellOffset);
+		SetDrawCursorPos(cellOffset);
 		
 		/*
 		float spacing{ 0 };
@@ -749,5 +752,93 @@ namespace App::Ui::Core
 	
 	}
 
+	
+	UiBuilder &UiBuilderImpl::DeclareReadonlyInput()
+	{
+		userSettings.isReadonlyInput = true;
 
+		return *this;
+		
+	}
+
+
+
+	UiBuilder &UiBuilderImpl::MakeInputInt(int &data)
+	{
+		ApplyInputWidgetDimensions();		
+		ImGui::InputInt(userSettings.name.c_str(), &data, 1, 100, GetInputFlags());
+
+		DoItemEpilogue();
+		return *this;
+		
+	}
+
+		ImVec2 UiBuilderImpl::ApplyInputWidgetDimensions()
+		{
+			DoItemPrologue();
+		
+			ImVec2 size{ 80, ImGui::GetFrameHeight() };
+			ApplyUserSizing(size.x, size.y);
+			SetNextItemSize(size.x, size.y);
+
+			ImVec2 position{};
+			ApplyUserPositioning(position.x, position.y);
+			ApplyUserPivot(position.x, position.y, size.x, size.y);
+			SetDrawCursorPos(position);
+
+			return size;
+
+		}
+
+		ImGuiInputTextFlags UiBuilderImpl::GetInputFlags() const
+		{
+			return userSettings.isReadonlyInput ? ImGuiInputTextFlags_ReadOnly : 0;
+		
+		}
+
+
+
+	UiBuilder &UiBuilderImpl::MakeInputFloat(float &data)
+	{
+		ApplyInputWidgetDimensions();
+		ImGui::InputFloat(userSettings.name.c_str(), &data, 0, 0, "%.3f", GetInputFlags());
+
+		DoItemEpilogue();
+		return *this;
+
+	}
+
+
+	
+	UiBuilder &UiBuilderImpl::MakeInputFloat4(float data[4])
+	{
+		ApplyInputWidgetDimensions();
+		ImGui::InputFloat4(userSettings.name.c_str(), data, "%.3f", GetInputFlags());
+
+		DoItemEpilogue();
+		return *this;
+
+	}
+
+
+	
+	UiBuilder &UiBuilderImpl::MakeInputUnsigned(unsigned &data)
+	{
+		static_assert(sizeof(unsigned) == 4);
+
+		static constexpr unsigned step{ 1 };
+		static constexpr unsigned fastStep{ 100 };
+		
+		const auto size{ ApplyInputWidgetDimensions() };
+		
+		ImGui::BeginChild(userSettings.name.c_str(), size, false, ImGuiWindowFlags_NoSavedSettings);
+		ImGui::InputScalar(userSettings.name.c_str(), ImGuiDataType_U32, &data, &step, &fastStep, nullptr, GetInputFlags());
+		ImGui::EndChild();
+
+		DoItemEpilogue();
+		return *this;
+
+	}
+
+	
 }
