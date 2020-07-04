@@ -332,6 +332,9 @@
       <Filter>Ui\Elements</Filter>
     </ClInclude>
     <ClInclude Include="Ui\Elements\TextElement.hpp">
+    <ClInclude Include="Ui\Elements\SpacingElement.hpp">
+      <Filter>Ui\Elements</Filter>
+    </ClInclude>
       <Filter>Ui\Elements</Filter>
     </ClInclude>
   </ItemGroup>
