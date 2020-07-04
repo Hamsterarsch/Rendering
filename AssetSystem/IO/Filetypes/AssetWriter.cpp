@@ -115,6 +115,19 @@ namespace assetSystem::io
 
 
 	
+	Archive &AssetWriter::Serialize(const char *propertyName, uint32_t &data)
+	{
+		WritePropertyName(propertyName);
+
+		const auto asString{ std::to_string(data) };
+		WritePropertyValue(reinterpret_cast<const unsigned char *>(asString.c_str()), asString.size(), sizeof(std::string::value_type));
+
+		return *this;
+		
+	}
+
+
+
 	Archive &AssetWriter::Serialize(const char *propertyName, float &data) 
 	{
 		WritePropertyName(propertyName);

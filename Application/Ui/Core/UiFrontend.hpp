@@ -24,6 +24,12 @@ namespace App::Ui::Core
 
 		public: virtual bool *GetInputTargetBool(size_t index) { return nullptr; }
 
+		public: virtual float *GetInputTargetFloat(size_t index) { return nullptr; }
+
+		public: virtual int *GetInputTargetInt(size_t index) { return nullptr; }
+
+		public: virtual unsigned *GetInputTargetUnsigned(size_t index) { return nullptr; }
+		
 		protected: bool RenderAndQueryInputForUiElements(UiBuilder &builder)
 		{
 			bool executedWork{ false };

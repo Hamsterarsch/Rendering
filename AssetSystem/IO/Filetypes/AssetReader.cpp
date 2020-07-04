@@ -1,10 +1,11 @@
 #include "AssetSystem/IO/Filetypes/AssetReader.hpp"
 #include "AssetSystem/IO/Filetypes/AssetArchiveConstants.hpp"
 #include "IO/DiskConversions.hpp"
+#include "Shared/Exception/Exception.hpp"
 
 
 namespace assetSystem::io
-{
+{//todo: catch eofs with exception
 	AssetReader::AssetReader(const std::filesystem::path &filepath) :
 		file{ filepath, std::ios_base::in | std::ios_base::binary }
 	{
@@ -44,7 +45,12 @@ namespace assetSystem::io
 		void AssetReader::BuildPropertyMap()
 		{
 			ProcessNextProperty();
-		
+					   
+			if(file.eof())
+			{
+				file.clear();
+			}
+					
 		}
 
 			void AssetReader::ProcessNextProperty()
@@ -76,7 +82,7 @@ namespace assetSystem::io
 			}
 
 				bool AssetReader::SeekNextPropertyStart()
-				{					
+				{		
 					while(true)
 					{
 						if(file.peek() == std::ifstream::traits_type::eof())
@@ -110,7 +116,7 @@ namespace assetSystem::io
 						PopCurrentObjectScope();
 
 						if(SeekEofUntilToken(AssetArchiveConstants::dataStartToken))
-						{
+						{							
 							return false;
 						}
 						file.get();
@@ -130,6 +136,8 @@ namespace assetSystem::io
 					if(propertyToken == '{')
 					{
 						ProcessObjectProperty(std::move(propertyName));
+						return;
+						
 					}
 
 					if(propertyToken == AssetArchiveConstants::dataStartToken)
@@ -204,12 +212,18 @@ namespace assetSystem::io
 					void AssetReader::ProcessValueProperty(std::string&& propertyName)
 					{
 						propertyMap.insert( { objectQualifiers + std::move(propertyName), 1+currentPropertyNameEnd} );
+	
 						SeekToTokenAfterPropertyValue();
 		
 					}
 
 						void AssetReader::SeekToTokenAfterPropertyValue()
 						{
+							if(SkipValueSection() == std::ifstream::traits_type::eof())
+							{
+								return;
+							}
+								
 							while(true)
 							{
 								const auto character{ GetNonBinaryDataFromFile() };
@@ -231,6 +245,24 @@ namespace assetSystem::io
 							}
 		
 						}
+
+							char AssetReader::SkipValueSection()
+							{
+								while(true)
+								{
+									const auto character{ GetNonBinaryDataFromFile() };
+									if(character == std::ifstream::traits_type::eof())
+									{
+										return character;										
+									}
+
+									if(character == AssetArchiveConstants::dataStartToken)
+									{
+										return character;
+									}									
+								}
+		
+							}
 
 							char AssetReader::GetNonBinaryDataFromFile()
 							{
@@ -348,8 +380,9 @@ namespace assetSystem::io
 		void AssetReader::SeekPropertyValueStart(const char *propertyName)
 		{
 			const auto afterNamePos{ propertyMap.at(objectQualifiers + propertyName) };
-			file.seekg(afterNamePos);		
 		
+			file.seekg(afterNamePos);		
+
 			SeekEofUntilToken(AssetArchiveConstants::dataStartToken);
 			file.get();
 		
@@ -391,6 +424,16 @@ namespace assetSystem::io
 			}
 
 
+	
+	Archive &AssetReader::Serialize(const char *propertyName, uint32_t &data)
+	{
+		data = static_cast<unsigned>(std::stoul(ReadPropertyValue(propertyName)));
+
+		return *this;
+		
+	}
+
+
 
 	Archive &AssetReader::Serialize(const char *propertyName, float &data)
 	{
@@ -406,7 +449,7 @@ namespace assetSystem::io
 	{
 		const auto valueLength{ SeekNonBinaryPropertyValueStartAndLength(propertyName) };				
 		file.read(str, valueLength);
-		
+
 		return *this;
 		
 	}

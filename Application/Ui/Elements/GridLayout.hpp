@@ -1,5 +1,5 @@
 #pragma once
-#include "Ui/Core/UiLayoutElement.hpp"
+#include "Ui/Core/UiLayoutElementBasic.hpp"
 #include <string>
 
 
@@ -8,7 +8,7 @@ namespace App::Ui
 	class GridSlot;
 		
 	
-	class GridLayout final : public Core::UiLayoutElement
+	class GridLayout final : public Core::UiLayoutElementBasic
 	{
 		private: static inline unsigned constructedInstances{ 0 };
 

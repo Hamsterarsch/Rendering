@@ -1,9 +1,9 @@
-#include "Ui/Core/UiLayoutElement.hpp"
+#include "Ui/Core/UiLayoutElementBasic.hpp"
 
 
 namespace App::Ui::Core
 {	
-	void UiLayoutElement::AddChild(UniquePtr<UiElement> &&child)
+	void UiLayoutElementBasic::AddChild(UniquePtr<UiElement> &&child)
 	{
 		OnChildAdded(*children.emplace_back(std::move(child)));
 		
@@ -11,7 +11,7 @@ namespace App::Ui::Core
 
 
 	
-	void UiLayoutElement::RenderAndQueryInternal(UiBuilder &builder)
+	void UiLayoutElementBasic::RenderAndQueryInternal(UiBuilder &builder)
 	{
 		OnPreRenderAndQueryChildren(builder);
 

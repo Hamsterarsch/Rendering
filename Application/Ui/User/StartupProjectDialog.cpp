@@ -21,7 +21,7 @@ namespace App::Ui::User
 			shouldOpenProject{ false },			
 			parent{ &parent }
 	{			
-		auto grid{ MakeUnique<GridLayout>(2, 2) };
+		auto grid{ MakeUnique<GridLayout>(2, 2)->*Set{&GridLayout::size, {1,1}} };
 
 		grid +=
 		{

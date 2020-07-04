@@ -292,7 +292,9 @@
     <ClInclude Include="Ui\Core\UiLayoutElement.hpp" />
     <ClInclude Include="Ui\Core\UiBuilder.hpp" />
     <ClInclude Include="Ui\Core\UiBuilderImpl.hpp" />
+    <ClInclude Include="Ui\Core\UiLayoutElementBasic.hpp" />
     <ClInclude Include="Ui\Elements\ButtonElement.hpp" />
+    <ClInclude Include="Ui\Elements\CollapsibleNodeLayoutFrontend.hpp" />
     <ClInclude Include="Ui\Elements\EqualColumnsLayout.hpp" />
     <ClInclude Include="Ui\Elements\FloatLayout.hpp" />
     <ClInclude Include="Ui\Elements\GridLayout.hpp" />
@@ -301,7 +303,9 @@
     <ClInclude Include="Ui\Elements\InputElement.hpp" />
     <ClInclude Include="Ui\Elements\ItemGridLayout.hpp" />
     <ClInclude Include="Ui\Elements\ModalElement.hpp" />
+    <ClInclude Include="Ui\Elements\SpacingElement.hpp" />
     <ClInclude Include="Ui\Elements\TextElement.hpp" />
+    <ClInclude Include="Ui\Elements\CollapsibleNodeLayout.hpp" />
     <ClInclude Include="Ui\Elements\WindowElement.hpp" />
     <ClInclude Include="Ui\ImguiTypeArithmetics.hpp" />
     <ClInclude Include="Ui\Misc\AssetNameFilter.hpp" />
@@ -316,7 +320,7 @@
     <ClInclude Include="Ui\User\AssetBrowser.hpp" />
     <ClInclude Include="Ui\User\AssetCreationDialog.hpp" />
     <ClInclude Include="Ui\User\CreateProjectDialog.hpp" />
-    <ClInclude Include="Ui\User\PropertyCompositeElement.hpp" />
+    <ClInclude Include="Ui\User\ObjectList.hpp" />
     <ClInclude Include="Ui\User\ShaderEditor.hpp" />
     <ClInclude Include="Ui\User\StartupProjectDialog.hpp" />
     <ClInclude Include="Ui\User\StringInputTargetImpl.hpp" />
@@ -353,11 +357,13 @@
     <ClCompile Include="Types\Dimensions2D.cpp" />
     <ClCompile Include="Ui\BasicFrontends\SetVisibilityFrontend.cpp" />
     <ClCompile Include="Ui\Core\UiElement.cpp" />
-    <ClCompile Include="Ui\Core\UiLayoutElement.cpp" />
+    <ClCompile Include="Ui\Core\UiLayoutElementBasic.cpp" />
     <ClCompile Include="Ui\Core\UiBuilderImpl.cpp" />
+    <ClCompile Include="Ui\Elements\CollapsibleNodeLayoutFrontend.cpp" />
     <ClCompile Include="Ui\Elements\FloatLayout.cpp" />
     <ClCompile Include="Ui\Elements\GridLayout.cpp" />
     <ClCompile Include="Ui\Elements\ItemGridLayout.cpp" />
+    <ClCompile Include="Ui\Elements\CollapsibleNodeLayout.cpp" />
     <ClCompile Include="Ui\ImguiTypeArithmetics.cpp" />
     <ClCompile Include="Ui\Misc\AssetNameFilter.cpp" />
     <ClCompile Include="Ui\States\UiCreateProjectState.cpp" />
@@ -367,7 +373,7 @@
     <ClCompile Include="Ui\User\AssetBrowser.cpp" />
     <ClCompile Include="Ui\User\AssetCreationDialog.cpp" />
     <ClCompile Include="Ui\User\CreateProjectDialog.cpp" />
-    <ClCompile Include="Ui\User\PropertyCompositeElement.cpp" />
+    <ClCompile Include="Ui\User\ObjectList.cpp" />
     <ClCompile Include="Ui\User\ShaderEditor.cpp" />
     <ClCompile Include="Ui\User\StartupProjectDialog.cpp" />
     <ClCompile Include="Windows\Application.cpp" />

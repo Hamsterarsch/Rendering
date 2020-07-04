@@ -15,6 +15,8 @@ namespace assetSystem::io
 
 		public: virtual Archive &Serialize(const char *propertyName, int32_t &data) = 0;
 
+		public: virtual Archive &Serialize(const char *propertyName, uint32_t &data) = 0;
+
 		public: virtual Archive &Serialize(const char *propertyName, float &data) = 0;
 				
 		public: virtual Archive &Serialize(const char *propertyName, char *str) = 0;

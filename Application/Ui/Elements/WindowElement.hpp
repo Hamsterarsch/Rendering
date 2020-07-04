@@ -1,5 +1,5 @@
 #pragma once
-#include "Ui/Core/UiLayoutElement.hpp"
+#include "Ui/Core/UiLayoutElementBasic.hpp"
 #include "Ui/Core/UiBuilder.hpp"
 #include "Ui/Core/UiFrontend.hpp"
 
@@ -7,7 +7,7 @@
 
 namespace App::Ui
 {
-	class WindowElement final : public Core::UiLayoutElement
+	class WindowElement final : public Core::UiLayoutElementBasic
 	{
 		private: std::string title;
 

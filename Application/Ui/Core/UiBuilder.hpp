@@ -72,6 +72,18 @@ namespace App::Ui::Core
 		public: virtual UiBuilder &MakeGrid(size_t columns, size_t rows) = 0;
 
 		public: virtual UiBuilder &MakeCell(size_t startColIndex, size_t startRowIndex, size_t colSpan = 1, size_t rowSpan = 1) = 0;
+
+
+		
+		public: virtual UiBuilder &DeclareReadonlyInput() = 0;
+		
+		public: virtual UiBuilder &MakeInputInt(int &data) = 0;
+		
+		public: virtual UiBuilder &MakeInputFloat(float &data) = 0;
+
+		public: virtual UiBuilder &MakeInputFloat4(float data[4]) = 0;
+
+		public: virtual UiBuilder &MakeInputUnsigned(unsigned &data) = 0;
 						
 	};
 

@@ -1,12 +1,12 @@
 #pragma once
-#include "Ui/Core/UiLayoutElement.hpp"
+#include "Ui/Core/UiLayoutElementBasic.hpp"
 #include "Ui/Core/UiBuilder.hpp"
 #include "Ui/Core/UiFrontend.hpp"
 
 
 namespace App::Ui
 {
-	class ModalElement : public Core::UiLayoutElement
+	class ModalElement : public Core::UiLayoutElementBasic
 	{
 		private: const char *title;
 

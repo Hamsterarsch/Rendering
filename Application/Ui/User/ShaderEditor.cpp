@@ -8,20 +8,112 @@
 #include "Ui/States/UiState.hpp"
 #include "Ui/UiStateMachine.hpp"
 #include "Ui/Elements/TextElement.hpp"
+#include "Ui/Elements/CollapsibleNodeLayout.hpp"
+#include "Ui/Elements/SpacingElement.hpp"
 
 
 namespace App::Ui::User
 {	
+	unsigned *ShaderConstantsSlotFrontend::GetInputTargetUnsigned(const size_t index)
+	{
+		if(index == 0)
+		{
+			return &slot.shaderRegister;
+		}
+		
+		if(index == 1)
+		{
+			return &slot.sizeInVector4;
+		}
+		
+		return nullptr;
+		
+	}
+
+
+	
+	UniquePtr<Core::UiElement> ShaderConstantsSlotFrontend::MakeEditUi()
+	{
+		return Element<FloatLayout>(5, true)
+				<< Element<TextElement>("Shader Register:")
+				<< Element<InputElement<unsigned>>(*this, 0)->*Set{&InputElementBase::size, {1,0}}
+				<< Element<SpacingElement>(Math::Vector2{0,5})
+				<< Element<TextElement>("Num Vector 4's:")
+				<< Element<InputElement<unsigned>>(*this, 1)->*Set{&InputElementBase::size, {1,0}};
+		
+	}
+
+
+	
+
+	unsigned *TextureSlotFrontend::GetInputTargetUnsigned(const size_t index)
+	{
+		return &slot.shaderRegister;
+		
+	}
+
+
+	
+	UniquePtr<Core::UiElement> TextureSlotFrontend::MakeEditUi()
+	{
+		return Element<FloatLayout>(5, true)
+				<< Element<TextElement>("Shader Register:")
+				<< Element<InputElement<unsigned>>(*this, 0)->*Set{&InputElementBase::size, {1,0}};
+		
+	}
+
+
+
+
+
 	ShaderEditorFrontend::ShaderEditorFrontend(States::UiState &parent, std::string &&shaderName, const assetSystem::AssetPtr &shaderToEdit)
 		:
 		parent{ &parent },
-		shaderToEdit{ shaderToEdit },
+		editingTarget{ shaderToEdit },
 		shaderName{ std::move(shaderName) },
-		hasUnsavedChanges{ false },
+		window{ nullptr },
 		shouldSave{ false },
-		shouldAbort{ false }
+		shouldAbort{ false },
+		shouldAddTextureResource{ false },
+		shouldRemoveTextureResource{ false },
+		shouldAddCbvResource{ false },
+		shouldRemoveCbvResource{ false }
 	{		
-		codeToEdit.data = std::string{this->shaderToEdit->GetCode(), this->shaderToEdit->GetShaderLength() };
+		codeToEdit.data = std::string{editingTarget->GetCode(), editingTarget->GetShaderLength() };
+		
+		auto textureSlotItems
+		{
+			Element<FloatLayout>(5, true) 
+				<< (Element<GridLayout>(2,1, 1)->*Set{&GridLayout::size, {1,0}}
+					+= {{0,0}, Element<ButtonElement>(*this, 2, "Add" )->*Set{&ButtonElement::size, {1,0}}} 
+					+= {{1,0}, Element<ButtonElement>(*this, 3, "Remove")->*Set{&ButtonElement::size, {1,0}}}
+				   )			
+		};
+		textureSlotList = ObjectListFrontend{ *textureSlotItems };
+		
+		for(size_t slotIndex{ 0 }; slotIndex < editingTarget->GetNumTextureSlots(); ++slotIndex)
+		{
+			PushTextureSlotUi(editingTarget->GetTextureSlotAt(slotIndex));
+		}
+		
+		
+		auto cbvSlotItems
+		{
+			(Element<FloatLayout>(5, true) 
+				<< (Element<GridLayout>(2,1, 1)->*Set{&GridLayout::size, {1,0}} 
+						+= {{0,0}, Element<ButtonElement>(*this, 4, "Add" )->*Set{&ButtonElement::size, {1,0}}} 
+						+= {{1,0}, Element<ButtonElement>(*this, 5, "Remove")->*Set{&ButtonElement::size, {1,0}}}
+				   )
+			)
+		};
+		constantsSlotList = ObjectListFrontend{ *cbvSlotItems };
+		
+		for(size_t slotIndex{ 0 }; slotIndex < editingTarget->GetNumConstantsSlots(); ++slotIndex)
+		{
+			PushConstantsSlotUi(editingTarget->GetConstantsSlotAt(slotIndex));
+		}
+		
+		
 		auto window
 		{		
 			Element<WindowElement>(this->shaderName.c_str())
@@ -29,7 +121,11 @@ namespace App::Ui::User
 			->*Set
 			{
 				&WindowElement::tabChild,
-				Element<WindowElement>("ShaderResourceNodes") << Element<TextElement>("Shader Resources")->*Set{&TextElement::pivot, {.5,0}}->*Set{&TextElement::position, {.5,0}}
+				Element<WindowElement>("ShaderResourceNodes")
+				<<	(Element<FloatLayout>(5, true) 
+						<< (Element<CollapsibleNodeLayout>(textureSlotsNodeFrontend, "Texture Resources") << std::move(textureSlotItems))
+						<< (Element<CollapsibleNodeLayout>(constantSlotsNodeFrontend, "Cbv Resources") << std::move(cbvSlotItems))
+					)
 			}
 			->*Set{&WindowElement::tabChildSizeInPercent, .25f}
 			<< (Element<FloatLayout>(5, true, true)->*Set{&FloatLayout::position, {1,1}}->*Set{&FloatLayout::pivot,{1,1}}
@@ -45,6 +141,26 @@ namespace App::Ui::User
 	}
 
 
+	
+	void ShaderEditorFrontend::PushTextureSlotUi(const Assets::TextureResourceSlot &slot)
+	{
+		auto slotFrontend{ MakeUnique<t_textureSlotFrontend>(slot) };
+		auto editUi{ slotFrontend->MakeEditUi() };
+		textureSlotList.PushBack(("Texture Slot "+std::to_string(textureSlotList.GetNumEntries())).c_str(), std::move(editUi), std::move(slotFrontend));
+		
+	}
+
+
+	
+	void ShaderEditorFrontend::PushConstantsSlotUi(const Assets::ConstantsResourceSlot &slot)
+	{
+		auto slotFrontend{ MakeUnique<t_constantsSlotFrontend>(slot) };
+		auto editUi{ slotFrontend->MakeEditUi() };
+		constantsSlotList.PushBack(("Constants Slot "+std::to_string(constantsSlotList.GetNumEntries())).c_str(), std::move(editUi), std::move(slotFrontend));
+		
+	}
+
+
 
 	void ShaderEditorFrontend::Update(Core::UiBuilder &builder)
 	{
@@ -54,37 +170,82 @@ namespace App::Ui::User
 			return;
 			
 		}
-
-		if(codeToEdit.ContentWasChanged())
-		{
-			if(not hasUnsavedChanges)
-			{
-				window->SetTitle((shaderName + "*").c_str());
-			}
-			
-			hasUnsavedChanges = true;			
-			codeToEdit.ClearChangedState();
-		}
 				
 		if(not RenderAndQueryInputForUiElements(builder))
 		{
 			return;
 			
 		}
-
-		if(shouldSave && hasUnsavedChanges)
+			   
+		HandleResourceSlotUpdates(builder);
+						
+		if(shouldSave)
 		{
-			shaderToEdit->SetCode(codeToEdit.data);
-			shaderToEdit.SaveToDisk();
-			
-			hasUnsavedChanges = false;
-			window->SetTitle(shaderName.c_str());			
+			SaveChanges();									
 		}
 		
 	}
 
+		void ShaderEditorFrontend::HandleResourceSlotUpdates(Core::UiBuilder &builder)
+		{
+			HandleTextureSlotUpdates(builder);
+			HandleConstantsSlotUpdates(builder);
+		
+		}
 
-	
+			void ShaderEditorFrontend::HandleTextureSlotUpdates(Core::UiBuilder &builder)
+			{
+				textureSlotsNodeFrontend.Update(builder);
+				if(shouldAddTextureResource)
+				{
+					PushTextureSlotUi({});
+				}
+
+				if(shouldRemoveTextureResource)
+				{
+					textureSlotList.PopBack();			
+				}
+				textureSlotList.Update(builder);
+						
+			}
+
+			void ShaderEditorFrontend::HandleConstantsSlotUpdates(Core::UiBuilder &builder)
+			{
+				constantSlotsNodeFrontend.Update(builder);		
+				if(shouldAddCbvResource)
+				{
+					PushConstantsSlotUi({});		
+				}
+
+				if(shouldRemoveCbvResource)
+				{
+					constantsSlotList.PopBack();
+				}
+				constantsSlotList.Update(builder);
+		
+			}
+
+		void ShaderEditorFrontend::SaveChanges()
+		{
+			editingTarget->SetCode(codeToEdit.data);
+		
+			editingTarget->ClearResourceSlots();			
+			textureSlotList.ForEachFrontend([&shader = editingTarget](UiFrontend &frontend)
+			{
+				shader->AddTextureSlot(reinterpret_cast<t_textureSlotFrontend &>(frontend).GetSlot());
+			});
+
+			constantsSlotList.ForEachFrontend([&shader = editingTarget](UiFrontend &frontend)
+			{
+				shader->AddConstantsSlot(reinterpret_cast<t_constantsSlotFrontend &>(frontend).GetSlot());
+			});
+			
+			editingTarget.SaveToDisk();
+		
+		}
+
+
+
 	Core::StringInputTarget *ShaderEditorFrontend::GetInputTargetString(const size_t index)
 	{
 		return &codeToEdit;
@@ -99,6 +260,10 @@ namespace App::Ui::User
 		{
 		case 0: return &shouldSave;
 		case 1: return &shouldAbort;
+		case 2: return &shouldAddTextureResource;
+		case 3: return &shouldRemoveTextureResource;
+		case 4: return &shouldAddCbvResource;
+		case 5: return &shouldRemoveCbvResource;
 		default: return nullptr;
 		}
 		
