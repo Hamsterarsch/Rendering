@@ -50,9 +50,6 @@
     <ClCompile Include="Ui\Elements\GridLayout.cpp">
       <Filter>Ui\Elements</Filter>
     </ClCompile>
-    <ClCompile Include="Ui\User\PropertyCompositeElement.cpp">
-      <Filter>Ui\User</Filter>
-    </ClCompile>
     <ClCompile Include="Ui\Core\UiBuilderImpl.cpp">
       <Filter>Ui\Core</Filter>
     </ClCompile>
@@ -122,7 +119,13 @@
     <ClCompile Include="Ui\Core\UiLayoutElementBasic.cpp">
       <Filter>Ui\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Ui\Elements\TreeLayout.cpp">
+    <ClCompile Include="Ui\User\ObjectList.cpp">
+      <Filter>Ui\User</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui\Elements\CollapsibleNodeLayout.cpp">
+      <Filter>Ui\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui\Elements\CollapsibleNodeLayoutFrontend.cpp">
       <Filter>Ui\Elements</Filter>
     </ClCompile>
   </ItemGroup>
@@ -210,9 +213,6 @@
     </ClInclude>
     <ClInclude Include="Ui\Elements\InputElement.hpp">
       <Filter>Ui\Elements</Filter>
-    </ClInclude>
-    <ClInclude Include="Ui\User\PropertyCompositeElement.hpp">
-      <Filter>Ui\User</Filter>
     </ClInclude>
     <ClInclude Include="Ui\User\CreateProjectDialog.hpp">
       <Filter>Ui\User</Filter>
@@ -328,13 +328,19 @@
     <ClInclude Include="Ui\Core\UiLayoutElementBasic.hpp">
       <Filter>Ui\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Ui\Elements\TreeLayout.hpp">
+    <ClInclude Include="Ui\Elements\TextElement.hpp">
       <Filter>Ui\Elements</Filter>
     </ClInclude>
-    <ClInclude Include="Ui\Elements\TextElement.hpp">
+    <ClInclude Include="Ui\User\ObjectList.hpp">
+      <Filter>Ui\User</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Elements\CollapsibleNodeLayout.hpp">
+      <Filter>Ui\Elements</Filter>
+    </ClInclude>
     <ClInclude Include="Ui\Elements\SpacingElement.hpp">
       <Filter>Ui\Elements</Filter>
     </ClInclude>
+    <ClInclude Include="Ui\Elements\CollapsibleNodeLayoutFrontend.hpp">
       <Filter>Ui\Elements</Filter>
     </ClInclude>
   </ItemGroup>
