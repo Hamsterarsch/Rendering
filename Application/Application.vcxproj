@@ -255,6 +255,8 @@
     <ClInclude Include="AssetTypes\CacheAsset.hpp" />
     <ClInclude Include="AssetTypes\ImageAsset.hpp" />
     <ClInclude Include="AssetTypes\ProjectAsset.hpp" />
+    <ClInclude Include="AssetTypes\PsoAsset.hpp" />
+    <ClInclude Include="AssetTypes\RendererAsset.hpp" />
     <ClInclude Include="AssetTypes\ShaderAsset.hpp" />
     <ClInclude Include="Core\Application.hpp" />
     <ClInclude Include="Core\CreateProject.hpp" />

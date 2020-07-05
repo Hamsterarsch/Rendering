@@ -343,6 +343,12 @@
     <ClInclude Include="Ui\Elements\CollapsibleNodeLayoutFrontend.hpp">
       <Filter>Ui\Elements</Filter>
     </ClInclude>
+    <ClInclude Include="AssetTypes\PsoAsset.hpp">
+      <Filter>AssetTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetTypes\RendererAsset.hpp">
+      <Filter>AssetTypes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Window">

@@ -75,7 +75,9 @@ namespace App::Assets
 
 		std::vector<AssetClassInfo> assetClassInfos;
 		
-		inline static const std::unordered_set<const char *> hiddenAssetTypes{ "cache" };
+		static const std::unordered_set<std::string> hiddenAssetTypes;
+
+		static const std::unordered_set<std::string> typesNotCreatableByEditor;
 
 		
 		

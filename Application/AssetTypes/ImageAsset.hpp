@@ -3,6 +3,7 @@
 #include "AssetFactories/ImageData.hpp"
 #include <string>
 #include "Asset.hpp"
+#include "RendererAsset.hpp"
 
 
 namespace Renderer{ class RendererFacade; }
@@ -12,7 +13,7 @@ namespace App::Assets
 	struct ImageData;
 	
 	
-	class ImageAsset final : public assetSystem::Asset
+	class ImageAsset final : public assetSystem::Asset, public RendererAsset
 	{
 		private: Renderer::HandleWrapper textureHandle;
 
@@ -34,6 +35,8 @@ namespace App::Assets
 				
 		public: void OnAssetLoaded(const char *absoluteAssetFilePath) override;
 
+		public: void UploadToRenderer(Renderer::RendererFacade &renderer) override;
+		
 
 		public: unsigned GetImageWidth() const { return data.width; }
 
@@ -44,7 +47,6 @@ namespace App::Assets
 		public: Renderer::ResourceHandle::t_hash GetDescriptorHandle() const { return srvDescriptor.Get(); }
 
 
-		public: void UploadToRenderer(Renderer::RendererFacade &renderer);
 		
 		
 		public: static const char *GetAssetClassExtension();

@@ -2,6 +2,8 @@
 #include "Asset.hpp"
 #include <string>
 #include <vector>
+#include "RendererAsset.hpp"
+#include "Resources/HandleWrapper.hpp"
 
 
 
@@ -41,10 +43,11 @@ namespace App::Assets
 	};
 
 
-
-	
-	class ShaderAsset final : public assetSystem::Asset
+		
+	class ShaderAsset : public assetSystem::Asset, public RendererAsset
 	{
+		private: Renderer::HandleWrapper shaderHandle;
+		
 		private: std::string shaderCode;
 
 		private: std::vector<ConstantsResourceSlot> constantsSlots;
@@ -61,6 +64,9 @@ namespace App::Assets
 		public: assetSystem::io::Archive &Serialize(assetSystem::io::Archive &archive) override;
 
 			private: void SerializeResourceSlots(assetSystem::io::Archive &archive);
+		
+		public: void UploadToRenderer(Renderer::RendererFacade &renderer) override;
+
 		
 		public: const char *GetCode() const { return shaderCode.c_str(); }
 
@@ -81,11 +87,35 @@ namespace App::Assets
 		public: size_t GetNumTextureSlots() const { return textureSlots.size(); }
 
 		public: TextureResourceSlot GetTextureSlotAt(const size_t index) const { return textureSlots.at(index); }
-				
-		public: static const char *GetAssetClassExtension();
 
-		public: static const wchar_t *GetAssetClassExtensionW();
-				
+		
+		public: static const char *GetAssetClassExtension();
+						
+
+	};
+
+	class PixelShaderAsset final : public ShaderAsset
+	{
+		public: static const char *GetAssetClassExtension()
+		{
+			static const std::string extension{ std::string{"ps."} + ShaderAsset::GetAssetClassExtension() };
+
+			return extension.c_str();
+			
+		}
+		
+	};
+
+	class VertexShaderAsset final : public ShaderAsset
+	{
+		public: static const char *GetAssetClassExtension()
+		{
+			static const std::string extension{ std::string{"vs."} + ShaderAsset::GetAssetClassExtension() };
+
+			return extension.c_str();
+			
+		}
+		
 	};
 	
 	

@@ -6,6 +6,7 @@
 #include "ProjectAsset.hpp"
 #include "AssetFileending.hpp"
 #include "Ui/User/ShaderEditor.hpp"
+#include "CacheAsset.hpp"
 
 
 
@@ -24,7 +25,12 @@ namespace App::Assets
 	};
 
 	
+	
 
+	const std::unordered_set<std::string> AssetTypesRegistry::hiddenAssetTypes{ CacheAsset::GetAssetClassExtension(), ShaderAsset::GetAssetClassExtension() };
+	
+	const std::unordered_set<std::string> AssetTypesRegistry::typesNotCreatableByEditor{ ProjectAsset::GetAssetClassExtension(), CacheAsset::GetAssetClassExtension(), ShaderAsset::GetAssetClassExtension() };
+	
 	
 	AssetTypesRegistry::AssetClassInfo::AssetClassInfo
 	(
@@ -53,7 +59,8 @@ namespace App::Assets
 	{
 		AddAssetInfo<ImageAsset>(app, "Image Asset", "Images/Icons/TextureIcon.img", {});
 		AddAssetInfo<ProjectAsset>(app, "Project Asset", "Images/Icons/FileIcon.img", {});
-		AddAssetInfo<ShaderAsset>(app, "Shader Asset", "Images/Icons/FileIcon.img", MakeUnique<PrototypeEditor<Ui::User::ShaderEditorFrontend>>());
+		AddAssetInfo<PixelShaderAsset>(app, "Pixel Shader Asset", "Images/Icons/FileIcon.img", MakeUnique<PrototypeEditor<Ui::User::ShaderEditorFrontend>>());
+		AddAssetInfo<VertexShaderAsset>(app, "Pixel Shader Asset", "Images/Icons/FileIcon.img", MakeUnique<PrototypeEditor<Ui::User::ShaderEditorFrontend>>());
 				
 	}
 
@@ -95,12 +102,8 @@ namespace App::Assets
 	
 	bool AssetTypesRegistry::IsUserCreatableType(size_t index) const
 	{
-		if(std::strcmp(assetClassInfos.at(index).extension, ProjectAsset::GetAssetClassExtension()) == 0)
-		{
-			return false;
-		}
-		return true;
-		
+		return typesNotCreatableByEditor.find(assetClassInfos.at(index).extension) == typesNotCreatableByEditor.end();
+				
 	}
 
 

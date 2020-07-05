@@ -1,5 +1,7 @@
 #include "AssetTypes/ShaderAsset.hpp"
 #include "AssetSystem/Interface/IO/Archive.hpp"
+#include "Resources/SerializeTarget.hpp"
+#include "Shared/Debugging.hpp"
 
 
 namespace App::Assets
@@ -65,6 +67,14 @@ namespace App::Assets
 			}
 		
 		}
+
+
+	
+	void ShaderAsset::UploadToRenderer(Renderer::RendererFacade &renderer)
+	{
+		DebugBreak();
+		
+	}
 
 
 
