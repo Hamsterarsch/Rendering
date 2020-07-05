@@ -9,8 +9,9 @@ namespace App::Ui::Core
 	{
 		DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(StringInputTarget)
 
+		public: virtual void SetLength(size_t newLength) = 0;
 		
-		public: virtual void Resize(size_t toLength) = 0;
+		public: virtual void Reserve(size_t toLength) = 0;
 		
 		public: virtual size_t GetCapacity() const = 0;
 

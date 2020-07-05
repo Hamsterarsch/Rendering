@@ -32,7 +32,7 @@ namespace assetSystem::core
 			private: void DiscoverAssets(const fs::path &rootFolder);
 
 		
-		public: fs::path GetAssetDirectory() const { return projectAssetDirectory; }
+		public: fs::path GetAssetDirectory() const { return absolute(projectAssetDirectory); }
 		
 		public: void RegisterAsset(std::string &&projectRelativePath);
 

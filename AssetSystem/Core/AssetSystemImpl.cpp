@@ -120,7 +120,23 @@ namespace assetSystem::core
 		
 	}
 
+
 	
+	bool AssetSystemImpl::IsSameRootAssetPath(const char *asThisPath) const
+	{		
+		return registry.GetAssetDirectory() == fs::path{ asThisPath };
+		
+	}
+
+
+	
+	std::string AssetSystemImpl::GetRootAssetPath() const
+	{
+		return registry.GetAssetDirectory().string();
+		
+	}
+
+
 
 	LoadedAssetInfo AssetSystemImpl::GetAssetInternal(const char *path)
 	{

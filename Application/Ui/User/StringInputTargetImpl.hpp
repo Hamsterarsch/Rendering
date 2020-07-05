@@ -30,7 +30,9 @@ namespace App::Ui::User
 
 		public: StringInputTargetImpl(bool isReadOnly = false) : isReadOnly{ isReadOnly } {}
 		
-		public:	void Resize(size_t toLength) override{ data.resize(toLength); }
+		public: void SetLength(size_t newLength) override { data.resize(newLength); }
+		
+		public:	void Reserve(size_t toLength) override{ data.resize(toLength); }
 
 		public: size_t GetCapacity() const override{ return data.capacity(); }
 
@@ -45,7 +47,7 @@ namespace App::Ui::User
 		public: bool ContentWasChanged() const override { return wasTextChanged; }
 		
 		public: void ClearChangedState() override { wasTextChanged = false; }
-		
+
 	};
 
 	

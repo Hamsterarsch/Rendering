@@ -512,7 +512,9 @@ namespace App::Ui::Core
 
 			if(data->Flags & ImGuiInputTextFlags_CallbackResize)
 			{
-				inputTarget->Resize(data->BufTextLen);
+				inputTarget->Reserve(data->BufSize);
+				inputTarget->SetLength(data->BufTextLen);
+				data->Buf = inputTarget->GetBuffer();
 			}
 			
 			return out;
