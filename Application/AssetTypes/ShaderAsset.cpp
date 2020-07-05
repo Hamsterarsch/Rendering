@@ -86,15 +86,5 @@ namespace App::Assets
 		
 	}
 
-
-	
-	const wchar_t *ShaderAsset::GetAssetClassExtensionW()
-	{
-		static const wchar_t *extension{ L"shdr" };
-
-		return extension;
-		
-	}
-
 	
 }

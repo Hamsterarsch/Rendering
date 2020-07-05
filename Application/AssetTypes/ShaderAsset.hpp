@@ -117,6 +117,18 @@ namespace App::Assets
 		}
 		
 	};
+
+	class ComputeShaderAsset final : public ShaderAsset
+	{
+		public: static const char *GetAssetClassExtension()
+		{
+			static const std::string extension{ std::string{"cs."} + ShaderAsset::GetAssetClassExtension() };
+
+			return extension.c_str();
+			
+		}
+		
+	};
 	
 	
 }
