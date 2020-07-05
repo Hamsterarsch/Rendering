@@ -3,6 +3,7 @@
 #include <vector>
 #include "StringInputTargetImpl.hpp"
 #include "Ui/Misc/AssetNameFilter.hpp"
+#include <functional>
 
 
 namespace App::Ui { class ButtonElement; }
@@ -37,9 +38,12 @@ namespace App::Ui::User
 		private: StringInputTargetImpl<Filter::AssetNameFilter> assetName;
 
 		private: ButtonElement *confirmButton;
+
+		private: std::function<void()> onAssetCreated;
 		
 		
-		public: AssetCreationDialogFrontend(App::Core::Application &app, std::string &&targetDirectory);
+		
+		public: AssetCreationDialogFrontend(App::Core::Application &app, std::string &&targetDirectory, std::function<void()> &&onAssetCreated);
 		
 		public: void Update(Core::UiBuilder& builder) override;
 
