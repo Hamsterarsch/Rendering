@@ -74,16 +74,19 @@ namespace App::Assets
 		std::unordered_map<std::string, size_t> assetClassMap;
 
 		std::vector<AssetClassInfo> assetClassInfos;
+
+		private: bool showAllTypes;
 		
 		static const std::unordered_set<std::string> hiddenAssetTypes;
 
-		static const std::unordered_set<std::string> typesNotCreatableByEditor;
+		static const std::unordered_set<std::string> typesNotCreatableByUser;
 
 		
 		
-		public: AssetTypesRegistry() : app{ nullptr } {}
 		
-		public: AssetTypesRegistry(Core::Application &app);
+		public: AssetTypesRegistry() : app{ nullptr }, showAllTypes{ false } {}
+		
+		public: AssetTypesRegistry(Core::Application &app, bool showAllTypes);
 
 			private: template<class t_asset> void AddAssetInfo
 			(

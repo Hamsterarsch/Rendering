@@ -27,9 +27,20 @@ namespace App::Assets
 	
 	
 
-	const std::unordered_set<std::string> AssetTypesRegistry::hiddenAssetTypes{ CacheAsset::GetAssetClassExtension(), ShaderAsset::GetAssetClassExtension() };
+	const std::unordered_set<std::string> AssetTypesRegistry::hiddenAssetTypes
+	{
+		CacheAsset::GetAssetClassExtension(),
+		ShaderAsset::GetAssetClassExtension(),
+		ComputeShaderAsset::GetAssetClassExtension()
+	};
 	
-	const std::unordered_set<std::string> AssetTypesRegistry::typesNotCreatableByEditor{ ProjectAsset::GetAssetClassExtension(), CacheAsset::GetAssetClassExtension(), ShaderAsset::GetAssetClassExtension() };
+	const std::unordered_set<std::string> AssetTypesRegistry::typesNotCreatableByUser
+	{
+		ProjectAsset::GetAssetClassExtension(),
+		CacheAsset::GetAssetClassExtension(),
+		ShaderAsset::GetAssetClassExtension(),
+		ComputeShaderAsset::GetAssetClassExtension()
+	};
 	
 	
 	AssetTypesRegistry::AssetClassInfo::AssetClassInfo
@@ -55,12 +66,14 @@ namespace App::Assets
 	}
 	
 
-	AssetTypesRegistry::AssetTypesRegistry(Core::Application &app) : app{ &app }
+	AssetTypesRegistry::AssetTypesRegistry(Core::Application &app, bool showAllTypes) : app{ &app }, showAllTypes{ showAllTypes }
 	{
 		AddAssetInfo<ImageAsset>(app, "Image Asset", "Images/Icons/TextureIcon.img", {});
 		AddAssetInfo<ProjectAsset>(app, "Project Asset", "Images/Icons/FileIcon.img", {});
+		AddAssetInfo<ShaderAsset>(app, "Shader Asset", "Images/Icons/FileIcon.img", MakeUnique<PrototypeEditor<Ui::User::ShaderEditorFrontend>>());
 		AddAssetInfo<PixelShaderAsset>(app, "Pixel Shader Asset", "Images/Icons/FileIcon.img", MakeUnique<PrototypeEditor<Ui::User::ShaderEditorFrontend>>());
 		AddAssetInfo<VertexShaderAsset>(app, "Pixel Shader Asset", "Images/Icons/FileIcon.img", MakeUnique<PrototypeEditor<Ui::User::ShaderEditorFrontend>>());
+		AddAssetInfo<ComputeShaderAsset>(app, "Compute Shader Asset", "Images/Icons/FileIcon.img", MakeUnique<PrototypeEditor<Ui::User::ShaderEditorFrontend>>());
 				
 	}
 
@@ -95,14 +108,14 @@ namespace App::Assets
 
 	bool AssetTypesRegistry::IsHiddenAssetType(const size_t index) const
 	{
-		return hiddenAssetTypes.find(assetClassInfos.at(index).extension) != hiddenAssetTypes.end();
+		return not showAllTypes && hiddenAssetTypes.find(assetClassInfos.at(index).extension) != hiddenAssetTypes.end();
 		
 	}
 
 	
 	bool AssetTypesRegistry::IsUserCreatableType(size_t index) const
 	{
-		return typesNotCreatableByEditor.find(assetClassInfos.at(index).extension) == typesNotCreatableByEditor.end();
+		return showAllTypes || typesNotCreatableByUser.find(assetClassInfos.at(index).extension) == typesNotCreatableByUser.end();
 				
 	}
 
@@ -178,7 +191,7 @@ namespace App::Assets
 	
 	bool AssetTypesRegistry::IsHiddenAssetType(const char *classExtension) const
 	{
-		return hiddenAssetTypes.find(classExtension) != hiddenAssetTypes.end();
+		return not showAllTypes && hiddenAssetTypes.find(classExtension) != hiddenAssetTypes.end();
 		
 	}
 
