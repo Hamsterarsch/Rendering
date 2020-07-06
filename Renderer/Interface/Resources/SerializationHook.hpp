@@ -10,6 +10,8 @@ namespace Renderer
 					
 		public: virtual void Resize(size_t sizeInBytes) = 0;
 
+		public: virtual const unsigned char *GetData() const = 0;
+		
 		public: virtual unsigned char *GetData() = 0;
 							
 	};

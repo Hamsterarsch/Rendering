@@ -11,7 +11,9 @@ namespace Renderer
 		private: size_t size{ 0 };
 
 		
-
+		
+		public: const unsigned char *GetData() const override { return data.get(); }
+		
 		public: unsigned char *GetData() override { return data.get(); }
 
 		public: size_t GetSizeInBytes() const { return size; }

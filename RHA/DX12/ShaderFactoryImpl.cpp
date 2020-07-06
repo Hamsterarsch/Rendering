@@ -185,10 +185,6 @@ namespace RHA::DX12
 		return DoCompile(shader, shaderLength, entrypoint, "cs");
 		
 	}
-
-	bool ShaderFactoryImpl::WasCompileSuccessful() const
-	{
-	}
 	
 		
 }
