@@ -130,7 +130,7 @@ namespace assetSystem::core
 
 
 	
-	std::string AssetSystemImpl::GetRootAssetPath() const
+	std::string AssetSystemImpl::GetAbsoluteRootAssetPath() const
 	{
 		return registry.GetAssetDirectory().string();
 		

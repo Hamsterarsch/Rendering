@@ -40,7 +40,7 @@ namespace assetSystem
 
 		public: virtual bool IsSameRootAssetPath(const char *asThisPath) const = 0;
 
-		public: virtual std::string GetRootAssetPath() const = 0;
+		public: virtual std::string GetAbsoluteRootAssetPath() const = 0;
 		
 		
 		friend AssetPtr;
