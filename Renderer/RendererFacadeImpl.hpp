@@ -107,11 +107,11 @@ namespace Renderer::DX12
 
 		public: void AddShaderIncludeDirectory(const char *absoluteDirectoryPath) override;
 		
-		public: bool CompileVertexShader(const char *shader, size_t length, SerializationHook &serializer) const override;
+		public: void CompileVertexShader(const char *shader, size_t length, SerializationHook &serializer) const override;
 
-		public: bool CompilePixelShader(const char *shader, size_t length, SerializationHook &serializer) const override;
+		public: void CompilePixelShader(const char *shader, size_t length, SerializationHook &serializer) const override;
 
-		public: bool CompileComputeShader(const char *shader, size_t length, SerializationHook &serializer) const override;
+		public: void CompileComputeShader(const char *shader, size_t length, SerializationHook &serializer) const override;
 
 		public: std::string GetLastCompileMessage() const override { return shaderFactory->GetCompileMessage(); }
 
