@@ -2,9 +2,11 @@
 #include "Asset.hpp"
 #include <string>
 #include <vector>
-#include "RendererAsset.hpp"
-#include "Resources/HandleWrapper.hpp"
+#include "Resources/SerializeTarget.hpp"
+#include "RendererFacade.hpp"
 
+
+namespace Renderer { class RendererFacade; }
 
 
 namespace App::Assets
@@ -44,35 +46,42 @@ namespace App::Assets
 
 
 		
-	class ShaderAsset : public assetSystem::Asset, public RendererAsset
-	{
-		private: Renderer::HandleWrapper shaderHandle;
-		
+	class ShaderAsset : public assetSystem::Asset
+	{				
 		private: std::string shaderCode;
 
 		private: std::vector<ConstantsResourceSlot> constantsSlots;
 
 		private: std::vector<TextureResourceSlot> textureSlots;
+				 
+		private: Renderer::SerializeTarget compiledCode;
 
-
+		
 		
 		public: ShaderAsset() = default;
 
 		public: ShaderAsset(const char *code) : shaderCode{ code } {}
 
-						
+
+		public: void Compile(Renderer::RendererFacade &renderer);
+		
+			private: virtual void CompileInternal(Renderer::RendererFacade &renderer, Renderer::SerializeTarget &outCode) = 0;
+		
 		public: assetSystem::io::Archive &Serialize(assetSystem::io::Archive &archive) override;
 
 			private: void SerializeResourceSlots(assetSystem::io::Archive &archive);
-		
-		public: void UploadToRenderer(Renderer::RendererFacade &renderer) override;
-
+				
+		public: void SetCode(const std::string &code) { shaderCode = code; }
 		
 		public: const char *GetCode() const { return shaderCode.c_str(); }
 
-		public: size_t GetShaderLength() const { return shaderCode.size(); }
+		public: size_t GetCodeLength() const { return shaderCode.size(); }
 
-		public: void SetCode(const std::string &code) { shaderCode = code; }
+		
+		public: const unsigned char *GetCompiledCode() const { return compiledCode.GetData(); }
+
+		public: size_t GetCompiledCodeSizeInBytes() const { return compiledCode.GetSizeInBytes(); }
+
 
 		public: void ClearResourceSlots() { constantsSlots.clear(); textureSlots.clear(); }
 		
@@ -103,6 +112,12 @@ namespace App::Assets
 			return extension.c_str();
 			
 		}
+
+		private: void CompileInternal(Renderer::RendererFacade &renderer, Renderer::SerializeTarget &outCode) override
+		{
+			renderer.CompilePixelShader(GetCode(), GetCodeLength(), outCode);
+			
+		}
 		
 	};
 
@@ -115,6 +130,12 @@ namespace App::Assets
 			return extension.c_str();
 			
 		}
+
+		private: void CompileInternal(Renderer::RendererFacade &renderer, Renderer::SerializeTarget &outCode) override
+		{
+			renderer.CompileVertexShader(GetCode(), GetCodeLength(), outCode);
+			
+		}
 		
 	};
 
@@ -125,6 +146,12 @@ namespace App::Assets
 			static const std::string extension{ std::string{"cs."} + ShaderAsset::GetAssetClassExtension() };
 
 			return extension.c_str();
+			
+		}
+
+		private: void CompileInternal(Renderer::RendererFacade &renderer, Renderer::SerializeTarget &outCode) override
+		{
+			renderer.CompileComputeShader(GetCode(), GetCodeLength(), outCode);
 			
 		}
 		

@@ -79,7 +79,7 @@ namespace App::Ui::User
 		shouldAddCbvResource{ false },
 		shouldRemoveCbvResource{ false }
 	{		
-		codeToEdit.data = std::string{editingTarget->GetCode(), editingTarget->GetShaderLength() };
+		codeToEdit.data = std::string{editingTarget->GetCode(), editingTarget->GetCodeLength() };
 		
 		auto textureSlotItems
 		{
