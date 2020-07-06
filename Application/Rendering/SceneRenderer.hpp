@@ -2,6 +2,7 @@
 #include "Math/Interface/Types/Matrix.hpp"
 
 
+namespace assetSystem { class AssetSystem; }
 namespace Renderer{ class RendererFacade; }
 
 
@@ -19,7 +20,13 @@ namespace App::Rendering
 
 		
 		
-		public: SceneRenderer(RendererMediator &mediator, const Math::VectorUint2 &surfaceDimensions);
+		public: SceneRenderer
+		(
+			RendererMediator &mediator,
+			Renderer::RendererFacade &renderer,
+			assetSystem::AssetSystem &internalShaderProvider, 
+			const Math::VectorUint2 &surfaceDimensions
+		);
 
 		public: void SubmitFrame();
 		
