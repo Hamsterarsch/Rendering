@@ -431,7 +431,7 @@ namespace Renderer::DX12
 
 
 
-	void RendererFacadeImpl::CompileVertexShader(const char *shader, size_t length, SerializationHook &serializer) const
+	bool  RendererFacadeImpl::CompileVertexShader(const char *shader, size_t length, SerializationHook &serializer) const
 	{
 		auto shaderBlob{ shaderFactory->MakeVertexShader(shader, length, "main")};
 						
@@ -442,7 +442,7 @@ namespace Renderer::DX12
 
 
 	
-	void RendererFacadeImpl::CompilePixelShader(const char *shader, size_t length, SerializationHook &serializer) const
+	bool  RendererFacadeImpl::CompilePixelShader(const char *shader, size_t length, SerializationHook &serializer) const
 	{
 		auto shaderBlob{ shaderFactory->MakePixelShader(shader, length, "main")};
 
@@ -454,7 +454,7 @@ namespace Renderer::DX12
 
 
 	
-	void RendererFacadeImpl::CompileComputeShader(const char *shader, const size_t length, SerializationHook &serializer) const
+	bool RendererFacadeImpl::CompileComputeShader(const char *shader, const size_t length, SerializationHook &serializer) const
 	{
 		auto shaderBlob{ shaderFactory->MakeComputeShader(shader, length, "main") };
 
@@ -463,7 +463,7 @@ namespace Renderer::DX12
 		
 	}
 
-	
+
 
 	void RendererFacadeImpl::SerializeRootSignature
 	(

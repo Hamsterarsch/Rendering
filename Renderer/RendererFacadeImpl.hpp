@@ -94,24 +94,30 @@ namespace Renderer::DX12
 		public: RendererFacadeImpl &operator=(const RendererFacadeImpl &) = delete;
 
 
-		public: virtual size_t MakeBuffer(const void *data, size_t sizeInBytes) override;
+		public: size_t MakeBuffer(const void *data, size_t sizeInBytes) override;
 
 			private: size_t MakeBufferInternal(const void *data, size_t sizeInBytes, size_t handle);
 		
-		public: virtual size_t MakeBuffer(const void *data, size_t sizeInBytes, D3D12_RESOURCE_STATES state) override;
+		public: size_t MakeBuffer(const void *data, size_t sizeInBytes, D3D12_RESOURCE_STATES state) override;
 
-		public: virtual size_t MakeUavBuffer(const void *data, size_t sizeInBytes) override;
+		public: size_t MakeUavBuffer(const void *data, size_t sizeInBytes) override;
 
-		public: virtual DxPtr<ID3D12Resource> MakeReadbackBuffer(size_t sizeInBytes) override;
+		public: DxPtr<ID3D12Resource> MakeReadbackBuffer(size_t sizeInBytes) override;
 
 
-		public: virtual void AddShaderIncludeDirectory(const char *absoluteDirectoryPath) override;
+		public: void AddShaderIncludeDirectory(const char *absoluteDirectoryPath) override;
 		
-		public: virtual void CompileVertexShader(const char *shader, size_t length, SerializationHook &serializer) const override;
+		public: bool CompileVertexShader(const char *shader, size_t length, SerializationHook &serializer) const override;
 
-		public: virtual void CompilePixelShader(const char *shader, size_t length, SerializationHook &serializer) const override;
+		public: bool CompilePixelShader(const char *shader, size_t length, SerializationHook &serializer) const override;
 
-		public: virtual void CompileComputeShader(const char *shader, size_t length, SerializationHook &serializer) const override;
+		public: bool CompileComputeShader(const char *shader, size_t length, SerializationHook &serializer) const override;
+
+		public: std::string GetLastCompileMessage() const override { return shaderFactory->GetCompileMessage(); }
+
+		public: bool WasCompileSuccessful() const override { return shaderFactory->WasCompileSuccessful(); }
+		
+		public: bool WasCompiledWithWarnings() const override{ return shaderFactory->WasCompiledWithWarnings(); }
 		
 
 		public: virtual void SerializeRootSignature
@@ -171,7 +177,7 @@ namespace Renderer::DX12
 		public: ResourceViewFactory &GetViewFactory() override;
 
 		public: CounterFactory &GetCounterFactory() override;
-
+						
 	};
 
 

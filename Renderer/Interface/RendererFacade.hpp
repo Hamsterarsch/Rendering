@@ -25,11 +25,17 @@ namespace Renderer
 	{
 		public: virtual void AddShaderIncludeDirectory(const char *absoluteDirectoryPath) = 0;
 		
-		public: virtual void CompileVertexShader(const char *shader, size_t length, SerializationHook &serializer) const = 0;
+		public: virtual bool CompileVertexShader(const char *shader, size_t length, SerializationHook &serializer) const = 0;
 
-		public: virtual void CompilePixelShader(const char *shader, size_t length, SerializationHook &serializer) const = 0;
+		public: virtual bool CompilePixelShader(const char *shader, size_t length, SerializationHook &serializer) const = 0;
 
-		public: virtual void CompileComputeShader(const char *shader, size_t length, SerializationHook &serializer) const = 0;
+		public: virtual bool CompileComputeShader(const char *shader, size_t length, SerializationHook &serializer) const = 0;
+
+		public: virtual std::string GetLastCompileMessage() const = 0;
+
+		public: virtual bool WasCompileSuccessful() const = 0;
+
+		public: virtual bool WasCompiledWithWarnings() const = 0;
 		
 
 		public: virtual void SerializeRootSignature
