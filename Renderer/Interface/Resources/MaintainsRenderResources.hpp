@@ -16,16 +16,16 @@ namespace Renderer
 
 		public: virtual size_t MakeRootSignature(const void *serializedData, size_t dataSizeInBytes, unsigned samplerAmount) = 0;
 					
-		public: virtual size_t MakePso(const ShaderList &shaders, size_t signatureHandle) = 0;
+		public: virtual size_t MakePso(const ShaderList &shaders, ResourceHandle::t_hash signatureHandle) = 0;
 					
-		public: virtual size_t MakePso(const Blob &csBlob, size_t signatureHandle) = 0;
+		public: virtual size_t MakePso(const Blob &csBlob, ResourceHandle::t_hash signatureHandle) = 0;
 
 		public: virtual ResourceHandle::t_hash MakeTexture(const void *data, size_t width, size_t height) = 0;
 
 		
-		public: virtual bool IsResourceValid(size_t handle) = 0;
+		public: virtual bool IsResourceValid(ResourceHandle::t_hash handle) = 0;
 					
-		public: virtual void RetireHandle(size_t handle) = 0;
+		public: virtual void RetireHandle(ResourceHandle::t_hash handle) = 0;
 		
 	};
 

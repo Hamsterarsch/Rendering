@@ -500,7 +500,7 @@ namespace Renderer::DX12
 	
 
 	
-	size_t RendererFacadeImpl::MakePso(const ShaderList &shaders, size_t signatureHandle)
+	size_t RendererFacadeImpl::MakePso(const ShaderList &shaders, ResourceHandle::t_hash signatureHandle)
 	{
 		auto pipelineState{	psoFactory.MakePso(shaders, registry.GetSignature(signatureHandle), D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE) };		
 		return registry.Register(std::move(pipelineState));
@@ -509,7 +509,7 @@ namespace Renderer::DX12
 
 
 	
-	size_t RendererFacadeImpl::MakePso(const Blob &csBlob, const size_t signatureHandle)
+	size_t RendererFacadeImpl::MakePso(const Blob &csBlob, Renderer::ResourceHandle::t_hash signatureHandle)
 	{
 		auto pipelineState{ psoFactory.MakePso(csBlob, registry.GetSignature(signatureHandle)) };
 		return registry.Register(std::move(pipelineState));
@@ -527,7 +527,7 @@ namespace Renderer::DX12
 
 
 
-	bool RendererFacadeImpl::IsResourceValid(size_t handle)
+	bool RendererFacadeImpl::IsResourceValid(ResourceHandle::t_hash handle)
 	{
 		return registry.IsHandleUnknown(handle);
 		
@@ -535,7 +535,7 @@ namespace Renderer::DX12
 
 
 	
-	void RendererFacadeImpl::RetireHandle(const size_t handle)
+	void RendererFacadeImpl::RetireHandle(ResourceHandle::t_hash handle)
 	{		
 		registry.RetireHandle(handle);
 		

@@ -129,16 +129,16 @@ namespace Renderer::DX12
 
 		public: virtual size_t MakeRootSignature(const void *serializedData, size_t dataSizeInBytes, unsigned samplerAmount) override;
 		
-		public: size_t MakePso(const ShaderList &shaders, size_t signatureHandle) override;
+		public: size_t MakePso(const ShaderList &shaders, ResourceHandle::t_hash signatureHandle) override;
 							
-		public: size_t MakePso(const Blob &csBlob, size_t signatureHandle) override;
+		public: size_t MakePso(const Blob &csBlob, Renderer::ResourceHandle::t_hash signatureHandle) override;
 
 		public: ResourceHandle::t_hash MakeTexture(const void *data, size_t width, size_t height) override;
 
 		
-		public: bool IsResourceValid(size_t handle) override;
+		public: bool IsResourceValid(ResourceHandle::t_hash handle) override;
 
-		public: void RetireHandle(size_t handle) override;
+		public: void RetireHandle(ResourceHandle::t_hash handle) override;
 
    		
 		public: ResourceHandle::t_hash MakeWindowsWindowSurface(HWND windowHandle) override;
