@@ -101,6 +101,9 @@ namespace RHA::DX12
 					lastCompileMessage.clear();
 					compileFailed = false;
 					compiledWithWarnings = false;
+
+					return;
+					
 				}
 				
 				lastCompileMessage = { reinterpret_cast<char *>(errorBlob->GetBufferPointer()), errorBlob->GetBufferSize() };
