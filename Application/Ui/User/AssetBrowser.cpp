@@ -211,8 +211,18 @@ namespace App::Ui::User
 						return;
 						
 					}
-										
-					if(auto editor{ app->GetAssetTypes().MakeAssetEditor(item.path.string().c_str(), app->GetProjectAssets().GetAsset(item.path.string().c_str())) })
+
+					auto editor
+					{
+						app->GetAssetTypes().MakeAssetEditor
+						(
+							item.path.string().c_str(),
+							app->GetUiStateMachine(),
+							app->GetProjectAssets().GetAsset(item.path.string().c_str())
+						)
+					};
+					
+					if(editor)
 					{
 						app->GetUiStateMachine().AddState(std::move(editor));
 					}					

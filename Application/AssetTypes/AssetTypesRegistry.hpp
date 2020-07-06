@@ -58,7 +58,7 @@ namespace App::Assets
 
 			AssetClassInfo
 			(
-				Core::Application &app,
+				Renderer::RendererFacade &iconTarget,
 				const assetSystem::AssetPtrTyped<ImageAsset> &icon,
 				const char *displayName,
 				const char *extension,
@@ -69,8 +69,6 @@ namespace App::Assets
 										
 		};
 
-		Core::Application *app;
-		
 		std::unordered_map<std::string, size_t> assetClassMap;
 
 		std::vector<AssetClassInfo> assetClassInfos;
@@ -81,22 +79,30 @@ namespace App::Assets
 
 		static const std::unordered_set<std::string> typesNotCreatableByUser;
 
+				
 		
+		public: AssetTypesRegistry
+		(
+			assetSystem::AssetSystem &addTargetAndIconSource,			
+			Renderer::RendererFacade &iconUploadTarget
+		);
 		
-		
-		public: AssetTypesRegistry() : app{ nullptr }, showAllTypes{ false } {}
-		
-		public: AssetTypesRegistry(Core::Application &app, bool showAllTypes);
+		public: static void RegisterAssetTypesWith(assetSystem::AssetSystem &asys);
 
+				private: template<class t_asset> static void RegisterAsset(assetSystem::AssetSystem &registerTarget);
+		
 			private: template<class t_asset> void AddAssetInfo
 			(
-				Core::Application &app,
+				assetSystem::AssetSystem &iconSource,
+				Renderer::RendererFacade &iconUploadTarget,
 				const char *displayName,
 				const char *iconImageAssetPath,
 				AssetClassInfo::EditorProvider &&assetEditor,
 				AssetClassInfo::ImportProvider &&importDialog = {}
 			);
 
+
+		public: void SetShouldShowAllTypes(bool value) { showAllTypes = value; }
 		
 		public: size_t GetNumberAssetTypes() const { return assetClassInfos.size(); }
 
@@ -115,12 +121,17 @@ namespace App::Assets
 		public: const char *GetAssetClassExtension(size_t index) const;
 		
 
-		public: UniquePtr<Ui::States::UiState> MakeAssetEditor(const char *assetAbsolutePath, const assetSystem::AssetPtr &assetToEdit) const;
+		public: UniquePtr<Ui::States::UiState> MakeAssetEditor
+		(
+			const char *assetAbsolutePath,
+			Ui::UiStateMachine &stateEditorParent,
+			const assetSystem::AssetPtr &assetToEdit
+		) const;
 
 		public: Core::ImageView GetAssetIcon(const char *classExtension) const;
 
 		public: bool IsHiddenAssetType(const char *classExtension) const;
-				
+							   				
 	};
 
 	
