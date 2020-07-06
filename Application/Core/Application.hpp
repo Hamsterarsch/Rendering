@@ -1,4 +1,6 @@
 #pragma once
+#include "Shared/InterfaceHelpers.hpp"
+#include "Shared/PtrTypes.hpp"
 
 
 namespace assetSystem{ class AssetSystem; }
