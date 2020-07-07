@@ -54,6 +54,8 @@ namespace Renderer::DX12
 				 			
 		private: UniquePtr<ResourceFactory> resourceFactory;
 		
+		private: DescriptorMemory descriptors;
+		
 		private: ResourceRegistry registry;
 
 		private: BlendSettingsImpl blendSettings;
@@ -71,8 +73,7 @@ namespace Renderer::DX12
 		private: RootSignatureFactory signatureFactory;
 		
 		private: UniquePtr<ShaderFactory> shaderFactory;
-			
-		private: DescriptorMemory descriptors;
+		
 
 		private: CounterFactoryImpl counterFactory;
 		

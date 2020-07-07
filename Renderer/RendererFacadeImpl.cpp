@@ -57,10 +57,10 @@ namespace Renderer::DX12
 				)
 			)
 		},
+		descriptors{ resources.get(), 524'288, 512 },		
 		psoFactory{ resources.get(), depthStencilSettings, blendSettings, rasterizerSettings, vertexLayoutSettings },
 		signatureFactory{ resources.get(), signatureSettings },
 		shaderFactory{ Facade::MakeShaderFactory(5, 1) },
-		descriptors{ resources.get(), 524'288, 512 },		
 		commandProcessor{ *resources, *commonQueue, registry, counterFactory },
 		resourceViewFactory{ registry, descriptors }
 	{							
