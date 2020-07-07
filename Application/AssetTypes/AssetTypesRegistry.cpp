@@ -82,7 +82,7 @@ namespace App::Assets
 		static const char *fileIconPath{ "Images/Icons/FileIcon.img" };
 		AddAssetInfo<ProjectAsset>(addTargetAndIconSource, iconUploadTarget,		"Project Asset", fileIconPath, {});		
 		AddAssetInfo<PixelShaderAsset>(addTargetAndIconSource, iconUploadTarget,	"Pixel Shader Asset", fileIconPath, MakeUnique<PrototypeEditor<Ui::User::ShaderEditorFrontend>>());
-		AddAssetInfo<VertexShaderAsset>(addTargetAndIconSource, iconUploadTarget,	"Pixel Shader Asset", fileIconPath, MakeUnique<PrototypeEditor<Ui::User::ShaderEditorFrontend>>());
+		AddAssetInfo<VertexShaderAsset>(addTargetAndIconSource, iconUploadTarget,	"Vertex Shader Asset", fileIconPath, MakeUnique<PrototypeEditor<Ui::User::ShaderEditorFrontend>>());
 		AddAssetInfo<ComputeShaderAsset>(addTargetAndIconSource, iconUploadTarget,	"Compute Shader Asset", fileIconPath, MakeUnique<PrototypeEditor<Ui::User::ShaderEditorFrontend>>());
 		
 	}
