@@ -7,6 +7,7 @@
 #include "AssetFileending.hpp"
 #include "Ui/User/ShaderEditor.hpp"
 #include "CacheAsset.hpp"
+#include "Core/AssetPathUtility.hpp"
 
 
 
@@ -195,9 +196,10 @@ namespace App::Assets
 	UniquePtr<Ui::States::UiState> AssetTypesRegistry::MakeAssetEditor(const char *assetAbsolutePath, Ui::UiStateMachine &stateEditorParent, const assetSystem::AssetPtr &assetToEdit) const
 	{
 		std::filesystem::path path{ assetAbsolutePath };		
-		auto assetClass{ path.replace_extension("").extension().string().erase(0, 1) };
-				
-		auto assetName{ path.filename().replace_extension().string() };
+		const auto assetClass{ Core::GetAssetClassExtensionFromFilename(path.filename().string()) };
+
+		
+		auto assetName{ Core::RemoveAllAssetExtensionsFromFilename(path.filename().string()) };
 
 		const auto &provider{ assetClassInfos.at(assetClassMap.at(assetClass)).assetEditor };
 		if(provider)

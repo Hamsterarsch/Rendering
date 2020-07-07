@@ -15,7 +15,7 @@
 #include "Ui/Elements/FloatLayout.hpp"
 #include "Ui/States/UiSimpleState.hpp"
 #include "AssetCreationDialog.hpp"
-
+#include "Core/AssetPathUtility.hpp"
 
 
 namespace App::Ui::User
@@ -89,25 +89,15 @@ namespace App::Ui::User
 				else if(entry.is_regular_file() && absolutePath.extension() == assetSystem::GetAssetFileending())
 				{
 					itemList.emplace_back(absolutePath);				
-					auto nameWithAssetExtension{ itemList.back().path.filename().replace_extension("") };
-
-					auto assetExtension{ nameWithAssetExtension.string() };
-					const auto extensionPos{ assetExtension.find_first_of('.')};
-					assetExtension.erase(0, extensionPos+1);					
+					const auto assetExtension{ App::Core::GetAssetClassExtensionFromFilename(itemList.back().path.filename().string()) };
 					
 					if(app->GetAssetTypes().IsHiddenAssetType(assetExtension.c_str()))
 					{
 						return;
 						
 					}
-
-					nameWithAssetExtension.replace_extension("");
-					while(not nameWithAssetExtension.extension().empty())
-					{
-						nameWithAssetExtension.replace_extension("");
-					}
-					
-					displayName = nameWithAssetExtension.string();
+															
+					displayName = App::Core::RemoveAllAssetExtensionsFromFilename(itemList.back().path.filename().string());
 					icon = app->GetAssetTypes().GetAssetIcon(assetExtension.c_str());
 				}
 				else
