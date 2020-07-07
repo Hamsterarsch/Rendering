@@ -326,6 +326,9 @@
     <ClInclude Include="Commands\Basic\SetConstantsToGraphicsCommand.hpp">
       <Filter>Commands\Basic</Filter>
     </ClInclude>
+    <ClInclude Include="StateSettings\StateImpl.hpp">
+      <Filter>StateSettings</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />

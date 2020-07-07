@@ -11,34 +11,10 @@ namespace Renderer::DX12
 	}
 
 
-	
-	void RasterizerSettingsImpl::ResetToDefault()
-	{
-		current = saved = State{};
-		
-	}
-
-
-	
-	void RasterizerSettingsImpl::SaveSettings()
-	{
-		saved = current;
-		
-	}
-
-
-	
-	void RasterizerSettingsImpl::RestoreSettings()
-	{
-		current = saved;
-		
-	}
-
-
 		
 	RasterizerSettings &RasterizerSettingsImpl::SetFillModeSolid()
 	{
-		current.fillMode = D3D12_FILL_MODE_SOLID;
+		state.current.fillMode = D3D12_FILL_MODE_SOLID;
 		
 		return *this;
 
@@ -48,7 +24,7 @@ namespace Renderer::DX12
 	
 	RasterizerSettings &RasterizerSettingsImpl::SetFillModeWireframe()
 	{
-		current.fillMode = D3D12_FILL_MODE_WIREFRAME;
+		state.current.fillMode = D3D12_FILL_MODE_WIREFRAME;
 		
 		return *this;
 
@@ -58,7 +34,7 @@ namespace Renderer::DX12
 	
 	RasterizerSettings &RasterizerSettingsImpl::SetFrontIsCounterClockwise(const bool value)
 	{
-		current.frontIsCounterClockwise = value;
+		state.current.frontIsCounterClockwise = value;
 		
 		return *this;
 
@@ -68,7 +44,7 @@ namespace Renderer::DX12
 	
 	RasterizerSettings &RasterizerSettingsImpl::SetFrontfaceCulling()
 	{
-		current.cullMode = D3D12_CULL_MODE_FRONT;
+		state.current.cullMode = D3D12_CULL_MODE_FRONT;
 		
 		return *this;
 
@@ -78,7 +54,7 @@ namespace Renderer::DX12
 	
 	RasterizerSettings &RasterizerSettingsImpl::SetBackfaceCulling()
 	{
-		current.cullMode = D3D12_CULL_MODE_BACK;
+		state.current.cullMode = D3D12_CULL_MODE_BACK;
 		
 		return *this;
 
@@ -88,7 +64,7 @@ namespace Renderer::DX12
 	
 	RasterizerSettings &RasterizerSettingsImpl::SetNoCulling()
 	{
-		current.cullMode = D3D12_CULL_MODE_NONE;
+		state.current.cullMode = D3D12_CULL_MODE_NONE;
 		
 		return *this;
 
@@ -100,9 +76,9 @@ namespace Renderer::DX12
 	{
 		D3D12_RASTERIZER_DESC desc{};
 
-		desc.FillMode = current.fillMode;
-		desc.FrontCounterClockwise = current.frontIsCounterClockwise;
-		desc.CullMode = current.cullMode;
+		desc.FillMode = state.current.fillMode;
+		desc.FrontCounterClockwise = state.current.frontIsCounterClockwise;
+		desc.CullMode = state.current.cullMode;
 
 		desc.DepthClipEnable = true;
 

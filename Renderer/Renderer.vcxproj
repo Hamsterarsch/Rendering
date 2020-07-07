@@ -392,6 +392,7 @@
     <ClInclude Include="StateSettings\RasterizerSettingsImpl.hpp" />
     <ClInclude Include="StateSettings\RootSignatureSettingsImpl.hpp" />
     <ClInclude Include="StateSettings\SemanticTargetsImpl.hpp" />
+    <ClInclude Include="StateSettings\StateImpl.hpp" />
     <ClInclude Include="StateSettings\TargetHelpers.hpp" />
     <ClInclude Include="StateSettings\VertexLayoutSettingsImpl.hpp" />
     <ClInclude Include="targetver.h" />

@@ -9,13 +9,15 @@ namespace Renderer
 		DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(StateSettings)
 
 
-		public: virtual void ResetToDefault() = 0;
+		public: virtual void ResetAllToDefault() = 0;
 
 		public: virtual void SaveSettings() = 0;
 
-		public: virtual void RestoreSettings() = 0;
+		public: virtual void RestoreSettingsToSaved() = 0;
+
+		public: virtual void RestoreSettingsToDefault() = 0;
 		
 	};
-	
+		
 	
 }

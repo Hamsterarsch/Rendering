@@ -4,31 +4,7 @@
 
 
 namespace Renderer::DX12
-{
-	void VertexLayoutSettingsImpl::ResetToDefault()
-	{
-		current = saved = State{};
-		
-	}
-
-
-	
-	void VertexLayoutSettingsImpl::SaveSettings()
-	{
-		saved = current;
-		
-	}
-
-
-	
-	void VertexLayoutSettingsImpl::RestoreSettings()
-	{
-		current = saved;
-		
-	}
-
-
-	
+{	
 	VertexLayoutSettings &VertexLayoutSettingsImpl::AddLayoutElementDesc
 	(
 		const Semantic semantic,
@@ -40,7 +16,7 @@ namespace Renderer::DX12
 		auto *semanticValue{ reinterpret_cast<const char *>((SemanticTargetsImpl::Get().*semantic)()) };
 		auto *formatValue{ reinterpret_cast<const DXGI_FORMAT *>((FormatTargetsImpl::Get().*format)()) };
 
-		current.elements.emplace_back( D3D12_INPUT_ELEMENT_DESC
+		state.current.elements.emplace_back( D3D12_INPUT_ELEMENT_DESC
 		{
 			semanticValue,
 			semanticIndex,
@@ -60,8 +36,8 @@ namespace Renderer::DX12
 	D3D12_INPUT_LAYOUT_DESC VertexLayoutSettingsImpl::GetLayoutDesc() const
 	{
 		D3D12_INPUT_LAYOUT_DESC desc{};
-		desc.pInputElementDescs = current.elements.data();
-		desc.NumElements = current.elements.size();
+		desc.pInputElementDescs = state.current.elements.data();
+		desc.NumElements = state.current.elements.size();
 
 		return desc;
 		
