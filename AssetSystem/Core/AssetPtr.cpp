@@ -68,8 +68,7 @@ namespace assetSystem
 			
 		}
 
-		const auto pointToDifferentAssets{ this->key != rhs.key };
-		if(!this->IsInvalid() && pointToDifferentAssets)
+		if(not this->IsInvalid())
 		{
 			assetSystem->RemoveReference(key);
 		}
@@ -78,7 +77,7 @@ namespace assetSystem
 		key = rhs.key;
 		assetSystem = rhs.assetSystem;
 
-		if(!this->IsInvalid() && pointToDifferentAssets)
+		if(not this->IsInvalid())
 		{
 			assetSystem->AddReference(key);			
 		}
