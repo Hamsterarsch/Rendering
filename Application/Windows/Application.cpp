@@ -95,6 +95,7 @@ namespace App::Windows
 	{
 		projectAssets = std::move(assets);
 		assetTypesRegistry.RegisterAssetTypesWith(*projectAssets);
+		assetTypesRegistry.SetShouldShowAllTypes(programAssets->IsSameRootAssetPath(projectAssets->GetAbsoluteRootAssetPath().c_str()));
 				
 	}
 
