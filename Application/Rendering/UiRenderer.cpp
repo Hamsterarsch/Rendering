@@ -34,7 +34,8 @@ namespace App::Rendering
 		void UiRenderer::CreateUiSignature(RendererFacade &renderer)
 		{
 			static_assert(sizeof(float) == 4);
-		
+
+			renderer.GetSignatureSettings().RestoreSettingsToSaved();
 			renderer.GetSignatureSettings()			
 			.DeclareTable().AddTableRange(&DescriptorTargets::ConstantBuffer, 0, 1)
 			.DeclareTable().AddTableRange(&DescriptorTargets::ShaderResource, 0, 1);
