@@ -22,9 +22,11 @@ namespace App::Rendering
 	)	:
 		mediator{ &mediator },
 		projection{ Math::Matrix::MakeProjection(Math::Radians(90), surfaceDimensions.x, surfaceDimensions.y, 100, 50'000) },
-		createVolumeTileGridPipeline{ MakeVolumeTileGridCreationPipeline(internalShaderProvider, renderer) },
-		markActiveVolumeTilesPipeline{ MakeMarkActiveVolumeTilesPipeline(internalShaderProvider, renderer) }
+		pipelineCreateVolumeTileGrid{ MakeVolumeTileGridCreationPipeline(internalShaderProvider, renderer) },
+		pipelineMarkActiveVolumeTiles{ MakeMarkActiveVolumeTilesPipeline(internalShaderProvider, renderer) },
+		pipelineBuildActiveVolumeTileList{ MakeBuildActiveVolumeTileListPipeline(internalShaderProvider, renderer) }
 	{
+		
 	}
 
 		PipelineData SceneRenderer::MakeVolumeTileGridCreationPipeline(assetSystem::AssetSystem &shaderProvider, Renderer::RendererFacade &renderer)
@@ -102,9 +104,33 @@ namespace App::Rendering
 		
 		}
 
-		PipelineData SceneRenderer::BuildActiveVolumeTileListPipeline(assetSystem::AssetSystem &shaderProvider, Renderer::RendererFacade &renderer)
+		PipelineData SceneRenderer::MakeBuildActiveVolumeTileListPipeline(assetSystem::AssetSystem &shaderProvider, Renderer::RendererFacade &renderer)
 		{
-			return {};
+			assetSystem::AssetPtrTyped<Assets::ShaderAsset> csBuildActiveTileList{ shaderProvider.GetAsset("Shaders/BuildActiveTileList.cs.shdr") };		
+			csBuildActiveTileList->Compile(renderer);
+			if(not renderer.WasCompileSuccessful())
+			{
+				Exception::DebugBreak();
+			}					
+
+		
+			auto &settings{ renderer.GetSignatureSettings() };
+			settings
+			.DeclareTable()
+			.AddTableRange(&Renderer::DescriptorTargets::ConstantBuffer, 0, 1)
+			.AddTableRange(&Renderer::DescriptorTargets::ShaderResource, 0, 1)
+			.AddTableRange(&Renderer::DescriptorTargets::UnorderedAccess, 0, 1);
+		
+			PipelineData out;		
+			Renderer::SerializeTarget rootData;
+			renderer.SerializeRootSignature(rootData, nullptr, 0);
+			out.signature = { &renderer, renderer.MakeRootSignature(rootData.GetData(), rootData.GetSizeInBytes(), 0) };
+			settings.RestoreSettingsToSaved();		
+					
+			out.pso = { &renderer, renderer.MakePso(Renderer::Blob{csBuildActiveTileList->GetCompiledCode(), csBuildActiveTileList->GetCompiledCodeSizeInBytes()}, out.signature) };
+					
+			return out;
+		
 		}
 
 
