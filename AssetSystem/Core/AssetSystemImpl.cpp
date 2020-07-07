@@ -47,6 +47,8 @@ namespace assetSystem::core
 
 		asset.Serialize(writer);
 
+		registry.AddReference(key);
+		
 		return AssetPtr{ asset, key, *this };
 		
 	}
