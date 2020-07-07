@@ -22,11 +22,12 @@ namespace App::Rendering
 	)	:
 		mediator{ &mediator },
 		projection{ Math::Matrix::MakeProjection(Math::Radians(90), surfaceDimensions.x, surfaceDimensions.y, 100, 50'000) },
-		createVolumeTileGridPipeline{ MakePsoVolumeTileGridCreationPipeline(internalShaderProvider, renderer) }
-	{		
+		createVolumeTileGridPipeline{ MakeVolumeTileGridCreationPipeline(internalShaderProvider, renderer) }
+	{
+		MakeVolumeTileGridTileMarkingPipeline(internalShaderProvider, renderer);
 	}
 
-		PipelineData SceneRenderer::MakePsoVolumeTileGridCreationPipeline(assetSystem::AssetSystem &shaderProvider, Renderer::RendererFacade &renderer)
+		PipelineData SceneRenderer::MakeVolumeTileGridCreationPipeline(assetSystem::AssetSystem &shaderProvider, Renderer::RendererFacade &renderer)
 		{						
 			assetSystem::AssetPtrTyped<Assets::ShaderAsset> csCreateVolumeTileGrid{ shaderProvider.GetAsset("Shaders/CreateVolumeTileGrid.cs.shdr") };		
 			csCreateVolumeTileGrid->Compile(renderer);
@@ -50,9 +51,55 @@ namespace App::Rendering
 
 		
 			out.pso = { &renderer, renderer.MakePso(Renderer::Blob{csCreateVolumeTileGrid->GetCompiledCode(), csCreateVolumeTileGrid->GetCompiledCodeSizeInBytes()}, out.signature) };
-		
+					
 			return out;
-			
+		
+		}
+
+		PipelineData SceneRenderer::MakeVolumeTileGridTileMarkingPipeline(assetSystem::AssetSystem &shaderProvider, Renderer::RendererFacade &renderer)
+		{
+			assetSystem::AssetPtrTyped<Assets::ShaderAsset>
+				vsInstancing{ shaderProvider.GetAsset("Shaders/InstancedVertex.vs.shdr") },
+				psMarkVolumeTiles{ shaderProvider.GetAsset("Shaders/MarkActiveVolumeTiles.ps.shdr") };
+
+			vsInstancing->Compile(renderer);
+			if(not renderer.WasCompileSuccessful())
+			{
+				Exception::DebugBreak();
+			}
+
+			psMarkVolumeTiles->Compile(renderer);
+			if(not renderer.WasCompileSuccessful())
+			{
+				Exception::DebugBreak();
+			}
+
+
+			auto &settings{ renderer.GetSignatureSettings() };			
+			settings
+			.DeclareTable()
+			.AddTableRange(&Renderer::DescriptorTargets::ConstantBuffer, 0, 3)
+			.AddTableRange(&Renderer::DescriptorTargets::UnorderedAccess, 1, 1);
+								
+			PipelineData out;		
+			Renderer::SerializeTarget rootData;
+			renderer.SerializeRootSignature(rootData, nullptr, 0);
+			out.signature = { &renderer, renderer.MakeRootSignature(rootData.GetData(), rootData.GetSizeInBytes(), 0) };
+			settings.RestoreSettingsToSaved();		
+
+		
+			renderer.GetVertexLayoutSettings()
+			.AddLayoutElementDesc(&Renderer::SemanticTargets::TargetPosition, 0, &Renderer::FormatTargets::R32G32B32_Float, sizeof(float)*3);
+		
+			Renderer::ShaderList shaders;
+			shaders.vs = {vsInstancing->GetCompiledCode(), vsInstancing->GetCompiledCodeSizeInBytes() };
+			shaders.ps = { psMarkVolumeTiles->GetCompiledCode(), psMarkVolumeTiles->GetCompiledCodeSizeInBytes() };
+		
+			out.pso = { &renderer, renderer.MakePso(shaders, out.signature) };
+			renderer.GetVertexLayoutSettings().RestoreSettingsToDefault();
+
+			return out;		
+		
 		}
 
 

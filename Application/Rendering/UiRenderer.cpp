@@ -91,7 +91,6 @@ namespace App::Rendering
 			renderer.GetRasterizerSettings()
 			.SetFrontIsCounterClockwise(false);
 
-		
 			renderer.GetVertexLayoutSettings()
 			.AddLayoutElementDesc(&SemanticTargets::TargetPosition, 0, &FormatTargets::R32G32_Float, (UINT)IM_OFFSETOF(ImDrawVert, pos))
 			.AddLayoutElementDesc(&SemanticTargets::TargetTexcoord, 0, &FormatTargets::R32G32_Float, (UINT)IM_OFFSETOF(ImDrawVert, uv))
@@ -109,6 +108,10 @@ namespace App::Rendering
 		
 		
 			uiPso = { &renderer, renderer.MakePso(list, uiSignature) };
+			renderer.GetVertexLayoutSettings().RestoreSettingsToSaved();
+			renderer.GetDepthStencilSettings().RestoreSettingsToSaved();
+			renderer.GetBlendSettings().RestoreSettingsToSaved();
+			renderer.GetRasterizerSettings().RestoreSettingsToSaved();
 		
 		}
 

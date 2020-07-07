@@ -36,7 +36,9 @@ namespace App::Rendering
 			const Math::VectorUint2 &surfaceDimensions
 		);
 
-			private: static PipelineData MakePsoVolumeTileGridCreationPipeline(assetSystem::AssetSystem &shaderProvider, Renderer::RendererFacade &renderer);
+			private: static PipelineData MakeVolumeTileGridCreationPipeline(assetSystem::AssetSystem &shaderProvider, Renderer::RendererFacade &renderer);
+
+			private: static PipelineData MakeVolumeTileGridTileMarkingPipeline(assetSystem::AssetSystem &shaderProvider, Renderer::RendererFacade &renderer);
 		
 		
 		public: void SubmitFrame();
