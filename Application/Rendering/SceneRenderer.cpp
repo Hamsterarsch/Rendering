@@ -22,9 +22,9 @@ namespace App::Rendering
 	)	:
 		mediator{ &mediator },
 		projection{ Math::Matrix::MakeProjection(Math::Radians(90), surfaceDimensions.x, surfaceDimensions.y, 100, 50'000) },
-		createVolumeTileGridPipeline{ MakeVolumeTileGridCreationPipeline(internalShaderProvider, renderer) }
+		createVolumeTileGridPipeline{ MakeVolumeTileGridCreationPipeline(internalShaderProvider, renderer) },
+		markActiveVolumeTilesPipeline{ MakeMarkActiveVolumeTilesPipeline(internalShaderProvider, renderer) }
 	{
-		MakeVolumeTileGridTileMarkingPipeline(internalShaderProvider, renderer);
 	}
 
 		PipelineData SceneRenderer::MakeVolumeTileGridCreationPipeline(assetSystem::AssetSystem &shaderProvider, Renderer::RendererFacade &renderer)
@@ -38,7 +38,6 @@ namespace App::Rendering
 
 		
 			auto &settings{ renderer.GetSignatureSettings() };
-			settings.RestoreSettingsToSaved();		
 			settings
 			.DeclareTable()
 			.AddTableRange(&Renderer::DescriptorTargets::ConstantBuffer, 0, 1)
@@ -48,6 +47,7 @@ namespace App::Rendering
 			Renderer::SerializeTarget rootData;
 			renderer.SerializeRootSignature(rootData, nullptr, 0);
 			out.signature = { &renderer, renderer.MakeRootSignature(rootData.GetData(), rootData.GetSizeInBytes(), 0) };
+			settings.RestoreSettingsToSaved();		
 
 		
 			out.pso = { &renderer, renderer.MakePso(Renderer::Blob{csCreateVolumeTileGrid->GetCompiledCode(), csCreateVolumeTileGrid->GetCompiledCodeSizeInBytes()}, out.signature) };
@@ -56,7 +56,7 @@ namespace App::Rendering
 		
 		}
 
-		PipelineData SceneRenderer::MakeVolumeTileGridTileMarkingPipeline(assetSystem::AssetSystem &shaderProvider, Renderer::RendererFacade &renderer)
+		PipelineData SceneRenderer::MakeMarkActiveVolumeTilesPipeline(assetSystem::AssetSystem &shaderProvider, Renderer::RendererFacade &renderer)
 		{
 			assetSystem::AssetPtrTyped<Assets::ShaderAsset>
 				vsInstancing{ shaderProvider.GetAsset("Shaders/InstancedVertex.vs.shdr") },
@@ -100,6 +100,11 @@ namespace App::Rendering
 
 			return out;		
 		
+		}
+
+		PipelineData SceneRenderer::BuildActiveVolumeTileListPipeline(assetSystem::AssetSystem &shaderProvider, Renderer::RendererFacade &renderer)
+		{
+			return {};
 		}
 
 

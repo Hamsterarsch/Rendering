@@ -26,6 +26,8 @@ namespace App::Rendering
 		private: Math::Matrix view;
 
 		private: PipelineData createVolumeTileGridPipeline;
+
+		private: PipelineData markActiveVolumeTilesPipeline;
 		
 		
 		public: SceneRenderer
@@ -38,7 +40,9 @@ namespace App::Rendering
 
 			private: static PipelineData MakeVolumeTileGridCreationPipeline(assetSystem::AssetSystem &shaderProvider, Renderer::RendererFacade &renderer);
 
-			private: static PipelineData MakeVolumeTileGridTileMarkingPipeline(assetSystem::AssetSystem &shaderProvider, Renderer::RendererFacade &renderer);
+			private: static PipelineData MakeMarkActiveVolumeTilesPipeline(assetSystem::AssetSystem &shaderProvider, Renderer::RendererFacade &renderer);
+
+			private: static PipelineData BuildActiveVolumeTileListPipeline(assetSystem::AssetSystem &shaderProvider, Renderer::RendererFacade &renderer);
 		
 		
 		public: void SubmitFrame();
