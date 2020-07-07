@@ -90,8 +90,10 @@ namespace App::Ui::User
 				{
 					itemList.emplace_back(absolutePath);				
 					auto nameWithAssetExtension{ itemList.back().path.filename().replace_extension("") };
-					auto assetExtension{ nameWithAssetExtension.extension().string() };
-					assetExtension.erase(0, 1);
+
+					auto assetExtension{ nameWithAssetExtension.string() };
+					const auto extensionPos{ assetExtension.find_first_of('.')};
+					assetExtension.erase(0, extensionPos+1);					
 					
 					if(app->GetAssetTypes().IsHiddenAssetType(assetExtension.c_str()))
 					{
