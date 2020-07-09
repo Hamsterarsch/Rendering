@@ -21,7 +21,7 @@ namespace App::Rendering
 			gridData.screenDimensions.y / approximateTileDimensions.y,
 			Math::Log(gridData.farDistance/gridData.nearDistance) / Math::Log(1+fovTermForDepthCompute) +1
 		},
-	boundingBoxes(gridsize.x * gridsize.y * gridsize.z, Math::BoundingBox{})				
+	boundingBoxes(gridsize.x * gridsize.y * gridsize.z, RenderingBoundingBox{})				
 	{
 		gridData.outFovTermForTileGridDepthCompute = fovTermForDepthCompute;
 		gridData.outGridDimensions = gridsize;
@@ -30,7 +30,7 @@ namespace App::Rendering
 
 
 	
-	Math::BoundingBox &VolumeTileGrid::GetTile(const unsigned x, const unsigned y,  const unsigned z)
+	RenderingBoundingBox &VolumeTileGrid::GetTile(const unsigned x, const unsigned y,  const unsigned z)
 	{
 		return boundingBoxes[ gridsize.x + y*gridsize.x + z*gridsize.x*gridsize.y ];
 			

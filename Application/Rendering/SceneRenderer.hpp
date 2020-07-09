@@ -1,6 +1,10 @@
 #pragma once
 #include "Math/Interface/Types/Matrix.hpp"
 #include "Resources/HandleWrapper.hpp"
+#include "Shared/PtrTypes.hpp"
+
+//use frwd decl
+#include "Commands/CommandFactory.hpp"
 
 
 namespace assetSystem { class AssetSystem; }
@@ -31,9 +35,15 @@ namespace App::Rendering
 
 		private: PipelineData pipelineBuildActiveVolumeTileList;
 
-		private: PipelineData pipelineAssignLightsToTiles;;
-		
-		
+		private: PipelineData pipelineAssignLightsToTiles;
+
+		private: UniquePtr<Renderer::Commands::CommandFactory> commandFactory;
+
+		private: Renderer::HandleWrapper gridDataBuffer;
+
+		private: Renderer::HandleWrapper gridBoundingBoxBuffer;
+				 		
+				
 		public: SceneRenderer
 		(
 			RendererMediator &mediator,

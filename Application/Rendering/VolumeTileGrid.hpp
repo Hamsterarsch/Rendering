@@ -31,7 +31,7 @@ namespace App::Rendering
 		public: size_t GetTileCount() const { return boundingBoxes.size(); }
 
 		
-		public: Math::BoundingBox &GetTile(unsigned x, unsigned y, unsigned z);
+		public: RenderingBoundingBox &GetTile(unsigned x, unsigned y, unsigned z);
 		
 	};
 

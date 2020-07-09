@@ -4,15 +4,12 @@
 #include "AssetTypes/ShaderAsset.hpp"
 #include "Shared/Debugging.hpp"
 #include "AssetSystem.hpp"
+#include "VolumeTileGrid.hpp"
+#include "Commands/CompositeCommand.hpp"
 
 
 namespace App::Rendering
-{
-	
-	
-
-	
-	
+{	
 	SceneRenderer::SceneRenderer
 	(
 		RendererMediator &mediator,
@@ -21,12 +18,52 @@ namespace App::Rendering
 		const Math::VectorUint2 &surfaceDimensions
 	)	:
 		mediator{ &mediator },
-		projection{ Math::Matrix::MakeProjection(Math::Radians(90), surfaceDimensions.x, surfaceDimensions.y, 100, 50'000) },
+		projection{},
 		pipelineCreateVolumeTileGrid{ MakeVolumeTileGridCreationPipeline(internalShaderProvider, renderer) },
 		pipelineMarkActiveVolumeTiles{ MakeMarkActiveVolumeTilesPipeline(internalShaderProvider, renderer) },
 		pipelineBuildActiveVolumeTileList{ MakeBuildActiveVolumeTileListPipeline(internalShaderProvider, renderer) },
-		pipelineAssignLightsToTiles{ MakeAssignLightsToTilesPipeline(internalShaderProvider, renderer) }
+		pipelineAssignLightsToTiles{ MakeAssignLightsToTilesPipeline(internalShaderProvider, renderer) },
+		commandFactory{ renderer.MakeCommandFactory() }
 	{		
+		VolumeTileGridData gridData{};
+		gridData.nearDistance = 100;
+		gridData.farDistance = 50'000;
+		gridData.screenDimensions = surfaceDimensions;
+		
+		projection = Math::Matrix::MakeProjection(Math::Radians(90), surfaceDimensions.x, surfaceDimensions.y, gridData.nearDistance, gridData.farDistance);
+		gridData.inverseProjection = projection.Inverse();
+		
+		VolumeTileGrid grid{ {64, 64}, 90.f, gridData };
+		gridDataBuffer = { &renderer, renderer.MakeBuffer(&gridData, sizeof gridData) };
+		gridBoundingBoxBuffer = { &renderer, renderer.MakeUavBuffer(nullptr, grid.SizeInBytes()) };
+
+		Renderer::HandleWrapper view
+		{
+			&renderer,
+			renderer.GetViewFactory()
+			.DeclareSpecificDescriptorBlock(pipelineCreateVolumeTileGrid.signature, 0, 2, 0)
+			.DeclareOrdinal(1).CreateConstantBufferView(gridDataBuffer, sizeof gridData)
+			.DeclareOrdinal(1).CreateUnorderedAccessView(gridBoundingBoxBuffer, 0, grid.GetTileCount(), grid.GetTileStride())
+			.FinalizeDescriptorBlock()
+		};
+
+		auto createGridCommand{ MakeUnique<Renderer::Commands::CompositeCommand>() };
+		createGridCommand->Add(commandFactory->SetSignatureCompute(pipelineCreateVolumeTileGrid.signature));
+		createGridCommand->Add(commandFactory->SetPipelineState(pipelineCreateVolumeTileGrid.pso));
+		createGridCommand->Add(commandFactory->SetDescriptorBlockViewsAsComputeTable(view, 0));
+		createGridCommand->Add(commandFactory->Dispatch
+		(
+			std::ceil(gridData.outGridDimensions.x / 4.f),
+			std::ceil(gridData.outGridDimensions.y / 4.f),
+			std::ceil(gridData.outGridDimensions.z / 4.f)
+		));
+
+		renderer.SubmitCommand(std::move(createGridCommand));
+		
+		auto counter{ renderer.GetCounterFactory().MakeCounter(0) };
+		renderer.SubmitCommand(commandFactory->IncreaseCounter(counter, 1));
+		renderer.GetCounterFactory().WaitForCounterToReach(counter, 1);
+				
 	}
 
 		PipelineData SceneRenderer::MakeVolumeTileGridCreationPipeline(assetSystem::AssetSystem &shaderProvider, Renderer::RendererFacade &renderer)

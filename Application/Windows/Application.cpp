@@ -65,7 +65,7 @@ namespace App::Windows
 			rendererMediator
 			{			
 				*renderer,
-				{ rendererMediator, *renderer, *programAssets, {1,1} },
+				{ rendererMediator, *renderer, *programAssets, {1280, 720} },
 				{ rendererMediator, *renderer }
 			},
 			ui{ *this }
@@ -75,7 +75,7 @@ namespace App::Windows
 			renderer->AddShaderIncludeDirectory(includePath.string().c_str());
 					
 			rendererMediator.SetMainWindowSurface(mainWindowSurface);
-
+			
 			Assets::UserPixelShaderAsset::SetPixelShaderTemplate(programAssets->GetAsset("Shaders/LightingShaderTemplate.ps.shdr"));
 		
 		}
