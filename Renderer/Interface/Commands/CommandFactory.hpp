@@ -22,24 +22,18 @@ namespace Renderer::Commands
 		public: virtual UniquePtr<Command> ClearSurface(ResourceHandle::t_hash surface) = 0;
 
 		public: virtual UniquePtr<Command> BindSurface() = 0;
-
-		
-		public: virtual UniquePtr<Command> BindPsoToGraphics(ResourceHandle::t_hash pso) = 0;
-
-		public: virtual UniquePtr<Command> BindSignatureToGraphics(ResourceHandle::t_hash signature) = 0;
-
-		
-		public: virtual UniquePtr<Command> BindPsoToCompute(ResourceHandle::t_hash pso) = 0;
-
-		public: virtual UniquePtr<Command> BindSignatureToCompute(ResourceHandle::t_hash signature) = 0;
-		*/
+				*/
 
 		public: virtual UniquePtr<Command> SetSignatureGraphics(ResourceHandle::t_hash signature) = 0;
+
+		public: virtual UniquePtr<Command> SetSignatureCompute(ResourceHandle::t_hash signature) = 0;
 
 		public: virtual UniquePtr<Command> SetPipelineState(ResourceHandle::t_hash pipeline) = 0;
 
 		
 		public: virtual UniquePtr<Command> SetDescriptorBlockViewsAsGraphicsTable(ResourceHandle::t_hash descriptorBlock, unsigned parameterIndex) = 0;
+
+		public: virtual UniquePtr<Command> SetDescriptorBlockViewsAsComputeTable(ResourceHandle::t_hash descriptorBlock, unsigned parameterIndex) = 0;
 
 		
 		public: virtual UniquePtr<Command> SetIndexBuffer
@@ -88,6 +82,8 @@ namespace Renderer::Commands
 			size_t offsetOntoIndexViewStart,
 			size_t offsetOntoIndexValue
 		) = 0;
+
+		public: virtual UniquePtr<Command> Dispatch(unsigned dimensionX, unsigned dimensionY, unsigned dimensionZ) = 0;
 
 		public: virtual UniquePtr<Command> IncreaseCounter(CounterFactory::CounterID id, size_t valueToIncreaseBy) = 0;
 		

@@ -243,11 +243,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Commands\Basic\DispatchCommand.hpp" />
     <ClInclude Include="Commands\Basic\DrawIndexedInstancedCommand.hpp" />
     <ClInclude Include="Commands\Basic\SetConstantsToGraphicsCommand.hpp" />
+    <ClInclude Include="Commands\Basic\SetDescriptorBlockViewsAsComputeTableCommand.hpp" />
     <ClInclude Include="Commands\Basic\SetDescriptorBlockViewsAsGraphicsTableCommand.hpp" />
     <ClInclude Include="Commands\Basic\SetIndexBufferCommand.hpp" />
     <ClInclude Include="Commands\Basic\SetPipelineStateCommand.hpp" />
+    <ClInclude Include="Commands\Basic\SetSignatureComputeCommand.hpp" />
     <ClInclude Include="Commands\Basic\SetSignatureGraphicsCommand.hpp" />
     <ClInclude Include="Commands\Basic\SetScissorRectCommand.hpp" />
     <ClInclude Include="Commands\Basic\SetVertexBufferCommand.hpp" />
@@ -393,12 +396,15 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Commands\Basic\DispatchCommand.cpp" />
     <ClCompile Include="Commands\Basic\DrawIndexedInstancedCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetConstantsToGraphicsCommand.cpp" />
+    <ClCompile Include="Commands\Basic\SetDescriptorBlockViewsAsComputeTableCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetDescriptorBlockViewsAsGraphicsTableCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetIndexBufferCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetPipelineStateCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetScissorRectCommand.cpp" />
+    <ClCompile Include="Commands\Basic\SetSignatureComputeCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetSignatureGraphicsCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetVertexBufferCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetViewportCommand.cpp" />

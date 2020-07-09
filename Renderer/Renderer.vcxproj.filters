@@ -314,6 +314,15 @@
     <ClInclude Include="StateSettings\StateImpl.hpp">
       <Filter>StateSettings</Filter>
     </ClInclude>
+    <ClInclude Include="Commands\Basic\SetSignatureComputeCommand.hpp">
+      <Filter>Commands\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\Basic\DispatchCommand.hpp">
+      <Filter>Commands\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\Basic\SetDescriptorBlockViewsAsComputeTableCommand.hpp">
+      <Filter>Commands\Basic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -485,6 +494,15 @@
       <Filter>Commands\Basic</Filter>
     </ClCompile>
     <ClCompile Include="Commands\Basic\SetConstantsToGraphicsCommand.cpp">
+      <Filter>Commands\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Basic\SetSignatureComputeCommand.cpp">
+      <Filter>Commands\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Basic\DispatchCommand.cpp">
+      <Filter>Commands\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Basic\SetDescriptorBlockViewsAsComputeTableCommand.cpp">
       <Filter>Commands\Basic</Filter>
     </ClCompile>
   </ItemGroup>
