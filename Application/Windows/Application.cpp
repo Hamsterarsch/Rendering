@@ -8,6 +8,7 @@
 #include "AssetConstructOperationsHelper.hpp"
 #include "AssetTypes/ImageAsset.hpp"
 #include "AssetTypes/PsoAsset.hpp"
+#include "AssetTypes/UserPixelShaderAsset.hpp"
 
 
 
@@ -74,7 +75,9 @@ namespace App::Windows
 			renderer->AddShaderIncludeDirectory(includePath.string().c_str());
 					
 			rendererMediator.SetMainWindowSurface(mainWindowSurface);
-					
+
+			Assets::UserPixelShaderAsset::SetPixelShaderTemplate(programAssets->GetAsset("Shaders/LightingShaderTemplate.ps.shdr"));
+		
 		}
 
 			UniquePtr<Renderer::RendererFacade> Application::MakeRendererAndAddProgramShaderInclude(HWND window, assetSystem::AssetSystem &programAssets)
