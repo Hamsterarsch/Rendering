@@ -1,7 +1,8 @@
 #pragma once
 #include "Math/Interface/Types/Matrix.hpp"
 
-namespace Renderer
+
+namespace App::Rendering
 {
 	struct VolumeTileGridData
 	{

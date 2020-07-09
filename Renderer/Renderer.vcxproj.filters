@@ -77,12 +77,6 @@
     <ClInclude Include="Resources\ResourceRegistryDetachedReference.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Lighting\LightGrid\VolumeTileGrid.hpp">
-      <Filter>Lighting\LightGrid</Filter>
-    </ClInclude>
-    <ClInclude Include="ShaderRelevantTypes\VolumeTileGridData.hpp">
-      <Filter>ShaderRelevantTypes</Filter>
-    </ClInclude>
     <ClInclude Include="Interface\Resources\SerializationHook.hpp">
       <Filter>Interface\Resources</Filter>
     </ClInclude>
@@ -112,15 +106,6 @@
     </ClInclude>
     <ClInclude Include="Resources\MaintainsInternalRenderResources.hpp">
       <Filter>Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="ShaderRelevantTypes\GlobalBufferData.hpp">
-      <Filter>ShaderRelevantTypes</Filter>
-    </ClInclude>
-    <ClInclude Include="ShaderRelevantTypes\Light.hpp">
-      <Filter>ShaderRelevantTypes</Filter>
-    </ClInclude>
-    <ClInclude Include="Lighting\LightContainer.hpp">
-      <Filter>Lighting</Filter>
     </ClInclude>
     <ClInclude Include="Commands\CompositeRecordCommand.hpp">
       <Filter>Commands</Filter>
@@ -389,9 +374,6 @@
     <ClCompile Include="Resources\ResourceRegistryDetachedReference.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Lighting\LightGrid\VolumeTileGrid.cpp">
-      <Filter>Lighting\LightGrid</Filter>
-    </ClCompile>
     <ClCompile Include="Resources\Registry.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
@@ -400,9 +382,6 @@
     </ClCompile>
     <ClCompile Include="Resources\RenderSurface.cpp">
       <Filter>Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="Lighting\LightContainer.cpp">
-      <Filter>Lighting</Filter>
     </ClCompile>
     <ClCompile Include="Commands\LightingSetup\AssignLightsToTilesCommand.cpp">
       <Filter>Commands\LightingSetup</Filter>
@@ -533,15 +512,6 @@
     </Filter>
     <Filter Include="Commands">
       <UniqueIdentifier>{b526f4d7-e40e-4611-9c77-f5e6f623ac51}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Lighting">
-      <UniqueIdentifier>{b0a0db8e-7e66-4b16-bfda-3131e48028b9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Lighting\LightGrid">
-      <UniqueIdentifier>{ce76d3ed-a52c-438b-9da7-01cacaabf5f6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ShaderRelevantTypes">
-      <UniqueIdentifier>{4a9d49ad-d017-48e6-b89a-1860419f8e9e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Commands\LightingSetup">
       <UniqueIdentifier>{6c107102-58b6-486d-8174-b457996d0fe7}</UniqueIdentifier>

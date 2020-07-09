@@ -10,8 +10,7 @@ namespace Renderer
 		Texture,
 		Pso,
 		Buffer,
-		Signature,
-		Light,
+		Signature,		
 		WindowSurface,
 		DescriptorAllocator
 		

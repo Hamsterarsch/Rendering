@@ -1,7 +1,8 @@
-#include "Lighting/LightGrid/VolumeTileGrid.hpp"
+#include "Rendering/VolumeTileGrid.hpp"
 #include "Math/Interface/Utility.hpp"
 
-namespace Renderer
+
+namespace App::Rendering
 {
 	VolumeTileGrid::VolumeTileGrid
 	(

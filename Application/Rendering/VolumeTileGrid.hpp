@@ -1,11 +1,11 @@
 #pragma once
-#include "Math/Interface/Types/BoundingBox.hpp"
+#include "Rendering/ShaderRelevantTypes/RenderingBoundingBox.hpp"
 #include "Math/Interface/Types/Angle.hpp"
-#include "ShaderRelevantTypes/VolumeTileGridData.hpp"
+#include "Rendering/ShaderRelevantTypes/VolumeTileGridData.hpp"
 #include <vector>
 
 
-namespace Renderer
+namespace App::Rendering
 {
 	class VolumeTileGrid
 	{
@@ -13,7 +13,7 @@ namespace Renderer
 		
 		private: Math::VectorUint3 gridsize;
 
-		private: std::vector<Math::BoundingBox> boundingBoxes;
+		private: std::vector<RenderingBoundingBox> boundingBoxes;
 			
 
 

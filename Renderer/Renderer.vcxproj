@@ -353,8 +353,6 @@
     <ClInclude Include="Interface\StateSettings\StateSettings.hpp" />
     <ClInclude Include="Interface\StateSettings\AddressingTargets.hpp" />
     <ClInclude Include="Interface\StateSettings\VertexLayoutSettings.hpp" />
-    <ClInclude Include="Lighting\LightContainer.hpp" />
-    <ClInclude Include="Lighting\LightGrid\VolumeTileGrid.hpp" />
     <ClInclude Include="Resources\Descriptor\DescriptorAllocator.hpp" />
     <ClInclude Include="Resources\Descriptor\DescriptorChunk.hpp" />
     <ClInclude Include="Resources\Descriptor\DescriptorChunkRegistry.hpp" />
@@ -380,9 +378,6 @@
     <ClInclude Include="Resources\RootSignature\RootSignatureFactory.hpp" />
     <ClInclude Include="Resources\RootSignature\TableLayout.hpp" />
     <ClInclude Include="Resources\SerialFactory.hpp" />
-    <ClInclude Include="ShaderRelevantTypes\GlobalBufferData.hpp" />
-    <ClInclude Include="ShaderRelevantTypes\Light.hpp" />
-    <ClInclude Include="ShaderRelevantTypes\VolumeTileGridData.hpp" />
     <ClInclude Include="StateSettings\AddressingTargetsImpl.hpp" />
     <ClInclude Include="StateSettings\BlendSettingsImpl.hpp" />
     <ClInclude Include="StateSettings\DepthStencilSettingsImpl.hpp" />
@@ -467,8 +462,6 @@
     <ClCompile Include="RendererFacadeImpl.cpp" />
     <ClCompile Include="Interface\Commands\CompositeCommand.cpp" />
     <ClCompile Include="Interface\Renderer.cpp" />
-    <ClCompile Include="Lighting\LightContainer.cpp" />
-    <ClCompile Include="Lighting\LightGrid\VolumeTileGrid.cpp" />
     <ClCompile Include="Resources\Descriptor\DescriptorAllocator.cpp" />
     <ClCompile Include="Resources\Descriptor\DescriptorChunkRegistry.cpp" />
     <ClCompile Include="Resources\Descriptor\DescriptorMemory.cpp" />
