@@ -8,6 +8,7 @@
 #include "Ui/User/ShaderEditor.hpp"
 #include "CacheAsset.hpp"
 #include "Core/AssetPathUtility.hpp"
+#include "UserPixelShaderAsset.hpp"
 
 
 
@@ -30,14 +31,16 @@ namespace App::Assets
 
 	const std::unordered_set<std::string> AssetTypesRegistry::hiddenAssetTypes
 	{
-		CacheAsset::GetAssetClassExtension(),		
+		CacheAsset::GetAssetClassExtension(),
+		PixelShaderAsset::GetAssetClassExtension(),
 		ComputeShaderAsset::GetAssetClassExtension()
 	};
 	
 	const std::unordered_set<std::string> AssetTypesRegistry::typesNotCreatableByUser
 	{
 		ProjectAsset::GetAssetClassExtension(),
-		CacheAsset::GetAssetClassExtension(),		
+		CacheAsset::GetAssetClassExtension(),
+		PixelShaderAsset::GetAssetClassExtension(),
 		ComputeShaderAsset::GetAssetClassExtension()
 	};
 	
@@ -81,10 +84,11 @@ namespace App::Assets
 		AddAssetInfo<ImageAsset>(addTargetAndIconSource, iconUploadTarget, "Image Asset", "Images/Icons/TextureIcon.img", {});
 				
 		static const char *fileIconPath{ "Images/Icons/FileIcon.img" };
-		AddAssetInfo<ProjectAsset>(addTargetAndIconSource, iconUploadTarget,		"Project Asset", fileIconPath, {});		
-		AddAssetInfo<PixelShaderAsset>(addTargetAndIconSource, iconUploadTarget,	"Pixel Shader Asset", fileIconPath, MakeUnique<PrototypeEditor<Ui::User::ShaderEditorFrontend>>());
-		AddAssetInfo<VertexShaderAsset>(addTargetAndIconSource, iconUploadTarget,	"Vertex Shader Asset", fileIconPath, MakeUnique<PrototypeEditor<Ui::User::ShaderEditorFrontend>>());
-		AddAssetInfo<ComputeShaderAsset>(addTargetAndIconSource, iconUploadTarget,	"Compute Shader Asset", fileIconPath, MakeUnique<PrototypeEditor<Ui::User::ShaderEditorFrontend>>());
+		AddAssetInfo<ProjectAsset>(addTargetAndIconSource, iconUploadTarget,		"Project", fileIconPath, {});		
+		AddAssetInfo<PixelShaderAsset>(addTargetAndIconSource, iconUploadTarget,	"Pixel Shader", fileIconPath, MakeUnique<PrototypeEditor<Ui::User::ShaderEditorFrontend>>());
+		AddAssetInfo<UserPixelShaderAsset>(addTargetAndIconSource, iconUploadTarget,	"User Pixel Shader", fileIconPath, MakeUnique<PrototypeEditor<Ui::User::ShaderEditorFrontend>>());
+		AddAssetInfo<VertexShaderAsset>(addTargetAndIconSource, iconUploadTarget,	"Vertex Shader", fileIconPath, MakeUnique<PrototypeEditor<Ui::User::ShaderEditorFrontend>>());
+		AddAssetInfo<ComputeShaderAsset>(addTargetAndIconSource, iconUploadTarget,	"Compute Shader", fileIconPath, MakeUnique<PrototypeEditor<Ui::User::ShaderEditorFrontend>>());
 		
 	}
 
@@ -93,6 +97,7 @@ namespace App::Assets
 			RegisterAsset<ProjectAsset>(asys);
 			RegisterAsset<ImageAsset>(asys);
 			RegisterAsset<PixelShaderAsset>(asys);
+			RegisterAsset<UserPixelShaderAsset>(asys);
 			RegisterAsset<VertexShaderAsset>(asys);
 			RegisterAsset<ComputeShaderAsset>(asys);
 							

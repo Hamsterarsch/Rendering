@@ -258,6 +258,7 @@
     <ClInclude Include="AssetTypes\PsoAsset.hpp" />
     <ClInclude Include="AssetTypes\RendererAsset.hpp" />
     <ClInclude Include="AssetTypes\ShaderAsset.hpp" />
+    <ClInclude Include="AssetTypes\UserPixelShaderAsset.hpp" />
     <ClInclude Include="Core\Application.hpp" />
     <ClInclude Include="Core\AssetPathUtility.hpp" />
     <ClInclude Include="Core\CreateProject.hpp" />
@@ -338,6 +339,7 @@
     <ClCompile Include="AssetTypes\ImageAsset.cpp" />
     <ClCompile Include="AssetTypes\ProjectAsset.cpp" />
     <ClCompile Include="AssetTypes\ShaderAsset.cpp" />
+    <ClCompile Include="AssetTypes\UserPixelShaderAsset.cpp" />
     <ClCompile Include="Core\CreateProject.cpp" />
     <ClCompile Include="Core\Version.cpp" />
     <ClCompile Include="main.cpp" />
