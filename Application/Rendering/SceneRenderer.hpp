@@ -30,6 +30,8 @@ namespace App::Rendering
 		private: PipelineData pipelineMarkActiveVolumeTiles;
 
 		private: PipelineData pipelineBuildActiveVolumeTileList;
+
+		private: PipelineData pipelineAssignLightsToTiles;;
 		
 		
 		public: SceneRenderer
@@ -45,6 +47,8 @@ namespace App::Rendering
 			private: static PipelineData MakeMarkActiveVolumeTilesPipeline(assetSystem::AssetSystem &shaderProvider, Renderer::RendererFacade &renderer);
 
 			private: static PipelineData MakeBuildActiveVolumeTileListPipeline(assetSystem::AssetSystem &shaderProvider, Renderer::RendererFacade &renderer);
+
+			private: static PipelineData MakeAssignLightsToTilesPipeline(assetSystem::AssetSystem &shaderProvider, Renderer::RendererFacade &renderer);
 		
 		
 		public: void SubmitFrame();
