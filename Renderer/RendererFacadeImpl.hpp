@@ -95,13 +95,13 @@ namespace Renderer::DX12
 		public: RendererFacadeImpl &operator=(const RendererFacadeImpl &) = delete;
 
 
-		public: size_t MakeBuffer(const void *data, size_t sizeInBytes) override;
+		public: ResourceHandle::t_hash MakeBuffer(const void *data, size_t sizeInBytes) override;
 
-			private: size_t MakeBufferInternal(const void *data, size_t sizeInBytes, size_t handle);
+		private: ResourceHandle::t_hash MakeBufferInternal(const void *data, size_t sizeInBytes, size_t handle);
 		
-		public: size_t MakeBuffer(const void *data, size_t sizeInBytes, D3D12_RESOURCE_STATES state) override;
+		public: ResourceHandle::t_hash MakeBuffer(const void *data, size_t sizeInBytes, D3D12_RESOURCE_STATES state) override;
 
-		public: size_t MakeUavBuffer(const void *data, size_t sizeInBytes) override;
+		public: ResourceHandle::t_hash MakeUavBuffer(const void *data, size_t sizeInBytes) override;
 
 		public: DxPtr<ID3D12Resource> MakeReadbackBuffer(size_t sizeInBytes) override;
 
@@ -130,9 +130,9 @@ namespace Renderer::DX12
 
 		public: virtual size_t MakeRootSignature(const void *serializedData, size_t dataSizeInBytes, unsigned samplerAmount) override;
 		
-		public: size_t MakePso(const ShaderList &shaders, ResourceHandle::t_hash signatureHandle) override;
+		public: ResourceHandle::t_hash MakePso(const ShaderList &shaders, ResourceHandle::t_hash signatureHandle) override;
 							
-		public: size_t MakePso(const Blob &csBlob, Renderer::ResourceHandle::t_hash signatureHandle) override;
+		public: ResourceHandle::t_hash MakePso(const Blob &csBlob, Renderer::ResourceHandle::t_hash signatureHandle) override;
 
 		public: ResourceHandle::t_hash MakeTexture(const void *data, size_t width, size_t height) override;
 

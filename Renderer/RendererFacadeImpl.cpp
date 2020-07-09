@@ -364,7 +364,7 @@ namespace Renderer::DX12
 		*/
 
 	
-	size_t RendererFacadeImpl::MakeBuffer(const void *data, const size_t sizeInBytes)
+	ResourceHandle::t_hash RendererFacadeImpl::MakeBuffer(const void *data, const size_t sizeInBytes)
 	{			
 		return registry.Register
 		(
@@ -373,7 +373,7 @@ namespace Renderer::DX12
 		
 	}
 
-		size_t RendererFacadeImpl::MakeBufferInternal(const void *data, const size_t sizeInBytes, const size_t handle)
+		ResourceHandle::t_hash RendererFacadeImpl::MakeBufferInternal(const void *data, const size_t sizeInBytes, const size_t handle)
 		{
 			auto allocation
 			{
@@ -394,7 +394,7 @@ namespace Renderer::DX12
 
 	
 	
-	size_t RendererFacadeImpl::MakeBuffer(const void *data, const size_t sizeInBytes, const D3D12_RESOURCE_STATES state)
+	ResourceHandle::t_hash RendererFacadeImpl::MakeBuffer(const void *data, const size_t sizeInBytes, const D3D12_RESOURCE_STATES state)
 	{
 		return registry.Register
 		(					
@@ -404,7 +404,7 @@ namespace Renderer::DX12
 
 
 
-	size_t RendererFacadeImpl::MakeUavBuffer(const void *data, const size_t sizeInBytes)
+	ResourceHandle::t_hash RendererFacadeImpl::MakeUavBuffer(const void *data, const size_t sizeInBytes)
 	{						
 		return registry.Register
 		(					
@@ -497,7 +497,7 @@ namespace Renderer::DX12
 
 
 	
-	size_t RendererFacadeImpl::MakeRootSignature(const void *serializedData, const size_t dataSizeInBytes, const unsigned samplerAmount)
+	ResourceHandle::t_hash RendererFacadeImpl::MakeRootSignature(const void *serializedData, const size_t dataSizeInBytes, const unsigned samplerAmount)
 	{		
 		auto signatureData
 		{
@@ -516,7 +516,7 @@ namespace Renderer::DX12
 	
 
 	
-	size_t RendererFacadeImpl::MakePso(const ShaderList &shaders, ResourceHandle::t_hash signatureHandle)
+	ResourceHandle::t_hash RendererFacadeImpl::MakePso(const ShaderList &shaders, ResourceHandle::t_hash signatureHandle)
 	{
 		auto pipelineState{	psoFactory.MakePso(shaders, registry.GetSignature(signatureHandle), D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE) };		
 		return registry.Register(std::move(pipelineState));
@@ -525,7 +525,7 @@ namespace Renderer::DX12
 
 
 	
-	size_t RendererFacadeImpl::MakePso(const Blob &csBlob, Renderer::ResourceHandle::t_hash signatureHandle)
+	ResourceHandle::t_hash RendererFacadeImpl::MakePso(const Blob &csBlob, Renderer::ResourceHandle::t_hash signatureHandle)
 	{
 		auto pipelineState{ psoFactory.MakePso(csBlob, registry.GetSignature(signatureHandle)) };
 		return registry.Register(std::move(pipelineState));

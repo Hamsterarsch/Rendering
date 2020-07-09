@@ -12,13 +12,13 @@ namespace Renderer
 		DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(MaintainsRenderResources)
 
 		
-		public: virtual size_t MakeBuffer(const void *data, size_t sizeInBytes) = 0;
+		public: virtual ResourceHandle::t_hash MakeBuffer(const void *data, size_t sizeInBytes) = 0;
 
-		public: virtual size_t MakeRootSignature(const void *serializedData, size_t dataSizeInBytes, unsigned samplerAmount) = 0;
+		public: virtual ResourceHandle::t_hash MakeRootSignature(const void *serializedData, size_t dataSizeInBytes, unsigned samplerAmount) = 0;
 					
-		public: virtual size_t MakePso(const ShaderList &shaders, ResourceHandle::t_hash signatureHandle) = 0;
+		public: virtual ResourceHandle::t_hash MakePso(const ShaderList &shaders, ResourceHandle::t_hash signatureHandle) = 0;
 					
-		public: virtual size_t MakePso(const Blob &csBlob, ResourceHandle::t_hash signatureHandle) = 0;
+		public: virtual ResourceHandle::t_hash MakePso(const Blob &csBlob, ResourceHandle::t_hash signatureHandle) = 0;
 
 		public: virtual ResourceHandle::t_hash MakeTexture(const void *data, size_t width, size_t height) = 0;
 
