@@ -14,6 +14,8 @@ namespace Renderer
 		
 		public: virtual ResourceHandle::t_hash MakeBuffer(const void *data, size_t sizeInBytes) = 0;
 
+		public: virtual ResourceHandle::t_hash MakeUavBuffer(const void *data, size_t sizeInBytes) = 0;
+
 		public: virtual ResourceHandle::t_hash MakeRootSignature(const void *serializedData, size_t dataSizeInBytes, unsigned samplerAmount) = 0;
 					
 		public: virtual ResourceHandle::t_hash MakePso(const ShaderList &shaders, ResourceHandle::t_hash signatureHandle) = 0;

@@ -7,7 +7,6 @@
 
 namespace Renderer::DX12
 {
-
 	using namespace RHA::DX12;
 	
 	ResourceFactory::ResourceFactory(DeviceResources *resources, Queue *queue, UniquePtr<AllocatableGpuMemory> &&bufferMemory, UniquePtr<AllocatableGpuMemory> &&textureMemory) :

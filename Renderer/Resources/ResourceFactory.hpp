@@ -4,107 +4,100 @@
 #include "Resources/ResourceAllocation.hpp"
 #include "Resources/ResourceMemory.hpp"
 
-struct ID3D12Resource;
 
-namespace RHA
+struct ID3D12Resource;
+namespace RHA::DX12
 {
-	namespace DX12
-	{
-		class DeviceResources;
-		class UploadHeap;
-		class Queue;
-		class Fence;
-		class CmdAllocator;
-		class CmdList;
-	}
+	class DeviceResources;
+	class UploadHeap;
+	class Queue;
+	class Fence;
+	class CmdAllocator;
+	class CmdList;
 }
 
 
-namespace Renderer
+namespace Renderer::DX12
 {
-	namespace DX12
-	{
-		using namespace RHA::DX12;
-		
-		class ResourceFactory
-		{		
-			private: UniquePtr<UploadHeap> uploadBuffer;
 
-			private: Queue *queue;
+	using namespace RHA::DX12;
+	
+	class ResourceFactory
+	{		
+		private: UniquePtr<UploadHeap> uploadBuffer;
 
-			private: DeviceResources *resources;
+		private: Queue *queue;
 
-			private: UniquePtr<Fence> fence;
+		private: DeviceResources *resources;
 
-			private: HANDLE event;
+		private: UniquePtr<Fence> fence;
 
-			private: UniquePtr<CmdAllocator> allocator;
+		private: HANDLE event;
 
-			private: UniquePtr<CmdList> list;
+		private: UniquePtr<CmdAllocator> allocator;
 
-			private: D3D12_GPU_VIRTUAL_ADDRESS uploadAddress;
+		private: UniquePtr<CmdList> list;
 
+		private: D3D12_GPU_VIRTUAL_ADDRESS uploadAddress;
 
-			
-			protected: UniquePtr<AllocatableGpuMemory> bufferMemory;
-
-			protected: UniquePtr<AllocatableGpuMemory> textureMemory;
-
-			
-
-			public: ResourceFactory(DeviceResources *resources, Queue *queue, UniquePtr<AllocatableGpuMemory> &&bufferMemory, UniquePtr<AllocatableGpuMemory> &&textureMemory);
-
-			public: ResourceFactory(ResourceFactory &&other) noexcept = default;
-
-			public: ResourceFactory(ResourceFactory &other) = delete;
-
-			public: ResourceFactory &operator=(ResourceFactory &&other) noexcept = default;
-
-			public: ResourceFactory &operator=(ResourceFactory &other) = delete;
-
-			public: virtual ~ResourceFactory() noexcept;
-
-											
-			public: ResourceAllocation MakeBufferWithData(const void *data, size_t sizeInBytes, D3D12_RESOURCE_STATES desiredState, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
-								
-				private: void CopyDataToUploadBuffer(const void *data, size_t sizeInBytes);
-
-					private: bool UploadBufferCanNotFitAllocation(size_t allocationSizeInBytes) const;
-			
-				private: ResourceAllocation MakePlacedBufferResource(size_t sizeInBytes, D3D12_RESOURCE_FLAGS resourceFlags, D3D12_RESOURCE_STATES resourceState);
-
-					private: static D3D12_RESOURCE_DESC MakeBufferDesc(size_t sizeInBytes, D3D12_RESOURCE_FLAGS flags);
-
-				private: static void CheckGpuResourceCreation(HRESULT result);
-
-				private: void ClearCmdList();
-
-				private: void SubmitListAndFenceSynchronization(CmdList *list);
-
-			public: ResourceAllocation MakeTextureWithData(const void *data, size_t width, size_t height, D3D12_RESOURCE_STATES desiredState, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
-
-				private: ResourceAllocation MakePlacedTextureResource(const D3D12_SUBRESOURCE_FOOTPRINT &subresourceSize, D3D12_RESOURCE_FLAGS resourceFlags, D3D12_RESOURCE_STATES resourceState);
-			
-			public: DxPtr<ID3D12Resource> MakeCommittedBuffer
-			(
-				size_t sizeInBytes,
-				D3D12_RESOURCE_STATES desiredState,
-				D3D12_HEAP_TYPE heapType, 
-				D3D12_HEAP_FLAGS heapFlags,
-				D3D12_RESOURCE_FLAGS bufferFlags = D3D12_RESOURCE_FLAG_NONE
-			);
-
-
-			public: void Deallocate(ResourceAllocation &allocation, ResourceTypes type);
-
-			protected: virtual void DeallocateInternal(ResourceAllocation &allocation, ResourceTypes type) {};
-			
-
-						
-		};
 
 		
-	}
+		protected: UniquePtr<AllocatableGpuMemory> bufferMemory;
+
+		protected: UniquePtr<AllocatableGpuMemory> textureMemory;
+
+		
+
+		public: ResourceFactory(DeviceResources *resources, Queue *queue, UniquePtr<AllocatableGpuMemory> &&bufferMemory, UniquePtr<AllocatableGpuMemory> &&textureMemory);
+
+		public: ResourceFactory(ResourceFactory &&other) noexcept = default;
+
+		public: ResourceFactory(ResourceFactory &other) = delete;
+
+		public: ResourceFactory &operator=(ResourceFactory &&other) noexcept = default;
+
+		public: ResourceFactory &operator=(ResourceFactory &other) = delete;
+
+		public: virtual ~ResourceFactory() noexcept;
+
+										
+		public: ResourceAllocation MakeBufferWithData(const void *data, size_t sizeInBytes, D3D12_RESOURCE_STATES desiredState, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
+							
+			private: void CopyDataToUploadBuffer(const void *data, size_t sizeInBytes);
+
+				private: bool UploadBufferCanNotFitAllocation(size_t allocationSizeInBytes) const;
+		
+			private: ResourceAllocation MakePlacedBufferResource(size_t sizeInBytes, D3D12_RESOURCE_FLAGS resourceFlags, D3D12_RESOURCE_STATES resourceState);
+
+				private: static D3D12_RESOURCE_DESC MakeBufferDesc(size_t sizeInBytes, D3D12_RESOURCE_FLAGS flags);
+
+			private: static void CheckGpuResourceCreation(HRESULT result);
+
+			private: void ClearCmdList();
+
+			private: void SubmitListAndFenceSynchronization(CmdList *list);
+
+		public: ResourceAllocation MakeTextureWithData(const void *data, size_t width, size_t height, D3D12_RESOURCE_STATES desiredState, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
+
+			private: ResourceAllocation MakePlacedTextureResource(const D3D12_SUBRESOURCE_FOOTPRINT &subresourceSize, D3D12_RESOURCE_FLAGS resourceFlags, D3D12_RESOURCE_STATES resourceState);
+		
+		public: DxPtr<ID3D12Resource> MakeCommittedBuffer
+		(
+			size_t sizeInBytes,
+			D3D12_RESOURCE_STATES desiredState,
+			D3D12_HEAP_TYPE heapType, 
+			D3D12_HEAP_FLAGS heapFlags,
+			D3D12_RESOURCE_FLAGS bufferFlags = D3D12_RESOURCE_FLAG_NONE
+		);
+
+
+		public: void Deallocate(ResourceAllocation &allocation, ResourceTypes type);
+
+		protected: virtual void DeallocateInternal(ResourceAllocation &allocation, ResourceTypes type) {};
+		
+
+					
+	};
 
 	
 }
