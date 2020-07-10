@@ -10,7 +10,7 @@ namespace Renderer::DX12
 		const Semantic semantic,
 		const unsigned char semanticIndex,
 		const Format format,
-		const unsigned byteOffset
+		const unsigned byteOffsetFromVertexStart
 	)
 	{
 		auto *semanticValue{ reinterpret_cast<const char *>((SemanticTargetsImpl::Get().*semantic)()) };
@@ -22,7 +22,7 @@ namespace Renderer::DX12
 			semanticIndex,
 			*formatValue,
 			0,
-			byteOffset,
+			byteOffsetFromVertexStart,
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
 			0
 		});
