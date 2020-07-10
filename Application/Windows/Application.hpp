@@ -16,29 +16,32 @@ namespace App::Windows
 {
 	class Application final : public Core::Application
 	{
-		private: Window window;
-
-		private: UniquePtr<Renderer::RendererFacade> renderer;
-
-		private: Renderer::HandleWrapper mainWindowSurface;
-		
-		private: Rendering::RendererMediator rendererMediator;
-
 		private: Core::Version programVersion;
 		
 		private: UniquePtr<assetSystem::AssetSystem> programAssets;
 
 		private: UniquePtr<assetSystem::AssetSystem> projectAssets;
 		
+		private: Window window;
+		
+		private: UniquePtr<Renderer::RendererFacade> renderer;
+
+		private: Renderer::HandleWrapper mainWindowSurface;
+		
+		private: Assets::AssetTypesRegistry assetTypesRegistry;
+		
+		private: Rendering::RendererMediator rendererMediator;		
+		
 		private: Ui::UiStateMachine ui;
 
-		private: Assets::AssetTypesRegistry assetTypesRegistry;
 
 
 		
 		public: static Application &Get();
 		
 			private: Application();
+
+				private: static UniquePtr<Renderer::RendererFacade> MakeRendererAndAddProgramShaderInclude(HWND window, assetSystem::AssetSystem &programAssets);
 
 		
 		public: assetSystem::AssetSystem &GetProgramAssets() override { return *programAssets; }

@@ -23,7 +23,15 @@ namespace App::Assets
 	}
 
 
-	
+
+
+	void ShaderAsset::Compile(Renderer::RendererFacade &renderer)
+	{
+		CompileInternal(renderer, compiledCode);
+				
+	}
+
+
 	
 	assetSystem::io::Archive &ShaderAsset::Serialize(assetSystem::io::Archive &archive)
 	{
@@ -71,16 +79,6 @@ namespace App::Assets
 	const char *ShaderAsset::GetAssetClassExtension()
 	{
 		static const char *extension{ "shdr" };
-
-		return extension;
-		
-	}
-
-
-	
-	const wchar_t *ShaderAsset::GetAssetClassExtensionW()
-	{
-		static const wchar_t *extension{ L"shdr" };
 
 		return extension;
 		

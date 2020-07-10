@@ -12,6 +12,9 @@
 #include "Commands/Basic/DrawIndexedInstancedCommand.hpp"
 #include "Commands/IncreaseCounterCommand.hpp"
 #include "Basic/SetConstantsToGraphicsCommand.hpp"
+#include "Basic/SetSignatureComputeCommand.hpp"
+#include "Basic/DispatchCommand.hpp"
+#include "Basic/SetDescriptorBlockViewsAsComputeTableCommand.hpp"
 
 
 namespace Renderer::DX12::Commands
@@ -36,7 +39,7 @@ namespace Renderer::DX12::Commands
 
 
 
-	UniquePtr<::Renderer::Commands::Command> DX12CommandFactory::SetSignatureGraphics(const ResourceHandle::t_hash signature)
+	UniquePtr<Renderer::Commands::Command> DX12CommandFactory::SetSignatureGraphics(const ResourceHandle::t_hash signature)
 	{
 		return MakeUnique<SetSignatureGraphicsCommand>(signature);
 		
@@ -44,7 +47,15 @@ namespace Renderer::DX12::Commands
 
 
 	
-	UniquePtr<::Renderer::Commands::Command> DX12CommandFactory::SetPipelineState(const ResourceHandle::t_hash pipeline)
+	UniquePtr<Renderer::Commands::Command> DX12CommandFactory::SetSignatureCompute(const ResourceHandle::t_hash signature)
+	{
+		return MakeUnique<SetSignatureComputeCommand>(signature);
+		
+	}
+
+
+
+	UniquePtr<Renderer::Commands::Command> DX12CommandFactory::SetPipelineState(const ResourceHandle::t_hash pipeline)
 	{
 		return MakeUnique<SetPipelineStateCommand>(pipeline);
 		
@@ -52,7 +63,7 @@ namespace Renderer::DX12::Commands
 
 
 	
-	UniquePtr<::Renderer::Commands::Command> DX12CommandFactory::SetDescriptorBlockViewsAsGraphicsTable(const ResourceHandle::t_hash descriptorBlock, const unsigned parameterIndex)
+	UniquePtr<Renderer::Commands::Command> DX12CommandFactory::SetDescriptorBlockViewsAsGraphicsTable(const ResourceHandle::t_hash descriptorBlock, const unsigned parameterIndex)
 	{
 		return MakeUnique<SetDescriptorBlockViewsAsGraphicsTableCommand>(descriptorBlock, parameterIndex);
 		
@@ -60,7 +71,15 @@ namespace Renderer::DX12::Commands
 
 
 	
-	UniquePtr<::Renderer::Commands::Command> DX12CommandFactory::SetIndexBuffer
+	UniquePtr<Renderer::Commands::Command> DX12CommandFactory::SetDescriptorBlockViewsAsComputeTable(const ResourceHandle::t_hash descriptorBlock, const unsigned parameterIndex)
+	{
+		return MakeUnique<SetDescriptorBlockViewsAsComputeTableCommand>(descriptorBlock, parameterIndex);
+		
+	}
+
+
+
+	UniquePtr<Renderer::Commands::Command> DX12CommandFactory::SetIndexBuffer
 	(
 		const ResourceHandle::t_hash indexBuffer,
 		const size_t byteOffsetToIndices, 
@@ -75,7 +94,7 @@ namespace Renderer::DX12::Commands
 
 
 	
-	UniquePtr<::Renderer::Commands::Command> DX12CommandFactory::SetVertexBuffer
+	UniquePtr<Renderer::Commands::Command> DX12CommandFactory::SetVertexBuffer
 	(
 		const ResourceHandle::t_hash vertexBuffer, 
 		const size_t byteOffsetToVertices, 
@@ -101,7 +120,7 @@ namespace Renderer::DX12::Commands
 
 
 
-	UniquePtr<::Renderer::Commands::Command> DX12CommandFactory::SetScissorRect
+	UniquePtr<Renderer::Commands::Command> DX12CommandFactory::SetScissorRect
 	(
 		const float topLeftX,
 		const float topLeftY,
@@ -115,7 +134,7 @@ namespace Renderer::DX12::Commands
 
 
 	
-	UniquePtr<::Renderer::Commands::Command> DX12CommandFactory::SetViewport
+	UniquePtr<Renderer::Commands::Command> DX12CommandFactory::SetViewport
 	(
 		const float topLeftX,
 		const float topLeftY,
@@ -131,7 +150,7 @@ namespace Renderer::DX12::Commands
 
 
 	
-	UniquePtr<::Renderer::Commands::Command> DX12CommandFactory::DrawIndexedInstanced
+	UniquePtr<Renderer::Commands::Command> DX12CommandFactory::DrawIndexedInstanced
 	(
 		const size_t instanceCount, 
 		const size_t indexCountPerInstance, 
@@ -145,6 +164,19 @@ namespace Renderer::DX12::Commands
 
 
 	
+	UniquePtr<Renderer::Commands::Command> DX12CommandFactory::Dispatch
+	(
+		const unsigned groupSizeX, 
+		const unsigned groupSizeY, 
+		const unsigned groupSizeZ
+	)
+	{
+		return MakeUnique<DispatchCommand>(groupSizeX, groupSizeY, groupSizeZ);
+		
+	}
+
+
+
 	UniquePtr<Renderer::Commands::Command> DX12CommandFactory::IncreaseCounter
 	(
 		const CounterFactory::CounterID id,

@@ -7,6 +7,8 @@
 
 #include "AssetConstructOperationsHelper.hpp"
 #include "AssetTypes/ImageAsset.hpp"
+#include "AssetTypes/PsoAsset.hpp"
+#include "AssetTypes/UserPixelShaderAsset.hpp"
 
 
 
@@ -54,39 +56,56 @@ namespace App::Windows
 	}
 
 		Application::Application() :
+			programVersion{ 0, 0, 0 },
+			programAssets{ LoadProject(Filesystem::Conversions::MakeExeRelative("../../ProgramContent/ProgramContent.proj.asset"), programVersion) },
 			window{ {1280, 720}, L"Window", L"UniqueClassName", WndProc },
-			renderer{ Renderer::MakeRenderer(window.GetHandle()) },
+			renderer{ MakeRendererAndAddProgramShaderInclude(window.GetHandle(), *programAssets) },
 			mainWindowSurface{ renderer.get(), renderer->MakeWindowsWindowSurface(window.GetHandle()) },
+			assetTypesRegistry{ *programAssets, *renderer },
 			rendererMediator
 			{			
 				*renderer,
-				{ rendererMediator, {1,1} },
+				{ rendererMediator, *renderer, *programAssets, {1280, 720} },
 				{ rendererMediator, *renderer }
 			},
-			programVersion{ 0, 0, 0 },
-			programAssets{ LoadProject(Filesystem::Conversions::MakeExeRelative("../../ProgramContent/ProgramContent.proj.asset"), programVersion) },
 			ui{ *this }
 		{
-			renderer->AddShaderIncludeDirectory(Filesystem::Conversions::MakeExeRelative("../../Content/Shaders/Includes").c_str());
-			programAssets->RegisterAssetClass("img", MakeUnique<assetSystem::AssetConstructOperationsHelper<Assets::ImageAsset>>());
+			std::filesystem::path includePath{ programAssets->GetAbsoluteRootAssetPath() };
+			includePath /= "Shaders/Includes";					
+			renderer->AddShaderIncludeDirectory(includePath.string().c_str());
+					
 			rendererMediator.SetMainWindowSurface(mainWindowSurface);
 			
+			Assets::UserPixelShaderAsset::SetPixelShaderTemplate(programAssets->GetAsset("Shaders/LightingShaderTemplate.ps.shdr"));
+		
 		}
+
+			UniquePtr<Renderer::RendererFacade> Application::MakeRendererAndAddProgramShaderInclude(HWND window, assetSystem::AssetSystem &programAssets)
+			{
+				auto renderer{ Renderer::MakeRenderer(window) };
+
+				std::filesystem::path includePath{ programAssets.GetAbsoluteRootAssetPath() };
+				includePath /= "Shaders/Includes";					
+				renderer->AddShaderIncludeDirectory(includePath.string().c_str());
+
+				return renderer;
+		
+			}
 
 
 
 	void Application::SetProjectAssets(UniquePtr<assetSystem::AssetSystem> &&assets)
 	{
 		projectAssets = std::move(assets);
-
-		assetTypesRegistry = Assets::AssetTypesRegistry{ *this };
-		
+		assetTypesRegistry.RegisterAssetTypesWith(*projectAssets);
+		assetTypesRegistry.SetShouldShowAllTypes(programAssets->IsSameRootAssetPath(projectAssets->GetAbsoluteRootAssetPath().c_str()));
+				
 	}
 
 
 	
 	void Application::EnterLoop()
-	{
+	{		
 		window.ShowWindow();
 		ImGui_ImplWin32_Init(window.GetHandle());
 		

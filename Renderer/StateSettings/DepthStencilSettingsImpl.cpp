@@ -10,33 +10,10 @@ namespace Renderer::DX12
 	}
 	
 
-	void DepthStencilSettingsImpl::ResetToDefault()
-	{
-		saved = current = State{};
-		
-	}
-
-	
-
-	void DepthStencilSettingsImpl::SaveSettings()
-	{
-		saved = current;
-		
-	}
-	
-
-	
-	void DepthStencilSettingsImpl::RestoreSettings()
-	{
-		current = saved;
-		
-	}
-
-
 	
 	void DepthStencilSettingsImpl::SetEnableDepth(const bool value)
 	{
-		current.enableDepth = value;
+		state.current.enableDepth = value;
 		
 	}
 
@@ -45,8 +22,8 @@ namespace Renderer::DX12
 	D3D12_DEPTH_STENCIL_DESC DepthStencilSettingsImpl::GetDepthStencilDesc() const
 	{
 		D3D12_DEPTH_STENCIL_DESC desc{};
-		desc.DepthEnable = current.enableDepth;
-		desc.DepthFunc = current.depthFunc;
+		desc.DepthEnable = state.current.enableDepth;
+		desc.DepthFunc = state.current.depthFunc;
 		desc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
 
 		desc.StencilEnable = false;

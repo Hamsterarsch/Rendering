@@ -26,11 +26,6 @@ namespace Renderer::DX12
 			return registrySignature.IsHandleUnknown(handle);
 		}
 
-		if(handleType == ResourceHandle::t_resourceTypes::Light)
-		{
-			return registryLight.IsHandleUnknown(handle);
-		}
-
 		if(handleType == ResourceHandle::t_resourceTypes::DescriptorAllocator)
 		{
 			return registryDescriptor.IsHandleUnknown(handle);
@@ -93,16 +88,6 @@ namespace Renderer::DX12
 	}
 
 
-
-	ResourceHandle::t_hash ResourceRegistry::Register(Light &&info)
-	{
-		const auto handle{ handleProvider.MakeHandle(ResourceHandle::t_resourceTypes::Light) };		
-		registryLight.Add(handle, std::move(info));		
-		return handle;
-		
-	}
-
-
 	
 	ResourceHandle::t_hash ResourceRegistry::Register(UniquePtr<RHA::DX12::WindowSurface> &&surface)
 	{
@@ -155,14 +140,6 @@ namespace Renderer::DX12
 	ID3D12RootSignature *ResourceRegistry::GetSignature(const ResourceHandle::t_hash handle)
 	{
 		return registrySignature.Get(handle).signature.Get();
-		
-	}
-
-
-
-	Light &ResourceRegistry::GetLight(const ResourceHandle::t_hash handle)
-	{
-		return registryLight.Get(handle);
 		
 	}
 
@@ -230,11 +207,6 @@ namespace Renderer::DX12
 	
 	void ResourceRegistry::RetireHandle(const ResourceHandle::t_hash handle)
 	{
-		if(ResourceHandle::GetResourceType(handle) == ResourceHandle::t_resourceTypes::Light)
-		{
-			registryLight.Remove(handle);
-		}
-
 		RemoveReference(handle);
 		handlesToRetire.push_front(handle);
 		
@@ -310,12 +282,6 @@ namespace Renderer::DX12
 				
 			}
 
-			if(handleType == ResourceHandle::t_resourceTypes::Light)
-			{
-				return;
-				
-			}
-
 			(registryResource.*operation)(handle);
 		
 		}
@@ -325,30 +291,6 @@ namespace Renderer::DX12
 	{
 		ExecuteReferenceOperationOnCorrectRegistry(handle, &UsesReferences::RemoveReference);
 		
-	}
-
-
-
-	const void *ResourceRegistry::GetLightsData() const
-	{
-		return registryLight.GetData();
-
-	}
-
-
-
-	size_t ResourceRegistry::GetLigthsDataSizeInBytes() const
-	{
-		return registryLight.SizeInBytes();
-
-	}
-
-
-
-	size_t ResourceRegistry::GetLightCount() const
-	{
-		return registryLight.Size();
-
 	}
 
 	

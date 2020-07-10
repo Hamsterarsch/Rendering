@@ -30,6 +30,12 @@ namespace Renderer
 		public: virtual void CompilePixelShader(const char *shader, size_t length, SerializationHook &serializer) const = 0;
 
 		public: virtual void CompileComputeShader(const char *shader, size_t length, SerializationHook &serializer) const = 0;
+
+		public: virtual std::string GetLastCompileMessage() const = 0;
+
+		public: virtual bool WasCompileSuccessful() const = 0;
+
+		public: virtual bool WasCompiledWithWarnings() const = 0;
 		
 
 		public: virtual void SerializeRootSignature

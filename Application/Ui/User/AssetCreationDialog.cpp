@@ -16,13 +16,16 @@
 
 namespace App::Ui::User
 {
-	AssetCreationDialogFrontend::AssetCreationDialogFrontend(App::Core::Application &app, std::string &&targetDirectory)
+	#undef max
+	AssetCreationDialogFrontend::AssetCreationDialogFrontend(App::Core::Application &app, std::string &&targetDirectory, std::function<void()> &&onAssetCreated)
 		:
 		app{ &app },
 		shouldAbort{ false },
 		creationConfirmed{ false },
 		selectedTypeIndex{ std::numeric_limits<decltype(selectedTypeIndex)>::max() },
-		targetDirectory{ std::move(targetDirectory) }
+		targetDirectory{ std::move(targetDirectory) },
+		onAssetCreated{ std::move(onAssetCreated) }
+	
 	{		
 		auto typesLayout{ Element<FloatLayout>(5, true) };
 		for(size_t typeIndex{ 0 }; typeIndex < app.GetAssetTypes().GetNumberAssetTypes(); ++typeIndex)
@@ -87,7 +90,7 @@ namespace App::Ui::User
 		{
 			if(auto importDialog{ app->GetAssetTypes().GetAssetImportDialog(selectedTypeIndex) })
 			{
-				app->GetUiStateMachine().PushStateLevel(std::move(importDialog));
+				app->GetUiStateMachine().PushStateLevel(std::move(importDialog));//todo: inegrate creation callback
 				return;
 				
 			}
@@ -99,6 +102,12 @@ namespace App::Ui::User
 			auto defaultInstance{ app->GetAssetTypes().GetDefaultAssetOfType(selectedTypeIndex) };
 			
 			app->GetProjectAssets().MakeAsset(path.string().c_str(), std::move(*defaultInstance));
+
+			if(onAssetCreated)
+			{
+				onAssetCreated();
+			}
+			
 			app->GetUiStateMachine().PopStateLevel();
 			return;
 												
@@ -126,9 +135,9 @@ namespace App::Ui::User
 		}
 				
 	}
-
 		void AssetCreationDialogFrontend::TryToEnableAssetCreation()
 		{
+			#undef max
 			confirmButton->isDisabled = assetName.data.empty() || selectedTypeIndex == std::numeric_limits<decltype(selectedTypeIndex)>::max();
 					
 		}

@@ -47,6 +47,8 @@ namespace assetSystem::core
 
 		asset.Serialize(writer);
 
+		registry.AddReference(key);
+		
 		return AssetPtr{ asset, key, *this };
 		
 	}
@@ -120,7 +122,23 @@ namespace assetSystem::core
 		
 	}
 
+
 	
+	bool AssetSystemImpl::IsSameRootAssetPath(const char *asThisPath) const
+	{		
+		return registry.GetAssetDirectory() == fs::path{ asThisPath };
+		
+	}
+
+
+	
+	std::string AssetSystemImpl::GetAbsoluteRootAssetPath() const
+	{
+		return registry.GetAssetDirectory().string();
+		
+	}
+
+
 
 	LoadedAssetInfo AssetSystemImpl::GetAssetInternal(const char *path)
 	{

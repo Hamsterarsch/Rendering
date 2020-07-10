@@ -243,11 +243,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Commands\Basic\DispatchCommand.hpp" />
     <ClInclude Include="Commands\Basic\DrawIndexedInstancedCommand.hpp" />
     <ClInclude Include="Commands\Basic\SetConstantsToGraphicsCommand.hpp" />
+    <ClInclude Include="Commands\Basic\SetDescriptorBlockViewsAsComputeTableCommand.hpp" />
     <ClInclude Include="Commands\Basic\SetDescriptorBlockViewsAsGraphicsTableCommand.hpp" />
     <ClInclude Include="Commands\Basic\SetIndexBufferCommand.hpp" />
     <ClInclude Include="Commands\Basic\SetPipelineStateCommand.hpp" />
+    <ClInclude Include="Commands\Basic\SetSignatureComputeCommand.hpp" />
     <ClInclude Include="Commands\Basic\SetSignatureGraphicsCommand.hpp" />
     <ClInclude Include="Commands\Basic\SetScissorRectCommand.hpp" />
     <ClInclude Include="Commands\Basic\SetVertexBufferCommand.hpp" />
@@ -353,8 +356,6 @@
     <ClInclude Include="Interface\StateSettings\StateSettings.hpp" />
     <ClInclude Include="Interface\StateSettings\AddressingTargets.hpp" />
     <ClInclude Include="Interface\StateSettings\VertexLayoutSettings.hpp" />
-    <ClInclude Include="Lighting\LightContainer.hpp" />
-    <ClInclude Include="Lighting\LightGrid\VolumeTileGrid.hpp" />
     <ClInclude Include="Resources\Descriptor\DescriptorAllocator.hpp" />
     <ClInclude Include="Resources\Descriptor\DescriptorChunk.hpp" />
     <ClInclude Include="Resources\Descriptor\DescriptorChunkRegistry.hpp" />
@@ -380,9 +381,6 @@
     <ClInclude Include="Resources\RootSignature\RootSignatureFactory.hpp" />
     <ClInclude Include="Resources\RootSignature\TableLayout.hpp" />
     <ClInclude Include="Resources\SerialFactory.hpp" />
-    <ClInclude Include="ShaderRelevantTypes\GlobalBufferData.hpp" />
-    <ClInclude Include="ShaderRelevantTypes\Light.hpp" />
-    <ClInclude Include="ShaderRelevantTypes\VolumeTileGridData.hpp" />
     <ClInclude Include="StateSettings\AddressingTargetsImpl.hpp" />
     <ClInclude Include="StateSettings\BlendSettingsImpl.hpp" />
     <ClInclude Include="StateSettings\DepthStencilSettingsImpl.hpp" />
@@ -392,17 +390,21 @@
     <ClInclude Include="StateSettings\RasterizerSettingsImpl.hpp" />
     <ClInclude Include="StateSettings\RootSignatureSettingsImpl.hpp" />
     <ClInclude Include="StateSettings\SemanticTargetsImpl.hpp" />
+    <ClInclude Include="StateSettings\StateImpl.hpp" />
     <ClInclude Include="StateSettings\TargetHelpers.hpp" />
     <ClInclude Include="StateSettings\VertexLayoutSettingsImpl.hpp" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Commands\Basic\DispatchCommand.cpp" />
     <ClCompile Include="Commands\Basic\DrawIndexedInstancedCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetConstantsToGraphicsCommand.cpp" />
+    <ClCompile Include="Commands\Basic\SetDescriptorBlockViewsAsComputeTableCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetDescriptorBlockViewsAsGraphicsTableCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetIndexBufferCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetPipelineStateCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetScissorRectCommand.cpp" />
+    <ClCompile Include="Commands\Basic\SetSignatureComputeCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetSignatureGraphicsCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetVertexBufferCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetViewportCommand.cpp" />
@@ -466,8 +468,6 @@
     <ClCompile Include="RendererFacadeImpl.cpp" />
     <ClCompile Include="Interface\Commands\CompositeCommand.cpp" />
     <ClCompile Include="Interface\Renderer.cpp" />
-    <ClCompile Include="Lighting\LightContainer.cpp" />
-    <ClCompile Include="Lighting\LightGrid\VolumeTileGrid.cpp" />
     <ClCompile Include="Resources\Descriptor\DescriptorAllocator.cpp" />
     <ClCompile Include="Resources\Descriptor\DescriptorChunkRegistry.cpp" />
     <ClCompile Include="Resources\Descriptor\DescriptorMemory.cpp" />

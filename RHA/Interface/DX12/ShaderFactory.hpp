@@ -2,43 +2,45 @@
 #include "DxPtrTypes.hpp"
 #include <d3d12.h>
 #include "Shared/InterfaceHelpers.hpp"
+#include <string>
 
-namespace RHA
+
+namespace RHA::DX12
 {
-	namespace DX12
+	class ShaderFactory
 	{
-		class ShaderFactory
-		{
-			DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(ShaderFactory)
-
-
-
-			public: virtual void SkipOptimization(bool value) = 0;
-
-			public: virtual void AddDebugInfo(bool value) = 0;
-
-			public: virtual void AllowHighOptimizationTimes(bool value) = 0;
-
-			public: virtual void AddIncludeDirectory(const char *directory) = 0;
-
+		DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(ShaderFactory)
 			
-			public: virtual DxPtr<ID3DBlob> MakeVertexShader(const wchar_t *filepath, const char *entrypoint) = 0;
 
-			public: virtual DxPtr<ID3DBlob> MakeVertexShader(const char *shader, size_t shaderLength, const char *entrypoint) = 0;
+		public: virtual void SkipOptimization(bool value) = 0;
 
-			
-			public: virtual DxPtr<ID3DBlob> MakePixelShader(const wchar_t *filepath, const char *entrypoint) = 0;
+		public: virtual void AddDebugInfo(bool value) = 0;
 
-			public: virtual DxPtr<ID3DBlob> MakePixelShader(const char *shader, size_t shaderLength, const char *entrypoint) = 0;
+		public: virtual void AllowHighOptimizationTimes(bool value) = 0;
 
-			
-			public: virtual DxPtr<ID3DBlob> MakeComputeShader(const char *shader, size_t shaderLength, const char *entrypoint) = 0;
-			
-		};
+		public: virtual void AddIncludeDirectory(const char *directory) = 0;
 
 		
-	}
-	
+		public: virtual DxPtr<ID3DBlob> MakeVertexShader(const wchar_t *filepath, const char *entrypoint) = 0;
+
+		public: virtual DxPtr<ID3DBlob> MakeVertexShader(const char *shader, size_t shaderLength, const char *entrypoint) = 0;
+
+		
+		public: virtual DxPtr<ID3DBlob> MakePixelShader(const wchar_t *filepath, const char *entrypoint) = 0;
+
+		public: virtual DxPtr<ID3DBlob> MakePixelShader(const char *shader, size_t shaderLength, const char *entrypoint) = 0;
+
+		
+		public: virtual DxPtr<ID3DBlob> MakeComputeShader(const char *shader, size_t shaderLength, const char *entrypoint) = 0;
+
+		public: virtual bool WasCompileSuccessful() const = 0;
+
+		public: virtual bool WasCompiledWithWarnings() const = 0;
+
+		public: virtual std::string GetCompileMessage() const = 0;
+					
+	};
+
 	
 }
 

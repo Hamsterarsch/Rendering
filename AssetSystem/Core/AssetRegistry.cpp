@@ -79,8 +79,8 @@ namespace assetSystem::core
 
 	
 	void AssetRegistry::RemoveReference(const AssetKey key)
-	{
-		if(--references[key].strongReferences == 0)
+	{		
+		if(--references.at(key).strongReferences == 0)
 		{
 			references.erase(key);	
 		}

@@ -1,6 +1,7 @@
 #pragma once
 #include "StateSettings/BlendSettings.hpp"
 #include <d3d12.h>
+#include "StateImpl.hpp"
 
 
 namespace Renderer::DX12
@@ -19,16 +20,20 @@ namespace Renderer::DX12
 			
 			State();
 			
-		} current, saved;
+		};
+
+		private: StateImpl<State> state;
 
 		
 		
-		public:	void ResetToDefault() override;
+		public:	void ResetAllToDefault() override { state.ResetAllToDefault(); }
 
-		public: void SaveSettings() override;
+		public: void SaveSettings() override { state.SaveSettings(); }
 
-		public: void RestoreSettings() override;
-
+		public: void RestoreSettingsToSaved() override { state.RestoreSettingsToSaved(); }
+		
+		public: void RestoreSettingsToDefault() override { state.RestoreSettingsToDefault(); }
+		
 		
 		public: void TargetSrc(const char* data) override;
 

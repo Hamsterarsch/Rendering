@@ -47,6 +47,8 @@ namespace App::Ui::User
 
 		private: bool shouldMakeNewAsset;
 
+		private: bool wasNewAssetCreated;
+
 				 		
 
 		

@@ -5,6 +5,7 @@
 #include "AssetSystemTypes.hpp"
 #include "AssetPtr.hpp"
 #include "Asset.hpp"
+#include <string>
 
 
 namespace assetSystem
@@ -37,6 +38,9 @@ namespace assetSystem
 
 		public: virtual void ReloadAsset(AssetPtr &assetPtr) = 0;
 
+		public: virtual bool IsSameRootAssetPath(const char *asThisPath) const = 0;
+
+		public: virtual std::string GetAbsoluteRootAssetPath() const = 0;
 		
 		
 		friend AssetPtr;

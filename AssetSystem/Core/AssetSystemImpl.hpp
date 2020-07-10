@@ -33,6 +33,10 @@ namespace assetSystem::core
 
 		public: void ReloadAsset(AssetPtr &assetPtr) override;
 		
+		public: bool IsSameRootAssetPath(const char *asThisPath) const override;
+		
+		public: std::string GetAbsoluteRootAssetPath() const override;
+		
 						
 		private: LoadedAssetInfo GetAssetInternal(const char *projectRelativePath) override;
 				

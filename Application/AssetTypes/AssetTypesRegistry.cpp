@@ -6,6 +6,9 @@
 #include "ProjectAsset.hpp"
 #include "AssetFileending.hpp"
 #include "Ui/User/ShaderEditor.hpp"
+#include "CacheAsset.hpp"
+#include "Core/AssetPathUtility.hpp"
+#include "UserPixelShaderAsset.hpp"
 
 
 
@@ -24,11 +27,29 @@ namespace App::Assets
 	};
 
 	
+	
+
+	const std::unordered_set<std::string> AssetTypesRegistry::hiddenAssetTypes
+	{
+		CacheAsset::GetAssetClassExtension(),
+		PixelShaderAsset::GetAssetClassExtension(),
+		ComputeShaderAsset::GetAssetClassExtension()
+	};
+	
+	const std::unordered_set<std::string> AssetTypesRegistry::typesNotCreatableByUser
+	{
+		ProjectAsset::GetAssetClassExtension(),
+		CacheAsset::GetAssetClassExtension(),
+		PixelShaderAsset::GetAssetClassExtension(),
+		ComputeShaderAsset::GetAssetClassExtension()
+	};
+	
+
 
 	
 	AssetTypesRegistry::AssetClassInfo::AssetClassInfo
 	(
-		Core::Application &app,
+		Renderer::RendererFacade &iconTarget,
 		const assetSystem::AssetPtrTyped<ImageAsset> &icon,
 		const char *displayName,
 		const char *extension,
@@ -44,36 +65,71 @@ namespace App::Assets
 		assetEditor{ std::move(assetEditor) },
 		assetImportDialog{ std::move(importDialog) }
 	{
-		displayIcon->UploadToRenderer(app.GetRenderer());
+		displayIcon->UploadToRenderer(iconTarget);
 		iconView.descriptorHandle = displayIcon->GetDescriptorHandle();
 	}
-	
 
-	AssetTypesRegistry::AssetTypesRegistry(Core::Application &app) : app{ &app }
+
+
+
+	AssetTypesRegistry::AssetTypesRegistry
+	(
+		assetSystem::AssetSystem &addTargetAndIconSource,		
+		Renderer::RendererFacade &iconUploadTarget
+	)	:
+		showAllTypes{ false }
 	{
-		AddAssetInfo<ImageAsset>(app, "Image Asset", "Images/Icons/TextureIcon.img", {});
-		AddAssetInfo<ProjectAsset>(app, "Project Asset", "Images/Icons/FileIcon.img", {});
-		AddAssetInfo<ShaderAsset>(app, "Shader Asset", "Images/Icons/FileIcon.img", MakeUnique<PrototypeEditor<Ui::User::ShaderEditorFrontend>>());
+		RegisterAssetTypesWith(addTargetAndIconSource);
+		
+		AddAssetInfo<ImageAsset>(addTargetAndIconSource, iconUploadTarget, "Image Asset", "Images/Icons/TextureIcon.img", {});
 				
+		static const char *fileIconPath{ "Images/Icons/FileIcon.img" };
+		AddAssetInfo<ProjectAsset>(addTargetAndIconSource, iconUploadTarget,		"Project", fileIconPath, {});		
+		AddAssetInfo<PixelShaderAsset>(addTargetAndIconSource, iconUploadTarget,	"Pixel Shader", fileIconPath, MakeUnique<PrototypeEditor<Ui::User::ShaderEditorFrontend>>());
+		AddAssetInfo<UserPixelShaderAsset>(addTargetAndIconSource, iconUploadTarget,	"User Pixel Shader", fileIconPath, MakeUnique<PrototypeEditor<Ui::User::ShaderEditorFrontend>>());
+		AddAssetInfo<VertexShaderAsset>(addTargetAndIconSource, iconUploadTarget,	"Vertex Shader", fileIconPath, MakeUnique<PrototypeEditor<Ui::User::ShaderEditorFrontend>>());
+		AddAssetInfo<ComputeShaderAsset>(addTargetAndIconSource, iconUploadTarget,	"Compute Shader", fileIconPath, MakeUnique<PrototypeEditor<Ui::User::ShaderEditorFrontend>>());
+		
 	}
+
+		void AssetTypesRegistry::RegisterAssetTypesWith(assetSystem::AssetSystem &asys)
+		{
+			RegisterAsset<ProjectAsset>(asys);
+			RegisterAsset<ImageAsset>(asys);
+			RegisterAsset<PixelShaderAsset>(asys);
+			RegisterAsset<UserPixelShaderAsset>(asys);
+			RegisterAsset<VertexShaderAsset>(asys);
+			RegisterAsset<ComputeShaderAsset>(asys);
+							
+		}
+
+			template <class t_asset>
+			void AssetTypesRegistry::RegisterAsset(assetSystem::AssetSystem &registerTarget)
+			{
+				registerTarget.RegisterAssetClass(t_asset::GetAssetClassExtension(), MakeUnique<assetSystem::AssetConstructOperationsHelper<t_asset>>());
+			
+			}
 
 		template<class t_asset>
 		void AssetTypesRegistry::AddAssetInfo
 		(
-			Core::Application &app,
+			assetSystem::AssetSystem &iconSource,
+			Renderer::RendererFacade &iconUploadTarget,
 			const char *displayName,
 			const char *iconImageAssetPath,
 			AssetClassInfo::EditorProvider &&assetEditor,
 			AssetClassInfo::ImportProvider &&importDialog
 		)
 		{
-			app.GetProgramAssets().RegisterAssetClass(t_asset::GetAssetClassExtension(), MakeUnique<assetSystem::AssetConstructOperationsHelper<t_asset>>());
-			app.GetProjectAssets().RegisterAssetClass(t_asset::GetAssetClassExtension(), MakeUnique<assetSystem::AssetConstructOperationsHelper<t_asset>>());
+			if(assetClassMap.find(t_asset::GetAssetClassExtension()) != assetClassMap.end())
+			{
+				return;
+			}
 		
 			assetClassInfos.emplace_back
 			(
-				app,
-				app.GetProgramAssets().GetAsset(iconImageAssetPath),
+				iconUploadTarget,
+				iconSource.GetAsset(iconImageAssetPath),
 				displayName,
 				t_asset::GetAssetClassExtension(),
 				MakeUnique<PrototypeAsset<t_asset>>(),
@@ -84,23 +140,19 @@ namespace App::Assets
 		
 		}
 
-
-
+		
+		
 	bool AssetTypesRegistry::IsHiddenAssetType(const size_t index) const
 	{
-		return hiddenAssetTypes.find(assetClassInfos.at(index).extension) != hiddenAssetTypes.end();
+		return not showAllTypes && hiddenAssetTypes.find(assetClassInfos.at(index).extension) != hiddenAssetTypes.end();
 		
 	}
 
 	
 	bool AssetTypesRegistry::IsUserCreatableType(size_t index) const
 	{
-		if(std::strcmp(assetClassInfos.at(index).extension, ProjectAsset::GetAssetClassExtension()) == 0)
-		{
-			return false;
-		}
-		return true;
-		
+		return showAllTypes || typesNotCreatableByUser.find(assetClassInfos.at(index).extension) == typesNotCreatableByUser.end();
+				
 	}
 
 
@@ -146,17 +198,18 @@ namespace App::Assets
 
 
 
-	UniquePtr<Ui::States::UiState> AssetTypesRegistry::MakeAssetEditor(const char *assetAbsolutePath, const assetSystem::AssetPtr &assetToEdit) const
+	UniquePtr<Ui::States::UiState> AssetTypesRegistry::MakeAssetEditor(const char *assetAbsolutePath, Ui::UiStateMachine &stateEditorParent, const assetSystem::AssetPtr &assetToEdit) const
 	{
 		std::filesystem::path path{ assetAbsolutePath };		
-		auto assetClass{ path.replace_extension("").extension().string().erase(0, 1) };
-				
-		auto assetName{ path.filename().replace_extension().string() };
+		const auto assetClass{ Core::GetAssetClassExtensionFromFilename(path.filename().string()) };
+
+		
+		auto assetName{ Core::RemoveAllAssetExtensionsFromFilename(path.filename().string()) };
 
 		const auto &provider{ assetClassInfos.at(assetClassMap.at(assetClass)).assetEditor };
 		if(provider)
 		{
-			return provider->Clone(app->GetUiStateMachine(), std::move(assetName), assetToEdit);
+			return provider->Clone(stateEditorParent, std::move(assetName), assetToEdit);
 			
 		}
 		return {};
@@ -175,7 +228,7 @@ namespace App::Assets
 	
 	bool AssetTypesRegistry::IsHiddenAssetType(const char *classExtension) const
 	{
-		return hiddenAssetTypes.find(classExtension) != hiddenAssetTypes.end();
+		return not showAllTypes && hiddenAssetTypes.find(classExtension) != hiddenAssetTypes.end();
 		
 	}
 

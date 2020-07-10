@@ -1,6 +1,6 @@
 #include "Core/CreateProject.hpp"
 #include "AssetTypes/ProjectAsset.hpp"
-#include "AssetSystem/Interface/AssetConstructOperationsHelper.hpp"
+#include "AssetTypes/AssetTypesRegistry.hpp"
 #include <string>
 #include <filesystem>
 
@@ -12,7 +12,7 @@ namespace App::Core
 	UniquePtr<AssetSystem> CreateProject(const char *projectName, const char *projectAssetFolder, const Version &programVersion)
 	{
 		auto asys{ MakeAssetSystem(projectAssetFolder) };
-		asys->RegisterAssetClass(Assets::ProjectAsset::GetAssetClassExtension(), MakeUnique<AssetConstructOperationsHelper<Assets::ProjectAsset>>());
+		Assets::AssetTypesRegistry::RegisterAssetTypesWith(*asys);
 
 		Assets::ProjectAsset asset{ programVersion };
 		std::string relativeAssetPath{ projectName };
@@ -33,13 +33,13 @@ namespace App::Core
 		absoluteProjectAssetFilePath.remove_filename();
 				
 		auto asys{ MakeAssetSystem(absoluteProjectAssetFilePath.string().c_str()) };
-		asys->RegisterAssetClass(Assets::ProjectAsset::GetAssetClassExtension(), MakeUnique<AssetConstructOperationsHelper<Assets::ProjectAsset>>());
+		Assets::AssetTypesRegistry::RegisterAssetTypesWith(*asys);
 				
 		const auto assetExtensionPos{ relativeAssetPath.find_last_of('.') };
 		relativeAssetPath.erase(assetExtensionPos, relativeAssetPath.size() - assetExtensionPos);
 
-		auto asset{ asys->GetAsset(relativeAssetPath.c_str()) };
-		if(not reinterpret_cast<Assets::ProjectAsset *>(asset.GetAsset()) ->DoesProjectVersionMatch(programVersion))
+		AssetPtrTyped<Assets::ProjectAsset> project{ asys->GetAsset(relativeAssetPath.c_str()) };
+		if(not project->DoesProjectVersionMatch(programVersion))
 		{			
 			return {};
 			

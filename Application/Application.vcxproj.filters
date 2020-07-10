@@ -128,6 +128,12 @@
     <ClCompile Include="Ui\Elements\CollapsibleNodeLayoutFrontend.cpp">
       <Filter>Ui\Elements</Filter>
     </ClCompile>
+    <ClCompile Include="AssetTypes\UserPixelShaderAsset.cpp">
+      <Filter>AssetTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\VolumeTileGrid.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window\Windows\Window.hpp">
@@ -343,6 +349,33 @@
     <ClInclude Include="Ui\Elements\CollapsibleNodeLayoutFrontend.hpp">
       <Filter>Ui\Elements</Filter>
     </ClInclude>
+    <ClInclude Include="AssetTypes\PsoAsset.hpp">
+      <Filter>AssetTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetTypes\RendererAsset.hpp">
+      <Filter>AssetTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\AssetPathUtility.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetTypes\UserPixelShaderAsset.hpp">
+      <Filter>AssetTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\ShaderRelevantTypes\GlobalBufferData.hpp">
+      <Filter>Rendering\ShaderRelevantTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\ShaderRelevantTypes\Light.hpp">
+      <Filter>Rendering\ShaderRelevantTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\ShaderRelevantTypes\VolumeTileGridData.hpp">
+      <Filter>Rendering\ShaderRelevantTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\ShaderRelevantTypes\RenderingBoundingBox.hpp">
+      <Filter>Rendering\ShaderRelevantTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\VolumeTileGrid.hpp">
+      <Filter>Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Window">
@@ -395,6 +428,9 @@
     </Filter>
     <Filter Include="AssetFactories">
       <UniqueIdentifier>{2e71534a-ef8b-499f-8032-af9bed6b874d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rendering\ShaderRelevantTypes">
+      <UniqueIdentifier>{f1536792-8209-40f2-8ed5-f0ca79f99306}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

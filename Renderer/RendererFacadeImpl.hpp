@@ -54,6 +54,8 @@ namespace Renderer::DX12
 				 			
 		private: UniquePtr<ResourceFactory> resourceFactory;
 		
+		private: DescriptorMemory descriptors;
+		
 		private: ResourceRegistry registry;
 
 		private: BlendSettingsImpl blendSettings;
@@ -71,8 +73,7 @@ namespace Renderer::DX12
 		private: RootSignatureFactory signatureFactory;
 		
 		private: UniquePtr<ShaderFactory> shaderFactory;
-			
-		private: DescriptorMemory descriptors;
+		
 
 		private: CounterFactoryImpl counterFactory;
 		
@@ -94,24 +95,30 @@ namespace Renderer::DX12
 		public: RendererFacadeImpl &operator=(const RendererFacadeImpl &) = delete;
 
 
-		public: virtual size_t MakeBuffer(const void *data, size_t sizeInBytes) override;
+		public: ResourceHandle::t_hash MakeBuffer(const void *data, size_t sizeInBytes) override;
 
-			private: size_t MakeBufferInternal(const void *data, size_t sizeInBytes, size_t handle);
+		private: ResourceHandle::t_hash MakeBufferInternal(const void *data, size_t sizeInBytes, size_t handle);
 		
-		public: virtual size_t MakeBuffer(const void *data, size_t sizeInBytes, D3D12_RESOURCE_STATES state) override;
+		public: ResourceHandle::t_hash MakeBuffer(const void *data, size_t sizeInBytes, D3D12_RESOURCE_STATES state) override;
 
-		public: virtual size_t MakeUavBuffer(const void *data, size_t sizeInBytes) override;
+		public: ResourceHandle::t_hash MakeUavBuffer(const void *data, size_t sizeInBytes) override;
 
-		public: virtual DxPtr<ID3D12Resource> MakeReadbackBuffer(size_t sizeInBytes) override;
+		public: DxPtr<ID3D12Resource> MakeReadbackBuffer(size_t sizeInBytes) override;
 
 
-		public: virtual void AddShaderIncludeDirectory(const char *absoluteDirectoryPath) override;
+		public: void AddShaderIncludeDirectory(const char *absoluteDirectoryPath) override;
 		
-		public: virtual void CompileVertexShader(const char *shader, size_t length, SerializationHook &serializer) const override;
+		public: void CompileVertexShader(const char *shader, size_t length, SerializationHook &serializer) const override;
 
-		public: virtual void CompilePixelShader(const char *shader, size_t length, SerializationHook &serializer) const override;
+		public: void CompilePixelShader(const char *shader, size_t length, SerializationHook &serializer) const override;
 
-		public: virtual void CompileComputeShader(const char *shader, size_t length, SerializationHook &serializer) const override;
+		public: void CompileComputeShader(const char *shader, size_t length, SerializationHook &serializer) const override;
+
+		public: std::string GetLastCompileMessage() const override { return shaderFactory->GetCompileMessage(); }
+
+		public: bool WasCompileSuccessful() const override { return shaderFactory->WasCompileSuccessful(); }
+		
+		public: bool WasCompiledWithWarnings() const override{ return shaderFactory->WasCompiledWithWarnings(); }
 		
 
 		public: virtual void SerializeRootSignature
@@ -123,16 +130,16 @@ namespace Renderer::DX12
 
 		public: virtual size_t MakeRootSignature(const void *serializedData, size_t dataSizeInBytes, unsigned samplerAmount) override;
 		
-		public: size_t MakePso(const ShaderList &shaders, size_t signatureHandle) override;
+		public: ResourceHandle::t_hash MakePso(const ShaderList &shaders, ResourceHandle::t_hash signatureHandle) override;
 							
-		public: size_t MakePso(const Blob &csBlob, size_t signatureHandle) override;
+		public: ResourceHandle::t_hash MakePso(const Blob &csBlob, Renderer::ResourceHandle::t_hash signatureHandle) override;
 
 		public: ResourceHandle::t_hash MakeTexture(const void *data, size_t width, size_t height) override;
 
 		
-		public: bool IsResourceValid(size_t handle) override;
+		public: bool IsResourceValid(ResourceHandle::t_hash handle) override;
 
-		public: void RetireHandle(size_t handle) override;
+		public: void RetireHandle(ResourceHandle::t_hash handle) override;
 
    		
 		public: ResourceHandle::t_hash MakeWindowsWindowSurface(HWND windowHandle) override;
@@ -171,7 +178,7 @@ namespace Renderer::DX12
 		public: ResourceViewFactory &GetViewFactory() override;
 
 		public: CounterFactory &GetCounterFactory() override;
-
+						
 	};
 
 
