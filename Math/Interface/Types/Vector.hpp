@@ -36,7 +36,7 @@ namespace Math
 	class VectorProxy : public VectorBase<VectorProxy<t_glm>, t_glm> { static_assert(true, "invalid vector base type"); };	
 
 	template<class t_glm>
-	class VectorProxy<t_glm, 2> : public VectorBase<VectorProxy<t_glm>, t_glm> 
+	class VectorProxy<t_glm, 2> final : public VectorBase<VectorProxy<t_glm>, t_glm> 
 	{
 		public: using t_wrapped = t_glm;
 		
@@ -64,7 +64,7 @@ namespace Math
 
 
 	template<class t_glm>
-	class VectorProxy<t_glm, 3> : public VectorBase<VectorProxy<t_glm>, t_glm> 
+	class VectorProxy<t_glm, 3> final : public VectorBase<VectorProxy<t_glm>, t_glm> 
 	{
 		public: using t_wrapped = t_glm;
 		
@@ -92,7 +92,7 @@ namespace Math
 	
 	
 	template<class t_glm>
-	class VectorProxy<t_glm, 4> : public VectorBase<VectorProxy<t_glm>, t_glm> 
+	class VectorProxy<t_glm, 4> final : public VectorBase<VectorProxy<t_glm>, t_glm> 
 	{
 		public: using t_wrapped = t_glm;
 		
