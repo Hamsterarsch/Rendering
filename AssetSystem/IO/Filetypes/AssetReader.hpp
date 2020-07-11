@@ -31,6 +31,8 @@ namespace assetSystem::io
 							 							 
 						private: bool HandleObjectPropertyEnd();
 
+							private: void PopCurrentObjectScope();
+		
 					private: void ProcessProperty(std::string &&propertyName);
 
 						private: char GetPropertyToken();
@@ -55,7 +57,6 @@ namespace assetSystem::io
 
 										private: void SkipBinaryDataToken();
 		
-							private: void PopCurrentObjectScope();
 		
 
 		public: using ArchiveBase::Serialize;

@@ -98,7 +98,8 @@ namespace assetSystem::io
 							{
 								return false;
 								
-							}
+							}		
+							
 							return HandleObjectPropertyEnd();							
 						}
 
@@ -115,14 +116,36 @@ namespace assetSystem::io
 					{
 						PopCurrentObjectScope();
 
-						if(SeekEofUntilToken(AssetArchiveConstants::dataStartToken))
-						{							
-							return false;
+						while(true)
+						{
+							const auto character{ file.peek() };
+							if(character == std::ifstream::traits_type::eof())
+							{
+								return false;
+							}
+
+							if(character == ',' || character == '}')
+							{								
+								return SeekNextPropertyStart();								
+							}
+							file.get();							
 						}
-						file.get();
-						return true;
-		
+				
 					}
+
+						void AssetReader::PopCurrentObjectScope()
+						{
+							objectQualifiers.pop_back();
+							while(!objectQualifiers.empty())
+							{								
+								if(objectQualifiers.back() == '.')
+								{
+									break;
+								}
+								objectQualifiers.pop_back();
+							}							
+		
+						}
 
 				void AssetReader::ProcessProperty(std::string &&propertyName)
 				{
@@ -168,19 +191,7 @@ namespace assetSystem::io
 
 					void AssetReader::ProcessObjectProperty(std::string &&propertyName)
 					{
-						const auto firstToken{ GetFirstTokenInObject() };
-						if
-						(	
-							firstToken == std::ifstream::traits_type::eof()
-							|| firstToken == '}'
-						)
-						{
-							return;
-							
-						}
-		
-						AddObjectScope(std::move(propertyName));
-						file.seekg(-1, std::ifstream::cur);
+						AddObjectScope(std::move(propertyName));					
 					
 					}
 
@@ -327,20 +338,6 @@ namespace assetSystem::io
 									}
 		
 								}
-
-						void AssetReader::PopCurrentObjectScope()
-						{
-							objectQualifiers.pop_back();
-							while(!objectQualifiers.empty())
-							{								
-								if(objectQualifiers.back() == '.')
-								{
-									break;
-								}
-								objectQualifiers.pop_back();
-							}							
-		
-						}
 
 
 
