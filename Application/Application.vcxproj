@@ -251,6 +251,9 @@
   <ItemGroup>
     <ClInclude Include="AssetFactories\ImageData.hpp" />
     <ClInclude Include="AssetFactories\ImageFactory.hpp" />
+    <ClInclude Include="AssetFactories\MeshData.hpp" />
+    <ClInclude Include="AssetFactories\StaticMeshData.hpp" />
+    <ClInclude Include="AssetFactories\StaticMeshFactory.hpp" />
     <ClInclude Include="AssetTypes\AssetTypesRegistry.hpp" />
     <ClInclude Include="AssetTypes\CacheAsset.hpp" />
     <ClInclude Include="AssetTypes\ImageAsset.hpp" />
@@ -258,6 +261,7 @@
     <ClInclude Include="AssetTypes\PsoAsset.hpp" />
     <ClInclude Include="AssetTypes\RendererAsset.hpp" />
     <ClInclude Include="AssetTypes\ShaderAsset.hpp" />
+    <ClInclude Include="AssetTypes\StaticMeshAsset.hpp" />
     <ClInclude Include="AssetTypes\UserPixelShaderAsset.hpp" />
     <ClInclude Include="Core\Application.hpp" />
     <ClInclude Include="Core\AssetPathUtility.hpp" />
@@ -273,6 +277,12 @@
     <ClInclude Include="Rendering\ShaderRelevantTypes\VolumeTileGridData.hpp" />
     <ClInclude Include="Rendering\UiRenderer.hpp" />
     <ClInclude Include="Rendering\VolumeTileGrid.hpp" />
+    <ClInclude Include="Scene\ContentLight.hpp" />
+    <ClInclude Include="Scene\ContentMesh.hpp" />
+    <ClInclude Include="Scene\GraphNode.hpp" />
+    <ClInclude Include="Scene\GraphNodeContent.hpp" />
+    <ClInclude Include="Scene\GraphVisitor.hpp" />
+    <ClInclude Include="Scene\GraphVisitorTransformRequiring.h" />
     <ClInclude Include="ThirdParty\imgui\imconfig.h" />
     <ClInclude Include="ThirdParty\imgui\imgui.h" />
     <ClInclude Include="ThirdParty\imgui\imgui_impl_dx12.h">
@@ -339,11 +349,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssetFactories\ImageFactory.cpp" />
+    <ClCompile Include="AssetFactories\StaticMeshData.cpp" />
     <ClCompile Include="AssetTypes\AssetTypesRegistry.cpp" />
     <ClCompile Include="AssetTypes\CacheAsset.cpp" />
     <ClCompile Include="AssetTypes\ImageAsset.cpp" />
     <ClCompile Include="AssetTypes\ProjectAsset.cpp" />
     <ClCompile Include="AssetTypes\ShaderAsset.cpp" />
+    <ClCompile Include="AssetTypes\StaticMeshAsset.cpp" />
     <ClCompile Include="AssetTypes\UserPixelShaderAsset.cpp" />
     <ClCompile Include="Core\CreateProject.cpp" />
     <ClCompile Include="Core\Version.cpp" />
@@ -352,6 +364,10 @@
     <ClCompile Include="Rendering\SceneRenderer.cpp" />
     <ClCompile Include="Rendering\UiRenderer.cpp" />
     <ClCompile Include="Rendering\VolumeTileGrid.cpp" />
+    <ClCompile Include="Scene\ContentLight.cpp" />
+    <ClCompile Include="Scene\ContentMesh.cpp" />
+    <ClCompile Include="Scene\GraphNode.cpp" />
+    <ClCompile Include="Scene\GraphVisitorTransformRequiring.cpp" />
     <ClCompile Include="ThirdParty\imgui\imgui.cpp" />
     <ClCompile Include="ThirdParty\imgui\imgui_demo.cpp" />
     <ClCompile Include="ThirdParty\imgui\imgui_draw.cpp" />
