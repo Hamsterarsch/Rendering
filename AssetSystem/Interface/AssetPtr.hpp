@@ -48,12 +48,24 @@ namespace assetSystem
 		public: Asset *operator->() { return asset; }
 
 		public: const Asset *operator->() const { return asset; }
-
+						
 		public: void SaveToDisk();
 
 		public: void LoadFromDisk();
 								
 	};
+
+	inline bool operator==(const AssetPtr &lhs, const AssetPtr &rhs)
+	{
+		return lhs.GetKey() == rhs.GetKey();
+		
+	}
+
+	inline bool operator!=(const AssetPtr &lhs, const AssetPtr &rhs)
+	{
+		return not (lhs == rhs);
+		
+	}
 	
 
 	template<class t_asset>
