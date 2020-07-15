@@ -14,6 +14,8 @@ namespace App::Scene
 		using GraphVisitor::Visit;
 		
 		public: void Visit(GraphNode &node) final override;
+
+		protected: Math::Matrix GetCurrentNodeToWorld() const { return nodeToWorld; }
 				
 	};
 
