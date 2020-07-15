@@ -12,6 +12,8 @@ namespace App::Scene
 		
 		
 		public: void Accept(GraphVisitor &visitor) override;
+
+		public: Rendering::Light GetLightData() const { return lightData; }
 		
 	};
 
