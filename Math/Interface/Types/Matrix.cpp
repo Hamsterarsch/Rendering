@@ -5,10 +5,18 @@
 
 namespace Math
 {
-	Matrix::Matrix(glm::mat4x4 && data) : data(std::move(data))
+	Matrix::Matrix() : data{ glm::identity<decltype(data)>() }
+	{		
+	}
+
+
+	
+	Matrix::Matrix(glm::mat4x4 &&data) : data(std::move(data))
 	{
 	}
 
+
+	
 	Matrix Matrix::MakeTranslation(const float x, const float y, const float z)
 	{			
 		return Matrix{ translate(glm::identity<decltype(data)>(), {x, y, z}) };

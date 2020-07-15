@@ -13,7 +13,7 @@ namespace Math
 		private: glm::mat4x4 data;
 
 
-		public: Matrix() = default;
+		public: Matrix();
 		
 		private: Matrix(glm::mat4x4 &&data);
 				 
