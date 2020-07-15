@@ -21,9 +21,15 @@ namespace assetSystem::core
 		
 		public:	AssetPtr MakeAsset(const char *path, Asset &&assetData) override;
 
-			private: std::string EnsureProjectRelativePath(const char *path) const;
+			private: std::string EnsureCorrectPathFormat(const char *path) const;
+
+				private: static std::string ReplaceBackslashes(std::string &&path);
 		
-			private: static std::string GetAssetClassExtension(const char *projectRelativePath);
+			private: Asset &ConstructAsset(AssetKey key, std::string &&projectRelativePath, Asset &&assetData);
+				
+				private: static std::string GetAssetClassExtension(const char *projectRelativePath);
+
+			private: void WriteAssetToFile(AssetKey key, Asset &asset) const;
 		
 		public: AssetPtr GetAsset(const char *projectRelativePath) override;
 
@@ -39,13 +45,15 @@ namespace assetSystem::core
 		
 						
 		private: LoadedAssetInfo GetAssetInternal(const char *projectRelativePath) override;
-				
+
+			private: void WriteFileToAsset(AssetKey key, Asset &asset) const;
+		
 		private: void RemoveReference(AssetKey key) override;
 		
 		private: void AddReference(AssetKey key) override;
 
 
 	};
-	
+
 	
 }
