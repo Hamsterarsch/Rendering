@@ -152,6 +152,12 @@
     <ClCompile Include="AssetTypes\StaticMeshAsset.cpp">
       <Filter>AssetTypes</Filter>
     </ClCompile>
+    <ClCompile Include="ThirdParty\tiny_obj_loader.cc">
+      <Filter>ThirdParty</Filter>
+    </ClCompile>
+    <ClCompile Include="AssetFactories\StaticMeshFactory.cpp">
+      <Filter>AssetFactories</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window\Windows\Window.hpp">
@@ -423,6 +429,12 @@
     </ClInclude>
     <ClInclude Include="AssetFactories\MeshData.hpp">
       <Filter>AssetFactories</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\tiny_obj_loader.h">
+      <Filter>ThirdParty</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\MeshInstanceData.hpp">
+      <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

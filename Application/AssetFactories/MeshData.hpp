@@ -18,6 +18,8 @@ namespace App::Assets
 
 		public: virtual const unsigned *GetIndexData() const = 0;
 
+		public: virtual size_t GetIndexDataSizeInBytes() const = 0;
+
 		public: virtual unsigned GetNumIndices() const = 0;
 		
 		public: virtual void ConfigureVertexLayout(Renderer::VertexLayoutSettings &forSettings) = 0;

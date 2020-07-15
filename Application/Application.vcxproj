@@ -283,6 +283,7 @@
     <ClInclude Include="Scene\GraphNodeContent.hpp" />
     <ClInclude Include="Scene\GraphVisitor.hpp" />
     <ClInclude Include="Scene\GraphVisitorTransformRequiring.h" />
+    <ClInclude Include="Scene\MeshInstanceData.hpp" />
     <ClInclude Include="ThirdParty\imgui\imconfig.h" />
     <ClInclude Include="ThirdParty\imgui\imgui.h" />
     <ClInclude Include="ThirdParty\imgui\imgui_impl_dx12.h">
@@ -299,6 +300,7 @@
     <ClInclude Include="ThirdParty\imgui\imstb_textedit.h" />
     <ClInclude Include="ThirdParty\imgui\imstb_truetype.h" />
     <ClInclude Include="ThirdParty\stb_image.h" />
+    <ClInclude Include="ThirdParty\tiny_obj_loader.h" />
     <ClInclude Include="Types\Dimensions2D.hpp" />
     <ClInclude Include="Ui\BasicFrontends\SetVisibilityFrontend.hpp" />
     <ClInclude Include="Ui\Core\ConstructionHelpers.hpp" />
@@ -350,6 +352,7 @@
   <ItemGroup>
     <ClCompile Include="AssetFactories\ImageFactory.cpp" />
     <ClCompile Include="AssetFactories\StaticMeshData.cpp" />
+    <ClCompile Include="AssetFactories\StaticMeshFactory.cpp" />
     <ClCompile Include="AssetTypes\AssetTypesRegistry.cpp" />
     <ClCompile Include="AssetTypes\CacheAsset.cpp" />
     <ClCompile Include="AssetTypes\ImageAsset.cpp" />
@@ -381,6 +384,7 @@
     </ClCompile>
     <ClCompile Include="ThirdParty\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="ThirdParty\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="ThirdParty\tiny_obj_loader.cc" />
     <ClCompile Include="Types\Dimensions2D.cpp" />
     <ClCompile Include="Ui\BasicFrontends\SetVisibilityFrontend.cpp" />
     <ClCompile Include="Ui\Core\UiElement.cpp" />

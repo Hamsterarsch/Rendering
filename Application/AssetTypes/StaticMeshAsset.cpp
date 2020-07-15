@@ -14,11 +14,19 @@ namespace App::Assets
 
 	void StaticMeshAsset::UploadToRenderer(Renderer::RendererFacade &renderer)
 	{
+		if(not bufferHandle)
+		{
+			//todo: implement resource factory multi data source support
+			size_t bufferSize{ meshData.GetVertexDataSizeInBytes() + meshData.GetIndexDataSizeInBytes() };
+			const auto buffer{ MakeUnique<unsigned char[]>(bufferSize) };
+					
+			bufferHandle = { &renderer, renderer.MakeBuffer(buffer.get(), bufferSize) };
+		}
 		
 	}
 
-
-
+	
+	
 	const char *StaticMeshAsset::GetAssetClassExtension()
 	{
 		static const char *extension{ "msh" };

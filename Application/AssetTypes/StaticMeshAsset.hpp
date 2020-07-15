@@ -5,7 +5,11 @@
 #include "AssetFactories/StaticMeshData.hpp"
 
 
-namespace Renderer{ class RendererFacade; }
+namespace Renderer
+{
+	class RendererFacade;
+	namespace Commands { class CompositeCommand; }
+}
 
 
 namespace App::Assets
@@ -30,7 +34,12 @@ namespace App::Assets
 		public: assetSystem::io::Archive &Serialize(assetSystem::io::Archive &archive) override;
 
 		public: void UploadToRenderer(Renderer::RendererFacade &renderer) override;
-				
+
+		//todo: find a better name for submeshes/matSlots
+		public: unsigned GetNumMeshShards() const { return static_cast<unsigned>(meshData.submeshes.size()); }
+
+		public: MeshSubgroup GetMaterialSlotIndexInfoFor(unsigned slotIndex) const { return meshData.submeshes.at(slotIndex); }
+
 		
 		public: static const char *GetAssetClassExtension();
 

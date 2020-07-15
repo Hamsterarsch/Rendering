@@ -6,7 +6,13 @@
 
 
 namespace App::Assets
-{	
+{
+	struct MeshSubgroup
+	{
+		uint32_t offsetToIndices;
+		uint32_t numIndices;
+	};
+	
 	class StaticMeshData final : public MeshData, public assetSystem::Archivable
 	{
 		public: struct VertexData
@@ -26,6 +32,8 @@ namespace App::Assets
 		
 		public: std::vector<unsigned> indices;
 
+		public: std::vector<MeshSubgroup> submeshes;
+		
 
 				 				
 		public: assetSystem::io::Archive &Serialize(assetSystem::io::Archive &archive) override;
@@ -36,6 +44,8 @@ namespace App::Assets
 
 		public: const unsigned *GetIndexData() const override { return indices.data(); }
 
+		public: size_t GetIndexDataSizeInBytes() const override  { return indices.size() * sizeof(decltype(indices)::value_type); }
+		
 		public: unsigned GetNumIndices() const override { return indices.size(); }
 
 		public: void ConfigureVertexLayout(Renderer::VertexLayoutSettings &forSettings) override;
