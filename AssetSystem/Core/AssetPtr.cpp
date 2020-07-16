@@ -4,20 +4,20 @@
 
 namespace assetSystem
 {
-	AssetPtr::AssetPtr() : asset{ nullptr }, key{ 0 }, assetSystem { nullptr } {}
+	AssetPtr::AssetPtr() : cachedAsset{ nullptr }, cachedKey{ 0 }, assetSystem { nullptr } {}
 
 
 	
 	AssetPtr::AssetPtr(const char *projectRelativePath, AssetSystem &system)
 		:
-		asset{ nullptr },
-		key{ 0 },
+		cachedAsset{ nullptr },
+		cachedKey{ 0 },
 		assetSystem{ &system }
 	{
 		if(const auto loadInfo{ assetSystem->GetAssetInternal(projectRelativePath) }; loadInfo.asset)
 		{
-			asset = loadInfo.asset;
-			key = loadInfo.key;						
+			cachedAsset = loadInfo.asset;
+			cachedKey = loadInfo.key;						
 		}
 		
 	}
@@ -26,8 +26,8 @@ namespace assetSystem
 	
 	AssetPtr::AssetPtr(Asset &asset, const AssetKey key, AssetSystem &system)
 		:
-		asset{ &asset },
-		key{ key },
+		cachedAsset{ &asset },
+		cachedKey{ key },
 		assetSystem{ &system }
 	{
 	}
@@ -36,8 +36,8 @@ namespace assetSystem
 
 	AssetPtr::AssetPtr(const AssetPtr &other)
 		:
-		asset{ nullptr },
-		key{ 0 },
+		cachedAsset{ nullptr },
+		cachedKey{ 0 },
 		assetSystem{ nullptr }
 	{
 		*this = other;
@@ -54,7 +54,7 @@ namespace assetSystem
 			
 		}
 
-		assetSystem->RemoveReference(key);
+		assetSystem->RemoveReference(cachedKey);
 		
 	}
 
@@ -70,16 +70,16 @@ namespace assetSystem
 
 		if(not this->IsInvalid())
 		{
-			assetSystem->RemoveReference(key);
+			assetSystem->RemoveReference(cachedKey);
 		}
 		
-		asset = rhs.asset;
-		key = rhs.key;
+		cachedAsset = rhs.cachedAsset;
+		cachedKey = rhs.cachedKey;
 		assetSystem = rhs.assetSystem;
 
 		if(not this->IsInvalid())
 		{
-			assetSystem->AddReference(key);			
+			assetSystem->AddReference(cachedKey);			
 		}
 		
 		return *this;
@@ -90,8 +90,8 @@ namespace assetSystem
 	
 	AssetPtr::AssetPtr(AssetPtr &&other) noexcept
 		:
-		asset{ nullptr },
-		key{ 0 },
+		cachedAsset{ nullptr },
+		cachedKey{ 0 },
 		assetSystem{ nullptr }
 	{
 		*this = std::move(other);
@@ -108,13 +108,13 @@ namespace assetSystem
 			
 		}
 
-		if(!this->IsInvalid() && this->key != rhs.key)
+		if(!this->IsInvalid() && this->cachedKey != rhs.cachedKey)
 		{
-			assetSystem->RemoveReference(key);
+			assetSystem->RemoveReference(cachedKey);
 		}
 		
-		asset = std::move(rhs.asset);
-		key = std::move(rhs.key);
+		cachedAsset = std::move(rhs.cachedAsset);
+		cachedKey = std::move(rhs.cachedKey);
 		assetSystem = std::move(rhs.assetSystem);
 
 		rhs.Invalidate();
@@ -125,8 +125,8 @@ namespace assetSystem
 
 		void AssetPtr::Invalidate()
 		{
-			asset = nullptr;
-			key = 0;
+			cachedAsset = nullptr;
+			cachedKey = 0;
 		
 		}
 
@@ -134,10 +134,31 @@ namespace assetSystem
 	
 	bool AssetPtr::IsInvalid() const
 	{
-		return asset == nullptr;
+		return cachedAsset == nullptr;
 		
 	}
 
+
+
+	Asset *AssetPtr::GetAsset() const
+	{
+		UpdateCache();
+		
+		return cachedAsset;
+	}
+	
+		void AssetPtr::UpdateCache() const
+		{
+			if(assetSystem->AssetWasInvalidated(cachedKey))
+			{
+				auto updatedData{ assetSystem->GetUpdatedAssetData(cachedKey) };
+				
+				cachedAsset = updatedData.asset;
+				cachedKey = updatedData.key;
+			}
+		
+		}
+			   		 	  
 
 	
 	void AssetPtr::SaveToDisk()
@@ -154,5 +175,27 @@ namespace assetSystem
 		
 	}
 
+
+
+	bool AssetPtr::operator!=(const AssetPtr &rhs) const
+	{
+		return not (*this == rhs);
+		
+	}
 	
+		bool AssetPtr::operator==(const AssetPtr &rhs) const
+		{
+			return GetKey() == rhs.GetKey();
+			
+		}
+		
+			AssetKey AssetPtr::GetKey() const
+			{
+				UpdateCache();
+
+				return cachedKey;
+				
+			}
+					   
+				
 }

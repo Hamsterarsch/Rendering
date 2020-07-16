@@ -11,12 +11,13 @@ namespace assetSystem
 	
 	class ASSET_SYSTEM_DLLSPEC AssetPtr
 	{		
-		private: Asset *asset;
+		private: mutable Asset *cachedAsset;
 
-		private: AssetKey key;
+		private: mutable AssetKey cachedKey;
 
 		private: AssetSystem *assetSystem;
 
+		
 		
 		public: AssetPtr();
 		
@@ -37,35 +38,29 @@ namespace assetSystem
 			private: void Invalidate();
 
 		public: bool IsInvalid() const;
-
-
-		public: Asset *GetAsset() { return asset; }
-
-		public: const Asset *GetAsset() const { return asset; }
 		
-		public: AssetKey GetKey() const { return key; }
 
-		public: Asset *operator->() { return asset; }
+		public: Asset *operator->() { return GetAsset(); }
 
-		public: const Asset *operator->() const { return asset; }
-						
+		public: const Asset *operator->() const { return GetAsset(); }
+
+		public: Asset *GetAsset() const;
+
+			private: void UpdateCache() const;
+					
+		
 		public: void SaveToDisk();
 
 		public: void LoadFromDisk();
-								
+
+		public: bool operator!=(const AssetPtr &rhs) const;
+		
+		public: bool operator==(const AssetPtr &rhs) const;
+
+			private: AssetKey GetKey() const;
+					 		
 	};
 
-	inline bool operator==(const AssetPtr &lhs, const AssetPtr &rhs)
-	{
-		return lhs.GetKey() == rhs.GetKey();
-		
-	}
-
-	inline bool operator!=(const AssetPtr &lhs, const AssetPtr &rhs)
-	{
-		return not (lhs == rhs);
-		
-	}
 	
 
 	template<class t_asset>

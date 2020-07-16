@@ -15,8 +15,7 @@ namespace assetSystem
 		Asset *asset;
 		AssetKey key;
 	};
-
-
+	
 	class AssetConstructionOperations;
 	
 	class ASSET_SYSTEM_DLLSPEC AssetSystem
@@ -41,7 +40,14 @@ namespace assetSystem
 		public: virtual bool IsSameRootAssetPath(const char *asThisPath) const = 0;
 
 		public: virtual std::string GetAbsoluteRootAssetPath() const = 0;
+
+
+		public: virtual void DeleteAsset(const char *projectRelativePathToDelete) = 0;
 		
+		public: virtual void DeleteAsset(const char *projectRelativePathToDelete, const char *projectRelativePathToReplacementAsset) = 0;
+
+		public: virtual void MoveAsset(const char *projectRelativeSourcePath, const char *projectRelativeTargetPath);
+						
 		
 		friend AssetPtr;
 
@@ -50,6 +56,10 @@ namespace assetSystem
 			private: virtual void RemoveReference(AssetKey key) = 0;
 
 			private: virtual void AddReference(AssetKey key) = 0;
+
+			private: virtual bool AssetWasInvalidated(AssetKey key) const = 0;
+					 					 		
+			private: virtual LoadedAssetInfo GetUpdatedAssetData(AssetKey oldKey) = 0;
 					 		
 	};
 
