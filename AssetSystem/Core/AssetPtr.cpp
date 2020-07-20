@@ -54,7 +54,7 @@ namespace assetSystem
 			
 		}
 
-		assetSystem->RemoveReference(cachedKey);
+		assetSystem->RemoveReference(GetCurrentKey());
 		
 	}
 
@@ -70,7 +70,7 @@ namespace assetSystem
 
 		if(not this->IsInvalid())
 		{
-			assetSystem->RemoveReference(cachedKey);
+			assetSystem->RemoveReference(GetCurrentKey());
 		}
 		
 		cachedAsset = rhs.cachedAsset;
@@ -79,7 +79,7 @@ namespace assetSystem
 
 		if(not this->IsInvalid())
 		{
-			assetSystem->AddReference(cachedKey);			
+			assetSystem->AddReference(GetCurrentKey());			
 		}
 		
 		return *this;
@@ -108,7 +108,7 @@ namespace assetSystem
 			
 		}
 
-		if(!this->IsInvalid() && this->cachedKey != rhs.cachedKey)
+		if(!this->IsInvalid() && this->GetCurrentKey() != rhs.GetCurrentKey())
 		{
 			assetSystem->RemoveReference(cachedKey);
 		}
@@ -128,6 +128,14 @@ namespace assetSystem
 			cachedAsset = nullptr;
 			cachedKey = 0;
 		
+		}
+
+		AssetKey AssetPtr::GetCurrentKey() const
+		{
+			UpdateCache();
+
+			return cachedKey;
+			
 		}
 
 
@@ -185,17 +193,9 @@ namespace assetSystem
 	
 		bool AssetPtr::operator==(const AssetPtr &rhs) const
 		{
-			return GetKey() == rhs.GetKey();
+			return GetCurrentKey() == rhs.GetCurrentKey();
 			
 		}
-		
-			AssetKey AssetPtr::GetKey() const
-			{
-				UpdateCache();
-
-				return cachedKey;
-				
-			}
-					   
+							   
 				
 }

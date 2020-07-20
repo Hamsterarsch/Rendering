@@ -1,13 +1,15 @@
 #include "AssetSystem/IO/Filetypes/AssetReader.hpp"
 #include "AssetSystem/IO/Filetypes/AssetArchiveConstants.hpp"
 #include "IO/DiskConversions.hpp"
+#include "AssetPtr.hpp"
 #include "Shared/Exception/Exception.hpp"
 
 
 namespace assetSystem::io
 {//todo: catch eofs with exception
-	AssetReader::AssetReader(const std::filesystem::path &filepath) :
-		file{ filepath, std::ios_base::in | std::ios_base::binary }
+	AssetReader::AssetReader(const std::filesystem::path &filepath, std::function<AssetPtr(AssetKey)> &&loadAsset) :
+		file{ filepath, std::ios_base::in | std::ios_base::binary },
+		loadAsset{ std::move(loadAsset) }
 	{
 		if(this->IsInvalid())
 		{
@@ -453,6 +455,20 @@ namespace assetSystem::io
 
 
 	
+	Archive &AssetReader::Serialize(const char *propertyName, AssetPtr &asset)
+	{
+		static_assert(std::is_same_v<uint32_t, decltype(asset.GetCurrentKey())>);
+		uint32_t key{ 0 };
+		Serialize(propertyName, key);
+
+		asset = loadAsset(key);
+
+		return *this;
+		
+	}
+
+
+
 	size_t AssetReader::GetPropertySizeInBytes(const char *propertyName)
 	{		
 		if(FileIsAtBinaryDataStartSequence())

@@ -36,8 +36,10 @@ namespace assetSystem
 		public: AssetPtr &operator=(AssetPtr &&rhs) noexcept;
 
 			private: void Invalidate();
-
+		
 		public: bool IsInvalid() const;
+
+		public: AssetKey GetCurrentKey() const;
 		
 
 		public: Asset *operator->() { return GetAsset(); }
@@ -57,7 +59,6 @@ namespace assetSystem
 		
 		public: bool operator==(const AssetPtr &rhs) const;
 
-			private: AssetKey GetKey() const;
 					 		
 	};
 

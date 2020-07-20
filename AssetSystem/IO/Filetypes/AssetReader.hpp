@@ -3,6 +3,9 @@
 #include <fstream>
 #include <filesystem>
 #include <unordered_map>
+#include <functional>
+#include "AssetSystemTypes.hpp"
+
 
 
 namespace assetSystem::io
@@ -17,9 +20,11 @@ namespace assetSystem::io
 
 		private: std::ifstream::pos_type currentPropertyNameEnd;
 
+		private: std::function<AssetPtr(AssetKey)> loadAsset;
+		
 
 				
-		public: AssetReader(const std::filesystem::path &filepath);
+		public: AssetReader(const std::filesystem::path &filepath, std::function<AssetPtr(AssetKey)> &&loadAsset);
 
 			private: bool SeekEofUntilToken(char token);
 		
@@ -79,6 +84,8 @@ namespace assetSystem::io
 		
 		public: Archive &Serialize(const char *propertyName, char *str) override;
 
+		public: Archive &Serialize(const char *propertyName, AssetPtr &asset) override;
+		
 		public: size_t GetPropertySizeInBytes(const char *propertyName) override;
 		
 		
@@ -89,7 +96,8 @@ namespace assetSystem::io
 		public: Archive &EnterSubobject(const char *propertyName) override;
 		
 		public: Archive &LeaveSubobject() override;
-						
+
+		
 	};
 
 	
