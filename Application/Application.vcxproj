@@ -357,6 +357,7 @@
     <ClCompile Include="AssetTypes\CacheAsset.cpp" />
     <ClCompile Include="AssetTypes\ImageAsset.cpp" />
     <ClCompile Include="AssetTypes\ProjectAsset.cpp" />
+    <ClCompile Include="AssetTypes\PsoAsset.cpp" />
     <ClCompile Include="AssetTypes\ShaderAsset.cpp" />
     <ClCompile Include="AssetTypes\StaticMeshAsset.cpp" />
     <ClCompile Include="AssetTypes\UserPixelShaderAsset.cpp" />

@@ -158,6 +158,9 @@
     <ClCompile Include="AssetFactories\StaticMeshFactory.cpp">
       <Filter>AssetFactories</Filter>
     </ClCompile>
+    <ClCompile Include="AssetTypes\PsoAsset.cpp">
+      <Filter>AssetTypes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window\Windows\Window.hpp">
