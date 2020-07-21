@@ -6,7 +6,7 @@
 
 namespace App::Rendering
 {
-	void GraphVisitorHarvesMeshes::Visit(Scene::ContentMesh &mesh)
+	void GraphVisitorHarvestMeshes::Visit(Scene::ContentMesh &mesh)
 	{
 		const auto asset{ mesh.GetMeshAsset() };
 
@@ -26,7 +26,7 @@ namespace App::Rendering
 
 
 	
-	void GraphVisitorHarvesMeshes::Visit(Scene::ContentLight &light)
+	void GraphVisitorHarvestMeshes::Visit(Scene::ContentLight &light)
 	{
 		lightData.emplace_back(light.GetLightData());
 		

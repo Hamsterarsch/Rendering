@@ -19,7 +19,7 @@ namespace App::Rendering
 		}
 	};
 	
-	class GraphVisitorHarvesMeshes final : public Scene::GraphVisitorTransformRequiring
+	class GraphVisitorHarvestMeshes final : public Scene::GraphVisitorTransformRequiring
 	{
 		private: struct ShardInstanceData
 		{
@@ -70,16 +70,16 @@ namespace App::Rendering
 						
 		};
 		
-		private: std::unordered_map<assetSystem::AssetPtrTyped<Assets::StaticMeshAsset>, MeshShardData, AssetPtrHasher> meshInstanceData;
+		public: std::unordered_map<assetSystem::AssetPtrTyped<Assets::StaticMeshAsset>, MeshShardData, AssetPtrHasher> meshInstanceData;//todo make interface for access
 				
 		private: std::vector<Light> lightData;
 
 
-		public: GraphVisitorHarvesMeshes() = default;
+		public: GraphVisitorHarvestMeshes() = default;
 		
-		public: GraphVisitorHarvesMeshes(const GraphVisitorHarvesMeshes&) = delete;
+		public: GraphVisitorHarvestMeshes(const GraphVisitorHarvestMeshes&) = delete;
 
-		public: GraphVisitorHarvesMeshes(GraphVisitorHarvesMeshes&&) = default;
+		public: GraphVisitorHarvestMeshes(GraphVisitorHarvestMeshes&&) = default;
 		
 		
 		public: void Visit(Scene::ContentMesh &mesh) override;
