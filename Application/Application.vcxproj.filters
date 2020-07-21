@@ -158,6 +158,9 @@
     <ClCompile Include="AssetFactories\StaticMeshFactory.cpp">
       <Filter>AssetFactories</Filter>
     </ClCompile>
+    <ClCompile Include="Rendering\GraphVisitorHarvestMeshes.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
     <ClCompile Include="AssetTypes\PsoAsset.cpp">
       <Filter>AssetTypes</Filter>
     </ClCompile>
@@ -435,6 +438,9 @@
     </ClInclude>
     <ClInclude Include="ThirdParty\tiny_obj_loader.h">
       <Filter>ThirdParty</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\GraphVisitorHarvestMeshes.hpp">
+      <Filter>Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Scene\MeshInstanceData.hpp">
       <Filter>Scene</Filter>

@@ -269,6 +269,7 @@
     <ClInclude Include="Core\ImageView.hpp" />
     <ClInclude Include="Core\Prototype.hpp" />
     <ClInclude Include="Core\Version.hpp" />
+    <ClInclude Include="Rendering\GraphVisitorHarvestMeshes.hpp" />
     <ClInclude Include="Rendering\RendererMediator.hpp" />
     <ClInclude Include="Rendering\SceneRenderer.hpp" />
     <ClInclude Include="Rendering\ShaderRelevantTypes\GlobalBufferData.hpp" />
@@ -364,6 +365,7 @@
     <ClCompile Include="Core\CreateProject.cpp" />
     <ClCompile Include="Core\Version.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Rendering\GraphVisitorHarvestMeshes.cpp" />
     <ClCompile Include="Rendering\RendererMediator.cpp" />
     <ClCompile Include="Rendering\SceneRenderer.cpp" />
     <ClCompile Include="Rendering\UiRenderer.cpp" />
