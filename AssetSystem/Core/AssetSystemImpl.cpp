@@ -365,7 +365,7 @@ namespace assetSystem::core
 	{
 		ptrReferences.RemoveReference(key);
 
-		if(ptrReferences.HasReferences(key))
+		if(ptrReferences.HasNoReferences(key))
 		{
 			memory.FreeAsset(key);
 		}
