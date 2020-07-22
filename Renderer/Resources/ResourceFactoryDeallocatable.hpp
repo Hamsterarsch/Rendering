@@ -13,7 +13,8 @@ namespace Renderer
 				DeviceResources *resources,
 				Queue *queue,
 				UniquePtr<DeallocatableGpuMemory> &&bufferMemory,
-				UniquePtr<DeallocatableGpuMemory> &&textureMemory
+				UniquePtr<DeallocatableGpuMemory> &&textureMemory,
+				UniquePtr<DeallocatableGpuMemory> &&depthTextureMemory
 			);
 
 					

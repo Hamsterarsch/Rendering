@@ -36,6 +36,11 @@ namespace Renderer::Commands
 		public: virtual UniquePtr<Command> SetDescriptorBlockViewsAsComputeTable(ResourceHandle::t_hash descriptorBlock, unsigned parameterIndex) = 0;
 
 		
+		public: virtual UniquePtr<Command>  BindDepthTargetOnly(ResourceHandle::t_hash depthTextureDescriptor) = 0;
+		
+		public: virtual UniquePtr<Command> BindRenderTargets(ResourceHandle::t_hash windowSurface, ResourceHandle::t_hash depthTextureDescriptor) = 0;
+		
+		
 		public: virtual UniquePtr<Command> SetIndexBuffer
 		(
 			ResourceHandle::t_hash indexBuffer,

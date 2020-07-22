@@ -97,8 +97,6 @@ namespace Renderer::DX12
 
 		public: ResourceHandle::t_hash MakeBuffer(const void *data, size_t sizeInBytes) override;
 
-		private: ResourceHandle::t_hash MakeBufferInternal(const void *data, size_t sizeInBytes, size_t handle);
-		
 		public: ResourceHandle::t_hash MakeBuffer(const void *data, size_t sizeInBytes, D3D12_RESOURCE_STATES state) override;
 
 		public: ResourceHandle::t_hash MakeUavBuffer(const void *data, size_t sizeInBytes) override;
@@ -136,6 +134,8 @@ namespace Renderer::DX12
 
 		public: ResourceHandle::t_hash MakeTexture(const void *data, size_t width, size_t height) override;
 
+		public: ResourceHandle::t_hash MakeDepthTexture(size_t width, size_t height) override;
+		
 		
 		public: bool IsResourceValid(ResourceHandle::t_hash handle) override;
 
@@ -178,7 +178,7 @@ namespace Renderer::DX12
 		public: ResourceViewFactory &GetViewFactory() override;
 
 		public: CounterFactory &GetCounterFactory() override;
-						
+
 	};
 
 

@@ -1,11 +1,14 @@
 #include "Resources/Descriptor/ResourceViewFactoryImpl.hpp"
 #include "Resources/ResourceRegistry.hpp"
 #include "StateSettings/FormatTargetsImpl.hpp"
+#include "DX12/DeviceResources.hpp"
 
 
 namespace Renderer::DX12
 {
-	ResourceViewFactoryImpl::ResourceViewFactoryImpl(ResourceRegistry &registry, DescriptorMemory &descriptors) :
+	ResourceViewFactoryImpl::ResourceViewFactoryImpl(DeviceResources &resources, ResourceRegistry &registry, DescriptorMemory &descriptors)
+		:
+		resources{ &resources },
 		registry{ &registry },
 		memory{ &descriptors },
 		currentTableIndex{ 0 },
@@ -250,5 +253,18 @@ namespace Renderer::DX12
 		
 	}
 
+
+	
+	ResourceHandle::t_hash ResourceViewFactoryImpl::MakeDepthTextureView(const ResourceHandle::t_hash forResource)
+	{
+		Exception::ThrowIfDebug(ResourceHandle::GetResourceType(forResource) != ResourceHandle::t_resourceTypes::DepthTexture, {"ResourceViewFactory: You can only create depth texture views for depth textures"});
+		
+		auto targetDescriptor{ memory->AllocateDepthStencilDescriptor() };		
+		resources->GetDevice()->CreateDepthStencilView(registry->GetResource(forResource), nullptr, targetDescriptor);
+
+		return registry->Register(RawDescriptorReference{ *memory, targetDescriptor, forResource} );
+		
+	}
+	
 	
 }

@@ -15,6 +15,8 @@
 #include "Basic/SetSignatureComputeCommand.hpp"
 #include "Basic/DispatchCommand.hpp"
 #include "Basic/SetDescriptorBlockViewsAsComputeTableCommand.hpp"
+#include "Basic/BindDepthTargetOnlyCommand.hpp"
+#include "Basic/BindRenderTargetsCommand.hpp"
 
 
 namespace Renderer::DX12::Commands
@@ -74,6 +76,26 @@ namespace Renderer::DX12::Commands
 	UniquePtr<Renderer::Commands::Command> DX12CommandFactory::SetDescriptorBlockViewsAsComputeTable(const ResourceHandle::t_hash descriptorBlock, const unsigned parameterIndex)
 	{
 		return MakeUnique<SetDescriptorBlockViewsAsComputeTableCommand>(descriptorBlock, parameterIndex);
+		
+	}
+
+
+	
+	UniquePtr<Renderer::Commands::Command> DX12CommandFactory::BindDepthTargetOnly(const ResourceHandle::t_hash depthTextureDescriptor)
+	{
+		return MakeUnique<BindDepthTargetOnlyCommand>(depthTextureDescriptor);
+		
+	}
+
+
+	
+	UniquePtr<Renderer::Commands::Command> DX12CommandFactory::BindRenderTargets
+	(
+		const ResourceHandle::t_hash windowSurface,
+		const ResourceHandle::t_hash depthTextureDescriptor
+	)
+	{
+		return MakeUnique<BindRenderTargetsCommand>(windowSurface, depthTextureDescriptor);
 		
 	}
 

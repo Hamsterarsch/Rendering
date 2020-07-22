@@ -9,12 +9,20 @@ namespace Renderer::DX12
 {
 	using namespace RHA::DX12;
 	
-	ResourceFactory::ResourceFactory(DeviceResources *resources, Queue *queue, UniquePtr<AllocatableGpuMemory> &&bufferMemory, UniquePtr<AllocatableGpuMemory> &&textureMemory) :
+	ResourceFactory::ResourceFactory
+	(
+		DeviceResources *resources,
+		Queue *queue,
+		UniquePtr<AllocatableGpuMemory> &&bufferMemory,
+		UniquePtr<AllocatableGpuMemory> &&textureMemory,
+		UniquePtr<AllocatableGpuMemory> &&depthTextureMemory
+	)	:
 		queue{ queue },
 		resources{ resources },
 		uploadAddress{ 0 },
 		bufferMemory{ std::move(bufferMemory) },
-		textureMemory{ std::move(textureMemory) }
+		textureMemory{ std::move(textureMemory) },
+		depthTextureMemory{ std::move(depthTextureMemory) }
 	{
 		uploadBuffer = Facade::MakeUploadHeap(resources, 1'000'000);
 		fence = Facade::MakeFence(resources);
@@ -160,103 +168,122 @@ namespace Renderer::DX12
 		const D3D12_RESOURCE_FLAGS flags
 	)
 	{
-		WaitForSingleObject(event, INFINITE);
-		fence->Signal(0);
-
-		D3D12_SUBRESOURCE_FOOTPRINT subresourceSize
-		{
-			DXGI_FORMAT_R8G8B8A8_UNORM,
-			width,
-			height,
-			1,
-			RHA::Utility::IncreaseValueToAlignment(width * 4, D3D12_TEXTURE_DATA_PITCH_ALIGNMENT)
-		};
-
-
-		auto creationState{ desiredState };
-		if(data != nullptr)
-		{
-			const auto sizeInBytes{ subresourceSize.Width * subresourceSize.Height * subresourceSize.Depth * 4 };
-			if(UploadBufferCanNotFitAllocation(sizeInBytes))
-			{
-				uploadBuffer = Facade::MakeUploadHeap(resources, sizeInBytes);
-			}			
-			uploadBuffer->Reset();
-			
-			uploadBuffer->CopyTextureDataToUploadAddress(reinterpret_cast<const char *>(data), subresourceSize);
-			creationState = D3D12_RESOURCE_STATE_COPY_DEST;
-		}
-		
-		auto outAlloc{ MakePlacedTextureResource(subresourceSize, flags, creationState) };
-		
-
-		D3D12_TEXTURE_COPY_LOCATION dstLoc{};
-		dstLoc.Type = D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX;
-		dstLoc.pResource = outAlloc.resource.Get();
-		dstLoc.SubresourceIndex = 0;
-
-		D3D12_TEXTURE_COPY_LOCATION srcLoc{};
-		srcLoc.Type = D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT;
-		srcLoc.pResource = uploadBuffer->GetResource().Get();
-		srcLoc.PlacedFootprint.Footprint = subresourceSize;
-		srcLoc.PlacedFootprint.Offset = 0;
-
-		ClearCmdList();						
-		list->RecordBarrierAliasing(nullptr, outAlloc.resource.Get());
-
-		if(data != nullptr)
-		{
-			list->AsGraphicsList()->CopyTextureRegion(&dstLoc, 0, 0, 0, &srcLoc, nullptr);
-			list->RecordBarrierTransition(outAlloc.resource.Get(), D3D12_RESOURCE_STATE_COPY_DEST, desiredState);				
-		}
-		list->StopRecording();
-		
-		SubmitListAndFenceSynchronization(list.get());	
-		return outAlloc;
+		return MakeTextureWithDataInternal(*textureMemory, ResourceTypes::Texture, data, width, height, DXGI_FORMAT_R8G8B8A8_UNORM, desiredState, flags);
 		
 	}
 
-		ResourceAllocation ResourceFactory::MakePlacedTextureResource
+		ResourceAllocation ResourceFactory::MakeTextureWithDataInternal
 		(
-			const D3D12_SUBRESOURCE_FOOTPRINT &subresourceSize,
-			const D3D12_RESOURCE_FLAGS resourceFlags,
-			const D3D12_RESOURCE_STATES resourceState
+			AllocatableGpuMemory &memorySource,
+			const ResourceTypes allocationType,
+			const void *data,
+			const size_t width,
+			const size_t height,
+			const DXGI_FORMAT format,
+			const D3D12_RESOURCE_STATES desiredState,
+			const D3D12_RESOURCE_FLAGS flags
 		)
 		{
-			ResourceAllocation outAlloc{ this, ResourceTypes::Texture };
-			outAlloc.allocation = textureMemory->Allocate(subresourceSize.Height * subresourceSize.Width * subresourceSize.Depth * 4);
-		
-			D3D12_RESOURCE_DESC desc{};
-			desc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-			desc.Width = subresourceSize.Width;
-			desc.Height = subresourceSize.Height;
-			desc.DepthOrArraySize = subresourceSize.Depth;
-			desc.Flags = resourceFlags;
-			desc.Alignment = D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT;
-			desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-			desc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
-			desc.MipLevels = 1;
-			desc.SampleDesc.Count = 1;
-			desc.SampleDesc.Quality = 0;		
-			
-			constexpr decltype(nullptr) NO_CLEAR_VALUE{ nullptr };
-			const auto result
-			{		
-				resources->GetDevice()->CreatePlacedResource
-				(
-					outAlloc.allocation.heap, 
-					outAlloc.allocation.offsetToAllocation,
-					&desc,
-					resourceState,
-					NO_CLEAR_VALUE,
-					IID_PPV_ARGS(&outAlloc.resource)
-				)
-			};
-			CheckGpuResourceCreation(result);
+			WaitForSingleObject(event, INFINITE);
+			fence->Signal(0);
 
+			D3D12_SUBRESOURCE_FOOTPRINT subresourceSize
+			{
+				DXGI_FORMAT_R8G8B8A8_UNORM,
+				width,
+				height,
+				1,
+				RHA::Utility::IncreaseValueToAlignment(width * 4, D3D12_TEXTURE_DATA_PITCH_ALIGNMENT)
+			};
+
+
+			auto creationState{ desiredState };
+			if(data != nullptr)
+			{
+				const auto sizeInBytes{ subresourceSize.Width * subresourceSize.Height * subresourceSize.Depth * 4 };
+				if(UploadBufferCanNotFitAllocation(sizeInBytes))
+				{
+					uploadBuffer = Facade::MakeUploadHeap(resources, sizeInBytes);
+				}			
+				uploadBuffer->Reset();
+				
+				uploadBuffer->CopyTextureDataToUploadAddress(reinterpret_cast<const char *>(data), subresourceSize);
+				creationState = D3D12_RESOURCE_STATE_COPY_DEST;
+			}
+			
+			auto outAlloc{ MakePlacedTextureResource(memorySource, allocationType, format, subresourceSize, flags, creationState) };
+			
+
+			D3D12_TEXTURE_COPY_LOCATION dstLoc{};
+			dstLoc.Type = D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX;
+			dstLoc.pResource = outAlloc.resource.Get();
+			dstLoc.SubresourceIndex = 0;
+
+			D3D12_TEXTURE_COPY_LOCATION srcLoc{};
+			srcLoc.Type = D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT;
+			srcLoc.pResource = uploadBuffer->GetResource().Get();
+			srcLoc.PlacedFootprint.Footprint = subresourceSize;
+			srcLoc.PlacedFootprint.Offset = 0;
+
+			ClearCmdList();						
+			list->RecordBarrierAliasing(nullptr, outAlloc.resource.Get());
+
+			if(data != nullptr)
+			{
+				list->AsGraphicsList()->CopyTextureRegion(&dstLoc, 0, 0, 0, &srcLoc, nullptr);
+				list->RecordBarrierTransition(outAlloc.resource.Get(), D3D12_RESOURCE_STATE_COPY_DEST, desiredState);				
+			}
+			list->StopRecording();
+			
+			SubmitListAndFenceSynchronization(list.get());	
 			return outAlloc;
 		
 		}
+
+			ResourceAllocation ResourceFactory::MakePlacedTextureResource
+			(
+				AllocatableGpuMemory &memorySource,
+				const ResourceTypes allocationType,
+				const DXGI_FORMAT format,
+				const D3D12_SUBRESOURCE_FOOTPRINT &subresourceSize,
+				const D3D12_RESOURCE_FLAGS resourceFlags,
+				const D3D12_RESOURCE_STATES resourceState
+			)
+			{
+				ResourceAllocation outAlloc{ this, allocationType };
+				outAlloc.allocation = memorySource.Allocate(subresourceSize.Height * subresourceSize.Width * subresourceSize.Depth * 4);
+			
+				D3D12_RESOURCE_DESC desc{};
+				desc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+				desc.Width = subresourceSize.Width;
+				desc.Height = subresourceSize.Height;
+				desc.DepthOrArraySize = subresourceSize.Depth;
+				desc.Flags = resourceFlags;
+				desc.Alignment = D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT;
+				desc.Format = format;
+				desc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+				desc.MipLevels = 1;
+				desc.SampleDesc.Count = 1;
+				desc.SampleDesc.Quality = 0;
+				
+				constexpr decltype(nullptr) NO_CLEAR_VALUE{ nullptr };
+				const auto result
+				{		
+					resources->GetDevice()->CreatePlacedResource
+					(
+						outAlloc.allocation.heap, 
+						outAlloc.allocation.offsetToAllocation,
+						&desc,
+						resourceState,
+						NO_CLEAR_VALUE,
+						IID_PPV_ARGS(&outAlloc.resource)
+					)
+				};
+				CheckGpuResourceCreation(result);
+
+				return outAlloc;
+			
+			}
 
 
 
@@ -294,6 +321,31 @@ namespace Renderer::DX12
 		
 	}
 
+
+	
+	ResourceAllocation ResourceFactory::MakeDepthTexture
+	(
+		size_t width,
+		size_t height, 
+		D3D12_RESOURCE_STATES desiredState, 
+		D3D12_RESOURCE_FLAGS flags
+	)
+	{
+		return MakeTextureWithDataInternal
+		(
+			*depthTextureMemory,
+			ResourceTypes::DepthTexture,
+			nullptr,
+			width,
+			height,
+			DXGI_FORMAT_D32_FLOAT,
+			desiredState,
+			flags | D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL
+		);
+						
+	}
+
+	
 
 	void ResourceFactory::Deallocate(ResourceAllocation &allocation, const ResourceTypes type)
 	{

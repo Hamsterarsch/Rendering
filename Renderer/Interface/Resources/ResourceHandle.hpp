@@ -4,7 +4,7 @@
 
 
 namespace Renderer
-{	
+{	//todo: provide a hash typedef for the interface and remove this ResourceHandle and types from the interface
 	struct RENDERER_DLLSPEC ResourceHandle
 	{
 		using t_hash = size_t;

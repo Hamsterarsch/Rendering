@@ -31,6 +31,11 @@ namespace Renderer::DX12::Commands
 		public: UniquePtr<Renderer::Commands::Command> SetDescriptorBlockViewsAsGraphicsTable(ResourceHandle::t_hash descriptorBlock, unsigned parameterIndex) override;
 
 		public: UniquePtr<Renderer::Commands::Command> SetDescriptorBlockViewsAsComputeTable(ResourceHandle::t_hash descriptorBlock, unsigned parameterIndex) override;
+
+
+		public: UniquePtr<Renderer::Commands::Command> BindDepthTargetOnly(ResourceHandle::t_hash depthTextureDescriptor) override;
+		
+		public: UniquePtr<Renderer::Commands::Command> BindRenderTargets(ResourceHandle::t_hash windowSurface, ResourceHandle::t_hash depthTextureDescriptor) override;
 		
 		
 		public: UniquePtr<Renderer::Commands::Command> SetIndexBuffer

@@ -12,9 +12,10 @@ namespace Renderer
 			DeviceResources *resources, 
 			Queue *queue,
 			UniquePtr<DeallocatableGpuMemory> &&bufferMemory,
-			UniquePtr<DeallocatableGpuMemory> &&textureMemory
+			UniquePtr<DeallocatableGpuMemory> &&textureMemory,
+			UniquePtr<DeallocatableGpuMemory> &&depthTextureMemory
 		)	:
-			ResourceFactory{ resources, queue, std::move(bufferMemory), std::move(textureMemory) }
+			ResourceFactory{ resources, queue, std::move(bufferMemory), std::move(textureMemory), std::move(depthTextureMemory) }
 		{
 		}
 
@@ -29,6 +30,10 @@ namespace Renderer
 				break;
 			case ResourceTypes::Texture:
 				reinterpret_cast<DeallocatableGpuMemory *>(textureMemory.get())->Deallocate(allocation.allocation);													
+				CheckAndReleaseResourceRefs(allocation.resource);
+				break;
+			case ResourceTypes::DepthTexture:
+				reinterpret_cast<DeallocatableGpuMemory *>(depthTextureMemory.get())->Deallocate(allocation.allocation);
 				CheckAndReleaseResourceRefs(allocation.resource);
 				break;
 			default:

@@ -11,6 +11,8 @@ namespace Renderer::DX12
 	
 	class ResourceViewFactoryImpl final : public ResourceViewFactory
 	{
+		private: DeviceResources *resources;
+		
 		private: ResourceRegistry *registry;
 
 		private: DescriptorMemory *memory;
@@ -29,7 +31,7 @@ namespace Renderer::DX12
 
 		
 		
-		public: ResourceViewFactoryImpl(ResourceRegistry &registry, DescriptorMemory &descriptors);
+		public: ResourceViewFactoryImpl(DeviceResources &resources, ResourceRegistry &registry, DescriptorMemory &descriptors);
 
 		
 		public: ResourceViewFactory &DeclareDescriptorBlock(size_t numViews, size_t numSamplers) override;
@@ -101,6 +103,8 @@ namespace Renderer::DX12
 
 		public: ResourceHandle::t_hash FinalizeDescriptorBlock() override;
 
+
+		public: ResourceHandle::t_hash MakeDepthTextureView(ResourceHandle::t_hash forResource);
 
 	};
 		

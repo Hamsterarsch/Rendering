@@ -86,9 +86,6 @@
     <ClInclude Include="Resources\HasQueriableResources.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Resources\Registry.hpp">
-      <Filter>Resources</Filter>
-    </ClInclude>
     <ClInclude Include="Resources\ResourceRegistry.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
@@ -323,6 +320,15 @@
     <ClInclude Include="Commands\Basic\SetDescriptorBlockViewsAsComputeTableCommand.hpp">
       <Filter>Commands\Basic</Filter>
     </ClInclude>
+    <ClInclude Include="Commands\Basic\BindRenderTargetsCommand.hpp">
+      <Filter>Commands\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\HandleMap.hpp">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\Basic\BindDepthTargetOnlyCommand.hpp">
+      <Filter>Commands\Basic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -381,9 +387,6 @@
       <Filter>Resources</Filter>
     </ClCompile>
     <ClCompile Include="Resources\ResourceRegistryDetachedReference.cpp">
-      <Filter>Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="Resources\Registry.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
     <ClCompile Include="Resources\ResourceRegistry.cpp">
@@ -503,6 +506,12 @@
       <Filter>Commands\Basic</Filter>
     </ClCompile>
     <ClCompile Include="Commands\Basic\SetDescriptorBlockViewsAsComputeTableCommand.cpp">
+      <Filter>Commands\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Basic\BindRenderTargetsCommand.cpp">
+      <Filter>Commands\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Basic\BindDepthTargetOnlyCommand.cpp">
       <Filter>Commands\Basic</Filter>
     </ClCompile>
   </ItemGroup>

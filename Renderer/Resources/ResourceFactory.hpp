@@ -46,9 +46,11 @@ namespace Renderer::DX12
 
 		protected: UniquePtr<AllocatableGpuMemory> textureMemory;
 
+		protected: UniquePtr<AllocatableGpuMemory> depthTextureMemory;
+
 		
 
-		public: ResourceFactory(DeviceResources *resources, Queue *queue, UniquePtr<AllocatableGpuMemory> &&bufferMemory, UniquePtr<AllocatableGpuMemory> &&textureMemory);
+		public: ResourceFactory(DeviceResources *resources, Queue *queue, UniquePtr<AllocatableGpuMemory> &&bufferMemory, UniquePtr<AllocatableGpuMemory> &&textureMemory, UniquePtr<AllocatableGpuMemory> &&depthTextureMemory);
 
 		public: ResourceFactory(ResourceFactory &&other) noexcept = default;
 
@@ -79,7 +81,27 @@ namespace Renderer::DX12
 
 		public: ResourceAllocation MakeTextureWithData(const void *data, size_t width, size_t height, D3D12_RESOURCE_STATES desiredState, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
 
-			private: ResourceAllocation MakePlacedTextureResource(const D3D12_SUBRESOURCE_FOOTPRINT &subresourceSize, D3D12_RESOURCE_FLAGS resourceFlags, D3D12_RESOURCE_STATES resourceState);
+			private: ResourceAllocation MakeTextureWithDataInternal
+			(
+				AllocatableGpuMemory &memorySource,
+				ResourceTypes allocationType,
+				const void *data,
+				size_t width,
+				size_t height,
+				DXGI_FORMAT format,
+				D3D12_RESOURCE_STATES desiredState,
+				D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE
+			);
+			
+				private: ResourceAllocation MakePlacedTextureResource
+				(
+					AllocatableGpuMemory &memorySource,
+					ResourceTypes allocationType,
+					DXGI_FORMAT format,
+					const D3D12_SUBRESOURCE_FOOTPRINT &subresourceSize,
+					D3D12_RESOURCE_FLAGS resourceFlags,
+					D3D12_RESOURCE_STATES resourceState
+				);
 		
 		public: DxPtr<ID3D12Resource> MakeCommittedBuffer
 		(
@@ -90,6 +112,7 @@ namespace Renderer::DX12
 			D3D12_RESOURCE_FLAGS bufferFlags = D3D12_RESOURCE_FLAG_NONE
 		);
 
+		public: ResourceAllocation MakeDepthTexture(size_t width, size_t height, D3D12_RESOURCE_STATES desiredState, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
 
 		public: void Deallocate(ResourceAllocation &allocation, ResourceTypes type);
 

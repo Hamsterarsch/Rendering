@@ -54,6 +54,13 @@ namespace Renderer::DX12
 					D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT * 16,
 					D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT,
 					D3D12_HEAP_FLAG_ALLOW_ONLY_NON_RT_DS_TEXTURES
+				),
+				std::make_unique<ResourceMemory>
+				(
+					resources.get(),
+					D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT * 16,
+					D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT,
+					D3D12_HEAP_FLAG_ALLOW_ONLY_RT_DS_TEXTURES
 				)
 			)
 		},
@@ -62,7 +69,7 @@ namespace Renderer::DX12
 		signatureFactory{ resources.get(), signatureSettings },
 		shaderFactory{ Facade::MakeShaderFactory(5, 1) },
 		commandProcessor{ *resources, *commonQueue, registry, counterFactory },
-		resourceViewFactory{ registry, descriptors }
+		resourceViewFactory{ *resources, registry, descriptors }
 	{							
 		commandProcessor.SubmitContextCommand(std::make_unique<Commands::BindDescriptorsContextCommand>(descriptors));
 		
@@ -373,25 +380,6 @@ namespace Renderer::DX12
 		
 	}
 
-		ResourceHandle::t_hash RendererFacadeImpl::MakeBufferInternal(const void *data, const size_t sizeInBytes, const size_t handle)
-		{
-			auto allocation
-			{
-				resourceFactory->MakeBufferWithData(data, sizeInBytes, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER | D3D12_RESOURCE_STATE_INDEX_BUFFER)
-			};
-
-		
-			if(handle == 0)
-			{
-				return registry.Register(std::move(allocation));
-				
-			}
-
-			registry.Register(handle, std::move(allocation));
-			return handle;
-		
-		}
-
 	
 	
 	ResourceHandle::t_hash RendererFacadeImpl::MakeBuffer(const void *data, const size_t sizeInBytes, const D3D12_RESOURCE_STATES state)
@@ -537,6 +525,15 @@ namespace Renderer::DX12
 	ResourceHandle::t_hash RendererFacadeImpl::MakeTexture(const void *data, const size_t width, const size_t height)
 	{
 		auto resource{ resourceFactory->MakeTextureWithData(data, width, height, D3D12_RESOURCE_STATE_COMMON) };
+		return registry.Register(std::move(resource));
+		
+	}
+
+
+	
+	ResourceHandle::t_hash RendererFacadeImpl::MakeDepthTexture(const size_t width, const size_t height)
+	{
+		auto resource{ resourceFactory->MakeDepthTexture(width, height, D3D12_RESOURCE_STATE_COMMON) };
 		return registry.Register(std::move(resource));
 		
 	}
