@@ -134,7 +134,7 @@ namespace Renderer::DX12
 
 		public: ResourceHandle::t_hash MakeTexture(const void *data, size_t width, size_t height) override;
 
-		public: ResourceHandle::t_hash MakeDepthTexture(size_t width, size_t height) override;
+		public: ResourceHandle::t_hash MakeDepthTexture(size_t width, size_t height, bool withStencil) override;
 		
 		
 		public: bool IsResourceValid(ResourceHandle::t_hash handle) override;

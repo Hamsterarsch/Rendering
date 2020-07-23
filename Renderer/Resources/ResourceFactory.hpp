@@ -112,7 +112,7 @@ namespace Renderer::DX12
 			D3D12_RESOURCE_FLAGS bufferFlags = D3D12_RESOURCE_FLAG_NONE
 		);
 
-		public: ResourceAllocation MakeDepthTexture(size_t width, size_t height, D3D12_RESOURCE_STATES desiredState, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
+		public: ResourceAllocation MakeDepthTexture(size_t width, size_t height, bool withStencil, D3D12_RESOURCE_STATES desiredState, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
 
 		public: void Deallocate(ResourceAllocation &allocation, ResourceTypes type);
 

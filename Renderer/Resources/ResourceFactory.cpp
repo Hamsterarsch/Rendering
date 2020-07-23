@@ -325,10 +325,11 @@ namespace Renderer::DX12
 	
 	ResourceAllocation ResourceFactory::MakeDepthTexture
 	(
-		size_t width,
-		size_t height, 
-		D3D12_RESOURCE_STATES desiredState, 
-		D3D12_RESOURCE_FLAGS flags
+		const size_t width,
+		const size_t height,
+		const bool withStencil,
+		const D3D12_RESOURCE_STATES desiredState, 
+		const D3D12_RESOURCE_FLAGS flags
 	)
 	{
 		return MakeTextureWithDataInternal
@@ -338,7 +339,7 @@ namespace Renderer::DX12
 			nullptr,
 			width,
 			height,
-			DXGI_FORMAT_D32_FLOAT,
+			withStencil ? DXGI_FORMAT_D24_UNORM_S8_UINT : DXGI_FORMAT_D32_FLOAT,
 			desiredState,
 			flags | D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL
 		);

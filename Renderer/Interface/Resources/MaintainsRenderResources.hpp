@@ -24,7 +24,7 @@ namespace Renderer
 
 		public: virtual ResourceHandle::t_hash MakeTexture(const void *data, size_t width, size_t height) = 0;
 
-		public: virtual ResourceHandle::t_hash MakeDepthTexture(size_t width, size_t height) = 0;
+		public: virtual ResourceHandle::t_hash MakeDepthTexture(size_t width, size_t height, bool withStencil) = 0;
 		
 		
 		public: virtual bool IsResourceValid(ResourceHandle::t_hash handle) = 0;

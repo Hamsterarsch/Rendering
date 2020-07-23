@@ -531,9 +531,9 @@ namespace Renderer::DX12
 
 
 	
-	ResourceHandle::t_hash RendererFacadeImpl::MakeDepthTexture(const size_t width, const size_t height)
+	ResourceHandle::t_hash RendererFacadeImpl::MakeDepthTexture(const size_t width, const size_t height, const bool withStencil)
 	{
-		auto resource{ resourceFactory->MakeDepthTexture(width, height, D3D12_RESOURCE_STATE_COMMON) };
+		auto resource{ resourceFactory->MakeDepthTexture(width, height, withStencil, D3D12_RESOURCE_STATE_COMMON) };
 		return registry.Register(std::move(resource));
 		
 	}
