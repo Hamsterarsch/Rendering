@@ -50,6 +50,8 @@ namespace Renderer
 						
 
 		public: virtual ResourceHandle::t_hash FinalizeDescriptorBlock() = 0;
+
+		public: virtual ResourceHandle::t_hash MakeDepthTextureView(ResourceHandle::t_hash forResource) = 0;
 		
 	};
 	

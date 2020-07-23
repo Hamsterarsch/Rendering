@@ -104,7 +104,7 @@ namespace Renderer::DX12
 		public: ResourceHandle::t_hash FinalizeDescriptorBlock() override;
 
 
-		public: ResourceHandle::t_hash MakeDepthTextureView(ResourceHandle::t_hash forResource);
+		public: ResourceHandle::t_hash MakeDepthTextureView(ResourceHandle::t_hash forResource) override;
 
 	};
 		
