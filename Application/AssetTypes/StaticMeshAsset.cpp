@@ -16,10 +16,12 @@ namespace App::Assets
 	{
 		if(not bufferHandle)
 		{
-			//todo: implement resource factory multi data source support
+			//todo: implement renderer resource creation using multiple data pointers
 			size_t bufferSize{ meshData.GetVertexDataSizeInBytes() + meshData.GetIndexDataSizeInBytes() };
 			const auto buffer{ MakeUnique<unsigned char[]>(bufferSize) };
-					
+			std::memcpy(buffer.get(), meshData.GetVertexData(), meshData.GetVertexDataSizeInBytes());
+			std::memcpy(buffer.get() + meshData.GetVertexDataSizeInBytes(), meshData.GetIndexData(), meshData.GetIndexDataSizeInBytes());
+			
 			bufferHandle = { &renderer, renderer.MakeBuffer(buffer.get(), bufferSize) };
 		}
 		
