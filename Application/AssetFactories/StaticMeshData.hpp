@@ -39,17 +39,21 @@ namespace App::Assets
 		public: assetSystem::io::Archive &Serialize(assetSystem::io::Archive &archive) override;
 		
 		public: const void *GetVertexData() const override { return vertices.data(); }
-
+							   		
 		public: size_t GetVertexDataSizeInBytes() const override { return vertices.size() * sizeof(decltype(vertices)::value_type); }
 
+		public: size_t GetVertexCount() const override { return vertices.size(); }
+		
+		public: unsigned GetVertexStrideInBytes() const override { return sizeof VertexData; }
+		
 		public: const unsigned *GetIndexData() const override { return indices.data(); }
 
 		public: size_t GetIndexDataSizeInBytes() const override  { return indices.size() * sizeof(decltype(indices)::value_type); }
 		
 		public: unsigned GetNumIndices() const override { return indices.size(); }
 
-		public: void ConfigureVertexLayout(Renderer::VertexLayoutSettings &forSettings) override;
 
+		public: static void ConfigureVertexLayoutSettings(Renderer::VertexLayoutSettings &forSettings);
 		
 	};
 	

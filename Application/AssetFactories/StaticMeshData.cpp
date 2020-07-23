@@ -1,8 +1,8 @@
 #include "AssetFactories/StaticMeshData.hpp"
-#include "Renderer/Interface/StateSettings/VertexLayoutSettings.hpp"
 #include "IO/Archive.hpp"
 #include "Shared/Exception/Exception.hpp"
 #include <string>
+#include "Renderer/Interface/StateSettings/VertexLayoutSettings.hpp"
 
 
 namespace App::Assets
@@ -58,8 +58,8 @@ namespace App::Assets
 
 
 	
-	void StaticMeshData::ConfigureVertexLayout(Renderer::VertexLayoutSettings &forSettings)
-	{		
+	void StaticMeshData::ConfigureVertexLayoutSettings(Renderer::VertexLayoutSettings &forSettings)
+	{
 		forSettings
 		.AddLayoutElementDesc(&Renderer::SemanticTargets::TargetPosition, 0, &Renderer::FormatTargets::R32G32B32_Float, 0)
 		.AddLayoutElementDesc(&Renderer::SemanticTargets::TargetNormal, 0, &Renderer::FormatTargets::R32G32B32_Float, sizeof VertexData::pos)
