@@ -40,6 +40,10 @@ namespace Renderer::DX12
 
 		private: D3D12_GPU_VIRTUAL_ADDRESS uploadAddress;
 
+		private: D3D12_CLEAR_VALUE depthTextureClearValue;
+
+		private: D3D12_CLEAR_VALUE *clearValue;
+
 
 		
 		protected: UniquePtr<AllocatableGpuMemory> bufferMemory;
@@ -89,6 +93,7 @@ namespace Renderer::DX12
 				size_t width,
 				size_t height,
 				DXGI_FORMAT format,
+				unsigned pixelSizeInBytes,
 				D3D12_RESOURCE_STATES desiredState,
 				D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE
 			);

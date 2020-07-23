@@ -19,11 +19,15 @@ namespace Renderer::DX12
 	)	:
 		queue{ queue },
 		resources{ resources },
-		uploadAddress{ 0 },
+		uploadAddress{ 0 },	
+		clearValue{ nullptr },
 		bufferMemory{ std::move(bufferMemory) },
 		textureMemory{ std::move(textureMemory) },
 		depthTextureMemory{ std::move(depthTextureMemory) }
 	{
+		depthTextureClearValue.DepthStencil.Depth = 1;
+		depthTextureClearValue.DepthStencil.Stencil = 0;
+		
 		uploadBuffer = Facade::MakeUploadHeap(resources, 1'000'000);
 		fence = Facade::MakeFence(resources);
 		allocator = Facade::MakeCmdAllocator(resources, D3D12_COMMAND_LIST_TYPE_DIRECT);
@@ -168,7 +172,8 @@ namespace Renderer::DX12
 		const D3D12_RESOURCE_FLAGS flags
 	)
 	{
-		return MakeTextureWithDataInternal(*textureMemory, ResourceTypes::Texture, data, width, height, DXGI_FORMAT_R8G8B8A8_UNORM, desiredState, flags);
+		clearValue = nullptr;
+		return MakeTextureWithDataInternal(*textureMemory, ResourceTypes::Texture, data, width, height, DXGI_FORMAT_R8G8B8A8_UNORM, 4, desiredState, flags);
 		
 	}
 
@@ -180,6 +185,7 @@ namespace Renderer::DX12
 			const size_t width,
 			const size_t height,
 			const DXGI_FORMAT format,
+			const unsigned pixelSizeInBytes,
 			const D3D12_RESOURCE_STATES desiredState,
 			const D3D12_RESOURCE_FLAGS flags
 		)
@@ -189,11 +195,11 @@ namespace Renderer::DX12
 
 			D3D12_SUBRESOURCE_FOOTPRINT subresourceSize
 			{
-				DXGI_FORMAT_R8G8B8A8_UNORM,
+				format,
 				width,
 				height,
 				1,
-				RHA::Utility::IncreaseValueToAlignment(width * 4, D3D12_TEXTURE_DATA_PITCH_ALIGNMENT)
+				RHA::Utility::IncreaseValueToAlignment(pixelSizeInBytes*width, D3D12_TEXTURE_DATA_PITCH_ALIGNMENT)
 			};
 
 
@@ -265,8 +271,7 @@ namespace Renderer::DX12
 				desc.MipLevels = 1;
 				desc.SampleDesc.Count = 1;
 				desc.SampleDesc.Quality = 0;
-				
-				constexpr decltype(nullptr) NO_CLEAR_VALUE{ nullptr };
+								
 				const auto result
 				{		
 					resources->GetDevice()->CreatePlacedResource
@@ -275,7 +280,7 @@ namespace Renderer::DX12
 						outAlloc.allocation.offsetToAllocation,
 						&desc,
 						resourceState,
-						NO_CLEAR_VALUE,
+						clearValue,
 						IID_PPV_ARGS(&outAlloc.resource)
 					)
 				};
@@ -332,6 +337,8 @@ namespace Renderer::DX12
 		const D3D12_RESOURCE_FLAGS flags
 	)
 	{
+		depthTextureClearValue.Format = withStencil ? DXGI_FORMAT_D24_UNORM_S8_UINT : DXGI_FORMAT_D32_FLOAT;
+		clearValue = &depthTextureClearValue;		
 		return MakeTextureWithDataInternal
 		(
 			*depthTextureMemory,
@@ -339,7 +346,8 @@ namespace Renderer::DX12
 			nullptr,
 			width,
 			height,
-			withStencil ? DXGI_FORMAT_D24_UNORM_S8_UINT : DXGI_FORMAT_D32_FLOAT,
+			depthTextureClearValue.Format,
+			4,
 			desiredState,
 			flags | D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL
 		);
