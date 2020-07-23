@@ -16,11 +16,9 @@ namespace App::Rendering
 		
 		float time;
 
+		Math::Vector2 screenResolution;
+
 		GlobalBufferData() :			
-			view{},
-			projection{},
-			inverseView{},
-			inverseProjection{},
 			time{ 0 }
 		{			
 		}
