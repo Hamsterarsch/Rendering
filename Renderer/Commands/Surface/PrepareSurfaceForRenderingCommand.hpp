@@ -22,8 +22,7 @@ namespace Renderer::DX12::Commands
 		public: void Execute(DX12CommandProcessor &context) override
 		{			
 			context.GetRegistry().GetSurface(surface)->RecordPreparationForRendering(context.GetList());
-			context.GetRegistry().GetSurface(surface)->RecordPipelineBindings(context.GetList(), nullptr);
-			
+						
 		}
 		
 	};
