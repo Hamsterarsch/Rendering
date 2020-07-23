@@ -18,8 +18,9 @@ namespace App::Rendering
 		}
 		
 		for(unsigned meshShardIndex{ 0 }; meshShardIndex < asset->GetNumMeshShards(); ++meshShardIndex)
-		{			
-			meshDataSlot->second.meshShardData.at(meshShardIndex).pipelineOccurences[mesh.GetPipelineForMeshShardAt(meshShardIndex)].data.emplace_back(ShardInstanceData{ GetCurrentNodeToWorld(), mesh.GetInstanceData() });			
+		{
+			meshDataSlot->second.transforms.emplace_back(GetCurrentNodeToWorld());
+			meshDataSlot->second.meshShardData.at(meshShardIndex).pipelineOccurences[mesh.GetPipelineForMeshShardAt(meshShardIndex)].data.emplace_back(ShardInstanceData{ mesh.GetInstanceData() });			
 		}
 		
 	}

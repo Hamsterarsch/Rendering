@@ -22,11 +22,9 @@ namespace App::Rendering
 	class GraphVisitorHarvestMeshes final : public Scene::GraphVisitorTransformRequiring
 	{
 		private: struct ShardInstanceData
-		{
-			Math::Matrix transform;
+		{			
 			Scene::MeshInstanceData perInstanceData;
-
-			
+						
 		};
 		
 		private: struct ShardRenderData
@@ -56,6 +54,8 @@ namespace App::Rendering
 		{
 			std::vector<ShardRenderData> meshShardData;
 
+			std::vector<Math::Matrix> transforms;
+			
 			MeshShardData() = default;
 
 			MeshShardData(const MeshShardData &) = delete;
