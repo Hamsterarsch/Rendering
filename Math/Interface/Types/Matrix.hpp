@@ -22,6 +22,8 @@ namespace Math
 
 		public: static Matrix MakeRotation(float pitch, float yaw, float roll);
 
+		public: static Matrix MakeScale(float x, float y, float z);
+
 		public: static Matrix MakeProjection(float verticalFovRadians, float screenWidth, float screenHeight, float nearDistance, float farDistance);
 
 		public: static Matrix MakeOrthogonalProjection(float left, float screenWidth, float top, float screenHeight, float nearDistance, float farDistance);

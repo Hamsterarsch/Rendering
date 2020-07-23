@@ -35,6 +35,16 @@ namespace Math
 		
 	}
 
+
+	
+	Matrix Matrix::MakeScale(const float x, const float y, const float z)
+	{
+		return { scale(glm::identity<decltype(data)>(), {x, y, z}) };
+				
+	}
+
+
+	
 	Matrix Matrix::MakeProjection
 	(
 		const float verticalFovRadians, 
