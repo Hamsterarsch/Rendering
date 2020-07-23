@@ -38,6 +38,15 @@ namespace Renderer::DX12
 	}
 
 
+	
+	const void *FormatTargetsImpl::R32_Uint() const
+	{
+		static constexpr auto format{ DXGI_FORMAT_R32_UINT };
+		return &format;
+		
+	}
+
+
 
 	const void *FormatTargetsImpl::R16_Uint() const
 	{
