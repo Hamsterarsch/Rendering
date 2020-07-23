@@ -16,8 +16,14 @@ namespace App::Assets
 		
 	}
 
+	bool PsoAsset::OccludesAllPixelsRenderedBehind() const
+	{
+		return type == PsoType::Opaque;
+		
+	}
 
-	
+
+
 	const char *PsoAsset::GetAssetClassExtension()
 	{
 		static const char *extension{ "pso" };

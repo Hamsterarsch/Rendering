@@ -28,9 +28,11 @@ namespace App::Assets
 
 		public: PsoAsset(const assetSystem::AssetPtrTyped<UserPixelShaderAsset> &pixelShader) : type{ PsoType::Opaque }, pixelShader{ pixelShader } {}
 
-		
+				
 		public: assetSystem::io::Archive &Serialize(assetSystem::io::Archive &archive) override;
 
+		public: bool OccludesAllPixelsRenderedBehind() const;
+		
 		public: static const char *GetAssetClassExtension();
 		
 	};
