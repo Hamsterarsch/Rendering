@@ -36,6 +36,8 @@ namespace Renderer::DX12::Commands
 		public: UniquePtr<Renderer::Commands::Command> BindDepthTargetOnly(ResourceHandle::t_hash depthTextureDescriptor) override;
 		
 		public: UniquePtr<Renderer::Commands::Command> BindRenderTargets(ResourceHandle::t_hash windowSurface, ResourceHandle::t_hash depthTextureDescriptor) override;
+
+		public: UniquePtr<Renderer::Commands::Command> ClearDepthTexture(ResourceHandle::t_hash depthTextureDescriptor) override;
 		
 		
 		public: UniquePtr<Renderer::Commands::Command> SetIndexBuffer

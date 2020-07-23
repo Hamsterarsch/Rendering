@@ -245,6 +245,7 @@
   <ItemGroup>
     <ClInclude Include="Commands\Basic\BindDepthTargetOnlyCommand.hpp" />
     <ClInclude Include="Commands\Basic\BindRenderTargetsCommand.hpp" />
+    <ClInclude Include="Commands\Basic\ClearDepthTextureCommand.hpp" />
     <ClInclude Include="Commands\Basic\DispatchCommand.hpp" />
     <ClInclude Include="Commands\Basic\DrawIndexedInstancedCommand.hpp" />
     <ClInclude Include="Commands\Basic\SetConstantsToGraphicsCommand.hpp" />
@@ -400,6 +401,7 @@
   <ItemGroup>
     <ClCompile Include="Commands\Basic\BindDepthTargetOnlyCommand.cpp" />
     <ClCompile Include="Commands\Basic\BindRenderTargetsCommand.cpp" />
+    <ClCompile Include="Commands\Basic\ClearDepthTextureCommand.cpp" />
     <ClCompile Include="Commands\Basic\DispatchCommand.cpp" />
     <ClCompile Include="Commands\Basic\DrawIndexedInstancedCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetConstantsToGraphicsCommand.cpp" />

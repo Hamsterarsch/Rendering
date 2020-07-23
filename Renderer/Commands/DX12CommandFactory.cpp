@@ -17,6 +17,7 @@
 #include "Basic/SetDescriptorBlockViewsAsComputeTableCommand.hpp"
 #include "Basic/BindDepthTargetOnlyCommand.hpp"
 #include "Basic/BindRenderTargetsCommand.hpp"
+#include "Basic/ClearDepthTextureCommand.hpp"
 
 
 namespace Renderer::DX12::Commands
@@ -96,6 +97,14 @@ namespace Renderer::DX12::Commands
 	)
 	{
 		return MakeUnique<BindRenderTargetsCommand>(windowSurface, depthTextureDescriptor);
+		
+	}
+
+
+	
+	UniquePtr<Renderer::Commands::Command> DX12CommandFactory::ClearDepthTexture(const ResourceHandle::t_hash depthTextureDescriptor)
+	{
+		return MakeUnique<ClearDepthTextureCommand>(depthTextureDescriptor);
 		
 	}
 
