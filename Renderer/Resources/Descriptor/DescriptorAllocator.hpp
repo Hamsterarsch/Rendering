@@ -82,7 +82,7 @@ namespace Renderer::DX12
 
 				private: D3D12_CPU_DESCRIPTOR_HANDLE GetViewHandleCpu(size_t index) const;
 
-				private: void UpdateAfterTableIndex(const ChunkData &forChunkData, size_t offsetFromTableStartToDescriptor);
+				private: void UpdateAfterTableIndex(ChunkData &forChunkData, size_t offsetFromTableStartToDescriptor) const;
 
 		public: void CreateSrvTex2D(ID3D12Resource *resource, size_t tableOffset, Format format, uint16_t numMips, uint16_t mostDetailedMip);
 		

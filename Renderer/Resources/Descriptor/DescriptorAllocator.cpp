@@ -194,9 +194,11 @@ namespace Renderer::DX12
 			
 			}
 
-			void DescriptorAllocator::UpdateAfterTableIndex(const ChunkData &forChunkData, const size_t offsetFromTableStartToDescriptor)
-			{			
-				view.offsetToAfterTable = max(forChunkData.offsetToAfterTable, forChunkData.offsetToTableStart + offsetFromTableStartToDescriptor +1 );
+			void DescriptorAllocator::UpdateAfterTableIndex(ChunkData &forChunkData, const size_t offsetFromTableStartToDescriptor) const
+			{
+				Exception::ThrowIfDebug(forChunkData.chunk.capacity <= offsetFromTableStartToDescriptor, {"DescriptorAllocator: Descriptor index is out of bounds"});
+		
+				forChunkData.offsetToAfterTable = max(forChunkData.offsetToAfterTable, forChunkData.offsetToTableStart + offsetFromTableStartToDescriptor +1 );
 
 			}
 
