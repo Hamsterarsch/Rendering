@@ -46,7 +46,15 @@ namespace Renderer
 
 		public: virtual ResourceViewFactory &CreateUnorderedAccessView(ResourceHandle::t_hash forResource, size_t firstIndex, size_t numElements, Format format) = 0;
 
-		public: virtual ResourceViewFactory &CreateUnorderedAccessView(ResourceHandle::t_hash forResource, size_t firstIndex, size_t numElements, size_t elementStrideInBytes, ResourceHandle::t_hash counterResource) = 0;
+		public: virtual ResourceViewFactory &CreateUnorderedAccessView
+		(
+			ResourceHandle::t_hash forResource,
+			size_t firstIndex,
+			size_t numElements,
+			size_t elementStrideInBytes,
+			ResourceHandle::t_hash counterResource,
+			uint32_t targetCounterIndex
+		) = 0;
 						
 
 		public: virtual ResourceHandle::t_hash FinalizeDescriptorBlock() = 0;

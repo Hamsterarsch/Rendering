@@ -320,11 +320,11 @@ namespace Renderer::DX12
 		const size_t strideInBytes
 	)
 	{
-		CreateUavBufferInternal(resource, nullptr, tableOffset, firstIndex, numElements, strideInBytes, DXGI_FORMAT_UNKNOWN);
+		CreateUavBufferInternal(resource, nullptr, 0, tableOffset, firstIndex, numElements, strideInBytes, DXGI_FORMAT_UNKNOWN);
 		
 	}
 
-		void DescriptorAllocator::CreateUavBufferInternal(ID3D12Resource *resource, ID3D12Resource *counter, size_t tableOffset, size_t firstIndex, size_t numElements, size_t strideInBytes, const DXGI_FORMAT format)
+		void DescriptorAllocator::CreateUavBufferInternal(ID3D12Resource *resource, ID3D12Resource *counter, size_t offsetToCounterInBytes, size_t tableOffset, size_t firstIndex, size_t numElements, size_t strideInBytes, const DXGI_FORMAT format)
 		{
 			CheckIfValidOpenTable();
 
@@ -334,7 +334,8 @@ namespace Renderer::DX12
 			uavDesc.Buffer.NumElements = numElements;
 			uavDesc.Buffer.StructureByteStride = strideInBytes;
 			uavDesc.Format = format;
-
+			uavDesc.Buffer.CounterOffsetInBytes = offsetToCounterInBytes;
+		
 			resources->GetDevice()->CreateUnorderedAccessView
 			(
 				resource,
@@ -353,13 +354,14 @@ namespace Renderer::DX12
 	(
 		ID3D12Resource *resource,
 		ID3D12Resource *counter,
+		const size_t offsetToCounterInBytes,
 		const size_t tableOffset,
 		const size_t firstIndex,
 		const size_t numElements,
 		const size_t strideInBytes
 	)
 	{
-		CreateUavBufferInternal(resource, counter, tableOffset, firstIndex, numElements, strideInBytes, DXGI_FORMAT_UNKNOWN);
+		CreateUavBufferInternal(resource, counter, offsetToCounterInBytes, tableOffset, firstIndex, numElements, strideInBytes, DXGI_FORMAT_UNKNOWN);
 		
 	}
 
@@ -367,7 +369,7 @@ namespace Renderer::DX12
 
 	void DescriptorAllocator::CreateUavBufferFormatted(ID3D12Resource *resource, const size_t tableOffset, const size_t firstIndex, const size_t numElements, const DXGI_FORMAT format)
 	{
-		CreateUavBufferInternal(resource, nullptr, tableOffset, firstIndex, numElements, 0, format);
+		CreateUavBufferInternal(resource, nullptr, 0, tableOffset, firstIndex, numElements, 0, format);
 
 	}
 

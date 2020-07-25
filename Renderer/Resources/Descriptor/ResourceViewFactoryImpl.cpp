@@ -2,6 +2,7 @@
 #include "Resources/ResourceRegistry.hpp"
 #include "StateSettings/FormatTargetsImpl.hpp"
 #include "DX12/DeviceResources.hpp"
+#include "CounterResourceDefinition.hpp"
 
 
 namespace Renderer::DX12
@@ -225,13 +226,15 @@ namespace Renderer::DX12
 		const size_t firstIndex,
 		const size_t numElements,
 		const size_t elementStrideInBytes,
-		const ResourceHandle::t_hash counterResource
+		const ResourceHandle::t_hash counterResource,
+		uint32_t targetCounterIndex
 	)
-	{
+	{		
 		currentAllocator.allocator.CreateUavBufferWithCounter
 		(
 			registry->GetResource(forResource), 
 			registry->GetResource(counterResource),
+			targetCounterIndex * sizeof(UnderlyingCounterType),
 			GetTableOffset(&ResourceRegistry::GetSignatureUavOffset),
 			firstIndex,
 			numElements,

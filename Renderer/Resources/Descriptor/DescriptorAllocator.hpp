@@ -98,9 +98,9 @@ namespace Renderer::DX12
 
 		public: void CreateUavBuffer(ID3D12Resource *resource, size_t tableOffset, size_t firstIndex, size_t numElements, size_t strideInBytes);
 
-			private: void CreateUavBufferInternal(ID3D12Resource *resource, ID3D12Resource *counter, size_t tableOffset, size_t firstIndex, size_t numElements, size_t strideInBytes, DXGI_FORMAT format);
+			private: void CreateUavBufferInternal(ID3D12Resource *resource, ID3D12Resource *counter, size_t offsetToCounterInBytes, size_t tableOffset, size_t firstIndex, size_t numElements, size_t strideInBytes, DXGI_FORMAT format);
 
-		public: void CreateUavBufferWithCounter(ID3D12Resource *resource, ID3D12Resource *counter, size_t tableOffset, size_t firstIndex, size_t numElements, size_t strideInBytes);
+		public: void CreateUavBufferWithCounter(ID3D12Resource *resource, ID3D12Resource *counter, size_t offsetToCounterInBytes, size_t tableOffset, size_t firstIndex, size_t numElements, size_t strideInBytes);
 
 		public: void CreateUavBufferFormatted(ID3D12Resource *resource, size_t tableOffset, size_t firstIndex, size_t numElements, DXGI_FORMAT format);
 			

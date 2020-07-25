@@ -332,6 +332,7 @@
     <ClInclude Include="Commands\Basic\ClearDepthTextureCommand.hpp">
       <Filter>Commands\Basic</Filter>
     </ClInclude>
+    <ClInclude Include="CounterResourceDefinition.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />

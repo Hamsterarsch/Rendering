@@ -44,6 +44,8 @@ namespace Renderer
 			private: size_t alignment;
 
 			private: D3D12_HEAP_FLAGS heapFlags;
+
+			private: D3D12_HEAP_TYPE type;
 			
 			private: std::list<MemoryInfo> freeBlocks;
 				
@@ -55,7 +57,14 @@ namespace Renderer
 			
 
 
-			public: ResourceMemory(RHA::DX12::DeviceResources *resources, size_t initialHeapSizeInBytes, size_t alignment, D3D12_HEAP_FLAGS heapFlags);
+			public: ResourceMemory
+			(
+				RHA::DX12::DeviceResources *resources,
+				size_t initialHeapSizeInBytes,
+				size_t alignment,
+				D3D12_HEAP_FLAGS heapFlags,
+				D3D12_HEAP_TYPE type = D3D12_HEAP_TYPE_DEFAULT
+			);
 
 				private: decltype(freeBlocks)::iterator MakeNewFreeBlock(size_t sizeInBytes);
 

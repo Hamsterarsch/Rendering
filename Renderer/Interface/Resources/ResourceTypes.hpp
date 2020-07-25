@@ -14,8 +14,9 @@ namespace Renderer
 		WindowSurface,
 		DescriptorAllocator,
 		DepthTexture,
-		RawDescriptor
-		
+		RawDescriptor,
+		ReadbackBuffer		
 	};
 
+	
 }

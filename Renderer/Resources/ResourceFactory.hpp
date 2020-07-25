@@ -52,9 +52,19 @@ namespace Renderer::DX12
 
 		protected: UniquePtr<AllocatableGpuMemory> depthTextureMemory;
 
+		protected: UniquePtr<AllocatableGpuMemory> bufferReadbackMemory;
+
 		
 
-		public: ResourceFactory(DeviceResources *resources, Queue *queue, UniquePtr<AllocatableGpuMemory> &&bufferMemory, UniquePtr<AllocatableGpuMemory> &&textureMemory, UniquePtr<AllocatableGpuMemory> &&depthTextureMemory);
+		public: ResourceFactory
+		(
+			DeviceResources *resources,
+			Queue *queue,
+			UniquePtr<AllocatableGpuMemory> &&bufferMemory,
+			UniquePtr<AllocatableGpuMemory> &&textureMemory,
+			UniquePtr<AllocatableGpuMemory> &&depthTextureMemory,
+			UniquePtr<AllocatableGpuMemory> &&bufferReadbackMemory
+		);
 
 		public: ResourceFactory(ResourceFactory &&other) noexcept = default;
 
@@ -68,21 +78,46 @@ namespace Renderer::DX12
 
 										
 		public: ResourceAllocation MakeBufferWithData(const void *data, size_t sizeInBytes, D3D12_RESOURCE_STATES desiredState, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
-							
-			private: void CopyDataToUploadBuffer(const void *data, size_t sizeInBytes);
 
-				private: bool UploadBufferCanNotFitAllocation(size_t allocationSizeInBytes) const;
+			private: ResourceAllocation MakeBufferWithDataInternal
+			(
+				AllocatableGpuMemory &memorySource,				
+				ResourceTypes allocationType,
+				const void *data,
+				size_t sizeInBytes,
+				D3D12_RESOURCE_STATES desiredState,
+				D3D12_RESOURCE_FLAGS flags
+			);
 		
-			private: ResourceAllocation MakePlacedBufferResource(size_t sizeInBytes, D3D12_RESOURCE_FLAGS resourceFlags, D3D12_RESOURCE_STATES resourceState);
+				private: void CopyDataToUploadBuffer(const void *data, size_t sizeInBytes);
 
-				private: static D3D12_RESOURCE_DESC MakeBufferDesc(size_t sizeInBytes, D3D12_RESOURCE_FLAGS flags);
+					private: bool UploadBufferCanNotFitAllocation(size_t allocationSizeInBytes) const;
+		
+				private: ResourceAllocation MakePlacedBufferResource
+				(
+					AllocatableGpuMemory &memorySource,
+					ResourceTypes allocationType,
+					size_t sizeInBytes,
+					D3D12_RESOURCE_FLAGS resourceFlags,
+					D3D12_RESOURCE_STATES resourceState
+				);
 
-			private: static void CheckGpuResourceCreation(HRESULT result);
+					private: static D3D12_RESOURCE_DESC MakeBufferDesc(size_t sizeInBytes, D3D12_RESOURCE_FLAGS flags);
 
-			private: void ClearCmdList();
+				private: static void CheckGpuResourceCreation(HRESULT result);
 
-			private: void SubmitListAndFenceSynchronization(CmdList *list);
+				private: void ClearCmdList();
 
+				private: void SubmitListAndFenceSynchronization(CmdList *list);
+
+		public: ResourceAllocation MakeReadbackBufferWithData
+		(
+			const void *data,
+			size_t sizeInBytes,
+			D3D12_RESOURCE_STATES desiredState,
+			D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE
+		);
+		
 		public: ResourceAllocation MakeTextureWithData(const void *data, size_t width, size_t height, D3D12_RESOURCE_STATES desiredState, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
 
 			private: ResourceAllocation MakeTextureWithDataInternal

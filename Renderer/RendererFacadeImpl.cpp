@@ -10,6 +10,7 @@
 #include "Commands/BindDescriptorsContextCommand.hpp"
 #include "Commands/UserContextCommandWrapper.hpp"
 #include "Commands/DX12CommandFactory.hpp"
+#include "CounterResourceDefinition.hpp"
 
 
 #if DEBUG_OPTIMIZED
@@ -46,21 +47,29 @@ namespace Renderer::DX12
 					resources.get(),
 					D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT * 32,
 					D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT,
-					D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS 
+					D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS | D3D12_HEAP_FLAG_ALLOW_SHADER_ATOMICS
 				),
 				std::make_unique<ResourceMemory>
 				(
 					resources.get(),
 					D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT * 16,
 					D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT,
-					D3D12_HEAP_FLAG_ALLOW_ONLY_NON_RT_DS_TEXTURES
+					D3D12_HEAP_FLAG_ALLOW_ONLY_NON_RT_DS_TEXTURES | D3D12_HEAP_FLAG_ALLOW_SHADER_ATOMICS
 				),
 				std::make_unique<ResourceMemory>
 				(
 					resources.get(),
 					D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT * 16,
 					D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT,
-					D3D12_HEAP_FLAG_ALLOW_ONLY_RT_DS_TEXTURES
+					D3D12_HEAP_FLAG_ALLOW_ONLY_RT_DS_TEXTURES | D3D12_HEAP_FLAG_ALLOW_SHADER_ATOMICS
+				),
+				std::make_unique<ResourceMemory>
+				(
+					resources.get(),
+					D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT * 2,
+					D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT,
+					D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS | D3D12_HEAP_FLAG_ALLOW_SHADER_ATOMICS,
+					D3D12_HEAP_TYPE_READBACK
 				)
 			)
 		},
@@ -539,6 +548,15 @@ namespace Renderer::DX12
 	}
 
 
+	
+	ResourceHandle::t_hash RendererFacadeImpl::MakeCounterResource(const uint32_t numCounters)
+	{		
+		auto resource{ resourceFactory->MakeReadbackBufferWithData(nullptr, sizeof(UnderlyingCounterType)*numCounters, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS) };
+		return registry.Register(std::move(resource));
+		
+	}
+
+
 
 	bool RendererFacadeImpl::IsResourceValid(ResourceHandle::t_hash handle)
 	{
@@ -651,6 +669,27 @@ namespace Renderer::DX12
 
 
 	
+	void RendererFacadeImpl::QueryCurrentCounterResourceContent(const ResourceHandle::t_hash counterResources, SerializationHook &serializer)
+	{
+		auto resource{ registry.GetResource(counterResources) };
+		const auto sizeInBytes{ resource->GetDesc().Width };
+		serializer.Resize(sizeInBytes);
+
+		void *resourceData{ nullptr };
+		if(FAILED(resource->Map(0, nullptr, &resourceData)))
+		{
+			throw Exception::Exception{ "RendererFacade: could not map counter resource for content query" };
+		}
+
+		std::memcpy(serializer.GetData(), resourceData, sizeInBytes);
+
+		D3D12_RANGE nothingWrittenRange{ 0, 0 };
+		resource->Unmap(0, &nothingWrittenRange);
+				
+	}
+
+
+
 	BlendSettings &RendererFacadeImpl::GetBlendSettings()
 	{
 		return blendSettings;

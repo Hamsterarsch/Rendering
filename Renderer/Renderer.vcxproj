@@ -327,6 +327,7 @@
     <ClInclude Include="Commands\Surface\PresentSurfaceCommand.hpp" />
     <ClInclude Include="Commands\UserContextCommandWrapper.hpp" />
     <ClInclude Include="CounterFactoryImpl.hpp" />
+    <ClInclude Include="CounterResourceDefinition.hpp" />
     <ClInclude Include="Interface\CounterFactory.hpp" />
     <ClInclude Include="Interface\StateSettings\DescriptorTargets.hpp" />
     <ClInclude Include="Interface\StateSettings\RootSignatureSettings.hpp" />

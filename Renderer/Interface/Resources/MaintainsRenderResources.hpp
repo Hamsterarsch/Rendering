@@ -3,6 +3,7 @@
 #include "Resources/Pso/PipelineTypes.hpp"
 #include "Resources/Pso/ShaderList.hpp"
 #include "ResourceHandle.hpp"
+#include <cstdint>
 
 
 namespace Renderer
@@ -15,6 +16,8 @@ namespace Renderer
 		public: virtual ResourceHandle::t_hash MakeBuffer(const void *data, size_t sizeInBytes) = 0;
 
 		public: virtual ResourceHandle::t_hash MakeUavBuffer(const void *data, size_t sizeInBytes) = 0;
+
+		public: virtual ResourceHandle::t_hash MakeCounterResource(uint32_t numCounters) = 0;
 
 		public: virtual ResourceHandle::t_hash MakeRootSignature(const void *serializedData, size_t dataSizeInBytes, unsigned samplerAmount) = 0;
 					

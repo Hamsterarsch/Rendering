@@ -126,6 +126,7 @@ namespace Renderer::DX12
 			unsigned numStaticSamplers
 		)	override;
 
+		
 		public: virtual size_t MakeRootSignature(const void *serializedData, size_t dataSizeInBytes, unsigned samplerAmount) override;
 		
 		public: ResourceHandle::t_hash MakePso(const ShaderList &shaders, ResourceHandle::t_hash signatureHandle) override;
@@ -135,6 +136,9 @@ namespace Renderer::DX12
 		public: ResourceHandle::t_hash MakeTexture(const void *data, size_t width, size_t height) override;
 
 		public: ResourceHandle::t_hash MakeDepthTexture(size_t width, size_t height, bool withStencil) override;
+		
+		public: ResourceHandle::t_hash MakeCounterResource(uint32_t numCounters) override;
+		
 		
 		
 		public: bool IsResourceValid(ResourceHandle::t_hash handle) override;
@@ -163,6 +167,8 @@ namespace Renderer::DX12
 
 		public: void DestroyExecutedCommands() override;
 
+		public: void QueryCurrentCounterResourceContent(ResourceHandle::t_hash counterResources, SerializationHook &serializer) override;
+		
 		
 		public: BlendSettings &GetBlendSettings() override;
 		

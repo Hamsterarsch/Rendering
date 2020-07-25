@@ -98,7 +98,8 @@ namespace Renderer::DX12
 			size_t firstIndex,
 			size_t numElements,
 			size_t elementStrideInBytes,
-			ResourceHandle::t_hash counterResource
+			ResourceHandle::t_hash counterResource,
+			uint32_t targetCounterIndex
 		) override;
 
 		public: ResourceHandle::t_hash FinalizeDescriptorBlock() override;

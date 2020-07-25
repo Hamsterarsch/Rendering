@@ -45,8 +45,7 @@ namespace Renderer
 			unsigned numStaticSamplers
 		) = 0;	
 
-		
-						
+								
 		public: virtual ResourceHandle::t_hash MakeWindowsWindowSurface(HWND windowHandle) = 0;
 
 		public: virtual void SetWindowSurfaceToFullscreen(ResourceHandle::t_hash surface) = 0;
@@ -66,6 +65,7 @@ namespace Renderer
 
 		public: virtual void DestroyExecutedCommands() = 0;
 
+		public: virtual void QueryCurrentCounterResourceContent(ResourceHandle::t_hash counterResources, SerializationHook &serializer) = 0;
 
 
 		public: virtual BlendSettings &GetBlendSettings() = 0;
