@@ -57,18 +57,24 @@ namespace Renderer
 		
 		size_t TableLayout::GetSrvOffset(const unsigned short ordinal) const 
 		{
+			Exception::ThrowIfDebug(ordinal > srvOffsets.size(), {"TableLayout: The specified table has no srv with this ordinal. Ordinals are counted for each table and are not zero based."});
+			
 			return srvOffsets.at(ordinal-1);
 
 		}
 
 		size_t TableLayout::GetUavOffset(const unsigned short ordinal) const 
 		{
+			Exception::ThrowIfDebug(ordinal > uavOffsets.size(), {"TableLayout: The specified table has no uav with this ordinal. Ordinals are counted for each table and are not zero based."});
+			
 			return uavOffsets.at(ordinal-1);
 
 		}
 
 		size_t TableLayout::GetCbvOffset(const unsigned short ordinal) const 
 		{
+			Exception::ThrowIfDebug(ordinal > cbvOffsets.size(), {"TableLayout: The specified table has no cbv with this ordinal. Ordinals are counted for each table and are not zero based."});
+			
 			return cbvOffsets.at(ordinal-1);
 
 		}
