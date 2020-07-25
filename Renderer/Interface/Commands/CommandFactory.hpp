@@ -73,7 +73,7 @@ namespace Renderer::Commands
 			unsigned parameterIndex, 
 			const unsigned &constantData,
 			unsigned numConstants,
-			unsigned offsetIntoConstants
+			unsigned offsetIntoDstInConstants
 		) = 0;
 		
 

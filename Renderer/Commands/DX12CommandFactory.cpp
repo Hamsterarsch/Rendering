@@ -156,10 +156,10 @@ namespace Renderer::DX12::Commands
 		const unsigned parameterIndex,
 		const unsigned &constantData,
 		const unsigned numConstants,
-		const unsigned offsetIntoConstants
+		const unsigned offsetIntoDstInConstants
 	)
 	{
-		return MakeUnique<SetConstantsCommand>(&RHA::DX12::CmdList::RecordSetComputeConstants, parameterIndex, constantData, numConstants, offsetIntoConstants);
+		return MakeUnique<SetConstantsCommand>(&RHA::DX12::CmdList::RecordSetComputeConstants, parameterIndex, constantData, numConstants, offsetIntoDstInConstants);
 		
 	}
 

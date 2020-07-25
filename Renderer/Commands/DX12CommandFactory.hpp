@@ -70,7 +70,7 @@ namespace Renderer::DX12::Commands
 			unsigned parameterIndex, 
 			const unsigned &constantData,
 			unsigned numConstants,
-			unsigned offsetIntoConstants
+			unsigned offsetIntoDstInConstants
 		) override;
 		
 		

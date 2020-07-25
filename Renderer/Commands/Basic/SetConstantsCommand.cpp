@@ -9,7 +9,7 @@ namespace Renderer::DX12::Commands
 		unsigned parameterIndex,
 		const unsigned &constantData,
 		unsigned numConstants,
-		unsigned offsetIntoConstants
+		unsigned offsetIntoDstConstants
 	)	:
 		smallConstantData{},
 		numConstants{ numConstants },
@@ -21,11 +21,11 @@ namespace Renderer::DX12::Commands
 		if(numConstants > smallDataConstantSize)
 		{
 			largeConstantData = MakeUnique<unsigned[]>(numConstants);
-			std::memcpy(largeConstantData.get(), &constantData+offsetIntoConstants, numConstants * sizeof(unsigned));			
+			std::memcpy(largeConstantData.get(), &constantData+offsetIntoDstConstants, numConstants * sizeof(unsigned));			
 		}
 		else
 		{
-			std::memcpy(smallConstantData.data(), &constantData+offsetIntoConstants, numConstants * sizeof(unsigned));			
+			std::memcpy(smallConstantData.data(), &constantData+offsetIntoDstConstants, numConstants * sizeof(unsigned));			
 		}
 				
 	}
