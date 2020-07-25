@@ -21,7 +21,7 @@ namespace RHA
 
 			
 
-			public: HeapImpl(DeviceResources *resources, size_t sizeInBytes, size_t alignment, D3D12_HEAP_FLAGS flags);
+			public: HeapImpl(DeviceResources *resources, size_t sizeInBytes, size_t alignment, D3D12_HEAP_FLAGS flags, D3D12_HEAP_TYPE type);
 
 				private: static void CheckHeapCreation(HRESULT result);
 			

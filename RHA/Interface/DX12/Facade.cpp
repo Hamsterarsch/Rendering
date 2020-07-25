@@ -74,9 +74,9 @@ namespace RHA
 			
 		}
 
-		UniquePtr<Heap> Facade::MakeHeap(DeviceResources* resources, size_t sizeInBytes, size_t alignment, D3D12_HEAP_FLAGS flags)
+		UniquePtr<Heap> Facade::MakeHeap(DeviceResources* resources, size_t sizeInBytes, size_t alignment, D3D12_HEAP_FLAGS flags, D3D12_HEAP_TYPE type)
 		{
-			return std::make_unique<HeapImpl>(resources, sizeInBytes, alignment, flags);
+			return std::make_unique<HeapImpl>(resources, sizeInBytes, alignment, flags, type);
 			
 		}
 
