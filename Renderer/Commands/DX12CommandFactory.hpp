@@ -65,6 +65,14 @@ namespace Renderer::DX12::Commands
 			unsigned offsetIntoConstants
 		) override;
 
+		UniquePtr<Renderer::Commands::Command> SetComputeConstants
+		(
+			unsigned parameterIndex, 
+			const unsigned &constantData,
+			unsigned numConstants,
+			unsigned offsetIntoConstants
+		) override;
+		
 		
 		public: UniquePtr<Renderer::Commands::Command> SetScissorRect(float topLeftX, float topLeftY, float width, float height) override;
 				

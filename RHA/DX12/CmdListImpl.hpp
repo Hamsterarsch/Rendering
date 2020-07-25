@@ -59,6 +59,14 @@ namespace RHA::DX12
 			unsigned constantOffsetIntoData
 		) override;
 
+		public: void RecordSetComputeConstants
+		(
+			unsigned parameterIndex,
+			unsigned numConstants,
+			const unsigned &constantData,
+			unsigned constantOffsetIntoData
+		) override;
+
 		
 		public: void RecordSetRenderTargets
 		(

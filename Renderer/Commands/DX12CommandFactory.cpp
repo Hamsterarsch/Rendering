@@ -11,7 +11,7 @@
 #include "Commands/Basic/SetViewportCommand.hpp"
 #include "Commands/Basic/DrawIndexedInstancedCommand.hpp"
 #include "Commands/IncreaseCounterCommand.hpp"
-#include "Basic/SetConstantsToGraphicsCommand.hpp"
+#include "Basic/SetConstantsCommand.hpp"
 #include "Basic/SetSignatureComputeCommand.hpp"
 #include "Basic/DispatchCommand.hpp"
 #include "Basic/SetDescriptorBlockViewsAsComputeTableCommand.hpp"
@@ -145,7 +145,21 @@ namespace Renderer::DX12::Commands
 		const unsigned offsetIntoConstants
 	)
 	{
-		return MakeUnique<SetConstantsToGraphicsCommand>(parameterIndex, constantData, numConstants, offsetIntoConstants);
+		return MakeUnique<SetConstantsCommand>(&RHA::DX12::CmdList::RecordSetGraphicsConstants, parameterIndex, constantData, numConstants, offsetIntoConstants);
+		
+	}
+
+
+	
+	UniquePtr<Renderer::Commands::Command> DX12CommandFactory::SetComputeConstants
+	(
+		const unsigned parameterIndex,
+		const unsigned &constantData,
+		const unsigned numConstants,
+		const unsigned offsetIntoConstants
+	)
+	{
+		return MakeUnique<SetConstantsCommand>(&RHA::DX12::CmdList::RecordSetComputeConstants, parameterIndex, constantData, numConstants, offsetIntoConstants);
 		
 	}
 

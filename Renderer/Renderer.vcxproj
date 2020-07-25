@@ -248,7 +248,7 @@
     <ClInclude Include="Commands\Basic\ClearDepthTextureCommand.hpp" />
     <ClInclude Include="Commands\Basic\DispatchCommand.hpp" />
     <ClInclude Include="Commands\Basic\DrawIndexedInstancedCommand.hpp" />
-    <ClInclude Include="Commands\Basic\SetConstantsToGraphicsCommand.hpp" />
+    <ClInclude Include="Commands\Basic\SetConstantsCommand.hpp" />
     <ClInclude Include="Commands\Basic\SetDescriptorBlockViewsAsComputeTableCommand.hpp" />
     <ClInclude Include="Commands\Basic\SetDescriptorBlockViewsAsGraphicsTableCommand.hpp" />
     <ClInclude Include="Commands\Basic\SetIndexBufferCommand.hpp" />
@@ -405,7 +405,7 @@
     <ClCompile Include="Commands\Basic\ClearDepthTextureCommand.cpp" />
     <ClCompile Include="Commands\Basic\DispatchCommand.cpp" />
     <ClCompile Include="Commands\Basic\DrawIndexedInstancedCommand.cpp" />
-    <ClCompile Include="Commands\Basic\SetConstantsToGraphicsCommand.cpp" />
+    <ClCompile Include="Commands\Basic\SetConstantsCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetDescriptorBlockViewsAsComputeTableCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetDescriptorBlockViewsAsGraphicsTableCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetIndexBufferCommand.cpp" />

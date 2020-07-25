@@ -305,9 +305,6 @@
     <ClInclude Include="Commands\Basic\SetDescriptorBlockViewsAsGraphicsTableCommand.hpp">
       <Filter>Commands\Basic</Filter>
     </ClInclude>
-    <ClInclude Include="Commands\Basic\SetConstantsToGraphicsCommand.hpp">
-      <Filter>Commands\Basic</Filter>
-    </ClInclude>
     <ClInclude Include="StateSettings\StateImpl.hpp">
       <Filter>StateSettings</Filter>
     </ClInclude>
@@ -333,6 +330,9 @@
       <Filter>Commands\Basic</Filter>
     </ClInclude>
     <ClInclude Include="CounterResourceDefinition.hpp" />
+    <ClInclude Include="Commands\Basic\SetConstantsCommand.hpp">
+      <Filter>Commands\Basic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -500,9 +500,6 @@
     <ClCompile Include="Commands\Basic\SetDescriptorBlockViewsAsGraphicsTableCommand.cpp">
       <Filter>Commands\Basic</Filter>
     </ClCompile>
-    <ClCompile Include="Commands\Basic\SetConstantsToGraphicsCommand.cpp">
-      <Filter>Commands\Basic</Filter>
-    </ClCompile>
     <ClCompile Include="Commands\Basic\SetSignatureComputeCommand.cpp">
       <Filter>Commands\Basic</Filter>
     </ClCompile>
@@ -519,6 +516,9 @@
       <Filter>Commands\Basic</Filter>
     </ClCompile>
     <ClCompile Include="Commands\Basic\ClearDepthTextureCommand.cpp">
+      <Filter>Commands\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Basic\SetConstantsCommand.cpp">
       <Filter>Commands\Basic</Filter>
     </ClCompile>
   </ItemGroup>

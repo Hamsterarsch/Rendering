@@ -1,18 +1,20 @@
-#include "Commands/Basic/SetConstantsToGraphicsCommand.hpp"
+#include "Commands/Basic/SetConstantsCommand.hpp"
 
 
 namespace Renderer::DX12::Commands
 {
-	SetConstantsToGraphicsCommand::SetConstantsToGraphicsCommand
+	SetConstantsCommand::SetConstantsCommand
 	(
-		const unsigned parameterIndex,
+		t_recordFunction recordFunction,
+		unsigned parameterIndex,
 		const unsigned &constantData,
-		const unsigned numConstants,
-		const unsigned offsetIntoConstants
+		unsigned numConstants,
+		unsigned offsetIntoConstants
 	)	:
 		smallConstantData{},
 		numConstants{ numConstants },
-		parameterIndex{ parameterIndex }
+		parameterIndex{ parameterIndex },
+		recordFunction{ recordFunction }
 	{
 		static_assert(sizeof(unsigned) == 4);
 		
@@ -28,15 +30,17 @@ namespace Renderer::DX12::Commands
 				
 	}
 
-	void SetConstantsToGraphicsCommand::Execute(DX12CommandProcessor &context)
+
+	
+	void SetConstantsCommand::Execute(DX12CommandProcessor &context)
 	{
 		if(largeConstantData)
 		{
-			context.GetList().RecordSetGraphicsConstants(parameterIndex, numConstants, *largeConstantData.get(), 0);
+			(context.GetList().*recordFunction)(parameterIndex, numConstants, *largeConstantData.get(), 0);
 		}
 		else
 		{
-			context.GetList().RecordSetGraphicsConstants(parameterIndex, numConstants, *smallConstantData.data(), 0);
+			(context.GetList().*recordFunction)(parameterIndex, numConstants, *smallConstantData.data(), 0);
 		}
 		
 	}

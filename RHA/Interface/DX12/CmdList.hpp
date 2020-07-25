@@ -56,6 +56,14 @@ namespace RHA
 				const unsigned &constantData,
 				unsigned constantOffsetIntoData
 			) = 0;
+
+			public: virtual void RecordSetComputeConstants
+			(
+				unsigned parameterIndex,
+				unsigned numConstants,
+				const unsigned &constantData,
+				unsigned constantOffsetIntoData
+			) = 0;
 			
 			
 			public: virtual void RecordSetRenderTargets
