@@ -17,6 +17,7 @@
 #include "StateSettings/RootSignatureSettingsImpl.hpp"
 #include "Resources/Descriptor/ResourceViewFactoryImpl.hpp"
 #include "CounterFactoryImpl.hpp"
+#include "Commands/DX12CommandFactory.hpp"
 
 
 namespace RHA
@@ -81,8 +82,7 @@ namespace Renderer::DX12
 
 		private: ResourceViewFactoryImpl resourceViewFactory;
 
-
-	 			
+			 			
 		
 		public: RendererFacadeImpl(HWND outputWindow);
 											 
@@ -167,7 +167,7 @@ namespace Renderer::DX12
 
 		public: void DestroyExecutedCommands() override;
 
-		public: void QueryCurrentCounterResourceContent(ResourceHandle::t_hash counterResources, SerializationHook &serializer) override;
+		public: void QueryCurrentCounterResourceContent(ResourceHandle::t_hash counterResource, SerializationHook &serializer) override;
 		
 		
 		public: BlendSettings &GetBlendSettings() override;

@@ -336,6 +336,9 @@
     <ClInclude Include="Commands\Basic\TransitionResourceCommand.hpp">
       <Filter>Commands\Basic</Filter>
     </ClInclude>
+    <ClInclude Include="Commands\Internal\CopyBufferRegionCommand.hpp">
+      <Filter>Commands\Internal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -527,6 +530,9 @@
     <ClCompile Include="Commands\Basic\TransitionResourceCommand.cpp">
       <Filter>Commands\Basic</Filter>
     </ClCompile>
+    <ClCompile Include="Commands\Internal\CopyBufferRegionCommand.cpp">
+      <Filter>Commands\Internal</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">
@@ -570,6 +576,9 @@
     </Filter>
     <Filter Include="Commands\Basic">
       <UniqueIdentifier>{aad6765a-6344-4012-ba88-f613411d9b7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Commands\Internal">
+      <UniqueIdentifier>{46d6f06f-2897-47ff-b589-ec6ebe4181fb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

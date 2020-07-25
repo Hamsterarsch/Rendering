@@ -266,6 +266,7 @@
     <ClInclude Include="Commands\BindDescriptorsContextCommand.hpp" />
     <ClInclude Include="Commands\GlobalBufferContextCommand.hpp" />
     <ClInclude Include="Commands\IncreaseCounterCommand.hpp" />
+    <ClInclude Include="Commands\Internal\CopyBufferRegionCommand.hpp" />
     <ClInclude Include="Commands\LightingContextCommand.hpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -429,6 +430,7 @@
     </ClCompile>
     <ClCompile Include="Commands\CommandProcessorImpl.cpp" />
     <ClCompile Include="Commands\BindDescriptorsContextCommand.cpp" />
+    <ClCompile Include="Commands\Internal\CopyBufferRegionCommand.cpp" />
     <ClCompile Include="Commands\LightingContextCommand.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>

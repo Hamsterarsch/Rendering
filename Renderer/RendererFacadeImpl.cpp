@@ -11,6 +11,9 @@
 #include "Commands/UserContextCommandWrapper.hpp"
 #include "Commands/DX12CommandFactory.hpp"
 #include "CounterResourceDefinition.hpp"
+#include "Resources/HandleWrapper.hpp"
+#include "Commands/Internal/CopyBufferRegionCommand.hpp"
+#include "Commands/Basic/TransitionResourceCommand.hpp"
 
 
 #if DEBUG_OPTIMIZED
@@ -68,7 +71,7 @@ namespace Renderer::DX12
 					resources.get(),
 					D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT * 2,
 					D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT,
-					D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS | D3D12_HEAP_FLAG_ALLOW_SHADER_ATOMICS,
+					D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS,
 					D3D12_HEAP_TYPE_READBACK
 				)
 			)
@@ -551,7 +554,7 @@ namespace Renderer::DX12
 	
 	ResourceHandle::t_hash RendererFacadeImpl::MakeCounterResource(const uint32_t numCounters)
 	{		
-		auto resource{ resourceFactory->MakeReadbackBufferWithData(nullptr, sizeof(UnderlyingCounterType)*numCounters, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS) };
+		auto resource{ resourceFactory->MakeBufferWithData(nullptr, sizeof(UnderlyingCounterType)*numCounters, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS) };
 		return registry.Register(std::move(resource));
 		
 	}
@@ -669,14 +672,21 @@ namespace Renderer::DX12
 
 
 	
-	void RendererFacadeImpl::QueryCurrentCounterResourceContent(const ResourceHandle::t_hash counterResources, SerializationHook &serializer)
-	{
-		auto resource{ registry.GetResource(counterResources) };
-		const auto sizeInBytes{ resource->GetDesc().Width };
+	void RendererFacadeImpl::QueryCurrentCounterResourceContent(const ResourceHandle::t_hash counterResource, SerializationHook &serializer)
+	{		
+		const auto sizeInBytes{ registry.GetResource(counterResource)->GetDesc().Width };
 		serializer.Resize(sizeInBytes);
+				
+		HandleWrapper readbackBuffer{ this, registry.Register(resourceFactory->MakeReadbackBufferWithData(nullptr, sizeInBytes, D3D12_RESOURCE_STATE_COPY_DEST)) };
+		SubmitCommand(MakeUnique<Commands::TransitionResourceCommand>(counterResource, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_COPY_SOURCE));
+		SubmitCommand(MakeUnique<Commands::CopyBufferRegionCommand>(counterResource, readbackBuffer.Get(), sizeInBytes, 0, 0));
+		SubmitCommand(MakeUnique<Commands::TransitionResourceCommand>(counterResource, D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_UNORDERED_ACCESS));
+		WaitForCommandsAndQueue();
 
+		auto resource{ registry.GetResource(readbackBuffer) };		
 		void *resourceData{ nullptr };
-		if(FAILED(resource->Map(0, nullptr, &resourceData)))
+		D3D12_RANGE fullRange{ 0, static_cast<SIZE_T>(sizeInBytes) };
+		if(FAILED(resource->Map(0, &fullRange, &resourceData)))
 		{
 			throw Exception::Exception{ "RendererFacade: could not map counter resource for content query" };
 		}
@@ -685,7 +695,7 @@ namespace Renderer::DX12
 
 		D3D12_RANGE nothingWrittenRange{ 0, 0 };
 		resource->Unmap(0, &nothingWrittenRange);
-				
+						
 	}
 
 
