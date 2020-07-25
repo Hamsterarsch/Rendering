@@ -101,6 +101,11 @@ namespace Renderer::Commands
 		public: virtual UniquePtr<Command> Dispatch(unsigned dimensionX, unsigned dimensionY, unsigned dimensionZ) = 0;
 
 		public: virtual UniquePtr<Command> IncreaseCounter(CounterFactory::CounterID id, size_t valueToIncreaseBy) = 0;
+
+
+		public: virtual UniquePtr<Command> TransitionUnorderedAccessToShaderResource(ResourceHandle::t_hash resource, bool usableInPixelShader) = 0;
+
+		public: virtual UniquePtr<Command> TransitionShaderResourceToUnorderedAccess(ResourceHandle::t_hash resource) = 0;
 		
 	};
 	

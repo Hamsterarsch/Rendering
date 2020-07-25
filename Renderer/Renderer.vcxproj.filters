@@ -333,6 +333,9 @@
     <ClInclude Include="Commands\Basic\SetConstantsCommand.hpp">
       <Filter>Commands\Basic</Filter>
     </ClInclude>
+    <ClInclude Include="Commands\Basic\TransitionResourceCommand.hpp">
+      <Filter>Commands\Basic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -519,6 +522,9 @@
       <Filter>Commands\Basic</Filter>
     </ClCompile>
     <ClCompile Include="Commands\Basic\SetConstantsCommand.cpp">
+      <Filter>Commands\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Basic\TransitionResourceCommand.cpp">
       <Filter>Commands\Basic</Filter>
     </ClCompile>
   </ItemGroup>

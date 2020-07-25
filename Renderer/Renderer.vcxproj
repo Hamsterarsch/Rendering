@@ -258,6 +258,7 @@
     <ClInclude Include="Commands\Basic\SetScissorRectCommand.hpp" />
     <ClInclude Include="Commands\Basic\SetVertexBufferCommand.hpp" />
     <ClInclude Include="Commands\Basic\SetViewportCommand.hpp" />
+    <ClInclude Include="Commands\Basic\TransitionResourceCommand.hpp" />
     <ClInclude Include="Commands\ClearDepthSurfaceCommand.hpp" />
     <ClInclude Include="Commands\DX12CommandFactory.hpp" />
     <ClInclude Include="Commands\DX12CommandProcessor.hpp" />
@@ -415,6 +416,7 @@
     <ClCompile Include="Commands\Basic\SetSignatureGraphicsCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetVertexBufferCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetViewportCommand.cpp" />
+    <ClCompile Include="Commands\Basic\TransitionResourceCommand.cpp" />
     <ClCompile Include="Commands\DX12CommandFactory.cpp" />
     <ClCompile Include="Commands\IncreaseCounterCommand.cpp" />
     <ClCompile Include="Commands\InitVolumeTileGridCommand.cpp">

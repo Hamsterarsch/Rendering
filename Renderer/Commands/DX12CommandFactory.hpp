@@ -99,6 +99,11 @@ namespace Renderer::DX12::Commands
 		
 		public: UniquePtr<Renderer::Commands::Command> IncreaseCounter(CounterFactory::CounterID id, size_t valueToIncreaseBy) override;
 
+		
+		public: UniquePtr<Renderer::Commands::Command> TransitionUnorderedAccessToShaderResource(ResourceHandle::t_hash resource, bool usableInPixelShader) override;
+		
+		public: UniquePtr<Renderer::Commands::Command> TransitionShaderResourceToUnorderedAccess(ResourceHandle::t_hash resource) override;
+		
 	};
 	
 	

@@ -18,6 +18,7 @@
 #include "Basic/BindDepthTargetOnlyCommand.hpp"
 #include "Basic/BindRenderTargetsCommand.hpp"
 #include "Basic/ClearDepthTextureCommand.hpp"
+#include "Basic/TransitionResourceCommand.hpp"
 
 
 namespace Renderer::DX12::Commands
@@ -230,6 +231,32 @@ namespace Renderer::DX12::Commands
 	{
 		return MakeUnique<IncreaseCounterCommand>(id, valueToIncreaseBy);
 			
+	}
+
+
+	
+	UniquePtr<Renderer::Commands::Command> DX12CommandFactory::TransitionUnorderedAccessToShaderResource
+	(
+		const ResourceHandle::t_hash resource, 
+		const bool usableInPixelShader
+	)
+	{
+		D3D12_RESOURCE_STATES targetState{ D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE };
+		if(usableInPixelShader)
+		{
+			targetState |= D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+		}
+		
+		return MakeUnique<TransitionResourceCommand>(resource, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, targetState);
+		
+	}
+
+
+	
+	UniquePtr<Renderer::Commands::Command> DX12CommandFactory::TransitionShaderResourceToUnorderedAccess(const ResourceHandle::t_hash resource)
+	{
+		return MakeUnique<TransitionResourceCommand>(resource, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+		
 	}
 
 	
