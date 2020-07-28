@@ -11,7 +11,7 @@ namespace Renderer::DX12::Commands
 
 	void BindDescriptorsContextCommand::Execute(DX12CommandProcessor &context)
 	{
-		if(context.ShouldExecuteContextCommandFor(CommandContextEvents::CommandListChanged))
+		if(context.DoesContextEventMatch(Renderer::Commands::CommandContextEvents::AllBindingsInvalidated))
 		{
 			descriptorMemory->RecordListBinding(&context.GetList());			
 		}

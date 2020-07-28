@@ -87,7 +87,7 @@ namespace Renderer::DX12::Commands
 
 		private: ResourceRegistry *registry;
 
-		private: CommandContextEvents currentContextEvent;
+		private: Renderer::Commands::CommandContextEvents currentContextEvent;
 
 		private: CounterFactoryImpl *counterFactory;
 		
@@ -103,7 +103,7 @@ namespace Renderer::DX12::Commands
 
 				private: void ResetList();
 
-		public: void NotifyCommandContextAbout(CommandContextEvents event) override;
+		public: void NotifyCommandContextAbout(Renderer::Commands::CommandContextEvents event) override;
 					
 						private: void ExecuteContextCommand();
 
@@ -116,7 +116,7 @@ namespace Renderer::DX12::Commands
 						
 		public: void SubmitAndWaitForGpuWork() override;
 
-		public: bool ShouldExecuteContextCommandFor(CommandContextEvents reason) const override;
+		public: bool DoesContextEventMatch(Renderer::Commands::CommandContextEvents reason) const override;
 
 
 		public: void SubmitCommand(UniquePtr<::Renderer::Commands::Command> &&command);

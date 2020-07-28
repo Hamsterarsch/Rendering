@@ -15,7 +15,7 @@ namespace Renderer
 		
 		public: virtual ResourceHandle::t_hash MakeBuffer(const void *data, size_t sizeInBytes) = 0;
 
-		public: virtual ResourceHandle::t_hash MakeUavBuffer(const void *data, size_t sizeInBytes) = 0;
+		public: virtual ResourceHandle::t_hash MakeUaBuffer(const void *data, size_t sizeInBytes) = 0;
 
 		public: virtual ResourceHandle::t_hash MakeCounterResource(uint32_t numCounters) = 0;
 

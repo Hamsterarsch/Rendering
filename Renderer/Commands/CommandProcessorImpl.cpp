@@ -17,7 +17,7 @@ namespace Renderer::DX12::Commands
 		commandsExecutedSinceListSubmit{ 0 },
 		maxExecutedCommandsPerList{ 50 },
 		registry{ &registry },
-		currentContextEvent{ CommandContextEvents::Nothing },
+		currentContextEvent{ Renderer::Commands::CommandContextEvents::Nothing },
 		counterFactory{ &counterFactory }
 	{		
 		updaterHandle = std::async(std::launch::async, &CommandProcessorImpl::Update, this);
@@ -50,7 +50,7 @@ namespace Renderer::DX12::Commands
 							}
 						}
 						currentContextCommand = std::move(bucket.command);
-						NotifyCommandContextAbout(CommandContextEvents::CommandListChanged);
+						NotifyCommandContextAbout(Renderer::Commands::CommandContextEvents::AllBindingsInvalidated);
 						
 						queuedCommands.Pop();
 						continue;
@@ -110,13 +110,13 @@ namespace Renderer::DX12::Commands
 			void CommandProcessorImpl::ResetList()
 			{
 				list = allocator->AllocateList();
-				NotifyCommandContextAbout(CommandContextEvents::CommandListChanged);
+				NotifyCommandContextAbout(Renderer::Commands::CommandContextEvents::AllBindingsInvalidated);
 		
 			}
 
-				void CommandProcessorImpl::NotifyCommandContextAbout(const CommandContextEvents event)
+				void CommandProcessorImpl::NotifyCommandContextAbout(const Renderer::Commands::CommandContextEvents event)
 				{
-					if(event == CommandContextEvents::Nothing)
+					if(event == Renderer::Commands::CommandContextEvents::Nothing)
 					{
 						return;
 					}
@@ -208,7 +208,7 @@ namespace Renderer::DX12::Commands
 
 
 	
-	bool CommandProcessorImpl::ShouldExecuteContextCommandFor(const CommandContextEvents reason) const
+	bool CommandProcessorImpl::DoesContextEventMatch(const Renderer::Commands::CommandContextEvents reason) const
 	{
 		return reason == currentContextEvent;
 		
