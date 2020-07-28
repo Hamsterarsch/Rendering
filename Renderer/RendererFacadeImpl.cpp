@@ -83,7 +83,7 @@ namespace Renderer::DX12
 		commandProcessor{ *resources, *commonQueue, registry, counterFactory },
 		resourceViewFactory{ *resources, registry, descriptors }
 	{							
-		commandProcessor.SubmitContextCommand(std::make_unique<Commands::BindDescriptorsContextCommand>(descriptors));
+		ClearContextCommand();
 		
 		/*
 		VolumeTileGridData gridData;
@@ -404,7 +404,7 @@ namespace Renderer::DX12
 
 
 
-	ResourceHandle::t_hash RendererFacadeImpl::MakeUavBuffer(const void *data, const size_t sizeInBytes)
+	ResourceHandle::t_hash RendererFacadeImpl::MakeUaBuffer(const void *data, const size_t sizeInBytes)
 	{						
 		return registry.Register
 		(					
@@ -654,6 +654,14 @@ namespace Renderer::DX12
 	}
 
 
+	
+	void RendererFacadeImpl::ClearContextCommand()
+	{
+		commandProcessor.SubmitContextCommand(MakeUnique<Commands::BindDescriptorsContextCommand>(descriptors));
+		
+	}
+
+
 
 	void RendererFacadeImpl::DestroyUnreferencedResources()
 	{
@@ -672,29 +680,26 @@ namespace Renderer::DX12
 
 
 	
-	void RendererFacadeImpl::QueryCurrentCounterResourceContent(const ResourceHandle::t_hash counterResource, SerializationHook &serializer)
-	{		
-		const auto sizeInBytes{ registry.GetResource(counterResource)->GetDesc().Width };
-		serializer.Resize(sizeInBytes);
-				
-		HandleWrapper readbackBuffer{ this, registry.Register(resourceFactory->MakeReadbackBufferWithData(nullptr, sizeInBytes, D3D12_RESOURCE_STATE_COPY_DEST)) };
-		SubmitCommand(MakeUnique<Commands::TransitionResourceCommand>(counterResource, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_COPY_SOURCE));
-		SubmitCommand(MakeUnique<Commands::CopyBufferRegionCommand>(counterResource, readbackBuffer.Get(), sizeInBytes, 0, 0));
-		SubmitCommand(MakeUnique<Commands::TransitionResourceCommand>(counterResource, D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_UNORDERED_ACCESS));
+	void RendererFacadeImpl::QueryUaResourceContent(const ResourceHandle::t_hash resource, const size_t amountOfBytesToRead, void *outData)
+	{							
+		HandleWrapper readbackBuffer{ this, registry.Register(resourceFactory->MakeReadbackBufferWithData(nullptr, amountOfBytesToRead, D3D12_RESOURCE_STATE_COPY_DEST)) };
+		SubmitCommand(MakeUnique<Commands::TransitionResourceCommand>(resource, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_COPY_SOURCE));
+		SubmitCommand(MakeUnique<Commands::CopyBufferRegionCommand>(resource, readbackBuffer.Get(), amountOfBytesToRead, 0, 0));
+		SubmitCommand(MakeUnique<Commands::TransitionResourceCommand>(resource, D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_UNORDERED_ACCESS));
 		WaitForCommandsAndQueue();
 
-		auto resource{ registry.GetResource(readbackBuffer) };		
+		auto readbackResource{ registry.GetResource(readbackBuffer) };		
 		void *resourceData{ nullptr };
-		D3D12_RANGE fullRange{ 0, static_cast<SIZE_T>(sizeInBytes) };
-		if(FAILED(resource->Map(0, &fullRange, &resourceData)))
+		D3D12_RANGE fullRange{ 0, static_cast<SIZE_T>(amountOfBytesToRead) };
+		if(FAILED(readbackResource->Map(0, &fullRange, &resourceData)))
 		{
 			throw Exception::Exception{ "RendererFacade: could not map counter resource for content query" };
 		}
 
-		std::memcpy(serializer.GetData(), resourceData, sizeInBytes);
+		std::memcpy(outData, resourceData, amountOfBytesToRead);
 
 		D3D12_RANGE nothingWrittenRange{ 0, 0 };
-		resource->Unmap(0, &nothingWrittenRange);
+		readbackResource->Unmap(0, &nothingWrittenRange);
 						
 	}
 

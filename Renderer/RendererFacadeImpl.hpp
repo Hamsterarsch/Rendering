@@ -85,7 +85,9 @@ namespace Renderer::DX12
 			 			
 		
 		public: RendererFacadeImpl(HWND outputWindow);
-											 
+
+		public: void ClearContextCommand() override;
+		
 		public: ~RendererFacadeImpl() override;
 
 			private: void WaitForIdleQueue();
@@ -99,7 +101,7 @@ namespace Renderer::DX12
 
 		public: ResourceHandle::t_hash MakeBuffer(const void *data, size_t sizeInBytes, D3D12_RESOURCE_STATES state) override;
 
-		public: ResourceHandle::t_hash MakeUavBuffer(const void *data, size_t sizeInBytes) override;
+		public: ResourceHandle::t_hash MakeUaBuffer(const void *data, size_t sizeInBytes) override;
 
 		public: DxPtr<ID3D12Resource> MakeReadbackBuffer(size_t sizeInBytes) override;
 
@@ -162,12 +164,12 @@ namespace Renderer::DX12
 		public: void SubmitCommand(UniquePtr<::Renderer::Commands::Command> &&command) override;
 
 		public: void SubmitContextCommand(UniquePtr<::Renderer::Commands::Command> &&command) override;
-		
+						
 		public: void DestroyUnreferencedResources() override;
 
 		public: void DestroyExecutedCommands() override;
 
-		public: void QueryCurrentCounterResourceContent(ResourceHandle::t_hash counterResource, SerializationHook &serializer) override;
+		public: void QueryUaResourceContent(ResourceHandle::t_hash resource, size_t amountOfBytesToRead, void *outData) override;
 		
 		
 		public: BlendSettings &GetBlendSettings() override;

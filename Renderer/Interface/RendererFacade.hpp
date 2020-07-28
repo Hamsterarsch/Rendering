@@ -60,12 +60,14 @@ namespace Renderer
 		public: virtual void SubmitCommand(UniquePtr<Commands::Command> &&command) = 0;
 
 		public: virtual void SubmitContextCommand(UniquePtr<Commands::Command> &&command) = 0;
+
+		public: virtual void ClearContextCommand() = 0;
 		
 		public: virtual void DestroyUnreferencedResources() = 0;
 
 		public: virtual void DestroyExecutedCommands() = 0;
 
-		public: virtual void QueryCurrentCounterResourceContent(ResourceHandle::t_hash counterResources, SerializationHook &serializer) = 0;
+		public: virtual void QueryUaResourceContent(ResourceHandle::t_hash counterResources, size_t amountOfBytesToRead, void *outData) = 0;
 
 
 		public: virtual BlendSettings &GetBlendSettings() = 0;
