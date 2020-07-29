@@ -29,6 +29,7 @@
       <Filter>Hashing</Filter>
     </ClInclude>
     <ClInclude Include="Debugging.hpp" />
+    <ClInclude Include="EnumFlagOperations.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Exception">
