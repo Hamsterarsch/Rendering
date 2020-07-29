@@ -20,7 +20,7 @@ namespace Renderer::DX12::Commands
 	)	:
 		RenderCommandCompute{ signature, pso },
 		pass{ &pass },		
-		tileCountBuffer{ &factory, factory.MakeBuffer(&pass.lightGridTileCount, sizeof(pass.lightGridTileCount)) },		
+		tileCountBuffer{ &factory, factory.MakeBufferWithData(&pass.lightGridTileCount, sizeof(pass.lightGridTileCount)) },		
 		descAlloc{ descMem.GetDescriptorAllocator(2, 0) },
 		groupsToDispatch{ static_cast<size_t>(std::ceil(pass.lightGridTileCount / 32.f)) }
 	{		

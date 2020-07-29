@@ -266,7 +266,10 @@
     <ClInclude Include="Commands\BindDescriptorsContextCommand.hpp" />
     <ClInclude Include="Commands\GlobalBufferContextCommand.hpp" />
     <ClInclude Include="Commands\IncreaseCounterCommand.hpp" />
+    <ClInclude Include="Commands\Internal\AliasingTransitionCommand.hpp" />
+    <ClInclude Include="Commands\Internal\CopyBufferToTextureCommand.hpp" />
     <ClInclude Include="Commands\Internal\CopyBufferRegionCommand.hpp" />
+    <ClInclude Include="Commands\Internal\DiscardResourceCommand.hpp" />
     <ClInclude Include="Commands\LightingContextCommand.hpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -331,6 +334,7 @@
     <ClInclude Include="CounterFactoryImpl.hpp" />
     <ClInclude Include="CounterResourceDefinition.hpp" />
     <ClInclude Include="Interface\CounterFactory.hpp" />
+    <ClInclude Include="Interface\Resources\DataSource.hpp" />
     <ClInclude Include="Interface\StateSettings\DescriptorTargets.hpp" />
     <ClInclude Include="Interface\StateSettings\RootSignatureSettings.hpp" />
     <ClInclude Include="RendererFacadeImpl.hpp" />
@@ -370,7 +374,6 @@
     <ClInclude Include="Resources\Descriptor\ResourceViewFactoryImpl.hpp" />
     <ClInclude Include="Resources\DynamicHeapSet.hpp" />
     <ClInclude Include="Resources\HandleFactory.hpp" />
-    <ClInclude Include="Resources\MaintainsInternalRenderResources.hpp" />
     <ClInclude Include="Resources\Pso\PsoFactory.hpp" />
     <ClInclude Include="Resources\Pso\VertexLayoutProvider.hpp" />
     <ClInclude Include="Resources\RenderSurface.hpp" />
@@ -430,7 +433,10 @@
     </ClCompile>
     <ClCompile Include="Commands\CommandProcessorImpl.cpp" />
     <ClCompile Include="Commands\BindDescriptorsContextCommand.cpp" />
+    <ClCompile Include="Commands\Internal\AliasingTransitionCommand.cpp" />
     <ClCompile Include="Commands\Internal\CopyBufferRegionCommand.cpp" />
+    <ClCompile Include="Commands\Internal\CopyBufferToTextureCommand.cpp" />
+    <ClCompile Include="Commands\Internal\DiscardResourceCommand.cpp" />
     <ClCompile Include="Commands\LightingContextCommand.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>

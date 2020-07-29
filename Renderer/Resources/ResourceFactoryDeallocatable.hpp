@@ -8,12 +8,14 @@ namespace Renderer::DX12
 	{
 		public: ResourceFactoryDeallocatable
 		(
-			DeviceResources *resources,
-			Queue *queue,
+			DeviceResources *resources, 
+			RendererFacade &renderer,
+			ResourceRegistry &registry,
 			UniquePtr<DeallocatableGpuMemory> &&bufferMemory,
 			UniquePtr<DeallocatableGpuMemory> &&textureMemory,
 			UniquePtr<DeallocatableGpuMemory> &&depthTextureMemory,
-			UniquePtr<DeallocatableGpuMemory> &&bufferReadbackMemory
+			UniquePtr<DeallocatableGpuMemory> &&bufferReadbackMemory,
+			UniquePtr<DeallocatableGpuMemory> &&uploadMemory
 		);
 
 				

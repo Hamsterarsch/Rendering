@@ -182,7 +182,7 @@ namespace Renderer::DX12::Commands
 	
 	void CommandProcessorImpl::SubmitAndWaitForGpuWork()
 	{
-		//we always need to do this even when commandsRecordedToList is 0, because commands can call this during execution
+		//we always need to do this even when commandsRecordedToList is 0, because commands can call this during their execution
 		
 		SubmitList();
 				
@@ -192,7 +192,10 @@ namespace Renderer::DX12::Commands
 		WaitForSingleObject(event, INFINITE);
 		fence->Signal(0);
 		
-		allocator->Reset();
+		if(FAILED(allocator->Reset()))
+		{
+			throw Exception::Exception{ "Renderer::CommandProcessor: could not reset dx12 command allocator" };
+		}
 		ResetList();
 
 		{

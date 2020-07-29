@@ -8,13 +8,25 @@ namespace Renderer::DX12
 	ResourceFactoryDeallocatable::ResourceFactoryDeallocatable
 	(
 		DeviceResources *resources, 
-		Queue *queue,
+		RendererFacade &renderer,
+		ResourceRegistry &registry,
 		UniquePtr<DeallocatableGpuMemory> &&bufferMemory,
 		UniquePtr<DeallocatableGpuMemory> &&textureMemory,
 		UniquePtr<DeallocatableGpuMemory> &&depthTextureMemory,
-		UniquePtr<DeallocatableGpuMemory> &&bufferReadbackMemory
+		UniquePtr<DeallocatableGpuMemory> &&bufferReadbackMemory,
+		UniquePtr<DeallocatableGpuMemory> &&uploadMemory
 	)	:
-		ResourceFactory{ resources, queue, std::move(bufferMemory), std::move(textureMemory), std::move(depthTextureMemory), std::move(bufferReadbackMemory) }
+		ResourceFactory
+		{
+			resources,
+			renderer,
+			registry,
+			std::move(bufferMemory),
+			std::move(textureMemory),
+			std::move(depthTextureMemory),
+			std::move(bufferReadbackMemory),
+			std::move(uploadMemory)
+		}
 	{
 	}
 
@@ -35,6 +47,10 @@ namespace Renderer::DX12
 			break;
 		case ResourceTypes::ReadbackBuffer:
 			DeallocateFromDeallocMemory(*bufferReadbackMemory, allocation);
+			break;
+		case ResourceTypes::UploadResource:
+			DeallocateFromDeallocMemory(*uploadMemory, allocation);
+			break;
 		default:
 			ThrowIfDebug(Exception::Exception{ "Resource type missing handling in dx12 resource factory deallocation" });				
 		}

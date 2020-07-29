@@ -21,7 +21,7 @@ namespace Renderer::DX12::Commands
 		descAlloc{ descMem.GetDescriptorAllocator(1,0) }
 	{
 		gridOutputBuffer = HandleWrapper{ &factory, factory.MakeUaBuffer(grid.GetData(), grid.SizeInBytes()) };
-		gridDataBuffer = HandleWrapper{ &factory, factory.MakeBuffer(&gridData, sizeof std::remove_reference_t<decltype(gridData)>) };
+		gridDataBuffer = HandleWrapper{ &factory, factory.MakeBufferWithData(&gridData, sizeof std::remove_reference_t<decltype(gridData)>) };
 		readbackBuffer = factory.MakeReadbackBuffer(grid.SizeInBytes());
 		
 		descAlloc.OpenNewTable();

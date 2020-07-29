@@ -3,6 +3,14 @@
 #include "Resources/ResourceTypes.hpp"
 #include "Resources/ResourceFactory.hpp"
 #include "Utility/Alignment.hpp"
+#include "Shared/Debugging.hpp"
+#include "RendererFacadeImpl.hpp"
+#include "Resources/DataSource.hpp"
+#include "Commands/Internal/AliasingTransitionCommand.hpp"
+#include "Commands/Internal/CopyBufferRegionCommand.hpp"
+#include "Commands/Internal/CopyBufferToTextureCommand.hpp"
+#include "Commands/Internal/DiscardResourceCommand.hpp"
+#include "Commands/Basic/TransitionResourceCommand.hpp"
 
 
 namespace Renderer::DX12
@@ -12,101 +20,69 @@ namespace Renderer::DX12
 	ResourceFactory::ResourceFactory
 	(
 		DeviceResources *resources,
-		Queue *queue,
+		RendererFacade &renderer,
+		ResourceRegistry &registry,
 		UniquePtr<AllocatableGpuMemory> &&bufferMemory,
 		UniquePtr<AllocatableGpuMemory> &&textureMemory,
 		UniquePtr<AllocatableGpuMemory> &&depthTextureMemory,
-		UniquePtr<AllocatableGpuMemory> &&bufferReadbackMemory
-	)	:
-		queue{ queue },
+		UniquePtr<AllocatableGpuMemory> &&bufferReadbackMemory,
+		UniquePtr<AllocatableGpuMemory> &&uploadMemory
+	)	:			
 		resources{ resources },
-		uploadAddress{ 0 },	
+		renderer{ &renderer },
+		registry{ &registry },
 		clearValue{ nullptr },
 		bufferMemory{ std::move(bufferMemory) },
 		textureMemory{ std::move(textureMemory) },
 		depthTextureMemory{ std::move(depthTextureMemory) },
-		bufferReadbackMemory{ std::move(bufferReadbackMemory) }
+		bufferReadbackMemory{ std::move(bufferReadbackMemory) },
+		uploadMemory{ std::move(uploadMemory) }
 	{
 		depthTextureClearValue.DepthStencil.Depth = 1;
 		depthTextureClearValue.DepthStencil.Stencil = 0;
-		
-		uploadBuffer = Facade::MakeUploadHeap(resources, 1'000'000);
-		fence = Facade::MakeFence(resources);
-		allocator = Facade::MakeCmdAllocator(resources, D3D12_COMMAND_LIST_TYPE_DIRECT);
-		
-		list = allocator->AllocateList();
-		list->StopRecording();
-
-		event = CreateEvent(nullptr, false, true, nullptr);
-		
+				
 	}
 
 	ResourceFactory::~ResourceFactory() noexcept = default;
 	
 
 	
-	ResourceAllocation ResourceFactory::MakeBufferWithData(const void *data, const size_t sizeInBytes, const D3D12_RESOURCE_STATES desiredState, const D3D12_RESOURCE_FLAGS flags)
+	ResourceHandle::t_hash ResourceFactory::MakeBufferWithData
+	(
+		const DataSource *dataSources,
+		const unsigned char numDataSources,
+		const size_t resourceSizeInBytes,
+		const D3D12_RESOURCE_STATES desiredState,
+		const D3D12_RESOURCE_FLAGS flags
+	)
 	{
-		return MakeBufferWithDataInternal(*bufferMemory, ResourceTypes::Buffer, data, sizeInBytes, desiredState, flags);
+		return MakeBufferWithDataInternal(*bufferMemory, ResourceTypes::Buffer, dataSources, numDataSources, resourceSizeInBytes, desiredState, flags);
 		
 	}
 
-		ResourceAllocation ResourceFactory::MakeBufferWithDataInternal
+		ResourceHandle::t_hash ResourceFactory::MakeBufferWithDataInternal
 		(
 			AllocatableGpuMemory &memorySource,
-			const ResourceTypes allocationType,
-			const void *data,
-			const size_t sizeInBytes,
+			const ResourceTypes allocationType,			
+			const DataSource *dataSources,
+			const unsigned char numDataSources,
+			const size_t resourceSizeInBytes,
 			const D3D12_RESOURCE_STATES desiredState,
 			const D3D12_RESOURCE_FLAGS flags
 		)
 		{
-			WaitForSingleObject(event, INFINITE);
-			fence->Signal(0);
+			auto resource{ MakePlacedBufferResource(memorySource, allocationType, RHA::Utility::IncreaseValueToAlignment(resourceSizeInBytes, 256), flags, D3D12_RESOURCE_STATE_COPY_DEST) };
 
-			auto creationState{ desiredState };
-			if(data != nullptr)
-			{							
-				CopyDataToUploadBuffer(data, sizeInBytes);
-				creationState = D3D12_RESOURCE_STATE_COPY_DEST;
-			}
-
-			ResourceAllocation outAlloc{ MakePlacedBufferResource(memorySource, allocationType, RHA::Utility::IncreaseValueToAlignment(sizeInBytes, 256), flags, creationState) };
-			
-			ClearCmdList();						
-			list->RecordBarrierAliasing(nullptr, outAlloc.resource.Get());
-
-			if(data != nullptr)
-			{
-				list->RecordCopyBufferRegion(outAlloc.resource.Get(), 0, uploadBuffer->GetResource().Get(), 0, sizeInBytes);
-				list->RecordBarrierTransition(outAlloc.resource.Get(), D3D12_RESOURCE_STATE_COPY_DEST, desiredState);				
-			}
-			list->StopRecording();
-			
-			SubmitListAndFenceSynchronization(list.get());		
-			return outAlloc;
+			auto dataSourceResource{ MakeUploadBuffer(dataSources, numDataSources, resourceSizeInBytes) };
+			renderer->SubmitCommand(MakeUnique<Commands::CopyBufferRegionCommand>(dataSourceResource, resource, resourceSizeInBytes, 0, 0));
+			renderer->SubmitCommand(MakeUnique<Commands::TransitionResourceCommand>(resource, D3D12_RESOURCE_STATE_COPY_DEST, desiredState));
+			renderer->RetireHandle(dataSourceResource);
+		
+			return resource;
 		
 		}
-	
-			void ResourceFactory::CopyDataToUploadBuffer(const void *data, const size_t sizeInBytes)
-			{							
-				if(UploadBufferCanNotFitAllocation(sizeInBytes))
-				{
-					uploadBuffer = Facade::MakeUploadHeap(resources, sizeInBytes);
-				}
-	
-				uploadBuffer->Reset();			
-				uploadAddress = uploadBuffer->CopyDataToUploadAddress(data, sizeInBytes, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT);
-			
-			}
-	
-				bool ResourceFactory::UploadBufferCanNotFitAllocation(const size_t allocationSizeInBytes) const
-				{
-					return uploadBuffer->GetSizeInBytes() < allocationSizeInBytes;
-					
-				}
-	
-			ResourceAllocation ResourceFactory::MakePlacedBufferResource
+
+			ResourceHandle::t_hash ResourceFactory::MakePlacedBufferResource
 			(
 				AllocatableGpuMemory &memorySource,
 				const ResourceTypes allocationType,
@@ -115,8 +91,8 @@ namespace Renderer::DX12
 				const D3D12_RESOURCE_STATES resourceState
 			)
 			{
-				ResourceAllocation outAlloc{ this, allocationType };
-				outAlloc.allocation = memorySource.Allocate(sizeInBytes);
+				ResourceAllocation alloc{ this, allocationType };
+				alloc.allocation = memorySource.Allocate(sizeInBytes);
 							
 				const auto desc{ MakeBufferDesc(sizeInBytes, resourceFlags) };
 				constexpr decltype(nullptr) BUFFER_CLEAR_VALUE{ nullptr };
@@ -124,17 +100,20 @@ namespace Renderer::DX12
 				{		
 					resources->GetDevice()->CreatePlacedResource
 					(
-						outAlloc.allocation.heap, 
-						outAlloc.allocation.offsetToAllocation,
+						alloc.allocation.heap, 
+						alloc.allocation.offsetToAllocation,
 						&desc,
 						resourceState,
 						BUFFER_CLEAR_VALUE,
-						IID_PPV_ARGS(&outAlloc.resource)
+						IID_PPV_ARGS(&alloc.resource)
 					)
 				};
 				CheckGpuResourceCreation(result);
-	
-				return outAlloc;
+
+				const auto outResource{ registry->Register(std::move(alloc)) };
+				renderer->SubmitCommand(MakeUnique<Commands::AliasingTransitionCommand>(0, outResource));
+		
+				return outResource;
 			
 			}
 		
@@ -155,52 +134,90 @@ namespace Renderer::DX12
 				
 				}
 	
-			void ResourceFactory::CheckGpuResourceCreation(const HRESULT result)
-			{
-				if(FAILED(result))
+				void ResourceFactory::CheckGpuResourceCreation(const HRESULT result)
 				{
-					throw Exception::CreationFailed{ "ResourceFactory:: could not create a dx12 placed buffer on gpu heap to upload to" };
+					if(FAILED(result))
+					{
+						Exception::DebugBreak();
+						throw Exception::CreationFailed{ "ResourceFactory:: could not create a dx12 placed buffer on gpu heap to upload to" };
+					}
+				
 				}
+	
+
+	
+			ResourceHandle::t_hash ResourceFactory::MakeUploadBuffer(const DataSource *dataSources, const unsigned char numDataSources, const size_t resourceSizeInBytes)
+			{				
+				const auto uploadResourceHandle{ MakePlacedBufferResource(*uploadMemory, ResourceTypes::UploadResource, resourceSizeInBytes, D3D12_RESOURCE_FLAG_NONE, D3D12_RESOURCE_STATE_GENERIC_READ) };
+				auto *uploadResource{ registry->GetResource(uploadResourceHandle) };
+				
+				void *uploadDataStart{ nullptr };
+
+				const D3D12_RANGE nothingReadRange{ 0, 0 };
+				if(FAILED(uploadResource->Map(0, &nothingReadRange, &uploadDataStart)))
+				{
+					throw Exception::Exception{ "ResourceFactory: Could not map texture upload resource to upload texture data"};
+				}
+		
+				size_t offsetIntoResource{ 0 };
+
+				for(unsigned char dataSourceIndex{ 0 }; dataSourceIndex < numDataSources; ++dataSourceIndex)			
+				{
+					const auto &dataSource{ dataSources[dataSourceIndex] };
+
+					auto *dataDst{ static_cast<char *>(uploadDataStart)+offsetIntoResource };
+					if(dataSource.data)
+					{
+						std::memcpy(dataDst, dataSource.data, dataSource.sizeInBytes);
+					}
+					else
+					{
+						std::memset(dataDst, 0, dataSource.sizeInBytes);
+					}
+					offsetIntoResource += dataSource.sizeInBytes;													
+				}
+
+				const auto uninitializedBytes{ resourceSizeInBytes-offsetIntoResource };
+				if(uninitializedBytes > 0)
+				{
+					std::memset(static_cast<char *>(uploadDataStart)+offsetIntoResource, 0, uninitializedBytes);
+				}
+						
+				D3D12_RANGE writeRange{ 0, resourceSizeInBytes };
+				uploadResource->Unmap(0, &writeRange);
+									
+				return uploadResourceHandle;
 			
 			}
 	
-			void ResourceFactory::ClearCmdList()
-			{
-				if(FAILED(allocator->Reset()))
-				{
-					throw Exception::Exception{ "Could not reset dx12 resource factory command allocator" };
-				}
-	
-				list = allocator->AllocateList();
-							
-			}
-	
-			void ResourceFactory::SubmitListAndFenceSynchronization(CmdList *list)
-			{
-				queue->SubmitCommandList(list);
-				
-				fence->SetEventOnValue(1, event);				
-				queue->Signal(1, fence.get());
-				
-			}
-
 
 	
-	ResourceAllocation ResourceFactory::MakeReadbackBufferWithData
-	(
-		const void *data,
-		const size_t sizeInBytes, 
-		const D3D12_RESOURCE_STATES desiredState, 
+	ResourceHandle::t_hash ResourceFactory::MakeReadbackBuffer
+	(		
+		const size_t sizeInBytes, 	
 		const D3D12_RESOURCE_FLAGS flags
 	)
 	{		
-		return MakeBufferWithDataInternal(*bufferReadbackMemory, ResourceTypes::ReadbackBuffer, data, sizeInBytes, desiredState, flags);
+		const auto readbackResource
+		{
+			MakePlacedBufferResource
+			(
+				*bufferReadbackMemory,
+				ResourceTypes::ReadbackBuffer,
+				sizeInBytes,
+				flags,
+				D3D12_RESOURCE_STATE_COPY_DEST
+			)
+		};
+
+		renderer->SubmitCommand(MakeUnique<Commands::AliasingTransitionCommand>(0, readbackResource));
+		return readbackResource;
 		
 	}
 
 
 
-	ResourceAllocation ResourceFactory::MakeTextureWithData
+	ResourceHandle::t_hash ResourceFactory::MakeTextureWithData
 	(
 		const void *data,
 		const size_t width,
@@ -214,7 +231,7 @@ namespace Renderer::DX12
 		
 	}
 
-		ResourceAllocation ResourceFactory::MakeTextureWithDataInternal
+		ResourceHandle::t_hash ResourceFactory::MakeTextureWithDataInternal
 		(
 			AllocatableGpuMemory &memorySource,
 			const ResourceTypes allocationType,
@@ -222,85 +239,77 @@ namespace Renderer::DX12
 			const size_t width,
 			const size_t height,
 			const DXGI_FORMAT format,
-			const unsigned pixelSizeInBytes,
+			const unsigned texelSizeInBytes,
 			const D3D12_RESOURCE_STATES desiredState,
 			const D3D12_RESOURCE_FLAGS flags
 		)
-		{
-			WaitForSingleObject(event, INFINITE);
-			fence->Signal(0);
-
-			D3D12_SUBRESOURCE_FOOTPRINT subresourceSize
+		{			
+			D3D12_PLACED_SUBRESOURCE_FOOTPRINT pf;
+			pf.Footprint =
 			{
 				format,
-				width,
-				height,
+				static_cast<UINT>(width),
+				static_cast<UINT>(height),
 				1,
-				RHA::Utility::IncreaseValueToAlignment(pixelSizeInBytes*width, D3D12_TEXTURE_DATA_PITCH_ALIGNMENT)
+				static_cast<UINT>(RHA::Utility::IncreaseValueToAlignment(texelSizeInBytes*width, D3D12_TEXTURE_DATA_PITCH_ALIGNMENT))
+			};
+			pf.Offset = 0;
+		
+			const auto textureSizeInBytes
+			{
+				pf.Footprint.Width
+				* pf.Footprint.Height
+				* pf.Footprint.Depth
+				* texelSizeInBytes
+			};	//todo: check if width should actually be row pitch	
+		
+			const auto dataSource{ MakeUploadTexture(data, textureSizeInBytes, pf.Footprint, texelSizeInBytes) };
+			const auto texture
+			{
+				MakePlacedTextureResource
+				(
+					memorySource,
+					allocationType,
+					format,
+					textureSizeInBytes,
+					pf.Footprint.Width,
+					pf.Footprint.Height,
+					pf.Footprint.Depth,
+					flags,
+					D3D12_RESOURCE_STATE_COPY_DEST
+				)
 			};
 
-
-			auto creationState{ desiredState };
-			if(data != nullptr)
-			{
-				const auto sizeInBytes{ subresourceSize.Width * subresourceSize.Height * subresourceSize.Depth * 4 };
-				if(UploadBufferCanNotFitAllocation(sizeInBytes))
-				{
-					uploadBuffer = Facade::MakeUploadHeap(resources, sizeInBytes);
-				}			
-				uploadBuffer->Reset();
-				
-				uploadBuffer->CopyTextureDataToUploadAddress(reinterpret_cast<const char *>(data), subresourceSize);
-				creationState = D3D12_RESOURCE_STATE_COPY_DEST;
-			}
-			
-			auto outAlloc{ MakePlacedTextureResource(memorySource, allocationType, format, subresourceSize, flags, creationState) };
-			
-
-			D3D12_TEXTURE_COPY_LOCATION dstLoc{};
-			dstLoc.Type = D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX;
-			dstLoc.pResource = outAlloc.resource.Get();
-			dstLoc.SubresourceIndex = 0;
-
-			D3D12_TEXTURE_COPY_LOCATION srcLoc{};
-			srcLoc.Type = D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT;
-			srcLoc.pResource = uploadBuffer->GetResource().Get();
-			srcLoc.PlacedFootprint.Footprint = subresourceSize;
-			srcLoc.PlacedFootprint.Offset = 0;
-
-			ClearCmdList();						
-			list->RecordBarrierAliasing(nullptr, outAlloc.resource.Get());
-
-			if(data != nullptr)
-			{
-				list->AsGraphicsList()->CopyTextureRegion(&dstLoc, 0, 0, 0, &srcLoc, nullptr);
-				list->RecordBarrierTransition(outAlloc.resource.Get(), D3D12_RESOURCE_STATE_COPY_DEST, desiredState);				
-			}
-			list->StopRecording();
-			
-			SubmitListAndFenceSynchronization(list.get());	
-			return outAlloc;
+			renderer->SubmitCommand(MakeUnique<Commands::CopyBufferToTextureCommand>(dataSource, texture, pf, 0));
+			renderer->SubmitCommand(MakeUnique<Commands::TransitionResourceCommand>(texture, D3D12_RESOURCE_STATE_COPY_DEST, desiredState));
+			renderer->RetireHandle(dataSource);
+		
+			return texture;
+		
 		
 		}
 
-			ResourceAllocation ResourceFactory::MakePlacedTextureResource
+			ResourceHandle::t_hash ResourceFactory::MakePlacedTextureResource
 			(
 				AllocatableGpuMemory &memorySource,
 				const ResourceTypes allocationType,
 				const DXGI_FORMAT format,
-				const D3D12_SUBRESOURCE_FOOTPRINT &subresourceSize,
+				const size_t textureSizeInBytes,
+				const size_t width,
+				const size_t height,
+				const unsigned depth,
 				const D3D12_RESOURCE_FLAGS resourceFlags,
 				const D3D12_RESOURCE_STATES resourceState
 			)
 			{
-				ResourceAllocation outAlloc{ this, allocationType };
-				outAlloc.allocation = memorySource.Allocate(subresourceSize.Height * subresourceSize.Width * subresourceSize.Depth * 4);
+				ResourceAllocation alloc{ this, allocationType };
+				alloc.allocation = memorySource.Allocate(textureSizeInBytes);
 			
 				D3D12_RESOURCE_DESC desc{};
 				desc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-				desc.Width = subresourceSize.Width;
-				desc.Height = subresourceSize.Height;
-				desc.DepthOrArraySize = subresourceSize.Depth;
+				desc.Width = static_cast<UINT>(width);
+				desc.Height = static_cast<UINT>(height);
+				desc.DepthOrArraySize = depth;
 				desc.Flags = resourceFlags;
 				desc.Alignment = D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT;
 				desc.Format = format;
@@ -313,59 +322,62 @@ namespace Renderer::DX12
 				{		
 					resources->GetDevice()->CreatePlacedResource
 					(
-						outAlloc.allocation.heap, 
-						outAlloc.allocation.offsetToAllocation,
+						alloc.allocation.heap, 
+						alloc.allocation.offsetToAllocation,
 						&desc,
 						resourceState,
 						clearValue,
-						IID_PPV_ARGS(&outAlloc.resource)
+						IID_PPV_ARGS(&alloc.resource)
 					)
 				};
 				CheckGpuResourceCreation(result);
 
-				return outAlloc;
+				const auto outResource{ registry->Register(std::move(alloc)) };
+				renderer->SubmitCommand(MakeUnique<Commands::AliasingTransitionCommand>(0, outResource));
+		
+				return outResource;
 			
 			}
 
 
 
-	DxPtr<ID3D12Resource> ResourceFactory::MakeCommittedBuffer
+	ResourceHandle::t_hash ResourceFactory::MakeUploadTexture
 	(
-		const size_t sizeInBytes,
-		const D3D12_RESOURCE_STATES desiredState,
-		const D3D12_HEAP_TYPE heapType,
-		const D3D12_HEAP_FLAGS heapFlags,
-		const D3D12_RESOURCE_FLAGS bufferFlags
+		const void *data,
+		const size_t textureSizeInBytes,
+		const  D3D12_SUBRESOURCE_FOOTPRINT &footprint,
+		const unsigned texelSizeInBytes
 	)
-	{
-		D3D12_HEAP_PROPERTIES heapProperties{};
-		heapProperties.Type = heapType;
-					
-		const auto desc{ MakeBufferDesc(sizeInBytes, bufferFlags) };
-		constexpr decltype(nullptr) BUFFER_CLEAR_VALUE{ nullptr };
-
-		DxPtr<ID3D12Resource> outResource;
-		const auto result
-		{		
-			resources->GetDevice()->CreateCommittedResource
-			(
-				&heapProperties,
-				heapFlags,
-				&desc,
-				desiredState,
-				BUFFER_CLEAR_VALUE,
-				IID_PPV_ARGS(&outResource)
-			)
-		};
-		CheckGpuResourceCreation(result);
-
-		return outResource;
+	{		
+		const auto uploadResourceHandle{ MakePlacedBufferResource(*uploadMemory, ResourceTypes::UploadResource, textureSizeInBytes, D3D12_RESOURCE_FLAG_NONE, D3D12_RESOURCE_STATE_GENERIC_READ) };
+				
+		auto *uploadResource{ registry->GetResource(uploadResourceHandle) };							
+		void *uploadDataStart{ nullptr };
+		const D3D12_RANGE nothingReadRange{ 0, 0 };
+		if(FAILED(uploadResource->Map(0, &nothingReadRange, &uploadDataStart)))
+		{
+			throw Exception::Exception{ "ResourceFactory: Could not map texture upload resource to upload texture data"};
+		}
+		auto *byteData{ static_cast<const char *>(data) };
 		
+		for(unsigned scanlineIndex{ 0 }; scanlineIndex < footprint.Height; ++scanlineIndex)
+		{
+			char *uploadPos{ static_cast<char *>(uploadDataStart) + scanlineIndex*footprint.RowPitch };
+			const void *copyPos{ &byteData[scanlineIndex * footprint.Width * texelSizeInBytes] };
+			std::memcpy(uploadPos, copyPos, footprint.Width * texelSizeInBytes);
+		}
+
+		D3D12_RANGE writeRange{ 0, textureSizeInBytes };				
+		uploadResource->Unmap(0, &writeRange);
+		
+		renderer->SubmitCommand(MakeUnique<Commands::AliasingTransitionCommand>(0, uploadResourceHandle));
+		return uploadResourceHandle;
+						
 	}
 
 
 	
-	ResourceAllocation ResourceFactory::MakeDepthTexture
+	ResourceHandle::t_hash ResourceFactory::MakeDepthTexture
 	(
 		const size_t width,
 		const size_t height,
@@ -374,20 +386,30 @@ namespace Renderer::DX12
 		const D3D12_RESOURCE_FLAGS flags
 	)
 	{
+		constexpr auto texelSizeInBytes{ 4 };
+		const auto sizeInBytes{ width * height * texelSizeInBytes };
+		
 		depthTextureClearValue.Format = withStencil ? DXGI_FORMAT_D24_UNORM_S8_UINT : DXGI_FORMAT_D32_FLOAT;
-		clearValue = &depthTextureClearValue;		
-		return MakeTextureWithDataInternal
-		(
-			*depthTextureMemory,
-			ResourceTypes::DepthTexture,
-			nullptr,
-			width,
-			height,
-			depthTextureClearValue.Format,
-			4,
-			desiredState,
-			flags | D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL
-		);
+		clearValue = &depthTextureClearValue;
+		const auto depthTexture
+		{
+			MakePlacedTextureResource
+			(
+				*depthTextureMemory,
+				ResourceTypes::DepthTexture,
+				depthTextureClearValue.Format,
+				sizeInBytes,
+				width,
+				height,
+				1,						
+				flags | D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL,
+				desiredState
+			)
+		};
+
+		//we have to discard here to make sure any existing texture metadata is cleared as to provide a valid and usable 'aliased' texture
+		renderer->SubmitCommand(MakeUnique<Commands::DiscardResourceCommand>(depthTexture, 0, 1));
+		return depthTexture;
 						
 	}
 

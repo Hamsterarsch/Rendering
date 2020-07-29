@@ -102,6 +102,22 @@ namespace RHA::DX12
 
 
 	
+	void CmdListImpl::RecordCopyTextureRegion(const D3D12_TEXTURE_COPY_LOCATION &src, const D3D12_TEXTURE_COPY_LOCATION &dst)
+	{
+		glist->CopyTextureRegion(&dst, 0, 0, 0, &src, nullptr);
+		
+	}
+
+
+	
+	void CmdListImpl::RecordDiscardResource(ID3D12Resource *resource, const D3D12_DISCARD_REGION &region)
+	{
+		glist->DiscardResource(resource, &region);
+		
+	}
+
+
+
 	void CmdListImpl::RecordDispatch
 	(
 		const unsigned groupCountX, 

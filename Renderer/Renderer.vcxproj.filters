@@ -101,9 +101,6 @@
     <ClInclude Include="Resources\RenderSurface.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Resources\MaintainsInternalRenderResources.hpp">
-      <Filter>Resources</Filter>
-    </ClInclude>
     <ClInclude Include="Commands\CompositeRecordCommand.hpp">
       <Filter>Commands</Filter>
     </ClInclude>
@@ -339,6 +336,18 @@
     <ClInclude Include="Commands\Internal\CopyBufferRegionCommand.hpp">
       <Filter>Commands\Internal</Filter>
     </ClInclude>
+    <ClInclude Include="Commands\Internal\AliasingTransitionCommand.hpp">
+      <Filter>Commands\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\Resources\DataSource.hpp">
+      <Filter>Interface\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\Internal\CopyBufferToTextureCommand.hpp">
+      <Filter>Commands\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\Internal\DiscardResourceCommand.hpp">
+      <Filter>Commands\Internal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -531,6 +540,15 @@
       <Filter>Commands\Basic</Filter>
     </ClCompile>
     <ClCompile Include="Commands\Internal\CopyBufferRegionCommand.cpp">
+      <Filter>Commands\Internal</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Internal\AliasingTransitionCommand.cpp">
+      <Filter>Commands\Internal</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Internal\CopyBufferToTextureCommand.cpp">
+      <Filter>Commands\Internal</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Internal\DiscardResourceCommand.cpp">
       <Filter>Commands\Internal</Filter>
     </ClCompile>
   </ItemGroup>

@@ -5,7 +5,6 @@
 #include "Resources/RootSignature/RootSignatureFactory.hpp"
 #include "DX12/ShaderFactory.hpp"
 #include "Resources/ResourceRegistry.hpp"
-#include "Resources/MaintainsInternalRenderResources.hpp"
 #include "Resources/Descriptor/DescriptorMemory.hpp"
 #include "Commands/CommandProcessorImpl.hpp"
 #include "Commands/RenderMeshCommand.hpp"
@@ -43,7 +42,7 @@ namespace Renderer::DX12
 	class ResourceFactory;
 	
 	
-	class RendererFacadeImpl final : public RendererFacade, public MaintainsInternalRenderResources
+	class RendererFacadeImpl final : public RendererFacade
 	{	
 		private: UniquePtr<RHA::DX12::DeviceResources> resources;
 
@@ -52,14 +51,14 @@ namespace Renderer::DX12
 		private: UniquePtr<RHA::DX12::Fence> closeFence;
 
 		private: HANDLE closeEvent;
-				 			
-		private: UniquePtr<ResourceFactory> resourceFactory;
-		
+				 					
 		private: DescriptorMemory descriptors;
 		
-		private: ResourceRegistry registry;
+		private: UniquePtr<ResourceFactory> resourceFactory;
 
-		private: BlendSettingsImpl blendSettings;
+		private: ResourceRegistry registry;
+		
+		private: BlendSettingsImpl blendSettings;		
 
 		private: DepthStencilSettingsImpl depthStencilSettings;
 
@@ -97,14 +96,19 @@ namespace Renderer::DX12
 		public: RendererFacadeImpl &operator=(const RendererFacadeImpl &) = delete;
 
 
-		public: ResourceHandle::t_hash MakeBuffer(const void *data, size_t sizeInBytes) override;
+		public: ResourceHandle::t_hash MakeBuffer(const void *data, size_t dataAndResourceSizeInBytes) override;
+		
+		public: ResourceHandle::t_hash MakeBuffer(const DataSource *dataSources, unsigned char numDataSources, size_t resourceSizeInBytes) override;
 
-		public: ResourceHandle::t_hash MakeBuffer(const void *data, size_t sizeInBytes, D3D12_RESOURCE_STATES state) override;
+		public: ResourceHandle::t_hash MakeUaBuffer(const void *data, size_t dataAndResourceSizeInBytes) override;
+		
+		public: ResourceHandle::t_hash MakeUaBuffer(const DataSource *dataSources, unsigned char numDataSources, size_t resourceSizeInBytes) override;
 
-		public: ResourceHandle::t_hash MakeUaBuffer(const void *data, size_t sizeInBytes) override;
+		
+		public: ResourceHandle::t_hash MakeTexture(const void *data, size_t width, size_t height) override;
 
-		public: DxPtr<ID3D12Resource> MakeReadbackBuffer(size_t sizeInBytes) override;
-
+		public: ResourceHandle::t_hash MakeDepthTexture(size_t width, size_t height, bool withStencil) override;
+		
 
 		public: void AddShaderIncludeDirectory(const char *absoluteDirectoryPath) override;
 		
@@ -134,10 +138,6 @@ namespace Renderer::DX12
 		public: ResourceHandle::t_hash MakePso(const ShaderList &shaders, ResourceHandle::t_hash signatureHandle) override;
 							
 		public: ResourceHandle::t_hash MakePso(const Blob &csBlob, Renderer::ResourceHandle::t_hash signatureHandle) override;
-
-		public: ResourceHandle::t_hash MakeTexture(const void *data, size_t width, size_t height) override;
-
-		public: ResourceHandle::t_hash MakeDepthTexture(size_t width, size_t height, bool withStencil) override;
 		
 		public: ResourceHandle::t_hash MakeCounterResource(uint32_t numCounters) override;
 		

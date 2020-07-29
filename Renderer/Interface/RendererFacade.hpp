@@ -21,7 +21,7 @@ namespace Renderer
 	class SerializationHook;
 
 
-	class RENDERER_DLLSPEC RendererFacade : public virtual MaintainsRenderResources
+	class RENDERER_DLLSPEC RendererFacade : public MaintainsRenderResources
 	{
 		public: virtual void AddShaderIncludeDirectory(const char *absoluteDirectoryPath) = 0;
 		

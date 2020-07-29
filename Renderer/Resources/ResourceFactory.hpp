@@ -16,35 +16,33 @@ namespace RHA::DX12
 	class CmdList;
 }
 
+namespace Renderer
+{
+	class RendererFacade;
+	
+	struct DataSource;
+}
+
 
 namespace Renderer::DX12
 {
-
+	class ResourceRegistry;
 	using namespace RHA::DX12;
+
 	
 	class ResourceFactory
-	{		
-		private: UniquePtr<UploadHeap> uploadBuffer;
-
-		private: Queue *queue;
-
+	{					
 		private: DeviceResources *resources;
 
-		private: UniquePtr<Fence> fence;
-
-		private: HANDLE event;
-
-		private: UniquePtr<CmdAllocator> allocator;
-
-		private: UniquePtr<CmdList> list;
-
-		private: D3D12_GPU_VIRTUAL_ADDRESS uploadAddress;
-
+		private: RendererFacade *renderer;
+		
+		private: ResourceRegistry *registry;
+				 		
 		private: D3D12_CLEAR_VALUE depthTextureClearValue;
 
 		private: D3D12_CLEAR_VALUE *clearValue;
 
-
+				 
 		
 		protected: UniquePtr<AllocatableGpuMemory> bufferMemory;
 
@@ -54,16 +52,20 @@ namespace Renderer::DX12
 
 		protected: UniquePtr<AllocatableGpuMemory> bufferReadbackMemory;
 
+		protected: UniquePtr<AllocatableGpuMemory> uploadMemory;
 		
+				
 
 		public: ResourceFactory
 		(
 			DeviceResources *resources,
-			Queue *queue,
+			RendererFacade &renderer,
+			ResourceRegistry &registry,
 			UniquePtr<AllocatableGpuMemory> &&bufferMemory,
 			UniquePtr<AllocatableGpuMemory> &&textureMemory,
 			UniquePtr<AllocatableGpuMemory> &&depthTextureMemory,
-			UniquePtr<AllocatableGpuMemory> &&bufferReadbackMemory
+			UniquePtr<AllocatableGpuMemory> &&bufferReadbackMemory,
+			UniquePtr<AllocatableGpuMemory> &&uploadMemory
 		);
 
 		public: ResourceFactory(ResourceFactory &&other) noexcept = default;
@@ -77,23 +79,20 @@ namespace Renderer::DX12
 		public: virtual ~ResourceFactory() noexcept;
 
 										
-		public: ResourceAllocation MakeBufferWithData(const void *data, size_t sizeInBytes, D3D12_RESOURCE_STATES desiredState, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
+		public: ResourceHandle::t_hash MakeBufferWithData(const DataSource *dataSources, unsigned char numDataSources, size_t resourceSizeInBytes, D3D12_RESOURCE_STATES desiredState, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
 
-			private: ResourceAllocation MakeBufferWithDataInternal
+			private: ResourceHandle::t_hash MakeBufferWithDataInternal
 			(
 				AllocatableGpuMemory &memorySource,				
-				ResourceTypes allocationType,
-				const void *data,
-				size_t sizeInBytes,
+				ResourceTypes allocationType,				
+				const DataSource *dataSources,
+				unsigned char numDataSources,
+				size_t resourceSizeInBytes,
 				D3D12_RESOURCE_STATES desiredState,
 				D3D12_RESOURCE_FLAGS flags
 			);
-		
-				private: void CopyDataToUploadBuffer(const void *data, size_t sizeInBytes);
 
-					private: bool UploadBufferCanNotFitAllocation(size_t allocationSizeInBytes) const;
-		
-				private: ResourceAllocation MakePlacedBufferResource
+				private: ResourceHandle::t_hash MakePlacedBufferResource
 				(
 					AllocatableGpuMemory &memorySource,
 					ResourceTypes allocationType,
@@ -104,23 +103,16 @@ namespace Renderer::DX12
 
 					private: static D3D12_RESOURCE_DESC MakeBufferDesc(size_t sizeInBytes, D3D12_RESOURCE_FLAGS flags);
 
-				private: static void CheckGpuResourceCreation(HRESULT result);
+					private: static void CheckGpuResourceCreation(HRESULT result);
 
-				private: void ClearCmdList();
+				private: ResourceHandle::t_hash MakeUploadBuffer(const DataSource *dataSources, unsigned char numDataSources, size_t resourceSizeInBytes);
 
-				private: void SubmitListAndFenceSynchronization(CmdList *list);
+		public: ResourceHandle::t_hash MakeReadbackBuffer(size_t sizeInBytes, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
 
-		public: ResourceAllocation MakeReadbackBufferWithData
-		(
-			const void *data,
-			size_t sizeInBytes,
-			D3D12_RESOURCE_STATES desiredState,
-			D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE
-		);
 		
-		public: ResourceAllocation MakeTextureWithData(const void *data, size_t width, size_t height, D3D12_RESOURCE_STATES desiredState, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
+		public: ResourceHandle::t_hash MakeTextureWithData(const void *data, size_t width, size_t height, D3D12_RESOURCE_STATES desiredState, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
 
-			private: ResourceAllocation MakeTextureWithDataInternal
+			private: ResourceHandle::t_hash MakeTextureWithDataInternal
 			(
 				AllocatableGpuMemory &memorySource,
 				ResourceTypes allocationType,
@@ -128,31 +120,35 @@ namespace Renderer::DX12
 				size_t width,
 				size_t height,
 				DXGI_FORMAT format,
-				unsigned pixelSizeInBytes,
+				unsigned texelSizeInBytes,
 				D3D12_RESOURCE_STATES desiredState,
 				D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE
 			);
 			
-				private: ResourceAllocation MakePlacedTextureResource
+				private: ResourceHandle::t_hash MakePlacedTextureResource
 				(
 					AllocatableGpuMemory &memorySource,
 					ResourceTypes allocationType,
 					DXGI_FORMAT format,
-					const D3D12_SUBRESOURCE_FOOTPRINT &subresourceSize,
+					size_t textureSizeInBytes,
+					size_t width,
+					size_t height,
+					unsigned depth,
 					D3D12_RESOURCE_FLAGS resourceFlags,
 					D3D12_RESOURCE_STATES resourceState
 				);
-		
-		public: DxPtr<ID3D12Resource> MakeCommittedBuffer
-		(
-			size_t sizeInBytes,
-			D3D12_RESOURCE_STATES desiredState,
-			D3D12_HEAP_TYPE heapType, 
-			D3D12_HEAP_FLAGS heapFlags,
-			D3D12_RESOURCE_FLAGS bufferFlags = D3D12_RESOURCE_FLAG_NONE
-		);
 
-		public: ResourceAllocation MakeDepthTexture(size_t width, size_t height, bool withStencil, D3D12_RESOURCE_STATES desiredState, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
+				private: ResourceHandle::t_hash MakeUploadTexture
+				(
+					const void *data,
+					size_t textureSizeInBytes,
+					const D3D12_SUBRESOURCE_FOOTPRINT &footprint,
+					unsigned texelSizeInBytes
+				);
+
+			
+
+		public: ResourceHandle::t_hash MakeDepthTexture(size_t width, size_t height, bool withStencil, D3D12_RESOURCE_STATES desiredState, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
 
 		public: void Deallocate(ResourceAllocation &allocation, ResourceTypes type);
 

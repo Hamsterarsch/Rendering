@@ -14,6 +14,7 @@
 #include "Resources/HandleWrapper.hpp"
 #include "Commands/Internal/CopyBufferRegionCommand.hpp"
 #include "Commands/Basic/TransitionResourceCommand.hpp"
+#include "Commands/Internal/AliasingTransitionCommand.hpp"
 
 
 #if DEBUG_OPTIMIZED
@@ -39,12 +40,14 @@ namespace Renderer::DX12
 		commonQueue{ Facade::MakeQueue(resources.get(), D3D12_COMMAND_LIST_TYPE_DIRECT) },
 		closeFence{ Facade::MakeFence(resources.get()) },
 		closeEvent{ CreateEvent(nullptr, false, false, nullptr) },
+		descriptors{ resources.get(), 524'288, 512 },		
 		resourceFactory
 		{
 			std::make_unique<ResourceFactoryDeallocatable>
 			(
 				resources.get(),
-				commonQueue.get(),
+				*this,
+				registry,
 				std::make_unique<ResourceMemory>
 				(
 					resources.get(),
@@ -73,10 +76,17 @@ namespace Renderer::DX12
 					D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT,
 					D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS,
 					D3D12_HEAP_TYPE_READBACK
+				),
+				std::make_unique<ResourceMemory>
+				(
+					resources.get(),
+					D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT * 16,
+					D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT,
+					D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS,
+					D3D12_HEAP_TYPE_UPLOAD
 				)
 			)
-		},
-		descriptors{ resources.get(), 524'288, 512 },		
+		},		
 		psoFactory{ resources.get(), depthStencilSettings, blendSettings, rasterizerSettings, vertexLayoutSettings },
 		signatureFactory{ resources.get(), signatureSettings },
 		shaderFactory{ Facade::MakeShaderFactory(5, 1) },
@@ -382,42 +392,64 @@ namespace Renderer::DX12
 		commandProcessor.FreeExecutedCommands();
 		*/
 
-	
-	ResourceHandle::t_hash RendererFacadeImpl::MakeBuffer(const void *data, const size_t sizeInBytes)
-	{			
-		return registry.Register
-		(
-			resourceFactory->MakeBufferWithData(data, sizeInBytes, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER | D3D12_RESOURCE_STATE_INDEX_BUFFER)				
-		);
-		
-	}
 
-	
-	
-	ResourceHandle::t_hash RendererFacadeImpl::MakeBuffer(const void *data, const size_t sizeInBytes, const D3D12_RESOURCE_STATES state)
+	ResourceHandle::t_hash RendererFacadeImpl::MakeBuffer(const void *data, const size_t dataAndResourceSizeInBytes)
 	{
-		return registry.Register
-		(					
-			resourceFactory->MakeBufferWithData(data, sizeInBytes, state)						
-		);	
-	}
-
-
-
-	ResourceHandle::t_hash RendererFacadeImpl::MakeUaBuffer(const void *data, const size_t sizeInBytes)
-	{						
-		return registry.Register
-		(					
-			resourceFactory->MakeBufferWithData(data, sizeInBytes, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS)						
-		);				
+		DataSource source{ data, dataAndResourceSizeInBytes };
+		return MakeBuffer(&source, 1, dataAndResourceSizeInBytes);
 		
 	}
 
 
 	
-	DxPtr<ID3D12Resource> RendererFacadeImpl::MakeReadbackBuffer(const size_t sizeInBytes)
+	ResourceHandle::t_hash RendererFacadeImpl::MakeBuffer(const DataSource *dataSources, const unsigned char numDataSources, const size_t resourceSizeInBytes)
 	{			
-		return resourceFactory->MakeCommittedBuffer(RHA::Utility::IncreaseValueToAlignment(sizeInBytes, 256), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_HEAP_TYPE_READBACK, D3D12_HEAP_FLAG_NONE);
+		return resourceFactory->MakeBufferWithData
+		(
+			dataSources,
+			numDataSources,
+			resourceSizeInBytes,
+			D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER 
+			| D3D12_RESOURCE_STATE_INDEX_BUFFER
+			| D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE
+			| D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE,
+			D3D12_RESOURCE_FLAG_NONE
+		);
+						
+	}
+	
+
+	
+	ResourceHandle::t_hash RendererFacadeImpl::MakeUaBuffer(const void *data, const size_t dataAndResourceSizeInBytes)
+	{
+		DataSource source{ data, dataAndResourceSizeInBytes };
+				
+		return MakeUaBuffer(&source, 1, dataAndResourceSizeInBytes);
+		
+	}
+
+
+
+	ResourceHandle::t_hash RendererFacadeImpl::MakeUaBuffer(const DataSource *dataSources, const unsigned char numDataSources, const size_t resourceSizeInBytes)
+	{						
+		return resourceFactory->MakeBufferWithData(dataSources, numDataSources, resourceSizeInBytes, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
+		
+	}
+
+
+
+	ResourceHandle::t_hash RendererFacadeImpl::MakeTexture(const void *data, const size_t width, const size_t height)
+	{
+		return resourceFactory->MakeTextureWithData(data, width, height, D3D12_RESOURCE_STATE_COMMON);
+		
+		
+	}
+
+
+	
+	ResourceHandle::t_hash RendererFacadeImpl::MakeDepthTexture(const size_t width, const size_t height, const bool withStencil)
+	{
+		return resourceFactory->MakeDepthTexture(width, height, withStencil, D3D12_RESOURCE_STATE_DEPTH_WRITE);		
 		
 	}
 
@@ -531,32 +563,15 @@ namespace Renderer::DX12
 		return registry.Register(std::move(pipelineState));
 		
 	}
-
-
 	
-	ResourceHandle::t_hash RendererFacadeImpl::MakeTexture(const void *data, const size_t width, const size_t height)
-	{
-		auto resource{ resourceFactory->MakeTextureWithData(data, width, height, D3D12_RESOURCE_STATE_COMMON) };
-		return registry.Register(std::move(resource));
-		
-	}
-
-
 	
-	ResourceHandle::t_hash RendererFacadeImpl::MakeDepthTexture(const size_t width, const size_t height, const bool withStencil)
-	{
-		auto resource{ resourceFactory->MakeDepthTexture(width, height, withStencil, D3D12_RESOURCE_STATE_DEPTH_WRITE) };
-		return registry.Register(std::move(resource));
-		
-	}
 
 
 	
 	ResourceHandle::t_hash RendererFacadeImpl::MakeCounterResource(const uint32_t numCounters)
-	{		
-		auto resource{ resourceFactory->MakeBufferWithData(nullptr, sizeof(UnderlyingCounterType)*numCounters, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS) };
-		return registry.Register(std::move(resource));
-		
+	{
+		return MakeUaBuffer(nullptr, 0, sizeof(UnderlyingCounterType)*numCounters);
+				
 	}
 
 
@@ -682,10 +697,10 @@ namespace Renderer::DX12
 	
 	void RendererFacadeImpl::QueryUaResourceContent(const ResourceHandle::t_hash resource, const size_t amountOfBytesToRead, void *outData)
 	{							
-		HandleWrapper readbackBuffer{ this, registry.Register(resourceFactory->MakeReadbackBufferWithData(nullptr, amountOfBytesToRead, D3D12_RESOURCE_STATE_COPY_DEST)) };
+		HandleWrapper readbackBuffer{ this, resourceFactory->MakeReadbackBuffer(amountOfBytesToRead) };
 		SubmitCommand(MakeUnique<Commands::TransitionResourceCommand>(resource, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_COPY_SOURCE));
 		SubmitCommand(MakeUnique<Commands::CopyBufferRegionCommand>(resource, readbackBuffer.Get(), amountOfBytesToRead, 0, 0));
-		SubmitCommand(MakeUnique<Commands::TransitionResourceCommand>(resource, D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_UNORDERED_ACCESS));
+		SubmitCommand(MakeUnique<Commands::TransitionResourceCommand>(resource, D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_UNORDERED_ACCESS));		
 		WaitForCommandsAndQueue();
 
 		auto readbackResource{ registry.GetResource(readbackBuffer) };		

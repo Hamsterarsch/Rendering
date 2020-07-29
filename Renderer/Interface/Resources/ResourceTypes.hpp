@@ -15,7 +15,9 @@ namespace Renderer
 		DescriptorAllocator,
 		DepthTexture,
 		RawDescriptor,
-		ReadbackBuffer		
+		ReadbackBuffer,
+		UploadResource,
+		
 	};
 
 	
