@@ -21,7 +21,7 @@ namespace Renderer::DX12::Commands
 	void SetSignatureComputeCommand::Execute(DX12CommandProcessor &context)
 	{
 		context.GetList().RecordSetComputeSignature(context.GetRegistry().GetSignature(signature));
-		context.NotifyCommandContextAbout(Renderer::Commands::CommandContextEvents::ComputeBindingsInvalidated);
+		context.NotifyCommandContextAbout(Renderer::Commands::CommandContextEventFlags::ComputeBindingsInvalidated);
 		
 	}
 

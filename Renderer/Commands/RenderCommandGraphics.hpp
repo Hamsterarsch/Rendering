@@ -15,7 +15,7 @@ namespace Renderer::DX12::Commands
 			if(SignatureIsValid())
 			{				
 				context.GetList().RecordSetGraphicsSignature(context.GetRegistry().GetSignature(GetSignatureHandle()));
-				context.NotifyCommandContextAbout(Renderer::Commands::CommandContextEvents::GraphicsBindingsInvalidated);				
+				context.NotifyCommandContextAbout(Renderer::Commands::CommandContextEventFlags::GraphicsBindingsInvalidated);				
 			}			
 					
 		}

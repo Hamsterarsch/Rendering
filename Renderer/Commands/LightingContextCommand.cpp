@@ -82,7 +82,7 @@ namespace Renderer::DX12::Commands
 	{
 		gbCommand.Execute(context);
 
-		if(context.DoesContextEventMatch(CommandContextEvents::GraphicsSignatureChanged))
+		if(context.DoesContextEventMatchAll(CommandContextEvents::GraphicsSignatureChanged))
 		{
 			context.GetList().RecordSetGraphicsSignatureTable(2, lightingDescriptors.GetCurrentTableStartForView());
 		}

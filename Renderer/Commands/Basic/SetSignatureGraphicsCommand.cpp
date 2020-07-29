@@ -21,7 +21,7 @@ namespace Renderer::DX12::Commands
 	void SetSignatureGraphicsCommand::Execute(DX12CommandProcessor &context)
 	{
 		context.GetList().RecordSetGraphicsSignature(context.GetRegistry().GetSignature(signature));
-		context.NotifyCommandContextAbout(Renderer::Commands::CommandContextEvents::GraphicsBindingsInvalidated);
+		context.NotifyCommandContextAbout(Renderer::Commands::CommandContextEventFlags::GraphicsBindingsInvalidated);
 		
 	}
 

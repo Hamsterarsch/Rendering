@@ -20,10 +20,12 @@ namespace Renderer::Commands
 
 		public: CompositeCommand &operator=(const CompositeCommand &) = delete;
 
+
+		public: virtual bool ShouldBeExecuted(const CommandProcessor &context) const { return true; }
 		
 		public: void ExecuteOperationOnResourceReferences(UsesReferences &registry, void(UsesReferences:: *operation)(size_t)) final override;
 		
-		public: void Execute(CommandProcessor &context) override;
+		public: void Execute(CommandProcessor &context) final override;
 
 		public: void Add(UniquePtr<Command> &&command);
 
