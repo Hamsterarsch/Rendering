@@ -86,7 +86,7 @@ namespace Renderer::DX12
 		
 		public: RendererFacadeImpl(HWND outputWindow);
 
-		public: void ClearContextCommand() override;
+		public: void SubmitDefaultContextCommand() override;
 		
 		public: ~RendererFacadeImpl() override;
 

@@ -61,7 +61,7 @@ namespace Renderer
 
 		public: virtual void SubmitContextCommand(UniquePtr<Commands::Command> &&command) = 0;
 
-		public: virtual void ClearContextCommand() = 0;
+		public: virtual void SubmitDefaultContextCommand() = 0;
 		
 		public: virtual void DestroyUnreferencedResources() = 0;
 

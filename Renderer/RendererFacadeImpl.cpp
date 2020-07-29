@@ -83,7 +83,7 @@ namespace Renderer::DX12
 		commandProcessor{ *resources, *commonQueue, registry, counterFactory },
 		resourceViewFactory{ *resources, registry, descriptors }
 	{							
-		ClearContextCommand();
+		SubmitDefaultContextCommand();
 		
 		/*
 		VolumeTileGridData gridData;
@@ -655,7 +655,7 @@ namespace Renderer::DX12
 
 
 	
-	void RendererFacadeImpl::ClearContextCommand()
+	void RendererFacadeImpl::SubmitDefaultContextCommand()
 	{
 		commandProcessor.SubmitContextCommand(MakeUnique<Commands::BindDescriptorsContextCommand>(descriptors));
 		
