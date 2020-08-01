@@ -37,6 +37,10 @@ namespace Math
 
 		public: Vector4 Transform(const Vector4 &vector) const;
 
+		public: Vector3 GetTranslation() const;
+
+		public: void SetTranslation(const Vector3 &translation);
+
 						
 	};
 

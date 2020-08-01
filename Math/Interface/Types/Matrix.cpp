@@ -28,8 +28,8 @@ namespace Math
 	Matrix Matrix::MakeRotation(const float pitch, const float yaw, const float roll)
 	{
 		Matrix out{ rotate(glm::identity<decltype(data)>(), glm::radians(pitch), {1, 0, 0}) };
-		rotate( out.data, glm::radians(yaw), {0,1,0});
-		rotate( out.data, glm::radians(roll), {0, 0, 1});
+		out.data =  rotate( out.data, glm::radians(yaw), {0,1,0});
+		out.data = rotate( out.data, glm::radians(roll), {0, 0, 1});
 					
 		return out;
 		
@@ -92,13 +92,31 @@ namespace Math
 		
 	}
 
+	
 	Vector4 Matrix::Transform(const Vector4& vector) const
 	{
 		return Vector4{ data * vector._internal };
 		
 	}
 
+	
 
+	Vector3 Matrix::GetTranslation() const
+	{
+		return Vector3{ data[3][0], data[3][1], data[3][2] };
+		
+	}
+
+
+	
+	void Matrix::SetTranslation(const Vector3 &translation)
+	{
+		data[3] = { translation.x, translation.y, translation.z, data[3][3] };
+		
+	}
+
+
+	
 	Matrix operator*(const Matrix &lhs, const Matrix &rhs)
 	{
 		auto out{ lhs };
