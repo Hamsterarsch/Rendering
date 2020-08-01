@@ -319,6 +319,7 @@ namespace Renderer::DX12::Commands
 
 	void CommandProcessorImpl::WaitForIdle()
 	{
+		PropagateExceptions();
 		queuedCommands.WaitForEmpty();
 		PropagateExceptions();
 		
