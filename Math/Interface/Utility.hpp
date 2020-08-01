@@ -10,7 +10,7 @@ namespace Math
 
 	float MATH_DLLSPEC Abs(float number);
 
-	float MATH_DLLSPEC Log(float number);
+	float MATH_DLLSPEC Log2(float number);
 	
 }
 
