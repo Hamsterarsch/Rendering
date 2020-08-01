@@ -12,7 +12,7 @@ namespace App::Rendering
 		
 		float outFovTermForTileGridDepthCompute;
 		
-		Math::VectorUint2 screenDimensions;
+		Math::Vector2 screenDimensions;
 		
 		float nearDistance;
 		

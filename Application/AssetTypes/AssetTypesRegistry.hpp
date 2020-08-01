@@ -80,6 +80,8 @@ namespace App::Assets
 		static const std::unordered_set<std::string> typesNotCreatableByUser;
 
 				
+
+		public: AssetTypesRegistry() = default;
 		
 		public: AssetTypesRegistry
 		(

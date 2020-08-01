@@ -10,6 +10,7 @@ struct App2V
 {
 	float3 pos : POSITION;
 	float3 normal : NORMAL;	
+	float2 uv : TEXCOORD;
 	uint instanceID : SV_InstanceID;
 };
 
@@ -17,9 +18,11 @@ LightingV2P main(App2V IN)
 {
 	LightingV2P OUT;
 	
-	OUT.worldPos = mul(instancePositions[IN.instanceID], float4(IN.pos, 1));
-	OUT.pos = mul(projection, mul(view, float4(OUT.worldPos, 1)));
-	OUT.normal = normalize(mul(view, mul(instancePositions[IN.instanceID], float4(IN.normal, 0))).xyz);
+	OUT.worldPos = mul(instancePositions[IN.instanceID], float4(IN.pos, 1)).xyz;
+	OUT.viewPos = mul(view, float4(OUT.worldPos)).xyz;
+	OUT.pos = mul(projection, float4(OUT.viewPos, 1));
+	OUT.normal = normalize(mul(instancePositions[IN.instanceID], float4(IN.normal, 0))).xyz;
+	OUT.uv = IN.uv;
 		
 	return OUT;
 

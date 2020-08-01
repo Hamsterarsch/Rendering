@@ -1,17 +1,14 @@
 #pragma once
 #include "RendererFacade.hpp"
-#include "Shared/InterfaceHelpers.hpp"
+#include "Asset.hpp"
 
 
 namespace App::Assets
 {
-	class RendererAsset
+	class RendererAsset : public assetSystem::Asset
 	{
-		DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(RendererAsset)
-
-
 		public: virtual void UploadToRenderer(Renderer::RendererFacade &renderer) = 0;
-				
+						
 	};
 	
 	

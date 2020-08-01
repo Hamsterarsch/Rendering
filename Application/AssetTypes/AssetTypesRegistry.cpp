@@ -10,7 +10,7 @@
 #include "Core/AssetPathUtility.hpp"
 #include "UserPixelShaderAsset.hpp"
 #include "StaticMeshAsset.hpp"
-#include "PsoAsset.hpp"
+#include "PipelineAsset.hpp"
 
 
 
@@ -92,7 +92,7 @@ namespace App::Assets
 		AddAssetInfo<VertexShaderAsset>(addTargetAndIconSource, iconUploadTarget,	"Vertex Shader", fileIconPath, MakeUnique<PrototypeEditor<Ui::User::ShaderEditorFrontend>>());
 		AddAssetInfo<ComputeShaderAsset>(addTargetAndIconSource, iconUploadTarget,	"Compute Shader", fileIconPath, MakeUnique<PrototypeEditor<Ui::User::ShaderEditorFrontend>>());
 		AddAssetInfo<StaticMeshAsset>(addTargetAndIconSource, iconUploadTarget,	"Static Mesh", fileIconPath, {});
-		AddAssetInfo<PsoAsset>(addTargetAndIconSource, iconUploadTarget, "Pipeline Asset", fileIconPath, {});
+		AddAssetInfo<PipelineAsset>(addTargetAndIconSource, iconUploadTarget, "Pipeline Asset", fileIconPath, {});
 		
 	}
 
@@ -105,7 +105,7 @@ namespace App::Assets
 			RegisterAsset<VertexShaderAsset>(asys);
 			RegisterAsset<ComputeShaderAsset>(asys);
 			RegisterAsset<StaticMeshAsset>(asys);
-			RegisterAsset<PsoAsset>(asys);
+			RegisterAsset<PipelineAsset>(asys);
 							
 		}
 

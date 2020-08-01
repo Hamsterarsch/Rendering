@@ -7,7 +7,7 @@ namespace App::Scene
 	ContentMesh::ContentMesh
 	(
 		const assetSystem::AssetPtrTyped<Assets::StaticMeshAsset> &mesh,
-		const assetSystem::AssetPtrTyped<Assets::PsoAsset> &defaultPso
+		const assetSystem::AssetPtrTyped<Assets::PipelineAsset> &defaultPso
 	)
 		:
 		mesh{ mesh }

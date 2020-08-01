@@ -1,7 +1,5 @@
 #include "Rendering/RendererMediator.hpp"
 #include "RendererFacade.hpp"
-#include <chrono>
-#include <iostream>
 
 
 namespace App::Rendering
@@ -15,6 +13,7 @@ namespace App::Rendering
 		underlyingRenderer{ &renderer },
 		commandFactory{ renderer.MakeCommandFactory() },
 		mainWindowSurface{ 0 },
+		mainDepthTextureView{ 0 },
 		sceneRenderer{ std::move(sceneRenderer) },
 		uiRenderer{ std::move(uiRenderer) },		
 		submitIterations{ 0 },
@@ -25,9 +24,9 @@ namespace App::Rendering
 
 
 	
-	void RendererMediator::SubmitFrame()
+	void RendererMediator::SubmitFrame(const UniquePtr<GraphVisitorHarvestMeshes> &sceneGraphData)
 	{
-		if(!mainWindowSurface)
+		if(not mainWindowSurface || not mainDepthTextureView)
 		{
 			return;
 		}
@@ -38,10 +37,12 @@ namespace App::Rendering
 			
 		}
 						
-		SubmitCommand(commandFactory->PrepareSurfaceForRendering(mainWindowSurface));
+		SubmitCommand(commandFactory->PrepareSurfaceForRendering(mainWindowSurface));//todo does surface binding persist across cmd lists		
+		SubmitCommand(commandFactory->ClearDepthTexture(mainDepthTextureView));
+				
+		sceneRenderer.SubmitFrame(sceneGraphData);		
+		//uiRenderer.SubmitFrame(); todo: bind rts inside the ui submit code
 		
-		sceneRenderer.SubmitFrame();		
-		uiRenderer.SubmitFrame();
 		
 		//are scissors reset automatically ?
 		SubmitCommand(commandFactory->PresentSurface(mainWindowSurface));
@@ -61,10 +62,27 @@ namespace App::Rendering
 
 
 	
-	void RendererMediator::SetMainWindowSurface(ResourceHandle::t_hash surface)
+	void RendererMediator::SetMainWindowSurface(const ResourceHandle::t_hash surface)
 	{
 		mainWindowSurface = surface;
 		
 	}
+
+
+	
+	void RendererMediator::SetMainDepthTextureView(const ResourceHandle::t_hash depthTextureView)
+	{
+		mainDepthTextureView = depthTextureView;
+		
+	}
+
+
+	
+	void RendererMediator::OnMainWindowSurfaceSizeChanged(const Math::VectorUint2 &newSize)
+	{
+		sceneRenderer.OnMainWindowSurfaceSizeChanged(newSize);
+		
+	}
+
 	
 }

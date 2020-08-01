@@ -64,6 +64,8 @@ namespace App::Rendering
 
 		private: bool fontTexWasOverwritten;
 
+
+		public: UiRenderer() = default;
 		
 		public: UiRenderer(RendererMediator &mediator, RendererFacade &renderer);
 

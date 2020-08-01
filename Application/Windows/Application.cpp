@@ -7,8 +7,13 @@
 
 #include "AssetConstructOperationsHelper.hpp"
 #include "AssetTypes/ImageAsset.hpp"
-#include "AssetTypes/PsoAsset.hpp"
+#include "AssetTypes/PipelineAsset.hpp"
 #include "AssetTypes/UserPixelShaderAsset.hpp"
+
+#include "AssetTypes/StaticMeshAsset.hpp"
+#include "AssetFactories/StaticMeshFactory.hpp"
+#include "Rendering/GraphVisitorHarvestMeshes.hpp"
+#include "Scene/ContentLight.hpp"
 
 
 
@@ -32,7 +37,7 @@ namespace App::Windows
 	        {
 				const auto width{ LOWORD(lParam) };
 	        	const auto height{ HIWORD(lParam) };
-				Application::Get().ResizeMainWindow(height, width);
+				Application::Get().ResizeMainWindow(width, height);
 	        	
 			}	           
 	        return 0;
@@ -61,6 +66,8 @@ namespace App::Windows
 			window{ {1280, 720}, L"Window", L"UniqueClassName", WndProc },
 			renderer{ MakeRendererAndAddProgramShaderInclude(window.GetHandle(), *programAssets) },
 			mainWindowSurface{ renderer.get(), renderer->MakeWindowsWindowSurface(window.GetHandle()) },
+			mainDepthTexture{ renderer.get(), renderer->MakeDepthTexture(1280, 720, true) },
+			mainDepthTextureView{ renderer.get(), renderer->GetViewFactory().MakeDepthTextureView(mainDepthTexture) },
 			assetTypesRegistry{ *programAssets, *renderer },
 			rendererMediator
 			{			
@@ -68,15 +75,28 @@ namespace App::Windows
 				{ rendererMediator, *renderer, *programAssets, {1280, 720} },
 				{ rendererMediator, *renderer }
 			},
-			ui{ *this }
+			ui{ *this },
+
+			cube{ programAssets->GetAsset("Meshes/MetricCube.msh") },
+			graphRoot{ Math::Matrix{}, {} }
 		{
 			std::filesystem::path includePath{ programAssets->GetAbsoluteRootAssetPath() };
 			includePath /= "Shaders/Includes";					
 			renderer->AddShaderIncludeDirectory(includePath.string().c_str());
 					
 			rendererMediator.SetMainWindowSurface(mainWindowSurface);
-			
+			rendererMediator.SetMainDepthTextureView(mainDepthTextureView);
+		
 			Assets::UserPixelShaderAsset::SetPixelShaderTemplate(programAssets->GetAsset("Shaders/LightingShaderTemplate.ps.shdr"));
+						
+			auto psoa = programAssets->GetAsset("DefaultAssets/DefaultPipelineState.pso");
+						
+			auto scale{ Math::Matrix::MakeScale(150, 150, 1)};					
+			graphRoot.AddChild( Math::Matrix::MakeTranslation(0, 0, 500)*scale, MakeUnique<Scene::ContentMesh>(cube, psoa));			
+			graphRoot.AddChild( Math::Matrix::MakeTranslation(0,0, 490), MakeUnique<Scene::ContentLight>(100, Math::Vector3{ 1, 1, 1 }, 0, 0) );
+		
+			currentHarvest = MakeUnique<Rendering::GraphVisitorHarvestMeshes>();
+			graphRoot.Accept(*currentHarvest);
 		
 		}
 
@@ -91,6 +111,56 @@ namespace App::Windows
 				return renderer;
 		
 			}
+			
+
+	
+	Application::Application(Application &&other) noexcept
+	{
+		*this = std::move(other);
+		
+	}
+
+	
+	
+	Application &Application::operator=(Application &&rhs) noexcept
+	{
+		if(this == &rhs)
+		{
+			return *this;
+			
+		}
+						
+		programVersion		  = std::move(rhs.programVersion		);
+		programAssets		  = std::move(rhs.programAssets			);
+		projectAssets		  = std::move(rhs.projectAssets			);
+		window				  = std::move(rhs.window				);
+		renderer			  = std::move(rhs.renderer				);
+		mainWindowSurface	  = std::move(rhs.mainWindowSurface		);
+		mainDepthTexture	  = std::move(rhs.mainDepthTexture		);
+		mainDepthTextureView  = std::move(rhs.mainDepthTextureView	);
+		assetTypesRegistry	  = std::move(rhs.assetTypesRegistry	);
+		rendererMediator	  =	std::move(rhs.rendererMediator	 	);
+		ui					  = std::move(rhs.ui					);
+		cube				  = std::move(rhs.cube					);
+		graphRoot			  = std::move(rhs.graphRoot				);
+		currentHarvest		  = std::move(rhs.currentHarvest		);
+
+		rhs.programAssets.reset();
+
+		return *this;
+		
+	}
+
+
+	
+	Application::~Application()
+	{
+		if(programAssets)
+		{
+			Assets::UserPixelShaderAsset::SetPixelShaderTemplate({});			
+		}
+		
+	}
 
 
 
@@ -135,7 +205,8 @@ namespace App::Windows
 			else
 			{				
 				Update();				
-				rendererMediator.SubmitFrame();
+				rendererMediator.SubmitFrame(currentHarvest);
+				ImGui::EndFrame();//todo remove when ui render is submitting again
 			}
 		}
 		ImGui_ImplWin32_Shutdown();
@@ -159,13 +230,17 @@ namespace App::Windows
 
 
 	
-	void Application::ResizeMainWindow(int width, int height)
+	void Application::ResizeMainWindow(const int width, const int height)
 	{		
+		mainDepthTexture = { renderer.get(), renderer->MakeDepthTexture(width, height, true) };
+		mainDepthTextureView = { renderer.get(), renderer->GetViewFactory().MakeDepthTextureView(mainDepthTexture) };
+		
 		renderer->FitWindowSurfaceToWindow(mainWindowSurface);
 		
+		rendererMediator.OnMainWindowSurfaceSizeChanged({width, height});
+		rendererMediator.SetMainDepthTextureView(mainDepthTextureView);
+		
 	}
-
-
-	
+	   
 	
 }

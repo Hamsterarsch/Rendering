@@ -2,23 +2,24 @@
 	`code`: `#include "Types/GlobalBufferData.hlsl"
 #include "Types/VolumeTileGridData.hlsl"
 #include "FlattenVolumeTileGridIndex.hlsl"
+#include "Types/LightingV2P.hlsl"
 
 ConstantBuffer<VolumeTileGridData> gridData : register(b2);
 RWBuffer<uint> volumeTileFlags : register(u1);
 
 
-float4 main(float4 pos : SV_POSITION) : SV_TARGET
+float4 main(LightingV2P IN) : SV_TARGET
 {
-float4 viewPos = mul(gridData.inverseProjection, pos);
 
 uint3 Index = uint3
 (
-pos.xy / (gridData.screenDimensions / float2(gridData.gridDimensions.xy)),
-log(viewPos.z / gridData.nearDistance) / log(1+gridData.fovTermForDepthCompute)
+IN.pos.xy / (gridData.screenDimensions / gridData.gridDimensions.xy),
+log2(IN.viewPos.z - gridData.nearDistance) / log2(1+gridData.fovTermForDepthCompute)
 );
 
 volumeTileFlags[FlattenVolumeTileGridIndex(Index, gridData.gridDimensions.xy)] = true;
 
+discard;
 return float4(0,0,0,0);
 
 }

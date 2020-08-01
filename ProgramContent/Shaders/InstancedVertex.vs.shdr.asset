@@ -1,12 +1,32 @@
 {
 	`code`: `#include "Types/GlobalBufferData.hlsl"
+#include "Types/LightingV2P.hlsl"
 
 StructuredBuffer<float4x4> transforms : register(t0);
-cbuffer buffer : register(b1) { uint transformOffset; };
+Buffer<uint> transformIndices : register(t1);
+cbuffer buffer : register(b1) { uint offsetIntoTransformIndices; };
 
-float4 main(float3 pos : POSITION, uint instanceID : SV_InstanceID) : SV_POSITION
+struct App2V
 {
-return  mul(projection, mul(view, mul(transforms[transformOffset+instanceID], float4(pos.xyz, 1))));
+	float3 pos : POSITION;
+	float3 normal : NORMAL;	
+	float2 uv : TEXCOORD;
+	uint instanceID : SV_InstanceID;
+};
+
+LightingV2P main(App2V IN)
+{
+const float4x4 worldTransform = transforms[transformIndices[offsetIntoTransformIndices+IN.instanceID]];
+
+LightingV2P OUT;
+
+OUT.worldPos = mul(worldTransform, float4(IN.pos, 1)).xyz;
+OUT.viewPos = mul(view, float4(OUT.worldPos, 1)).xyz;
+OUT.pos = mul(projection, float4(OUT.viewPos, 1));
+OUT.normal = normalize(mul(worldTransform, float4(IN.normal, 0))).xyz;
+OUT.uv = IN.uv;
+
+return OUT;
 
 }
 

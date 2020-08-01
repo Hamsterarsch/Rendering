@@ -5,8 +5,9 @@
 #include "ShaderRelevantTypes/Light.hpp"
 #include "Shared/PtrTypes.hpp"
 #include "Scene/MeshInstanceData.hpp"
+#include "Rendering/MeshShardInstanceData.hpp"
 #include "AssetTypes/StaticMeshAsset.hpp"
-#include "AssetTypes/PsoAsset.hpp"
+#include "AssetTypes/PipelineAsset.hpp"
 
 
 namespace App::Rendering
@@ -20,21 +21,15 @@ namespace App::Rendering
 	};
 	
 	class GraphVisitorHarvestMeshes final : public Scene::GraphVisitorTransformRequiring
-	{
-		private: struct ShardInstanceData
-		{			
-			Scene::MeshInstanceData perInstanceData;
-						
-		};
-		
+	{		
 		private: struct ShardRenderData
 		{
 			private: struct Bucket
 			{
-				std::vector<ShardInstanceData> data;
+				std::vector<MeshShardInstanceData> data;
 			};
 			
-			public: std::unordered_map<assetSystem::AssetPtrTyped<Assets::PsoAsset>, Bucket, AssetPtrHasher> pipelineOccurences;
+			public: std::unordered_map<assetSystem::AssetPtrTyped<Assets::PipelineAsset>, Bucket, AssetPtrHasher> pipelineOccurences;
 
 			ShardRenderData() = default;
 
@@ -72,7 +67,7 @@ namespace App::Rendering
 		
 		public: std::unordered_map<assetSystem::AssetPtrTyped<Assets::StaticMeshAsset>, MeshShardData, AssetPtrHasher> meshInstanceData;//todo make interface for access
 				
-		private: std::vector<Light> lightData;
+		public: std::vector<Light> lightData;
 
 
 		public: GraphVisitorHarvestMeshes() = default;

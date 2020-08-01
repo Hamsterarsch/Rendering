@@ -13,7 +13,7 @@ namespace App::Assets
 	struct ImageData;
 	
 	
-	class ImageAsset final : public assetSystem::Asset, public RendererAsset
+	class ImageAsset final : public RendererAsset
 	{
 		private: Renderer::HandleWrapper textureHandle;
 

@@ -161,7 +161,7 @@
     <ClCompile Include="Rendering\GraphVisitorHarvestMeshes.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="AssetTypes\PsoAsset.cpp">
+    <ClCompile Include="AssetTypes\PipelineAsset.cpp">
       <Filter>AssetTypes</Filter>
     </ClCompile>
   </ItemGroup>
@@ -379,9 +379,6 @@
     <ClInclude Include="Ui\Elements\CollapsibleNodeLayoutFrontend.hpp">
       <Filter>Ui\Elements</Filter>
     </ClInclude>
-    <ClInclude Include="AssetTypes\PsoAsset.hpp">
-      <Filter>AssetTypes</Filter>
-    </ClInclude>
     <ClInclude Include="AssetTypes\RendererAsset.hpp">
       <Filter>AssetTypes</Filter>
     </ClInclude>
@@ -445,6 +442,15 @@
     <ClInclude Include="Scene\MeshInstanceData.hpp">
       <Filter>Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Rendering\MeshShardInstanceData.hpp">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetTypes\PipelineAsset.hpp">
+      <Filter>AssetTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\ContextCommands\ContextCompositeCommand.hpp">
+      <Filter>Rendering\ContextCommands</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Window">
@@ -503,6 +509,9 @@
     </Filter>
     <Filter Include="Scene">
       <UniqueIdentifier>{7bae8e6b-ce91-49a0-b2eb-2f6a7c2fcb66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rendering\ContextCommands">
+      <UniqueIdentifier>{be0b1cc3-8564-4bac-bfa9-8d01879f6531}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

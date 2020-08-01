@@ -19,7 +19,7 @@ namespace App::Rendering
 
 		public: VolumeTileGrid() = default;
 		
-		public: VolumeTileGrid(const Math::VectorUint2 &approximateTileDimensions, Math::Angle verticalFov, VolumeTileGridData &gridData);
+		public: VolumeTileGrid(const Math::VectorUint2 &approximateTileDimensions, Math::Angle verticalFov, float tileDepthScale, VolumeTileGridData &gridData);
 
 
 		public: size_t SizeInBytes() const { return sizeof(decltype(boundingBoxes)::value_type) * boundingBoxes.size(); }

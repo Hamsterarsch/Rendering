@@ -10,13 +10,15 @@ namespace App::Windows
 {	
 	class Window
 	{
-		private: const std::wstring windowName;
+		private: std::wstring windowName;
 		
-		private: const std::wstring className;
+		private: std::wstring className;
 		
 		private: HWND handle;
 
 				
+
+		public: Window() = default;
 		
 		public: Window(const std::wstring &windowName, const std::wstring &className, WNDPROC windowProc = nullptr);
 		
@@ -25,16 +27,16 @@ namespace App::Windows
 			private: void CreateWindowClass(WNDPROC windowProc) const;
 		
 			private: static LRESULT _stdcall Procedure(HWND handle, UINT msg, WPARAM wparam, LPARAM lparam);
+				
+		public: Window(Window &&other) noexcept;
+		
+		public: Window &operator=(Window &&rhs) noexcept;
 		
 		public: ~Window();
 		
-		public: Window(Window &&Other);
-		
-		public: Window(const Window &) = delete;
-		
 		public: Window &operator=(const Window &) = delete;
 		
-		public: Window &operator=(Window &&) = delete;
+		public: Window(const Window &) = delete;
 
 		
 		public: inline HWND GetHandle() const { return handle; }

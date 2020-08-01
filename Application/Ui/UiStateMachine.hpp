@@ -27,6 +27,8 @@ namespace App::Ui
 		private: App::Core::Application *app;		
 		
 
+
+		public: UiStateMachine() = default;
 		
 		public: UiStateMachine(App::Core::Application &app);
 

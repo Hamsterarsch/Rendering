@@ -258,7 +258,7 @@
     <ClInclude Include="AssetTypes\CacheAsset.hpp" />
     <ClInclude Include="AssetTypes\ImageAsset.hpp" />
     <ClInclude Include="AssetTypes\ProjectAsset.hpp" />
-    <ClInclude Include="AssetTypes\PsoAsset.hpp" />
+    <ClInclude Include="AssetTypes\PipelineAsset.hpp" />
     <ClInclude Include="AssetTypes\RendererAsset.hpp" />
     <ClInclude Include="AssetTypes\ShaderAsset.hpp" />
     <ClInclude Include="AssetTypes\StaticMeshAsset.hpp" />
@@ -269,7 +269,9 @@
     <ClInclude Include="Core\ImageView.hpp" />
     <ClInclude Include="Core\Prototype.hpp" />
     <ClInclude Include="Core\Version.hpp" />
+    <ClInclude Include="Rendering\ContextCommands\ContextCompositeCommand.hpp" />
     <ClInclude Include="Rendering\GraphVisitorHarvestMeshes.hpp" />
+    <ClInclude Include="Rendering\MeshShardInstanceData.hpp" />
     <ClInclude Include="Rendering\RendererMediator.hpp" />
     <ClInclude Include="Rendering\SceneRenderer.hpp" />
     <ClInclude Include="Rendering\ShaderRelevantTypes\GlobalBufferData.hpp" />
@@ -358,7 +360,7 @@
     <ClCompile Include="AssetTypes\CacheAsset.cpp" />
     <ClCompile Include="AssetTypes\ImageAsset.cpp" />
     <ClCompile Include="AssetTypes\ProjectAsset.cpp" />
-    <ClCompile Include="AssetTypes\PsoAsset.cpp" />
+    <ClCompile Include="AssetTypes\PipelineAsset.cpp" />
     <ClCompile Include="AssetTypes\ShaderAsset.cpp" />
     <ClCompile Include="AssetTypes\StaticMeshAsset.cpp" />
     <ClCompile Include="AssetTypes\UserPixelShaderAsset.cpp" />

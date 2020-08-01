@@ -14,7 +14,7 @@ namespace Renderer
 
 namespace App::Assets
 {	
-	class StaticMeshAsset final : public assetSystem::Asset, public RendererAsset
+	class StaticMeshAsset final : public RendererAsset
 	{
 		private: Renderer::HandleWrapper bufferHandle;
 				 		

@@ -24,8 +24,10 @@ return;
 
 }
 
-const float bbNear = gridData.nearDistance * pow(1+gridData.fovTermForDepthCompute, dispatchID.z);
-const float bbFar = gridData.nearDistance * pow(1+gridData.fovTermForDepthCompute, dispatchID.z+1);
+const float bbNearGridSpace = pow(1+gridData.fovTermForDepthCompute, dispatchID.z);
+const float bbFarGridSpace = 1 + pow(1+gridData.fovTermForDepthCompute, dispatchID.z+1);
+const float bbNear = bbNearGridSpace -1 +gridData.nearDistance;
+const float bbFar = bbFarGridSpace -1 +gridData.nearDistance;
 
 const float2 tileDimensions = gridData.screenDimensions / gridData.gridDimensions.xy;
 const float2 tileMinUv = dispatchID.xy * tileDimensions / gridData.screenDimensions;

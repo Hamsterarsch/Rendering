@@ -1,4 +1,5 @@
 {
 	`pipelineType`: `0`,
-	`pixelShader`: `137333743`
+	`pixelShader`: `137333743`,
+	`vertexShader`: `3487434963`
 }

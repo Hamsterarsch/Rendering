@@ -12,6 +12,12 @@
 namespace App::Ui::Core{ class UiFrontend; }
 
 
+#include "AssetTypes/StaticMeshAsset.hpp"
+#include "AssetPtr.hpp"
+#include "Scene/GraphNode.hpp"
+#include "Scene/ContentMesh.hpp"
+
+
 namespace App::Windows
 {
 	class Application final : public Core::Application
@@ -27,6 +33,10 @@ namespace App::Windows
 		private: UniquePtr<Renderer::RendererFacade> renderer;
 
 		private: Renderer::HandleWrapper mainWindowSurface;
+
+		private: Renderer::HandleWrapper mainDepthTexture;
+
+		private: Renderer::HandleWrapper mainDepthTextureView;
 		
 		private: Assets::AssetTypesRegistry assetTypesRegistry;
 		
@@ -35,6 +45,12 @@ namespace App::Windows
 		private: Ui::UiStateMachine ui;
 
 
+				
+		private: assetSystem::AssetPtrTyped<Assets::StaticMeshAsset> cube;
+
+		private: Scene::GraphNode graphRoot;
+
+		private: UniquePtr<Rendering::GraphVisitorHarvestMeshes> currentHarvest;
 
 		
 		public: static Application &Get();
@@ -43,6 +59,16 @@ namespace App::Windows
 
 				private: static UniquePtr<Renderer::RendererFacade> MakeRendererAndAddProgramShaderInclude(HWND window, assetSystem::AssetSystem &programAssets);
 
+		public: Application(Application &&other) noexcept;
+
+		public: Application &operator=(Application &&rhs) noexcept;
+		
+		public: ~Application();
+		
+		public: Application(const Application &) = delete;
+
+		public: Application &operator=(Application &) = delete;
+		
 		
 		public: assetSystem::AssetSystem &GetProgramAssets() override { return *programAssets; }
 

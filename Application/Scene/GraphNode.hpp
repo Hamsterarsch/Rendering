@@ -18,6 +18,7 @@ namespace App::Scene
 		private: UniquePtr<GraphNodeContent> content;
 
 
+		public: GraphNode() = default;
 
 		public: GraphNode(const Math::Matrix &nodeTransform, UniquePtr<GraphNodeContent> &&content);
 		
