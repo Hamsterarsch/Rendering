@@ -53,7 +53,7 @@ namespace Math
 
 		public: constexpr VectorProxy() : _internal{} {}
 		
-		public: template<class ...t_args> constexpr VectorProxy(t_args ...Args) : _internal{Args...} {}
+		public: template<class ...t_args> constexpr VectorProxy(t_args ...Args) : _internal(Args...) {}
 										
 	};
 
@@ -81,7 +81,9 @@ namespace Math
 
 		public: constexpr VectorProxy() : _internal{} {}
 		
-		public: template<class ...t_args> constexpr VectorProxy(t_args ...Args) : _internal{Args...} {}
+		public: template<class ...t_args> constexpr VectorProxy(t_args ...Args) : _internal(Args...) {}
+
+		public: template<class t_glmOther> VectorProxy(const VectorProxy<t_glmOther> &other) : _internal(other._internal) {}
 										
 	};
 	
@@ -108,15 +110,22 @@ namespace Math
 
 
 		public: constexpr VectorProxy() : _internal{} {}
-		
-		public: template<class ...t_args> constexpr VectorProxy(t_args ...Args) : _internal{Args...} {}
+		public: template<class ...t_args> constexpr VectorProxy(t_args ...Args) : _internal(Args...) {}		
+		public: VectorProxy(const Vector3 &other) : _internal(other._internal.x, other._internal.y, other._internal.z, 1) {}
 										
 	};
-
+			
 	using Vector4 = VectorProxy<glm::vec4>;
 	using VectorInt4 = VectorProxy<glm::ivec4>;
 	using VectorUint4 = VectorProxy<glm::uvec4>;
 	
+
+	template<class t>
+	VectorProxy<t> operator-(const VectorProxy<t> &vector)
+	{
+		return -vector._internal;
+		
+	}
 	
 }
 
