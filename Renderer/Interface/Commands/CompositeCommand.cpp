@@ -22,6 +22,12 @@ namespace Renderer::Commands
 	
 	void CompositeCommand::Execute(CommandProcessor &context)
 	{
+		if(not ShouldBeExecuted(context))
+		{
+			return;
+			
+		}
+		
 		for(auto &&command : children)
 		{
 			command->Execute(context);

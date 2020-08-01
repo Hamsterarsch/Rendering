@@ -2,6 +2,8 @@
 #include "AssetSystem/IO/Writer.hpp"
 #include <filesystem>
 #include <fstream>
+#include "AssetSystemTypes.hpp"
+#include <functional>
 
 
 namespace assetSystem::io
@@ -16,9 +18,11 @@ namespace assetSystem::io
 
 		private: bool hasWrittenPropertyValue;
 
+		private: std::function<void(AssetKey)> onAssetPtr;
+
 		
 		
-		public: AssetWriter(const std::filesystem::path &filepath);
+		public: AssetWriter(const std::filesystem::path &filepath, std::function<void(AssetKey)> &&onAssetPtr);
 
 		public: virtual ~AssetWriter() noexcept;
 
@@ -43,7 +47,9 @@ namespace assetSystem::io
 
 		public: Archive &Serialize(const char *propertyName, char *str) override;
 
-		size_t GetPropertySizeInBytes(const char *propertyName) override { return 0; }
+		public: Archive &Serialize(const char *propertyName, AssetPtr &asset) override;
+		
+		public: size_t GetPropertySizeInBytes(const char *propertyName) override { return 0; }
 		
 		
 		public: bool IsInvalid() const override;

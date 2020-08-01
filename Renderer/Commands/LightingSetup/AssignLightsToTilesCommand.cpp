@@ -30,8 +30,8 @@ namespace Renderer::DX12::Commands
 		tileGridBoundingBoxes{ tileGridBoundingBoxes },
 		activeTileList{ activeTileList },
 		tileGridData{ tileGridData },
-		relevantLightIndices{ &factory, factory.MakeUavBuffer(nullptr, lightCount * activeTileCount * sizeof(unsigned) / 2) },
-		mappingToRelevantLights{ &factory, factory.MakeUavBuffer(nullptr, sizeof(LightIndexListInfo) * tileCount) },
+		relevantLightIndices{ &factory, factory.MakeUaBuffer(nullptr, lightCount * activeTileCount * sizeof(unsigned) / 2) },
+		mappingToRelevantLights{ &factory, factory.MakeUaBuffer(nullptr, sizeof(LightIndexListInfo) * tileCount) },
 		descAlloc{ descMem.GetDescriptorAllocator(5, 0) },
 		dispatchSize{ static_cast<size_t>(std::ceil(tileCount / 32.f)) }
 	{

@@ -10,11 +10,19 @@ namespace Renderer
 	{
 		using namespace RHA::DX12;
 
-		ResourceMemory::ResourceMemory(DeviceResources *resources, const size_t initialHeapSizeInBytes, const size_t alignment, const D3D12_HEAP_FLAGS heapFlags) :
+		ResourceMemory::ResourceMemory
+		(
+			DeviceResources *resources,
+			const size_t initialHeapSizeInBytes,
+			const size_t alignment,
+			const D3D12_HEAP_FLAGS heapFlags,
+			const D3D12_HEAP_TYPE type
+		)	:
 			resources{ resources },
 			initialHeapSizeInBytes{ RHA::Utility::IncreaseValueToAlignment(initialHeapSizeInBytes, alignment) },
 			alignment{ alignment },
-			heapFlags{ heapFlags }		
+			heapFlags{ heapFlags },
+			type{ type }
 		{
 			MakeNewFreeBlock(initialHeapSizeInBytes);
 			
@@ -31,7 +39,8 @@ namespace Renderer
 							resources, 
 							sizeInBytes,
 							alignment,
-							heapFlags
+							heapFlags,
+							type
 						),
 						{}
 					}

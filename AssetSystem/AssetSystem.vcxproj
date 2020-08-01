@@ -239,16 +239,17 @@
   <ItemGroup>
     <ClCompile Include="AssetSystem.cpp" />
     <ClCompile Include="Core\AssetFileending.cpp" />
+    <ClCompile Include="Core\AssetHashingUtils.cpp" />
     <ClCompile Include="Core\AssetMemory.cpp" />
     <ClCompile Include="Core\AssetPtr.cpp" />
     <ClCompile Include="Core\AssetRegistry.cpp" />
     <ClCompile Include="Core\AssetSystemImpl.cpp" />
-    <ClCompile Include="Core\Assets\AssetSystemConfigAsset.cpp" />
+    <ClCompile Include="Core\InMemoryReferences.cpp" />
+    <ClCompile Include="Core\SerializedReferences.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="IO\Archive.cpp" />
     <ClCompile Include="IO\Filetypes\AssetReader.cpp" />
     <ClCompile Include="IO\Filetypes\AssetWriter.cpp" />
-    <ClCompile Include="IO\Filetypes\Test\AssetArchiveTests.cpp" />
     <ClCompile Include="IO\Reader.cpp" />
     <ClCompile Include="IO\Writer.cpp" />
   </ItemGroup>
@@ -258,10 +259,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Core\AssetHashingUtils.hpp" />
     <ClInclude Include="Core\AssetMemory.hpp" />
     <ClInclude Include="Core\AssetRegistry.hpp" />
     <ClInclude Include="Core\AssetSystemImpl.hpp" />
-    <ClInclude Include="Core\Assets\AssetSystemConfigAsset.hpp" />
+    <ClInclude Include="Core\InMemoryReferences.hpp" />
+    <ClInclude Include="Core\SerializedReferences.hpp" />
     <ClInclude Include="Interface\Archivable.hpp" />
     <ClInclude Include="Interface\Asset.hpp" />
     <ClInclude Include="Interface\AssetConstructionOperations.hpp" />
@@ -278,7 +281,6 @@
     <ClInclude Include="IO\Filetypes\AssetReader.hpp" />
     <ClInclude Include="IO\Filetypes\AssetWriter.hpp" />
     <ClInclude Include="IO\Filetypes\JsonWriter.hpp" />
-    <ClInclude Include="IO\Filetypes\Test\AssetArchiveTests.hpp" />
     <ClInclude Include="IO\Reader.hpp" />
     <ClInclude Include="IO\Writer.hpp" />
   </ItemGroup>

@@ -12,8 +12,13 @@ namespace Renderer
 		Buffer,
 		Signature,		
 		WindowSurface,
-		DescriptorAllocator
+		DescriptorAllocator,
+		DepthTexture,
+		RawDescriptor,
+		ReadbackBuffer,
+		UploadResource,
 		
 	};
 
+	
 }

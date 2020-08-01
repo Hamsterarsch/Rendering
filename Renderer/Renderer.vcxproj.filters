@@ -86,9 +86,6 @@
     <ClInclude Include="Resources\HasQueriableResources.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Resources\Registry.hpp">
-      <Filter>Resources</Filter>
-    </ClInclude>
     <ClInclude Include="Resources\ResourceRegistry.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
@@ -102,9 +99,6 @@
       <Filter>Commands</Filter>
     </ClInclude>
     <ClInclude Include="Resources\RenderSurface.hpp">
-      <Filter>Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="Resources\MaintainsInternalRenderResources.hpp">
       <Filter>Resources</Filter>
     </ClInclude>
     <ClInclude Include="Commands\CompositeRecordCommand.hpp">
@@ -308,9 +302,6 @@
     <ClInclude Include="Commands\Basic\SetDescriptorBlockViewsAsGraphicsTableCommand.hpp">
       <Filter>Commands\Basic</Filter>
     </ClInclude>
-    <ClInclude Include="Commands\Basic\SetConstantsToGraphicsCommand.hpp">
-      <Filter>Commands\Basic</Filter>
-    </ClInclude>
     <ClInclude Include="StateSettings\StateImpl.hpp">
       <Filter>StateSettings</Filter>
     </ClInclude>
@@ -322,6 +313,40 @@
     </ClInclude>
     <ClInclude Include="Commands\Basic\SetDescriptorBlockViewsAsComputeTableCommand.hpp">
       <Filter>Commands\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\Basic\BindRenderTargetsCommand.hpp">
+      <Filter>Commands\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources\HandleMap.hpp">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\Basic\BindDepthTargetOnlyCommand.hpp">
+      <Filter>Commands\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\Basic\ClearDepthTextureCommand.hpp">
+      <Filter>Commands\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="CounterResourceDefinition.hpp" />
+    <ClInclude Include="Commands\Basic\SetConstantsCommand.hpp">
+      <Filter>Commands\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\Basic\TransitionResourceCommand.hpp">
+      <Filter>Commands\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\Internal\CopyBufferRegionCommand.hpp">
+      <Filter>Commands\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\Internal\AliasingTransitionCommand.hpp">
+      <Filter>Commands\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface\Resources\DataSource.hpp">
+      <Filter>Interface\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\Internal\CopyBufferToTextureCommand.hpp">
+      <Filter>Commands\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\Internal\DiscardResourceCommand.hpp">
+      <Filter>Commands\Internal</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -381,9 +406,6 @@
       <Filter>Resources</Filter>
     </ClCompile>
     <ClCompile Include="Resources\ResourceRegistryDetachedReference.cpp">
-      <Filter>Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="Resources\Registry.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
     <ClCompile Include="Resources\ResourceRegistry.cpp">
@@ -493,9 +515,6 @@
     <ClCompile Include="Commands\Basic\SetDescriptorBlockViewsAsGraphicsTableCommand.cpp">
       <Filter>Commands\Basic</Filter>
     </ClCompile>
-    <ClCompile Include="Commands\Basic\SetConstantsToGraphicsCommand.cpp">
-      <Filter>Commands\Basic</Filter>
-    </ClCompile>
     <ClCompile Include="Commands\Basic\SetSignatureComputeCommand.cpp">
       <Filter>Commands\Basic</Filter>
     </ClCompile>
@@ -504,6 +523,33 @@
     </ClCompile>
     <ClCompile Include="Commands\Basic\SetDescriptorBlockViewsAsComputeTableCommand.cpp">
       <Filter>Commands\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Basic\BindRenderTargetsCommand.cpp">
+      <Filter>Commands\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Basic\BindDepthTargetOnlyCommand.cpp">
+      <Filter>Commands\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Basic\ClearDepthTextureCommand.cpp">
+      <Filter>Commands\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Basic\SetConstantsCommand.cpp">
+      <Filter>Commands\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Basic\TransitionResourceCommand.cpp">
+      <Filter>Commands\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Internal\CopyBufferRegionCommand.cpp">
+      <Filter>Commands\Internal</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Internal\AliasingTransitionCommand.cpp">
+      <Filter>Commands\Internal</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Internal\CopyBufferToTextureCommand.cpp">
+      <Filter>Commands\Internal</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\Internal\DiscardResourceCommand.cpp">
+      <Filter>Commands\Internal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -548,6 +594,9 @@
     </Filter>
     <Filter Include="Commands\Basic">
       <UniqueIdentifier>{aad6765a-6344-4012-ba88-f613411d9b7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Commands\Internal">
+      <UniqueIdentifier>{46d6f06f-2897-47ff-b589-ec6ebe4181fb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

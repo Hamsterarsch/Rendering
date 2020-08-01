@@ -108,6 +108,33 @@ namespace App::Windows
 
 
 	
+	Window::Window(Window &&other) noexcept
+	{
+		*this = std::move(other);
+		
+	}
+
+
+	
+	Window &Window::operator=(Window &&rhs) noexcept
+	{
+		if(this == &rhs)
+		{
+			return *this;
+		}
+
+		windowName = std::move(rhs.windowName);
+		className = std::move(rhs.className);
+		handle = std::move(rhs.handle);
+
+		rhs.handle = nullptr;
+
+		return *this;
+		
+	}
+
+
+	
 	Window::~Window()
 	{
 		if(handle != nullptr)
@@ -116,20 +143,9 @@ namespace App::Windows
 		}
 				
 	}
+	   
 
 
-	
-	Window::Window(Window &&Other) :
-		windowName{ std::move(Other.windowName) },
-		className{ std::move(Other.className) },
-		handle{ Other.handle }
-	{
-		Other.handle = nullptr;
-		
-	}
-
-
-	
 	void Window::SetWindowSize(const Dimensions2D &size)
 	{
 		const auto primaryDisplayWidth{ GetSystemMetrics(SM_CXSCREEN) };

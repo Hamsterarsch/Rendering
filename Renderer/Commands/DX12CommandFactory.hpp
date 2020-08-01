@@ -31,6 +31,13 @@ namespace Renderer::DX12::Commands
 		public: UniquePtr<Renderer::Commands::Command> SetDescriptorBlockViewsAsGraphicsTable(ResourceHandle::t_hash descriptorBlock, unsigned parameterIndex) override;
 
 		public: UniquePtr<Renderer::Commands::Command> SetDescriptorBlockViewsAsComputeTable(ResourceHandle::t_hash descriptorBlock, unsigned parameterIndex) override;
+
+
+		public: UniquePtr<Renderer::Commands::Command> BindDepthTargetOnly(ResourceHandle::t_hash depthTextureDescriptor) override;
+		
+		public: UniquePtr<Renderer::Commands::Command> BindRenderTargets(ResourceHandle::t_hash windowSurface, ResourceHandle::t_hash depthTextureDescriptor) override;
+
+		public: UniquePtr<Renderer::Commands::Command> ClearDepthTexture(ResourceHandle::t_hash depthTextureDescriptor) override;
 		
 		
 		public: UniquePtr<Renderer::Commands::Command> SetIndexBuffer
@@ -58,6 +65,14 @@ namespace Renderer::DX12::Commands
 			unsigned offsetIntoConstants
 		) override;
 
+		UniquePtr<Renderer::Commands::Command> SetComputeConstants
+		(
+			unsigned parameterIndex, 
+			const unsigned &constantData,
+			unsigned numConstants,
+			unsigned offsetIntoDstInConstants
+		) override;
+		
 		
 		public: UniquePtr<Renderer::Commands::Command> SetScissorRect(float topLeftX, float topLeftY, float width, float height) override;
 				
@@ -84,6 +99,11 @@ namespace Renderer::DX12::Commands
 		
 		public: UniquePtr<Renderer::Commands::Command> IncreaseCounter(CounterFactory::CounterID id, size_t valueToIncreaseBy) override;
 
+		
+		public: UniquePtr<Renderer::Commands::Command> TransitionUnorderedAccessToShaderResource(ResourceHandle::t_hash resource, bool usableInPixelShader) override;
+		
+		public: UniquePtr<Renderer::Commands::Command> TransitionShaderResourceToUnorderedAccess(ResourceHandle::t_hash resource) override;
+		
 	};
 	
 	

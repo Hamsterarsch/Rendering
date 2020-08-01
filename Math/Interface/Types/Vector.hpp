@@ -36,7 +36,7 @@ namespace Math
 	class VectorProxy : public VectorBase<VectorProxy<t_glm>, t_glm> { static_assert(true, "invalid vector base type"); };	
 
 	template<class t_glm>
-	class VectorProxy<t_glm, 2> : public VectorBase<VectorProxy<t_glm>, t_glm> 
+	class VectorProxy<t_glm, 2> final : public VectorBase<VectorProxy<t_glm>, t_glm> 
 	{
 		public: using t_wrapped = t_glm;
 		
@@ -53,7 +53,7 @@ namespace Math
 
 		public: constexpr VectorProxy() : _internal{} {}
 		
-		public: template<class ...t_args> constexpr VectorProxy(t_args ...Args) : _internal{Args...} {}
+		public: template<class ...t_args> constexpr VectorProxy(t_args ...Args) : _internal(Args...) {}
 										
 	};
 
@@ -64,7 +64,7 @@ namespace Math
 
 
 	template<class t_glm>
-	class VectorProxy<t_glm, 3> : public VectorBase<VectorProxy<t_glm>, t_glm> 
+	class VectorProxy<t_glm, 3> final : public VectorBase<VectorProxy<t_glm>, t_glm> 
 	{
 		public: using t_wrapped = t_glm;
 		
@@ -81,7 +81,9 @@ namespace Math
 
 		public: constexpr VectorProxy() : _internal{} {}
 		
-		public: template<class ...t_args> constexpr VectorProxy(t_args ...Args) : _internal{Args...} {}
+		public: template<class ...t_args> constexpr VectorProxy(t_args ...Args) : _internal(Args...) {}
+
+		public: template<class t_glmOther> VectorProxy(const VectorProxy<t_glmOther> &other) : _internal(other._internal) {}
 										
 	};
 	
@@ -92,7 +94,7 @@ namespace Math
 	
 	
 	template<class t_glm>
-	class VectorProxy<t_glm, 4> : public VectorBase<VectorProxy<t_glm>, t_glm> 
+	class VectorProxy<t_glm, 4> final : public VectorBase<VectorProxy<t_glm>, t_glm> 
 	{
 		public: using t_wrapped = t_glm;
 		
@@ -108,15 +110,22 @@ namespace Math
 
 
 		public: constexpr VectorProxy() : _internal{} {}
-		
-		public: template<class ...t_args> constexpr VectorProxy(t_args ...Args) : _internal{Args...} {}
+		public: template<class ...t_args> constexpr VectorProxy(t_args ...Args) : _internal(Args...) {}		
+		public: VectorProxy(const Vector3 &other) : _internal(other._internal.x, other._internal.y, other._internal.z, 1) {}
 										
 	};
-
+			
 	using Vector4 = VectorProxy<glm::vec4>;
 	using VectorInt4 = VectorProxy<glm::ivec4>;
 	using VectorUint4 = VectorProxy<glm::uvec4>;
 	
+
+	template<class t>
+	VectorProxy<t> operator-(const VectorProxy<t> &vector)
+	{
+		return -vector._internal;
+		
+	}
 	
 }
 

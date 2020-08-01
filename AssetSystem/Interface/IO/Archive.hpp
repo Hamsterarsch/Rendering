@@ -4,6 +4,9 @@
 #include <cstdint>
 
 
+namespace assetSystem { class AssetPtr; }
+
+
 namespace assetSystem::io
 {	
 	class Archive
@@ -22,6 +25,8 @@ namespace assetSystem::io
 		public: virtual Archive &Serialize(const char *propertyName, char *str) = 0;
 
 		public: virtual Archive &Serialize(const char *propertyName, Archivable &archivable) = 0;
+
+		public: virtual Archive &Serialize(const char *propertyName, assetSystem::AssetPtr &asset) = 0;
 
 				
 

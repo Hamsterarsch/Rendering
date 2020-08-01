@@ -13,7 +13,7 @@ namespace Math
 		private: glm::mat4x4 data;
 
 
-		public: Matrix() = default;
+		public: Matrix();
 		
 		private: Matrix(glm::mat4x4 &&data);
 				 
@@ -21,6 +21,8 @@ namespace Math
 		public: static Matrix MakeTranslation(float x, float y, float z);
 
 		public: static Matrix MakeRotation(float pitch, float yaw, float roll);
+
+		public: static Matrix MakeScale(float x, float y, float z);
 
 		public: static Matrix MakeProjection(float verticalFovRadians, float screenWidth, float screenHeight, float nearDistance, float farDistance);
 
@@ -34,6 +36,10 @@ namespace Math
 		public: Matrix &operator*=(const Matrix &other);
 
 		public: Vector4 Transform(const Vector4 &vector) const;
+
+		public: Vector3 GetTranslation() const;
+
+		public: void SetTranslation(const Vector3 &translation);
 
 						
 	};

@@ -5,7 +5,6 @@
 #include "Resources/RootSignature/RootSignatureFactory.hpp"
 #include "DX12/ShaderFactory.hpp"
 #include "Resources/ResourceRegistry.hpp"
-#include "Resources/MaintainsInternalRenderResources.hpp"
 #include "Resources/Descriptor/DescriptorMemory.hpp"
 #include "Commands/CommandProcessorImpl.hpp"
 #include "Commands/RenderMeshCommand.hpp"
@@ -17,6 +16,7 @@
 #include "StateSettings/RootSignatureSettingsImpl.hpp"
 #include "Resources/Descriptor/ResourceViewFactoryImpl.hpp"
 #include "CounterFactoryImpl.hpp"
+#include "Commands/DX12CommandFactory.hpp"
 
 
 namespace RHA
@@ -42,7 +42,7 @@ namespace Renderer::DX12
 	class ResourceFactory;
 	
 	
-	class RendererFacadeImpl final : public RendererFacade, public MaintainsInternalRenderResources
+	class RendererFacadeImpl final : public RendererFacade
 	{	
 		private: UniquePtr<RHA::DX12::DeviceResources> resources;
 
@@ -51,14 +51,14 @@ namespace Renderer::DX12
 		private: UniquePtr<RHA::DX12::Fence> closeFence;
 
 		private: HANDLE closeEvent;
-				 			
-		private: UniquePtr<ResourceFactory> resourceFactory;
-		
+				 					
 		private: DescriptorMemory descriptors;
 		
-		private: ResourceRegistry registry;
+		private: UniquePtr<ResourceFactory> resourceFactory;
 
-		private: BlendSettingsImpl blendSettings;
+		private: ResourceRegistry registry;
+		
+		private: BlendSettingsImpl blendSettings;		
 
 		private: DepthStencilSettingsImpl depthStencilSettings;
 
@@ -81,11 +81,12 @@ namespace Renderer::DX12
 
 		private: ResourceViewFactoryImpl resourceViewFactory;
 
-
-	 			
+			 			
 		
 		public: RendererFacadeImpl(HWND outputWindow);
-											 
+
+		public: void SubmitDefaultContextCommand() override;
+		
 		public: ~RendererFacadeImpl() override;
 
 			private: void WaitForIdleQueue();
@@ -95,16 +96,19 @@ namespace Renderer::DX12
 		public: RendererFacadeImpl &operator=(const RendererFacadeImpl &) = delete;
 
 
-		public: ResourceHandle::t_hash MakeBuffer(const void *data, size_t sizeInBytes) override;
-
-		private: ResourceHandle::t_hash MakeBufferInternal(const void *data, size_t sizeInBytes, size_t handle);
+		public: ResourceHandle::t_hash MakeBuffer(const void *data, size_t dataAndResourceSizeInBytes) override;
 		
-		public: ResourceHandle::t_hash MakeBuffer(const void *data, size_t sizeInBytes, D3D12_RESOURCE_STATES state) override;
+		public: ResourceHandle::t_hash MakeBuffer(const DataSource *dataSources, unsigned char numDataSources, size_t resourceSizeInBytes) override;
 
-		public: ResourceHandle::t_hash MakeUavBuffer(const void *data, size_t sizeInBytes) override;
+		public: ResourceHandle::t_hash MakeUaBuffer(const void *data, size_t dataAndResourceSizeInBytes) override;
+		
+		public: ResourceHandle::t_hash MakeUaBuffer(const DataSource *dataSources, unsigned char numDataSources, size_t resourceSizeInBytes) override;
 
-		public: DxPtr<ID3D12Resource> MakeReadbackBuffer(size_t sizeInBytes) override;
+		
+		public: ResourceHandle::t_hash MakeTexture(const void *data, size_t width, size_t height) override;
 
+		public: ResourceHandle::t_hash MakeDepthTexture(size_t width, size_t height, bool withStencil) override;
+		
 
 		public: void AddShaderIncludeDirectory(const char *absoluteDirectoryPath) override;
 		
@@ -128,14 +132,16 @@ namespace Renderer::DX12
 			unsigned numStaticSamplers
 		)	override;
 
+		
 		public: virtual size_t MakeRootSignature(const void *serializedData, size_t dataSizeInBytes, unsigned samplerAmount) override;
 		
 		public: ResourceHandle::t_hash MakePso(const ShaderList &shaders, ResourceHandle::t_hash signatureHandle) override;
 							
 		public: ResourceHandle::t_hash MakePso(const Blob &csBlob, Renderer::ResourceHandle::t_hash signatureHandle) override;
-
-		public: ResourceHandle::t_hash MakeTexture(const void *data, size_t width, size_t height) override;
-
+		
+		public: ResourceHandle::t_hash MakeCounterResource(uint32_t numCounters) override;
+		
+		
 		
 		public: bool IsResourceValid(ResourceHandle::t_hash handle) override;
 
@@ -158,11 +164,13 @@ namespace Renderer::DX12
 		public: void SubmitCommand(UniquePtr<::Renderer::Commands::Command> &&command) override;
 
 		public: void SubmitContextCommand(UniquePtr<::Renderer::Commands::Command> &&command) override;
-		
+						
 		public: void DestroyUnreferencedResources() override;
 
 		public: void DestroyExecutedCommands() override;
 
+		public: void QueryUaResourceContent(ResourceHandle::t_hash resource, size_t amountOfBytesToRead, void *outData) override;
+		
 		
 		public: BlendSettings &GetBlendSettings() override;
 		
@@ -178,7 +186,7 @@ namespace Renderer::DX12
 		public: ResourceViewFactory &GetViewFactory() override;
 
 		public: CounterFactory &GetCounterFactory() override;
-						
+
 	};
 
 

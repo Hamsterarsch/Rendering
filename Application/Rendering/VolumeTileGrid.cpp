@@ -8,18 +8,19 @@ namespace App::Rendering
 	(
 		const Math::VectorUint2 &approximateTileDimensions,
 		const Math::Angle verticalFov,
+		const float tileDepthScale,
 		VolumeTileGridData &gridData
 	)
 		:
 	fovTermForDepthCompute
 		{
-			2* Math::Tan(Radians(verticalFov) /2 ) / (gridData.screenDimensions.y / approximateTileDimensions.y)		
+			2* Math::Tan(Radians(verticalFov) /2 ) * tileDepthScale / (gridData.screenDimensions.y / approximateTileDimensions.y)		
 		},
 	gridsize
 		{
 			gridData.screenDimensions.x / approximateTileDimensions.x,
 			gridData.screenDimensions.y / approximateTileDimensions.y,
-			Math::Log(gridData.farDistance/gridData.nearDistance) / Math::Log(1+fovTermForDepthCompute) +1
+			std::ceil(Math::Log2(gridData.farDistance-gridData.nearDistance) / Math::Log2(1+fovTermForDepthCompute))
 		},
 	boundingBoxes(gridsize.x * gridsize.y * gridsize.z, RenderingBoundingBox{})				
 	{

@@ -29,7 +29,7 @@ namespace assetSystem::core
 	
 		char *AssetMemory::AllocateAssetMemory(const AssetKey key, AssetConstructionOperations &cOps)
 		{
-			auto &assetInfo{ assetsInfos[key] = {MakeUnique<char[]>(cOps.GetAssetSizeInBytes()), &cOps} };
+			auto &assetInfo{ assetInfos[key] = {MakeUnique<char[]>(cOps.GetAssetSizeInBytes()), &cOps} };
 
 			return assetInfo.memory.get();
 			
@@ -51,7 +51,7 @@ namespace assetSystem::core
 
 	Asset &AssetMemory::GetAsset(const AssetKey key)
 	{
-		return *reinterpret_cast<Asset *>(assetsInfos.at(key).memory.get());//todo: is type punning from char * defined behavior ?
+		return *reinterpret_cast<Asset *>(assetInfos.at(key).memory.get());//todo: is type punning from char * defined behavior ?
 		
 	}
 	
@@ -59,18 +59,29 @@ namespace assetSystem::core
 	
 	void AssetMemory::FreeAsset(const AssetKey key)
 	{
-		auto &assetInfo{ assetsInfos.at(key) };
+		auto &assetInfo{ assetInfos.at(key) };
 		
-		reinterpret_cast<Asset *>(assetInfo.memory.get())->~Asset();	//todo try to replace DestructAsset with call to Asset::~Asset()
-		assetsInfos.erase(key);
+		reinterpret_cast<Asset *>(assetInfo.memory.get())->~Asset();
+		assetInfos.erase(key);
 		
 	}
 
 
 	
+	void AssetMemory::RenameAsset(const AssetKey key, const AssetKey newKey)
+	{
+		auto info{ std::move(assetInfos.at(key)) };
+		assetInfos.erase(key);
+
+		assetInfos.insert( {newKey, std::move(info)} );
+		
+	}
+
+
+
 	bool AssetMemory::IsAssetLoaded(const AssetKey key) const
 	{
-		return assetsInfos.find(key) != assetsInfos.end();
+		return assetInfos.find(key) != assetInfos.end();
 		
 	}
 

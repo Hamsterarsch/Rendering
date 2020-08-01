@@ -17,7 +17,7 @@ namespace assetSystem::core
 			AssetConstructionOperations *cOps;
 		};
 		
-		private: std::unordered_map<AssetKey, AssetInfo> assetsInfos;
+		private: std::unordered_map<AssetKey, AssetInfo> assetInfos;
 
 		private: std::unordered_map<std::string, UniquePtr<AssetConstructionOperations>> assetConstructOperations;
 		
@@ -35,6 +35,8 @@ namespace assetSystem::core
 
 		public: void FreeAsset(AssetKey key);
 
+		public: void RenameAsset(AssetKey key, AssetKey newKey);
+		
 		public: bool IsAssetLoaded(AssetKey key) const;
 		
 	};

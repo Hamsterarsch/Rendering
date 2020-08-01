@@ -1,13 +1,15 @@
 #include "AssetSystem/IO/Filetypes/AssetReader.hpp"
 #include "AssetSystem/IO/Filetypes/AssetArchiveConstants.hpp"
 #include "IO/DiskConversions.hpp"
+#include "AssetPtr.hpp"
 #include "Shared/Exception/Exception.hpp"
 
 
 namespace assetSystem::io
 {//todo: catch eofs with exception
-	AssetReader::AssetReader(const std::filesystem::path &filepath) :
-		file{ filepath, std::ios_base::in | std::ios_base::binary }
+	AssetReader::AssetReader(const std::filesystem::path &filepath, std::function<AssetPtr(AssetKey)> &&loadAsset) :
+		file{ filepath, std::ios_base::in | std::ios_base::binary },
+		loadAsset{ std::move(loadAsset) }
 	{
 		if(this->IsInvalid())
 		{
@@ -98,7 +100,8 @@ namespace assetSystem::io
 							{
 								return false;
 								
-							}
+							}		
+							
 							return HandleObjectPropertyEnd();							
 						}
 
@@ -115,14 +118,36 @@ namespace assetSystem::io
 					{
 						PopCurrentObjectScope();
 
-						if(SeekEofUntilToken(AssetArchiveConstants::dataStartToken))
-						{							
-							return false;
+						while(true)
+						{
+							const auto character{ file.peek() };
+							if(character == std::ifstream::traits_type::eof())
+							{
+								return false;
+							}
+
+							if(character == ',' || character == '}')
+							{								
+								return SeekNextPropertyStart();								
+							}
+							file.get();							
 						}
-						file.get();
-						return true;
-		
+				
 					}
+
+						void AssetReader::PopCurrentObjectScope()
+						{
+							objectQualifiers.pop_back();
+							while(!objectQualifiers.empty())
+							{								
+								if(objectQualifiers.back() == '.')
+								{
+									break;
+								}
+								objectQualifiers.pop_back();
+							}							
+		
+						}
 
 				void AssetReader::ProcessProperty(std::string &&propertyName)
 				{
@@ -168,19 +193,7 @@ namespace assetSystem::io
 
 					void AssetReader::ProcessObjectProperty(std::string &&propertyName)
 					{
-						const auto firstToken{ GetFirstTokenInObject() };
-						if
-						(	
-							firstToken == std::ifstream::traits_type::eof()
-							|| firstToken == '}'
-						)
-						{
-							return;
-							
-						}
-		
-						AddObjectScope(std::move(propertyName));
-						file.seekg(-1, std::ifstream::cur);
+						AddObjectScope(std::move(propertyName));					
 					
 					}
 
@@ -328,20 +341,6 @@ namespace assetSystem::io
 		
 								}
 
-						void AssetReader::PopCurrentObjectScope()
-						{
-							objectQualifiers.pop_back();
-							while(!objectQualifiers.empty())
-							{								
-								if(objectQualifiers.back() == '.')
-								{
-									break;
-								}
-								objectQualifiers.pop_back();
-							}							
-		
-						}
-
 
 
 	Archive &AssetReader::Serialize(const char *propertyName, unsigned char *data, const size_t numElements, const size_t elementStrideInBytes)
@@ -456,6 +455,20 @@ namespace assetSystem::io
 
 
 	
+	Archive &AssetReader::Serialize(const char *propertyName, AssetPtr &asset)
+	{
+		static_assert(std::is_same_v<uint32_t, decltype(asset.GetCurrentKey())>);
+		uint32_t key{ 0 };
+		Serialize(propertyName, key);
+
+		asset = loadAsset(key);
+
+		return *this;
+		
+	}
+
+
+
 	size_t AssetReader::GetPropertySizeInBytes(const char *propertyName)
 	{		
 		if(FileIsAtBinaryDataStartSequence())

@@ -16,7 +16,9 @@ namespace App::Rendering
 
 		private: UniquePtr<Commands::CommandFactory> commandFactory;
 		
-		private: size_t mainWindowSurface;
+		private: ResourceHandle::t_hash mainWindowSurface;
+
+		private: ResourceHandle::t_hash mainDepthTextureView;
 
 		private: SceneRenderer sceneRenderer;
 
@@ -30,18 +32,28 @@ namespace App::Rendering
 
 
 
+		public: RendererMediator() = default;
+		
 		public: RendererMediator(RendererFacade &renderer, SceneRenderer &&sceneRenderer, UiRenderer &&uiRenderer);
 
 		
-		public: void SubmitFrame();
+		public: void SubmitFrame(const UniquePtr<GraphVisitorHarvestMeshes> &sceneGraphData);
 
 			private: void SubmitCommand(UniquePtr<Commands::Command> &&command);
 
-		public: ::Renderer::RendererFacade &Renderer() { return *underlyingRenderer; }
+		public: RendererFacade &Renderer() { return *underlyingRenderer; }
 
 		public: Commands::CommandFactory &CommandFactory() { return *commandFactory; }
 
+		public: ResourceHandle::t_hash GetMainDepthTextureView() const { return mainDepthTextureView; }
+
+		public: ResourceHandle::t_hash GetMainWindowSurface() const { return mainWindowSurface; }
+		
 		public: void SetMainWindowSurface(ResourceHandle::t_hash surface);
+
+		public: void SetMainDepthTextureView(ResourceHandle::t_hash depthTextureView);
+
+		public: void OnMainWindowSurfaceSizeChanged(const Math::VectorUint2 &newSize);
 		
 	};
 

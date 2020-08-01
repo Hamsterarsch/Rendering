@@ -1,0 +1,8 @@
+{
+	`code`: `float3 DiffuseColor(LightingV2P IN)
+{
+	return float3(.5,.5,.5);
+}`,
+	`numConstantsSlots`: `0`,
+	`numTextureSlots`: `0`
+}

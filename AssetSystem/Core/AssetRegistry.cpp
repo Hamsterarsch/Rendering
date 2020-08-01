@@ -1,24 +1,29 @@
 #include "AssetSystem/Core/AssetRegistry.hpp"
-#include "Shared/Filesystem/Conversions.hpp"
-#include "Shared/Hashing/CRC32.hpp"
+#include "AssetHashingUtils.hpp"
 #include "AssetFileending.hpp"
+#include "Shared/Exception/Exception.hpp"
 
 
 namespace assetSystem::core
 {	
 	AssetRegistry::AssetRegistry(const char *projectAssetDirectory)		
-	{
-		std::string asString{ projectAssetDirectory };
-		if(asString.back() != '/' && asString.back() != '\\')
-		{
-			asString.append("/");
-		}		
-		this->projectAssetDirectory = asString;
-		
+	{		
+		CleanAndSaveRootDirectory(projectAssetDirectory);
 		DiscoverAssets(projectAssetDirectory);
 		
 	}
 
+		void AssetRegistry::CleanAndSaveRootDirectory(const char *path)
+		{
+			std::string asString{ path };
+			if(asString.back() != '/' && asString.back() != '\\')
+			{
+				asString.append("/");
+			}		
+			this->projectAssetDirectory = asString;
+			
+		}
+			
 		void AssetRegistry::DiscoverAssets(const fs::path &rootFolder)
 		{			
 			for(auto &&entry : fs::recursive_directory_iterator{ rootFolder })
@@ -32,35 +37,22 @@ namespace assetSystem::core
 		}
 
 			void AssetRegistry::RegisterAsset(std::string &&projectRelativePath)
-			{				
-				const auto extensionPos{ projectRelativePath.find(GetAssetFileending()) };
-				if(extensionPos != std::string::npos)
-				{
-					projectRelativePath.erase(extensionPos, projectRelativePath.size() - extensionPos);					
-				}
-
-				ReplaceBackslashes(projectRelativePath);		
-				const auto key{ MakeAssetKey(projectRelativePath) };
-				fileHandleMap.insert( {key, std::move(projectRelativePath)} );
+			{
+				auto cleanPath{ EnsureCorrectPathFormat(projectRelativePath.c_str()) };
+				const auto key{ MakeAssetKey(cleanPath) };
+				fileHandleMap.insert( {key, std::move(cleanPath)} );
 		
 			}
 
-					void AssetRegistry::ReplaceBackslashes(std::string &path)
-					{
-						for(auto replacePos{ path.find_first_of('\\') }; replacePos != path.npos; replacePos = path.find_first_of('\\'))
-						{
-							path.at(replacePos) = '/';
-						}
-		
-					}
-
-				AssetKey AssetRegistry::MakeAssetKey(const std::string &projectRelativePath)
-				{
-					return Hashing::CRC32Mpeg2::Generate(projectRelativePath.data(), projectRelativePath.size());
-		
-				}
 
 				
+	bool AssetRegistry::IsAssetRegistered(const AssetKey key) const
+	{			
+		return fileHandleMap.find(key) != fileHandleMap.end();
+		
+	}
+
+	
 				
 	fs::path AssetRegistry::GetAbsoluteAssetPath(const unsigned assetKey) const
 	{
@@ -70,45 +62,36 @@ namespace assetSystem::core
 
 
 	
-	void AssetRegistry::AddReference(const AssetKey key)
+	void AssetRegistry::AddAssetRedirect(const AssetKey from, const AssetKey to)
 	{
-		++references[key].strongReferences;
+		Exception::ThrowIfDebug(HasAssetRedirect(from), {"AssetRegistry: Tried to overwrite an existing redirect"});
+
+		assetRedirects[from] = to;
 		
 	}
-
-
 	
-	void AssetRegistry::RemoveReference(const AssetKey key)
-	{		
-		if(--references.at(key).strongReferences == 0)
+		bool AssetRegistry::HasAssetRedirect(const AssetKey key) const
 		{
-			references.erase(key);	
-		}
-		
-	}
-
-	
-	
-	bool AssetRegistry::IsUnreferenced(AssetKey key)
-	{
-		return references.find(key) == references.end();
-		
-	}
-
-
-
-	bool AssetRegistry::IsAssetKnown(const AssetKey key) const
-	{			
-		return fileHandleMap.find(key) != fileHandleMap.end();
-		
-	}
-
-		AssetKey AssetRegistry::MakeAssetKey(const char *projectRelativePath)
-		{
-			return Hashing::CRC32Mpeg2::Generate(projectRelativePath, std::strlen(projectRelativePath));
-		
+			return assetRedirects.find(key) != assetRedirects.end();
+			
 		}
 
 
 	
+	AssetKey AssetRegistry::GetAssetRedirect(const AssetKey key) const
+	{
+		return assetRedirects.at(key);
+		
+	}
+
+
+
+	void AssetRegistry::UnregisterAsset(const AssetKey key)
+	{
+		assetRedirects.erase(key);
+		fileHandleMap.erase(key);
+		
+	}
+
+	   	
 }

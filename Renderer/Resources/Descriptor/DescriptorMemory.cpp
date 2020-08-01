@@ -89,8 +89,39 @@ namespace Renderer::DX12
 		
 	}
 
+
 	
+	D3D12_CPU_DESCRIPTOR_HANDLE DescriptorMemory::AllocateDepthStencilDescriptor()
+	{
+		UniquePtr<DescriptorHeap> heap{};
+		if(not unoccupiedDsvMemory.empty())
+		{
+			heap = std::move(unoccupiedDsvMemory.back());
+			unoccupiedDsvMemory.pop_back();
+		}
+		else
+		{
+			heap = Facade::MakeDescriptorHeap(resources, D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
+		}
+
+		const auto cpuDescriptor{ heap->GetHandleCpu(0) };
+		
+		occupiedDsvMemory.insert( {cpuDescriptor, std::move(heap)} );
+		return cpuDescriptor;
+				
+	}
+
+
 	
+	void DescriptorMemory::RetireDepthStencilDescriptor(D3D12_CPU_DESCRIPTOR_HANDLE handle)
+	{
+		unoccupiedDsvMemory.emplace_back(std::move(occupiedDsvMemory.at(handle)));
+		occupiedDsvMemory.erase(handle);
+		
+	}
+
+
+
 	void DescriptorMemory::RecordListBinding(CmdList *list)
 	{
 		ID3D12DescriptorHeap *heaps[]

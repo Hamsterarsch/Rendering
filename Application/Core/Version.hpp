@@ -13,6 +13,8 @@ namespace App::Core
 		public: int patch{ 0 };
 
 
+
+		public: Version() : Version{ 0, 0, 0 } {}
 		
 		public: Version(int major, int minor, int patch) :
 			major{ major },

@@ -15,17 +15,11 @@
     <ClCompile Include="IO\Filetypes\AssetReader.cpp">
       <Filter>IO\Filetypes</Filter>
     </ClCompile>
-    <ClCompile Include="IO\Filetypes\Test\AssetArchiveTests.cpp">
-      <Filter>IO\Filetypes\Test</Filter>
-    </ClCompile>
     <ClCompile Include="IO\Archive.cpp">
       <Filter>IO</Filter>
     </ClCompile>
     <ClCompile Include="Core\AssetRegistry.cpp">
       <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\Assets\AssetSystemConfigAsset.cpp">
-      <Filter>Core\Assets</Filter>
     </ClCompile>
     <ClCompile Include="Core\AssetSystemImpl.cpp">
       <Filter>Core</Filter>
@@ -39,6 +33,15 @@
     <ClCompile Include="Core\AssetFileending.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Core\InMemoryReferences.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\SerializedReferences.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\AssetHashingUtils.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Interface">
@@ -50,14 +53,8 @@
     <Filter Include="IO\Filetypes">
       <UniqueIdentifier>{9101ebd1-9c4e-4106-8736-93943b21e565}</UniqueIdentifier>
     </Filter>
-    <Filter Include="IO\Filetypes\Test">
-      <UniqueIdentifier>{bcf12557-75b7-476c-85c1-de3ed06c9087}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Core">
       <UniqueIdentifier>{46687de7-9317-4b1c-9df7-a11f0ccf74da}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\Assets">
-      <UniqueIdentifier>{c23c8548-31ba-4f4a-bf80-d14e8d7a2af5}</UniqueIdentifier>
     </Filter>
     <Filter Include="Interface\IO">
       <UniqueIdentifier>{9d42432a-5a55-45db-ac13-258a62cebf81}</UniqueIdentifier>
@@ -97,14 +94,8 @@
     <ClInclude Include="IO\DiskConversions.hpp">
       <Filter>IO</Filter>
     </ClInclude>
-    <ClInclude Include="IO\Filetypes\Test\AssetArchiveTests.hpp">
-      <Filter>IO\Filetypes\Test</Filter>
-    </ClInclude>
     <ClInclude Include="Core\AssetRegistry.hpp">
       <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Assets\AssetSystemConfigAsset.hpp">
-      <Filter>Core\Assets</Filter>
     </ClInclude>
     <ClInclude Include="Core\AssetSystemImpl.hpp">
       <Filter>Core</Filter>
@@ -132,6 +123,15 @@
     </ClInclude>
     <ClInclude Include="Interface\AssetFileending.hpp">
       <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\InMemoryReferences.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\SerializedReferences.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\AssetHashingUtils.hpp">
+      <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

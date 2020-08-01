@@ -82,7 +82,7 @@ namespace Renderer::DX12
 
 				private: D3D12_CPU_DESCRIPTOR_HANDLE GetViewHandleCpu(size_t index) const;
 
-				private: void UpdateAfterTableIndex(const ChunkData &forChunkData, size_t offsetFromTableStartToDescriptor);
+				private: void UpdateAfterTableIndex(ChunkData &forChunkData, size_t offsetFromTableStartToDescriptor) const;
 
 		public: void CreateSrvTex2D(ID3D12Resource *resource, size_t tableOffset, Format format, uint16_t numMips, uint16_t mostDetailedMip);
 		
@@ -98,9 +98,9 @@ namespace Renderer::DX12
 
 		public: void CreateUavBuffer(ID3D12Resource *resource, size_t tableOffset, size_t firstIndex, size_t numElements, size_t strideInBytes);
 
-			private: void CreateUavBufferInternal(ID3D12Resource *resource, ID3D12Resource *counter, size_t tableOffset, size_t firstIndex, size_t numElements, size_t strideInBytes, DXGI_FORMAT format);
+			private: void CreateUavBufferInternal(ID3D12Resource *resource, ID3D12Resource *counter, size_t offsetToCounterInBytes, size_t tableOffset, size_t firstIndex, size_t numElements, size_t strideInBytes, DXGI_FORMAT format);
 
-		public: void CreateUavBufferWithCounter(ID3D12Resource *resource, ID3D12Resource *counter, size_t tableOffset, size_t firstIndex, size_t numElements, size_t strideInBytes);
+		public: void CreateUavBufferWithCounter(ID3D12Resource *resource, ID3D12Resource *counter, size_t offsetToCounterInBytes, size_t tableOffset, size_t firstIndex, size_t numElements, size_t strideInBytes);
 
 		public: void CreateUavBufferFormatted(ID3D12Resource *resource, size_t tableOffset, size_t firstIndex, size_t numElements, DXGI_FORMAT format);
 			

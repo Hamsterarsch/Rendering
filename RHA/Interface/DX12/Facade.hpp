@@ -34,7 +34,7 @@ namespace RHA
 
 			static UniquePtr<UploadHeap> MakeUploadHeap(DeviceResources *resources, size_t sizeInBytes);
 
-			static UniquePtr<Heap> MakeHeap(DeviceResources *resources, size_t sizeInBytes, size_t alignment, D3D12_HEAP_FLAGS flags);
+			static UniquePtr<Heap> MakeHeap(DeviceResources *resources, size_t sizeInBytes, size_t alignment, D3D12_HEAP_FLAGS flags, D3D12_HEAP_TYPE = D3D12_HEAP_TYPE_DEFAULT);
 
 			static UniquePtr<DescriptorHeap> MakeDescriptorHeap(DeviceResources *resources, D3D12_DESCRIPTOR_HEAP_TYPE type, size_t capacity, bool isGpuVisible);
 

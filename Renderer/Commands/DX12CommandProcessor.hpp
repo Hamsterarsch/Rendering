@@ -9,14 +9,7 @@ namespace Renderer::DX12{ class CounterFactoryImpl; }
 
 namespace Renderer::DX12::Commands
 {
-	enum class CommandContextEvents : short
-	{
-		Nothing,
-		CommandListChanged,
-		GraphicsSignatureChanged,
-		ComputeSignatureChanged
-	};
-		
+
 	
 	class DX12CommandProcessor : public ::Renderer::Commands::CommandProcessor
 	{		
@@ -25,11 +18,6 @@ namespace Renderer::DX12::Commands
 		public: virtual HasQueriableResources &GetRegistry() = 0;
 
 		public: virtual void SubmitAndWaitForGpuWork() = 0;
-
-		
-		public: virtual void NotifyCommandContextAbout(CommandContextEvents event) = 0;
-
-		public: virtual bool ShouldExecuteContextCommandFor(CommandContextEvents reason) const = 0;
 
 
 		public: virtual CounterFactoryImpl &GetCounters() = 0;

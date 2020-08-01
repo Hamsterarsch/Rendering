@@ -243,9 +243,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Commands\Basic\BindDepthTargetOnlyCommand.hpp" />
+    <ClInclude Include="Commands\Basic\BindRenderTargetsCommand.hpp" />
+    <ClInclude Include="Commands\Basic\ClearDepthTextureCommand.hpp" />
     <ClInclude Include="Commands\Basic\DispatchCommand.hpp" />
     <ClInclude Include="Commands\Basic\DrawIndexedInstancedCommand.hpp" />
-    <ClInclude Include="Commands\Basic\SetConstantsToGraphicsCommand.hpp" />
+    <ClInclude Include="Commands\Basic\SetConstantsCommand.hpp" />
     <ClInclude Include="Commands\Basic\SetDescriptorBlockViewsAsComputeTableCommand.hpp" />
     <ClInclude Include="Commands\Basic\SetDescriptorBlockViewsAsGraphicsTableCommand.hpp" />
     <ClInclude Include="Commands\Basic\SetIndexBufferCommand.hpp" />
@@ -255,6 +258,7 @@
     <ClInclude Include="Commands\Basic\SetScissorRectCommand.hpp" />
     <ClInclude Include="Commands\Basic\SetVertexBufferCommand.hpp" />
     <ClInclude Include="Commands\Basic\SetViewportCommand.hpp" />
+    <ClInclude Include="Commands\Basic\TransitionResourceCommand.hpp" />
     <ClInclude Include="Commands\ClearDepthSurfaceCommand.hpp" />
     <ClInclude Include="Commands\DX12CommandFactory.hpp" />
     <ClInclude Include="Commands\DX12CommandProcessor.hpp" />
@@ -262,6 +266,10 @@
     <ClInclude Include="Commands\BindDescriptorsContextCommand.hpp" />
     <ClInclude Include="Commands\GlobalBufferContextCommand.hpp" />
     <ClInclude Include="Commands\IncreaseCounterCommand.hpp" />
+    <ClInclude Include="Commands\Internal\AliasingTransitionCommand.hpp" />
+    <ClInclude Include="Commands\Internal\CopyBufferToTextureCommand.hpp" />
+    <ClInclude Include="Commands\Internal\CopyBufferRegionCommand.hpp" />
+    <ClInclude Include="Commands\Internal\DiscardResourceCommand.hpp" />
     <ClInclude Include="Commands\LightingContextCommand.hpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -324,7 +332,9 @@
     <ClInclude Include="Commands\Surface\PresentSurfaceCommand.hpp" />
     <ClInclude Include="Commands\UserContextCommandWrapper.hpp" />
     <ClInclude Include="CounterFactoryImpl.hpp" />
+    <ClInclude Include="CounterResourceDefinition.hpp" />
     <ClInclude Include="Interface\CounterFactory.hpp" />
+    <ClInclude Include="Interface\Resources\DataSource.hpp" />
     <ClInclude Include="Interface\StateSettings\DescriptorTargets.hpp" />
     <ClInclude Include="Interface\StateSettings\RootSignatureSettings.hpp" />
     <ClInclude Include="RendererFacadeImpl.hpp" />
@@ -364,7 +374,6 @@
     <ClInclude Include="Resources\Descriptor\ResourceViewFactoryImpl.hpp" />
     <ClInclude Include="Resources\DynamicHeapSet.hpp" />
     <ClInclude Include="Resources\HandleFactory.hpp" />
-    <ClInclude Include="Resources\MaintainsInternalRenderResources.hpp" />
     <ClInclude Include="Resources\Pso\PsoFactory.hpp" />
     <ClInclude Include="Resources\Pso\VertexLayoutProvider.hpp" />
     <ClInclude Include="Resources\RenderSurface.hpp" />
@@ -373,7 +382,7 @@
     <ClInclude Include="Resources\ResourceFactoryDeallocatable.hpp" />
     <ClInclude Include="Resources\ResourceMemory.hpp" />
     <ClInclude Include="Resources\ResourceRegistry.hpp" />
-    <ClInclude Include="Resources\Registry.hpp" />
+    <ClInclude Include="Resources\HandleMap.hpp" />
     <ClInclude Include="Resources\ResourceRegistryDetachedReference.hpp" />
     <ClInclude Include="Resources\HasQueriableResources.hpp" />
     <ClInclude Include="Resources\UsesReferences.hpp" />
@@ -396,9 +405,12 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Commands\Basic\BindDepthTargetOnlyCommand.cpp" />
+    <ClCompile Include="Commands\Basic\BindRenderTargetsCommand.cpp" />
+    <ClCompile Include="Commands\Basic\ClearDepthTextureCommand.cpp" />
     <ClCompile Include="Commands\Basic\DispatchCommand.cpp" />
     <ClCompile Include="Commands\Basic\DrawIndexedInstancedCommand.cpp" />
-    <ClCompile Include="Commands\Basic\SetConstantsToGraphicsCommand.cpp" />
+    <ClCompile Include="Commands\Basic\SetConstantsCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetDescriptorBlockViewsAsComputeTableCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetDescriptorBlockViewsAsGraphicsTableCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetIndexBufferCommand.cpp" />
@@ -408,6 +420,7 @@
     <ClCompile Include="Commands\Basic\SetSignatureGraphicsCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetVertexBufferCommand.cpp" />
     <ClCompile Include="Commands\Basic\SetViewportCommand.cpp" />
+    <ClCompile Include="Commands\Basic\TransitionResourceCommand.cpp" />
     <ClCompile Include="Commands\DX12CommandFactory.cpp" />
     <ClCompile Include="Commands\IncreaseCounterCommand.cpp" />
     <ClCompile Include="Commands\InitVolumeTileGridCommand.cpp">
@@ -420,6 +433,10 @@
     </ClCompile>
     <ClCompile Include="Commands\CommandProcessorImpl.cpp" />
     <ClCompile Include="Commands\BindDescriptorsContextCommand.cpp" />
+    <ClCompile Include="Commands\Internal\AliasingTransitionCommand.cpp" />
+    <ClCompile Include="Commands\Internal\CopyBufferRegionCommand.cpp" />
+    <ClCompile Include="Commands\Internal\CopyBufferToTextureCommand.cpp" />
+    <ClCompile Include="Commands\Internal\DiscardResourceCommand.cpp" />
     <ClCompile Include="Commands\LightingContextCommand.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -484,7 +501,6 @@
     <ClCompile Include="Resources\ResourceHandle.cpp" />
     <ClCompile Include="Resources\ResourceMemory.cpp" />
     <ClCompile Include="Resources\ResourceRegistry.cpp" />
-    <ClCompile Include="Resources\Registry.cpp" />
     <ClCompile Include="Resources\ResourceRegistryDetachedReference.cpp" />
     <ClCompile Include="Resources\RootSignature\RootSignatureFactory.cpp" />
     <ClCompile Include="Resources\RootSignature\TableLayout.cpp" />

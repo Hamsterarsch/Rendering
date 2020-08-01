@@ -134,6 +134,36 @@
     <ClCompile Include="Rendering\VolumeTileGrid.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="Scene\ContentLight.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\ContentMesh.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\GraphNode.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\GraphVisitorTransformRequiring.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="AssetFactories\StaticMeshData.cpp">
+      <Filter>AssetFactories</Filter>
+    </ClCompile>
+    <ClCompile Include="AssetTypes\StaticMeshAsset.cpp">
+      <Filter>AssetTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\tiny_obj_loader.cc">
+      <Filter>ThirdParty</Filter>
+    </ClCompile>
+    <ClCompile Include="AssetFactories\StaticMeshFactory.cpp">
+      <Filter>AssetFactories</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\GraphVisitorHarvestMeshes.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="AssetTypes\PipelineAsset.cpp">
+      <Filter>AssetTypes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window\Windows\Window.hpp">
@@ -349,9 +379,6 @@
     <ClInclude Include="Ui\Elements\CollapsibleNodeLayoutFrontend.hpp">
       <Filter>Ui\Elements</Filter>
     </ClInclude>
-    <ClInclude Include="AssetTypes\PsoAsset.hpp">
-      <Filter>AssetTypes</Filter>
-    </ClInclude>
     <ClInclude Include="AssetTypes\RendererAsset.hpp">
       <Filter>AssetTypes</Filter>
     </ClInclude>
@@ -375,6 +402,54 @@
     </ClInclude>
     <ClInclude Include="Rendering\VolumeTileGrid.hpp">
       <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\GraphVisitor.hpp">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\GraphNode.hpp">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\GraphNodeContent.hpp">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\ContentLight.hpp">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\ContentMesh.hpp">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\GraphVisitorTransformRequiring.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetTypes\StaticMeshAsset.hpp">
+      <Filter>AssetTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetFactories\StaticMeshFactory.hpp">
+      <Filter>AssetFactories</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetFactories\StaticMeshData.hpp">
+      <Filter>AssetFactories</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetFactories\MeshData.hpp">
+      <Filter>AssetFactories</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\tiny_obj_loader.h">
+      <Filter>ThirdParty</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\GraphVisitorHarvestMeshes.hpp">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\MeshInstanceData.hpp">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\MeshShardInstanceData.hpp">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetTypes\PipelineAsset.hpp">
+      <Filter>AssetTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\ContextCommands\ContextCompositeCommand.hpp">
+      <Filter>Rendering\ContextCommands</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -431,6 +506,12 @@
     </Filter>
     <Filter Include="Rendering\ShaderRelevantTypes">
       <UniqueIdentifier>{f1536792-8209-40f2-8ed5-f0ca79f99306}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{7bae8e6b-ce91-49a0-b2eb-2f6a7c2fcb66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rendering\ContextCommands">
+      <UniqueIdentifier>{be0b1cc3-8564-4bac-bfa9-8d01879f6531}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

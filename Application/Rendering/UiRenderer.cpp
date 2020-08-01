@@ -24,6 +24,8 @@ namespace App::Rendering
 		IMGUI_CHECKVERSION();		
 		imguiContext = ImGui::CreateContext();
 		ImGui::StyleColorsDark();
+
+		renderer.GetVertexLayoutSettings().RestoreSettingsToDefault();
 		
 		CreateUiSignature(renderer);			
 		CreateUiFontTexture(renderer);
@@ -35,7 +37,6 @@ namespace App::Rendering
 		{
 			static_assert(sizeof(float) == 4);
 
-			renderer.GetSignatureSettings().RestoreSettingsToSaved();
 			renderer.GetSignatureSettings()			
 			.DeclareTable().AddTableRange(&DescriptorTargets::ConstantBuffer, 0, 1)
 			.DeclareTable().AddTableRange(&DescriptorTargets::ShaderResource, 0, 1);
@@ -47,6 +48,8 @@ namespace App::Rendering
 			SerializeTarget root{};
 			renderer.SerializeRootSignature(root, &samplerSpec, 1);
 			uiSignature = { &renderer, renderer.MakeRootSignature(root.GetData(), root.GetSizeInBytes(), 0) };
+			renderer.GetSignatureSettings().RestoreSettingsToSaved();
+
 		
 		}
 

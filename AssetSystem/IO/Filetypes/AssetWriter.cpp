@@ -2,13 +2,20 @@
 #include <fstream>
 #include "AssetSystem/IO/Filetypes/AssetArchiveConstants.hpp"
 #include "IO/DiskConversions.hpp"
+#include "Core/AssetRegistry.hpp"
+#include "AssetPtr.hpp"
 
 
 namespace assetSystem::io
 {
-	AssetWriter::AssetWriter(const std::filesystem::path &filepath) :
+	AssetWriter::AssetWriter
+	(
+		const std::filesystem::path &filepath,		
+		std::function<void(AssetKey)> &&onAssetPtr
+	)	:
 		file{ filepath, std::ios_base::out | std::ios_base::trunc | std::ios_base::binary },
-		hasWrittenPropertyValue{ false }
+		hasWrittenPropertyValue{ false },
+		onAssetPtr{ std::move(onAssetPtr) }		
 	{				
 		if(IsInvalid())
 		{
@@ -149,6 +156,21 @@ namespace assetSystem::io
 		file << str;
 		file << AssetArchiveConstants::dataStartToken;
 		hasWrittenPropertyValue = true;
+
+		return *this;
+		
+	}
+
+
+	
+	Archive &AssetWriter::Serialize(const char *propertyName, AssetPtr &asset)
+	{
+		static_assert(std::is_same_v<uint32_t, decltype(asset.GetCurrentKey())>);
+		uint32_t assetKey{ asset.GetCurrentKey() };
+		
+		onAssetPtr(assetKey);
+		
+		Serialize(propertyName, assetKey);
 
 		return *this;
 		

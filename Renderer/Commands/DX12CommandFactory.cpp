@@ -11,10 +11,14 @@
 #include "Commands/Basic/SetViewportCommand.hpp"
 #include "Commands/Basic/DrawIndexedInstancedCommand.hpp"
 #include "Commands/IncreaseCounterCommand.hpp"
-#include "Basic/SetConstantsToGraphicsCommand.hpp"
+#include "Basic/SetConstantsCommand.hpp"
 #include "Basic/SetSignatureComputeCommand.hpp"
 #include "Basic/DispatchCommand.hpp"
 #include "Basic/SetDescriptorBlockViewsAsComputeTableCommand.hpp"
+#include "Basic/BindDepthTargetOnlyCommand.hpp"
+#include "Basic/BindRenderTargetsCommand.hpp"
+#include "Basic/ClearDepthTextureCommand.hpp"
+#include "Basic/TransitionResourceCommand.hpp"
 
 
 namespace Renderer::DX12::Commands
@@ -78,6 +82,34 @@ namespace Renderer::DX12::Commands
 	}
 
 
+	
+	UniquePtr<Renderer::Commands::Command> DX12CommandFactory::BindDepthTargetOnly(const ResourceHandle::t_hash depthTextureDescriptor)
+	{
+		return MakeUnique<BindDepthTargetOnlyCommand>(depthTextureDescriptor);
+		
+	}
+
+
+	
+	UniquePtr<Renderer::Commands::Command> DX12CommandFactory::BindRenderTargets
+	(
+		const ResourceHandle::t_hash windowSurface,
+		const ResourceHandle::t_hash depthTextureDescriptor
+	)
+	{
+		return MakeUnique<BindRenderTargetsCommand>(windowSurface, depthTextureDescriptor);
+		
+	}
+
+
+	
+	UniquePtr<Renderer::Commands::Command> DX12CommandFactory::ClearDepthTexture(const ResourceHandle::t_hash depthTextureDescriptor)
+	{
+		return MakeUnique<ClearDepthTextureCommand>(depthTextureDescriptor);
+		
+	}
+
+
 
 	UniquePtr<Renderer::Commands::Command> DX12CommandFactory::SetIndexBuffer
 	(
@@ -114,7 +146,21 @@ namespace Renderer::DX12::Commands
 		const unsigned offsetIntoConstants
 	)
 	{
-		return MakeUnique<SetConstantsToGraphicsCommand>(parameterIndex, constantData, numConstants, offsetIntoConstants);
+		return MakeUnique<SetConstantsCommand>(&RHA::DX12::CmdList::RecordSetGraphicsConstants, parameterIndex, constantData, numConstants, offsetIntoConstants);
+		
+	}
+
+
+	
+	UniquePtr<Renderer::Commands::Command> DX12CommandFactory::SetComputeConstants
+	(
+		const unsigned parameterIndex,
+		const unsigned &constantData,
+		const unsigned numConstants,
+		const unsigned offsetIntoDstInConstants
+	)
+	{
+		return MakeUnique<SetConstantsCommand>(&RHA::DX12::CmdList::RecordSetComputeConstants, parameterIndex, constantData, numConstants, offsetIntoDstInConstants);
 		
 	}
 
@@ -185,6 +231,32 @@ namespace Renderer::DX12::Commands
 	{
 		return MakeUnique<IncreaseCounterCommand>(id, valueToIncreaseBy);
 			
+	}
+
+
+	
+	UniquePtr<Renderer::Commands::Command> DX12CommandFactory::TransitionUnorderedAccessToShaderResource
+	(
+		const ResourceHandle::t_hash resource, 
+		const bool usableInPixelShader
+	)
+	{
+		D3D12_RESOURCE_STATES targetState{ D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE };
+		if(usableInPixelShader)
+		{
+			targetState |= D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+		}
+		
+		return MakeUnique<TransitionResourceCommand>(resource, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, targetState);
+		
+	}
+
+
+	
+	UniquePtr<Renderer::Commands::Command> DX12CommandFactory::TransitionShaderResourceToUnorderedAccess(const ResourceHandle::t_hash resource)
+	{
+		return MakeUnique<TransitionResourceCommand>(resource, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+		
 	}
 
 	

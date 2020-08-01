@@ -17,8 +17,9 @@ namespace Renderer::DX12::Commands
 		commandsExecutedSinceListSubmit{ 0 },
 		maxExecutedCommandsPerList{ 50 },
 		registry{ &registry },
-		currentContextEvent{ CommandContextEvents::Nothing },
-		counterFactory{ &counterFactory }
+		currentContextEventFlags{ Renderer::Commands::CommandContextEventFlags::Nothing },
+		counterFactory{ &counterFactory },
+		isProcessingCommandContextNotification{ false }
 	{		
 		updaterHandle = std::async(std::launch::async, &CommandProcessorImpl::Update, this);
 		
@@ -50,7 +51,7 @@ namespace Renderer::DX12::Commands
 							}
 						}
 						currentContextCommand = std::move(bucket.command);
-						NotifyCommandContextAbout(CommandContextEvents::CommandListChanged);
+						NotifyCommandContextAbout(Renderer::Commands::CommandContextEventFlags::InitialContextCommandExecution);
 						
 						queuedCommands.Pop();
 						continue;
@@ -110,20 +111,27 @@ namespace Renderer::DX12::Commands
 			void CommandProcessorImpl::ResetList()
 			{
 				list = allocator->AllocateList();
-				NotifyCommandContextAbout(CommandContextEvents::CommandListChanged);
+				NotifyCommandContextAbout(Renderer::Commands::CommandContextEventFlags::AllBindingsInvalidated);
 		
 			}
 
-				void CommandProcessorImpl::NotifyCommandContextAbout(const CommandContextEvents event)
+				void CommandProcessorImpl::NotifyCommandContextAbout(const Renderer::Commands::CommandContextEventFlags event)
 				{
-					if(event == CommandContextEvents::Nothing)
+					if(isProcessingCommandContextNotification)
+					{
+						return;
+						
+					}
+		
+					if(event == Renderer::Commands::CommandContextEventFlags::Nothing)
 					{
 						return;
 					}
 					
-					currentContextEvent = event;
+					isProcessingCommandContextNotification = true;
+					currentContextEventFlags = event;
 					ExecuteContextCommand();
-					
+					isProcessingCommandContextNotification = false;
 				}
 	
 					void CommandProcessorImpl::ExecuteContextCommand()
@@ -174,7 +182,7 @@ namespace Renderer::DX12::Commands
 	
 	void CommandProcessorImpl::SubmitAndWaitForGpuWork()
 	{
-		//we always need to do this even when commandsRecordedToList is 0, because commands can call this during execution
+		//we always need to do this even when commandsRecordedToList is 0, because commands can call this during their execution
 		
 		SubmitList();
 				
@@ -184,7 +192,10 @@ namespace Renderer::DX12::Commands
 		WaitForSingleObject(event, INFINITE);
 		fence->Signal(0);
 		
-		allocator->Reset();
+		if(FAILED(allocator->Reset()))
+		{
+			throw Exception::Exception{ "Renderer::CommandProcessor: could not reset dx12 command allocator" };
+		}
 		ResetList();
 
 		{
@@ -208,14 +219,30 @@ namespace Renderer::DX12::Commands
 
 
 	
-	bool CommandProcessorImpl::ShouldExecuteContextCommandFor(const CommandContextEvents reason) const
+	bool CommandProcessorImpl::DoesContextEventMatchAll(const Renderer::Commands::CommandContextEventFlags eventFlags) const
 	{
-		return reason == currentContextEvent;
+		auto masked{ currentContextEventFlags & eventFlags };
+		
+		return masked == eventFlags;
 		
 	}
 
 
 	
+	bool CommandProcessorImpl::DoesContextEventMatchAny(const Renderer::Commands::CommandContextEventFlags eventFlags) const
+	{
+		if(eventFlags == Renderer::Commands::CommandContextEventFlags::Nothing)
+		{
+			return currentContextEventFlags == eventFlags;
+			
+		}
+		
+		return (currentContextEventFlags & eventFlags) != Renderer::Commands::CommandContextEventFlags::Nothing;
+		
+	}
+
+
+
 	void CommandProcessorImpl::SubmitCommand(UniquePtr<::Renderer::Commands::Command> &&command)
 	{
 		command->ExecuteOperationOnResourceReferences(*registry, &UsesReferences::AddReference);
@@ -292,6 +319,7 @@ namespace Renderer::DX12::Commands
 
 	void CommandProcessorImpl::WaitForIdle()
 	{
+		PropagateExceptions();
 		queuedCommands.WaitForEmpty();
 		PropagateExceptions();
 		

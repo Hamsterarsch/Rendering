@@ -8,7 +8,7 @@ namespace Renderer
 {	
 	class VertexLayoutSettings : public StateSettings
 	{		
-		public: virtual VertexLayoutSettings &AddLayoutElementDesc(Semantic semantic, unsigned char semanticIndex, Format format, unsigned byteOffset) = 0;
+		public: virtual VertexLayoutSettings &AddLayoutElementDesc(Semantic semantic, unsigned char semanticIndex, Format format, unsigned byteOffsetFromVertexStart) = 0;
 								
 	};
 	

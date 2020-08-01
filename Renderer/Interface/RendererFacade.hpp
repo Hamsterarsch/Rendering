@@ -21,7 +21,7 @@ namespace Renderer
 	class SerializationHook;
 
 
-	class RENDERER_DLLSPEC RendererFacade : public virtual MaintainsRenderResources
+	class RENDERER_DLLSPEC RendererFacade : public MaintainsRenderResources
 	{
 		public: virtual void AddShaderIncludeDirectory(const char *absoluteDirectoryPath) = 0;
 		
@@ -45,8 +45,7 @@ namespace Renderer
 			unsigned numStaticSamplers
 		) = 0;	
 
-		
-						
+								
 		public: virtual ResourceHandle::t_hash MakeWindowsWindowSurface(HWND windowHandle) = 0;
 
 		public: virtual void SetWindowSurfaceToFullscreen(ResourceHandle::t_hash surface) = 0;
@@ -61,11 +60,14 @@ namespace Renderer
 		public: virtual void SubmitCommand(UniquePtr<Commands::Command> &&command) = 0;
 
 		public: virtual void SubmitContextCommand(UniquePtr<Commands::Command> &&command) = 0;
+
+		public: virtual void SubmitDefaultContextCommand() = 0;
 		
 		public: virtual void DestroyUnreferencedResources() = 0;
 
 		public: virtual void DestroyExecutedCommands() = 0;
 
+		public: virtual void QueryUaResourceContent(ResourceHandle::t_hash counterResources, size_t amountOfBytesToRead, void *outData) = 0;
 
 
 		public: virtual BlendSettings &GetBlendSettings() = 0;

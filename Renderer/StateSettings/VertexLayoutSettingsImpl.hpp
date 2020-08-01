@@ -28,7 +28,7 @@ namespace Renderer::DX12
 		
 		
 				
-		public: VertexLayoutSettings &AddLayoutElementDesc(Semantic semantic, unsigned char semanticIndex, Format format, unsigned byteOffset) override;
+		public: VertexLayoutSettings &AddLayoutElementDesc(Semantic semantic, unsigned char semanticIndex, Format format, unsigned byteOffsetFromVertexStart) override;
 
 		public: D3D12_INPUT_LAYOUT_DESC GetLayoutDesc() const;
 

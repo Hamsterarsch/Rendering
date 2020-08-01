@@ -36,6 +36,13 @@ namespace Renderer::Commands
 		public: virtual UniquePtr<Command> SetDescriptorBlockViewsAsComputeTable(ResourceHandle::t_hash descriptorBlock, unsigned parameterIndex) = 0;
 
 		
+		public: virtual UniquePtr<Command>  BindDepthTargetOnly(ResourceHandle::t_hash depthTextureDescriptor) = 0;
+		
+		public: virtual UniquePtr<Command> BindRenderTargets(ResourceHandle::t_hash windowSurface, ResourceHandle::t_hash depthTextureDescriptor) = 0;
+
+		public: virtual UniquePtr<Command> ClearDepthTexture(ResourceHandle::t_hash depthTextureDescriptor) = 0;
+		
+		
 		public: virtual UniquePtr<Command> SetIndexBuffer
 		(
 			ResourceHandle::t_hash indexBuffer,
@@ -58,7 +65,15 @@ namespace Renderer::Commands
 			unsigned parameterIndex,
 			const unsigned &constantData,
 			unsigned numConstants,
-			unsigned offsetIntoConstants
+			unsigned offsetIntoDstInConstants
+		) = 0;
+
+		public: virtual UniquePtr<Command> SetComputeConstants
+		(
+			unsigned parameterIndex, 
+			const unsigned &constantData,
+			unsigned numConstants,
+			unsigned offsetIntoDstInConstants
 		) = 0;
 		
 
@@ -86,6 +101,11 @@ namespace Renderer::Commands
 		public: virtual UniquePtr<Command> Dispatch(unsigned dimensionX, unsigned dimensionY, unsigned dimensionZ) = 0;
 
 		public: virtual UniquePtr<Command> IncreaseCounter(CounterFactory::CounterID id, size_t valueToIncreaseBy) = 0;
+
+
+		public: virtual UniquePtr<Command> TransitionUnorderedAccessToShaderResource(ResourceHandle::t_hash resource, bool usableInPixelShader) = 0;
+
+		public: virtual UniquePtr<Command> TransitionShaderResourceToUnorderedAccess(ResourceHandle::t_hash resource) = 0;
 		
 	};
 	

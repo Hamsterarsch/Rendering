@@ -27,9 +27,9 @@ namespace Math
 		
 	}
 
-	float Log(const float number)
+	float Log2(const float number)
 	{
-		return std::log(number);
+		return std::log2(number);
 		
 	}
 

@@ -3,27 +3,41 @@
 #include "Resources/Pso/PipelineTypes.hpp"
 #include "Resources/Pso/ShaderList.hpp"
 #include "ResourceHandle.hpp"
+#include <cstdint>
+#include "Resources/DataSource.hpp"
 
 
 namespace Renderer
 {
+	struct DataSource;
+
 	class RENDERER_DLLSPEC MaintainsRenderResources
 	{
 		DEFAULTED_INTERFACE_CONSTRUCTION_OPERATIONS(MaintainsRenderResources)
 
-		
-		public: virtual ResourceHandle::t_hash MakeBuffer(const void *data, size_t sizeInBytes) = 0;
 
-		public: virtual ResourceHandle::t_hash MakeUavBuffer(const void *data, size_t sizeInBytes) = 0;
+		public: virtual ResourceHandle::t_hash MakeBuffer(const void *data, size_t dataAndResourceSizeInBytes) = 0;
+		
+		public: virtual ResourceHandle::t_hash MakeBuffer(const DataSource *dataSources, unsigned char numDataSources, size_t resourceSizeInBytes) = 0;
+
+		public: virtual ResourceHandle::t_hash MakeUaBuffer(const void *data, size_t dataAndResourceSizeInBytes) = 0;
+		
+		public: virtual ResourceHandle::t_hash MakeUaBuffer(const DataSource *dataSources, unsigned char numDataSources, size_t resourceSizeInBytes) = 0;
+
+		
+		public: virtual ResourceHandle::t_hash MakeTexture(const void *data, size_t width, size_t height) = 0;
+
+		public: virtual ResourceHandle::t_hash MakeDepthTexture(size_t width, size_t height, bool withStencil) = 0;
+		
+		
+		public: virtual ResourceHandle::t_hash MakeCounterResource(uint32_t numCounters) = 0;
 
 		public: virtual ResourceHandle::t_hash MakeRootSignature(const void *serializedData, size_t dataSizeInBytes, unsigned samplerAmount) = 0;
 					
 		public: virtual ResourceHandle::t_hash MakePso(const ShaderList &shaders, ResourceHandle::t_hash signatureHandle) = 0;
 					
 		public: virtual ResourceHandle::t_hash MakePso(const Blob &csBlob, ResourceHandle::t_hash signatureHandle) = 0;
-
-		public: virtual ResourceHandle::t_hash MakeTexture(const void *data, size_t width, size_t height) = 0;
-
+							   		
 		
 		public: virtual bool IsResourceValid(ResourceHandle::t_hash handle) = 0;
 					

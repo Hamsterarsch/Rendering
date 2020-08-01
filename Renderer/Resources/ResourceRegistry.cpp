@@ -1,4 +1,5 @@
 #include "Resources/ResourceRegistry.hpp"
+#include "Descriptor/DescriptorMemory.hpp"
 
 
 
@@ -9,6 +10,13 @@ namespace Renderer::DX12
 		registryDescriptor.SetOnEntityPurged([&r = registryResource](ReferenceAwareDescriptorAllocator &entity)
 		{
 			entity.ExecuteOperationOnResourceReferences(r, &UsesReferences::RemoveReference);
+		});
+		
+		registryRawDescriptor.SetOnEntityPurged([&r = registryResource](RawDescriptorReference &entity)
+		{
+			entity.memorySource->RetireDepthStencilDescriptor(entity.descriptor);
+			r.RemoveReference(entity.referencedResource);
+			
 		});
 		
 	}
@@ -40,32 +48,18 @@ namespace Renderer::DX12
 	ResourceHandle::t_hash ResourceRegistry::Register(ResourceAllocation &&allocation)
 	{
 		const auto handle{ handleProvider.MakeHandle(allocation.GetType()) };
-		Register(handle, std::move(allocation));
+		registryResource.Register(handle, std::move(allocation));
 		return handle;
 		
 	}
-		   		
-		void ResourceRegistry::Register(const ResourceHandle::t_hash handle, ResourceAllocation &&allocation)
-		{
-			registryResource.Register(handle, std::move(allocation));
-			
-		}
 
 
 	
 	ResourceHandle::t_hash ResourceRegistry::Register(RootSignatureData &&signature)
 	{			
 		const auto handle{ handleProvider.MakeHandle(ResourceHandle::t_resourceTypes::Signature) };
-		Register(handle, std::move(signature));
-		return handle;
-		
-	}
-
-
-	
-	void ResourceRegistry::Register(const ResourceHandle::t_hash handle, RootSignatureData &&signature)
-	{
 		registrySignature.Register(handle, std::move(signature));
+		return handle;
 		
 	}
 
@@ -74,16 +68,8 @@ namespace Renderer::DX12
 	ResourceHandle::t_hash ResourceRegistry::Register(DxPtr<ID3D12PipelineState> &&pipeline)
 	{					
 		const auto handle{ handleProvider.MakeHandle(ResourceHandle::t_resourceTypes::Pso) };
-		Register(handle, std::move(pipeline));
-		return handle;
-		
-	}
-
-
-	
-	void ResourceRegistry::Register(const ResourceHandle::t_hash handle, DxPtr<ID3D12PipelineState> &&pipeline)
-	{
 		registryPso.Register(handle, std::move(pipeline));
+		return handle;
 		
 	}
 
@@ -107,6 +93,18 @@ namespace Renderer::DX12
 		allocator.ExecuteOperationOnResourceReferences(registryResource, &UsesReferences::AddReference);
 		registryDescriptor.Register(handle, std::move(allocator));
 
+		return handle;
+		
+	}
+
+
+	
+	ResourceHandle::t_hash ResourceRegistry::Register(RawDescriptorReference &&descriptor)
+	{
+		const auto handle{ handleProvider.MakeHandle(ResourceHandle::t_resourceTypes::RawDescriptor) };
+		registryRawDescriptor.Register(handle, std::move(descriptor));
+		registryResource.AddReference(descriptor.referencedResource);
+		
 		return handle;
 		
 	}
@@ -161,6 +159,14 @@ namespace Renderer::DX12
 
 
 	
+	D3D12_CPU_DESCRIPTOR_HANDLE ResourceRegistry::GetRawDescriptor(const ResourceHandle::t_hash handle)
+	{
+		return registryRawDescriptor.Get(handle).descriptor;
+		
+	}
+
+
+
 	RHA::DX12::WindowSurface *ResourceRegistry::GetSurface(const ResourceHandle::t_hash handle)
 	{
 		return registryWindowSurface.Get(handle);
@@ -220,7 +226,8 @@ namespace Renderer::DX12
 		registryResource.PurgeUnreferencedEntities();		
 		registryPso.PurgeUnreferencedEntities();
 		registrySignature.PurgeUnreferencedEntities();			
-					
+		registryRawDescriptor.PurgeUnreferencedEntities();
+		
 		handlesToRetire.remove_if([ &rorch = *this](const size_t &handle)
 		{
 			if(rorch.IsHandleUnknown(handle))
@@ -280,6 +287,12 @@ namespace Renderer::DX12
 				(registryDescriptor.*operation)(handle);
 				return;
 				
+			}
+
+			if(handleType == ResourceHandle::t_resourceTypes::RawDescriptor)
+			{
+				(registryRawDescriptor.*operation)(handle);
+				return;
 			}
 
 			(registryResource.*operation)(handle);

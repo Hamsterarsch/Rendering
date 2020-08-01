@@ -25,12 +25,12 @@ namespace Renderer::DX12::Commands
 		{
 			BindDescriptorsContextCommand::Execute(context);
 
-			if(context.ShouldExecuteContextCommandFor(CommandContextEvents::GraphicsSignatureChanged))
+			if(context.DoesContextEventMatchAll(CommandContextEvents::GraphicsSignatureChanged))
 			{
 				context.GetList().RecordSetGraphicsSignatureCbv(0, context.GetRegistry().GetResourceGpuAddress(buffer));				
 			}
 
-			if(context.ShouldExecuteContextCommandFor(CommandContextEvents::ComputeSignatureChanged))
+			if(context.DoesContextEventMatchAll(CommandContextEvents::ComputeSignatureChanged))
 			{
 				context.GetList().RecordSetComputeSignatureCbv(0, context.GetRegistry().GetResourceGpuAddress(buffer));				
 			}

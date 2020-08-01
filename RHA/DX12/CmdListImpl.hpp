@@ -35,6 +35,10 @@ namespace RHA::DX12
 
 		public: void RecordCopyBufferRegion(ID3D12Resource *dstBuffer, size_t dstOffset, ID3D12Resource *srcBuffer, size_t srcOffset, size_t sizeInBytes) override;
 
+		public: void RecordCopyTextureRegion(const D3D12_TEXTURE_COPY_LOCATION &src, const D3D12_TEXTURE_COPY_LOCATION &dst) override;
+
+		public: void RecordDiscardResource(ID3D12Resource *resource, const D3D12_DISCARD_REGION &region) override;
+		
 		public: void RecordDispatch(unsigned groupCountX, unsigned groupCountY, unsigned groupCountZ) override;
 		
 		
@@ -52,6 +56,14 @@ namespace RHA::DX12
 		public: void RecordSetComputeSignatureTable(unsigned parameterIndex, D3D12_GPU_DESCRIPTOR_HANDLE startAddress) override;
 
 		public: void RecordSetGraphicsConstants
+		(
+			unsigned parameterIndex,
+			unsigned numConstants,
+			const unsigned &constantData,
+			unsigned constantOffsetIntoData
+		) override;
+
+		public: void RecordSetComputeConstants
 		(
 			unsigned parameterIndex,
 			unsigned numConstants,
