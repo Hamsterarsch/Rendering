@@ -27,7 +27,7 @@ namespace assetSystem::core
 			private: void SaveReferenceData(bool forceRewrite = false);
 		
 			private: void LoadReferenceData();
-
+		
 		
 		public:	void RegisterAssetClass(const char* classFileExtension, UniquePtr<AssetConstructionOperations> &&constructOperations) override;
 		
@@ -60,6 +60,8 @@ namespace assetSystem::core
 		public: bool TryToDeleteAsset(const char *assetPath) override;
 
 			private: bool AssetCanBeDeletedWithoutReplacement(AssetKey key) const;
+
+			private: void DeleteAssetFile(const std::filesystem::path &filepath) const;
 		
 		public: void DeleteAsset(const char *pathToAssetToDelete, const char *pathToReplacementAsset) override;
 		

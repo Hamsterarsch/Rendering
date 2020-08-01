@@ -61,7 +61,7 @@ namespace assetSystem::core
 	{
 		auto &assetInfo{ assetInfos.at(key) };
 		
-		reinterpret_cast<Asset *>(assetInfo.memory.get())->~Asset();	//todo try to replace DestructAsset with call to Asset::~Asset()
+		reinterpret_cast<Asset *>(assetInfo.memory.get())->~Asset();
 		assetInfos.erase(key);
 		
 	}

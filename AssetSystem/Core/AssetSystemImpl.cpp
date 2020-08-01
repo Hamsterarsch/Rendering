@@ -195,6 +195,7 @@ namespace assetSystem::core
 		const auto key{ GetAssetKeyFromUnsafePath(assetPath) };
 		if(AssetCanBeDeletedWithoutReplacement(key))
 		{
+			DeleteAssetFile(registry.GetAbsoluteAssetPath(key));
 			registry.UnregisterAsset(key);
 			return true;			
 		}
@@ -205,6 +206,12 @@ namespace assetSystem::core
 		bool AssetSystemImpl::AssetCanBeDeletedWithoutReplacement(AssetKey key) const
 		{
 			return ptrReferences.HasNoReferences(key) && serializedReferences.HasNoReferences(key);
+		
+		}
+
+		void AssetSystemImpl::DeleteAssetFile(const std::filesystem::path &filepath) const
+		{		
+			std::filesystem::remove(filepath);
 		
 		}
 
@@ -223,6 +230,7 @@ namespace assetSystem::core
 		{			
 			memory.FreeAsset(deleteKey);			
 		}
+		DeleteAssetFile(registry.GetAbsoluteAssetPath(deleteKey));
 		
 		if(ptrReferences.HasReferences(deleteKey) && ptrReferences.HasReferences(replacementKey))
 		{
