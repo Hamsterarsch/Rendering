@@ -58,13 +58,25 @@ namespace Renderer::DX12
 
 	ResourceViewFactory &ResourceViewFactoryImpl::CreateShaderResourceView(const ResourceHandle::t_hash forResource)
 	{
-		currentAllocator.allocator.CreateDefaultedSrv(registry->GetResource(forResource), GetTableOffset(&ResourceRegistry::GetSignatureSrvOffset));
+		currentAllocator.allocator.CreateDefaultedSrv(GetResourceOrNullPtr(forResource), GetTableOffset(&ResourceRegistry::GetSignatureSrvOffset));
 		currentAllocator.AddReferenceTo(forResource);
 
 		return *this;
 		
 	}
 
+		ID3D12Resource *ResourceViewFactoryImpl::GetResourceOrNullPtr(const ResourceHandle::t_hash resourceHandle)
+		{
+			if(resourceHandle)
+			{
+				return registry->GetResource(resourceHandle);
+				
+			}
+
+			return nullptr;
+		
+		}
+	
 		size_t ResourceViewFactoryImpl::GetTableOffset(size_t(ResourceRegistry::* getter)(ResourceHandle::t_hash, unsigned, size_t))
 		{
 			Exception::ThrowIfDebug(isBuildingSpecificDescriptor && currentOrdinal == 0, {"Renderer::ResourceViewFactory: When creating descriptors for specific descriptor blocks you have to declare an ordinal."} );
@@ -85,7 +97,7 @@ namespace Renderer::DX12
 	{
 		currentAllocator.allocator.CreateSrvBuffer
 		(
-			registry->GetResource(forResource),
+			GetResourceOrNullPtr(forResource),
 			GetTableOffset(&ResourceRegistry::GetSignatureSrvOffset),
 			firstIndex,
 			numElements,
@@ -109,7 +121,7 @@ namespace Renderer::DX12
 	{
 		currentAllocator.allocator.CreateSrvBufferFormatted
 		(
-			registry->GetResource(forResource),
+			GetResourceOrNullPtr(forResource),
 			GetTableOffset(&ResourceRegistry::GetSignatureSrvOffset),
 			firstIndex,
 			numElements,
@@ -133,7 +145,7 @@ namespace Renderer::DX12
 	{
 		currentAllocator.allocator.CreateSrvTex2D
 		(
-			registry->GetResource(forResource),
+			GetResourceOrNullPtr(forResource),
 			GetTableOffset(&ResourceRegistry::GetSignatureSrvOffset),
 			format,
 			numMips,
@@ -153,7 +165,7 @@ namespace Renderer::DX12
 		const size_t sizeInBytes
 	)
 	{
-		currentAllocator.allocator.CreateCbv(registry->GetResource(forResource), GetTableOffset(&ResourceRegistry::GetSignatureCbvOffset), sizeInBytes);
+		currentAllocator.allocator.CreateCbv(GetResourceOrNullPtr(forResource), GetTableOffset(&ResourceRegistry::GetSignatureCbvOffset), sizeInBytes);
 		currentAllocator.AddReferenceTo(forResource);
 		
 		return *this;
@@ -182,7 +194,7 @@ namespace Renderer::DX12
 	{
 		currentAllocator.allocator.CreateUavBuffer
 		(
-			registry->GetResource(forResource),
+			GetResourceOrNullPtr(forResource),
 			GetTableOffset(&ResourceRegistry::GetSignatureUavOffset),
 			firstIndex,
 			numElements,
@@ -206,7 +218,7 @@ namespace Renderer::DX12
 	{
 		currentAllocator.allocator.CreateUavBufferFormatted
 		(
-			registry->GetResource(forResource),
+			GetResourceOrNullPtr(forResource),
 			GetTableOffset(&ResourceRegistry::GetSignatureUavOffset),
 			firstIndex,
 			numElements,
@@ -263,7 +275,7 @@ namespace Renderer::DX12
 		Exception::ThrowIfDebug(ResourceHandle::GetResourceType(forResource) != ResourceHandle::t_resourceTypes::DepthTexture, {"ResourceViewFactory: You can only create depth texture views for depth textures"});
 		
 		auto targetDescriptor{ memory->AllocateDepthStencilDescriptor() };		
-		resources->GetDevice()->CreateDepthStencilView(registry->GetResource(forResource), nullptr, targetDescriptor);
+		resources->GetDevice()->CreateDepthStencilView(GetResourceOrNullPtr(forResource), nullptr, targetDescriptor);
 
 		return registry->Register(RawDescriptorReference{ *memory, targetDescriptor, forResource} );
 		

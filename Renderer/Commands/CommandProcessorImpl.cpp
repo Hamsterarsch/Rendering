@@ -87,9 +87,10 @@ namespace Renderer::DX12::Commands
 			}
 			catch(std::exception &e)
 			{
+				queuedCommands.ReleaseWaitingThreads();
 				return ThreadResult{ 1, e };
 			}
-		
+						
 			return ThreadResult{ 0, {}};
 		
 		}
@@ -319,10 +320,11 @@ namespace Renderer::DX12::Commands
 
 	void CommandProcessorImpl::WaitForIdle()
 	{
-		PropagateExceptions();
-		queuedCommands.WaitForEmpty();
-		PropagateExceptions();
-		
+		while(not queuedCommands.IsEmpty())
+		{
+			PropagateExceptions();			
+		}
+				
 	}
 
 		void CommandProcessorImpl::PropagateExceptions()

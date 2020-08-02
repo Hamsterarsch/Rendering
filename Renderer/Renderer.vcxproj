@@ -334,6 +334,7 @@
     <ClInclude Include="CounterFactoryImpl.hpp" />
     <ClInclude Include="CounterResourceDefinition.hpp" />
     <ClInclude Include="Interface\CounterFactory.hpp" />
+    <ClInclude Include="Interface\Exceptions\InvalidRegistryHandleException.hpp" />
     <ClInclude Include="Interface\Resources\DataSource.hpp" />
     <ClInclude Include="Interface\StateSettings\DescriptorTargets.hpp" />
     <ClInclude Include="Interface\StateSettings\RootSignatureSettings.hpp" />

@@ -348,6 +348,9 @@
     <ClInclude Include="Commands\Internal\DiscardResourceCommand.hpp">
       <Filter>Commands\Internal</Filter>
     </ClInclude>
+    <ClInclude Include="Interface\Exceptions\InvalidRegistryHandleException.hpp">
+      <Filter>Interface\Exceptions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -597,6 +600,9 @@
     </Filter>
     <Filter Include="Commands\Internal">
       <UniqueIdentifier>{46d6f06f-2897-47ff-b589-ec6ebe4181fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interface\Exceptions">
+      <UniqueIdentifier>{a19d4444-4f53-4a38-b6dc-98f78f945364}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
