@@ -40,8 +40,6 @@ namespace App::Rendering
 		
 		private: HandleWrapper uiFontDescriptor;
 		
-		private: HandleWrapper uiVertexIndexBuffer;
-
 		private: HandleWrapper uiConstantBuffer;
 
 		private: HandleWrapper uiConstantBufferDescriptor;
@@ -99,7 +97,6 @@ namespace App::Rendering
 
 			private: bool DrawDataIsEmpty() const;
 
-			private: void CreateBufferWithUiVertexIndexData();
 
 			private: bool TryToUpdateUiConstantBuffer();
 
@@ -109,9 +106,11 @@ namespace App::Rendering
 
 			private: void SubmitUiRendererWork();
 
-			private: void RecordDrawDataDrawLists(Commands::CompositeCommand &targetCommand, Commands::CommandFactory &cmdFactory);
+				private: HandleWrapper CreateBufferWithUiVertexIndexData();
+		
+				private: void RecordDrawDataDrawLists(Commands::CompositeCommand &targetCommand, Commands::CommandFactory &cmdFactory);
 
-				private: void RecordDrawListDrawCommands(const ImDrawList &drawList, Commands::CompositeCommand &targetCommand, Commands::CommandFactory &cmdFactory);
+					private: void RecordDrawListDrawCommands(const ImDrawList &drawList, Commands::CompositeCommand &targetCommand, Commands::CommandFactory &cmdFactory);
 		
 	};
 	
