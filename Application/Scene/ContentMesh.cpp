@@ -27,5 +27,11 @@ namespace App::Scene
 		
 	}
 
+	UniquePtr<Ui::Core::UiFrontend> ContentMesh::MakeContentEditor(Ui::Core::UiLayoutElement &layoutParent)
+	{
+		return {};
+		
+	}
+
 	
 }

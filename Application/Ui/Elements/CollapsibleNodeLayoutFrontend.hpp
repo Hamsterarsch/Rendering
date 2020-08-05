@@ -18,7 +18,7 @@ namespace App::Ui
 		
 		public: CollapsibleNodeLayoutFrontend() : CollapsibleNodeLayoutFrontend{{}} {}
 					
-		public: CollapsibleNodeLayoutFrontend(UniquePtr<UiFrontend> childFrontend) : isHeaderNodeToggledOn{ true }, targetTree{ nullptr }, childFrontend{ std::move(childFrontend)} {}
+		public: CollapsibleNodeLayoutFrontend(UniquePtr<UiFrontend> &&childFrontend) : isHeaderNodeToggledOn{ true }, targetTree{ nullptr }, childFrontend{ std::move(childFrontend)} {}
 
 		
 		public: void SetTargetNode(CollapsibleNodeLayout &tree) { targetTree = &tree; }

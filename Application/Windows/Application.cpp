@@ -1,21 +1,9 @@
 #include "Windows/Application.hpp"
 #include "Types/Dimensions2D.hpp"
 #include "Shared/Filesystem/Conversions.hpp"
-#include "Ui/Core/UiBuilderImpl.hpp"
 #include "ThirdParty/imgui/imgui_impl_win32.h"
 #include "Core/CreateProject.hpp"
-
-#include "AssetConstructOperationsHelper.hpp"
-#include "AssetTypes/ImageAsset.hpp"
-#include "AssetTypes/PipelineAsset.hpp"
-#include "AssetTypes/UserPixelShaderAsset.hpp"
-
-#include "AssetTypes/StaticMeshAsset.hpp"
-#include "AssetFactories/StaticMeshFactory.hpp"
 #include "Rendering/GraphVisitorHarvestMeshes.hpp"
-#include "Scene/ContentLight.hpp"
-
-
 
 
 
@@ -75,10 +63,7 @@ namespace App::Windows
 				{ rendererMediator, *renderer, *programAssets, {1280, 720} },
 				{ rendererMediator, *renderer }
 			},
-			ui{ *this },
-
-			cube{ programAssets->GetAsset("Meshes/MetricCube.msh") },
-			graphRoot{ Math::Matrix{}, {} }
+			ui{ *this }						
 		{
 			std::filesystem::path includePath{ programAssets->GetAbsoluteRootAssetPath() };
 			includePath /= "Shaders/Includes";					
@@ -90,14 +75,9 @@ namespace App::Windows
 			Assets::UserPixelShaderAsset::SetPixelShaderTemplate(programAssets->GetAsset("Shaders/LightingShaderTemplate.ps.shdr"));
 						
 			auto psoa = programAssets->GetAsset("DefaultAssets/DefaultPipelineState.pso");
+
 						
-			auto scale{ Math::Matrix::MakeScale(150, 150, 1)};					
-			graphRoot.AddChild( Math::Matrix::MakeTranslation(0, 0, 500)*scale, MakeUnique<Scene::ContentMesh>(cube, psoa));			
-			graphRoot.AddChild( Math::Matrix::MakeTranslation(0,0, 490), MakeUnique<Scene::ContentLight>(100, Math::Vector3{ 1, 1, 1 }, 0, 0) );
-		
-			currentHarvest = MakeUnique<Rendering::GraphVisitorHarvestMeshes>();
-			graphRoot.Accept(*currentHarvest);
-		
+					
 		}
 
 			UniquePtr<Renderer::RendererFacade> Application::MakeRendererAndAddProgramShaderInclude(HWND window, assetSystem::AssetSystem &programAssets)
@@ -114,51 +94,9 @@ namespace App::Windows
 			
 
 	
-	Application::Application(Application &&other) noexcept
-	{
-		*this = std::move(other);
-		
-	}
-
-	
-	
-	Application &Application::operator=(Application &&rhs) noexcept
-	{
-		if(this == &rhs)
-		{
-			return *this;
-			
-		}
-						
-		programVersion		  = std::move(rhs.programVersion		);
-		programAssets		  = std::move(rhs.programAssets			);
-		projectAssets		  = std::move(rhs.projectAssets			);
-		window				  = std::move(rhs.window				);
-		renderer			  = std::move(rhs.renderer				);
-		mainWindowSurface	  = std::move(rhs.mainWindowSurface		);
-		mainDepthTexture	  = std::move(rhs.mainDepthTexture		);
-		mainDepthTextureView  = std::move(rhs.mainDepthTextureView	);
-		assetTypesRegistry	  = std::move(rhs.assetTypesRegistry	);
-		rendererMediator	  =	std::move(rhs.rendererMediator	 	);
-		ui					  = std::move(rhs.ui					);
-		cube				  = std::move(rhs.cube					);
-		graphRoot			  = std::move(rhs.graphRoot				);
-		currentHarvest		  = std::move(rhs.currentHarvest		);
-
-		rhs.programAssets.reset();
-
-		return *this;
-		
-	}
-
-
-	
 	Application::~Application()
 	{
-		if(programAssets)
-		{
-			Assets::UserPixelShaderAsset::SetPixelShaderTemplate({});			
-		}
+		Assets::UserPixelShaderAsset::SetPixelShaderTemplate({});			
 		
 	}
 
@@ -169,11 +107,11 @@ namespace App::Windows
 		projectAssets = std::move(assets);
 		assetTypesRegistry.RegisterAssetTypesWith(*projectAssets);
 		assetTypesRegistry.SetShouldShowAllTypes(programAssets->IsSameRootAssetPath(projectAssets->GetAbsoluteRootAssetPath().c_str()));
-				
+
 	}
 
 
-	
+
 	void Application::EnterLoop()
 	{		
 		window.ShowWindow();
@@ -204,9 +142,8 @@ namespace App::Windows
 			}
 			else
 			{				
-				Update();				
-				rendererMediator.SubmitFrame(currentHarvest);
-				ImGui::EndFrame();//todo remove when ui render is submitting again
+				Update();								
+				
 			}
 		}
 		ImGui_ImplWin32_Shutdown();
@@ -214,27 +151,87 @@ namespace App::Windows
 	}	
 
 	
-
+				bool IsKeyDown(int keycode)
+				{
+					return GetAsyncKeyState(keycode);
+				}
 	
 		void Application::Update()
-		{		
-			static Ui::Core::UiBuilderImpl builder{};
-		
-			ImGui_ImplWin32_NewFrame();
-			ImGui::NewFrame();
-					
-			ui.Update(builder);
+		{
+			QueryUiInputAndSubmitUiRenderData();
+
+			static Math::Vector3 rot{};
+			if(ImGui::GetIO().MouseDown[1] && projectAssets)
+			{				
+				auto mouseDelta{ ImGui::GetIO().MouseDelta };
+				constexpr float rotSpeed{ 0.5 };
+				
+				rot.x += mouseDelta.y*rotSpeed;
+				rot.y += mouseDelta.x*rotSpeed;														
+			}
 			
-					
+			constexpr int Key_W{ 0x57 };
+			constexpr int Key_A{ 0x41 };
+			constexpr int Key_S{ 0x53 };
+			constexpr int Key_D{ 0x44 };
+			static Math::Vector3 pos{};
+			if(not ImGui::GetIO().WantCaptureKeyboard && projectAssets)
+			{				
+				const float delta{ ImGui::GetIO().DeltaTime };
+				const auto forwardVector{ Math::Matrix::MakeRotation(rot.x, rot.y, rot.z).Transform({0,0,1,1}) };										
+				const Math::Vector3 rightVector{ forwardVector.z, 0, -forwardVector.x };					
+								   					
+				
+				constexpr float speed{ 1 };
+				if(IsKeyDown(Key_W))
+				{
+					pos += forwardVector*speed*delta;						
+				}
+
+				if(IsKeyDown(Key_S))
+				{
+					pos -= forwardVector*speed*delta;
+				}
+
+				if(IsKeyDown(Key_D))
+				{
+					pos += rightVector*speed*delta;
+				}
+				
+				if(IsKeyDown(Key_A))
+				{
+					pos -= rightVector*speed*delta;
+				}
+
+		
+				
+			}
+			rendererMediator.SetCurrentSceneView(pos, rot);		
+		
+			auto harvester{ MakeUnique<Rendering::GraphVisitorHarvestMeshes>() };
+			scene.Accept(*harvester);
+			 
+			rendererMediator.SubmitFrame(harvester);
+		
 		}
-
-
 	
+			void Application::QueryUiInputAndSubmitUiRenderData()
+			{
+				ImGui_ImplWin32_NewFrame();
+				ImGui::NewFrame();
+										
+				ui.Update(builder);
+		
+			}
+
+
+
 	void Application::ResizeMainWindow(const int width, const int height)
 	{		
 		mainDepthTexture = { renderer.get(), renderer->MakeDepthTexture(width, height, true) };
 		mainDepthTextureView = { renderer.get(), renderer->GetViewFactory().MakeDepthTextureView(mainDepthTexture) };
-		
+
+		renderer->SubmitDefaultContextCommand();//make sure that the context command does not reference surface textures
 		renderer->FitWindowSurfaceToWindow(mainWindowSurface);
 		
 		rendererMediator.OnMainWindowSurfaceSizeChanged({width, height});

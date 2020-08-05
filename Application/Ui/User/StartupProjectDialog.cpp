@@ -51,7 +51,9 @@ namespace App::Ui::User
 		auto window{ Element<WindowElement>("Open a project or create a new one to begin") += std::move(grid) };					
 		window->isNocollapse = true;
 		window->isStatic = true;
-		window->position.y = .4;
+		window->position = {.5, .4};
+		window->pivot = {.5, .5};
+		
 		window->size.y = .25;
 		
 		uiElements.push_front(std::move(window));

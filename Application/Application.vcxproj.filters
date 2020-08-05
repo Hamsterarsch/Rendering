@@ -164,6 +164,21 @@
     <ClCompile Include="AssetTypes\PipelineAsset.cpp">
       <Filter>AssetTypes</Filter>
     </ClCompile>
+    <ClCompile Include="Scene\SceneGraph.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui\User\SceneEditor.cpp">
+      <Filter>Ui\User</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui\Misc\OutlinerInfo.cpp">
+      <Filter>Ui\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui\Misc\GraphVisitorOutlinerInfo.cpp">
+      <Filter>Ui\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="Ui\User\TransformEditorFrontend.cpp">
+      <Filter>Ui\User</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window\Windows\Window.hpp">
@@ -450,6 +465,21 @@
     </ClInclude>
     <ClInclude Include="Rendering\ContextCommands\ContextCompositeCommand.hpp">
       <Filter>Rendering\ContextCommands</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\SceneGraph.hpp">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Misc\GraphVisitorOutlinerInfo.hpp">
+      <Filter>Ui\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\User\SceneEditor.hpp">
+      <Filter>Ui\User</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\Misc\OutlinerInfo.hpp">
+      <Filter>Ui\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="Ui\User\TransformEditorFrontend.hpp">
+      <Filter>Ui\User</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

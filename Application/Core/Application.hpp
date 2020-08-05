@@ -5,7 +5,12 @@
 
 namespace assetSystem{ class AssetSystem; }
 namespace Renderer{ class RendererFacade; }
-namespace App::Ui{ class UiStateMachine; }
+namespace App::Ui
+{
+	class OutlinerInfo;
+	class UiStateMachine;
+}
+namespace App::Scene{ class SceneGraph; }
 namespace App::Assets{ class AssetTypesRegistry; }
 
 
@@ -33,6 +38,8 @@ namespace App::Core
 		public: virtual bool ProjectAssetsAreInvalid() const  = 0;
 
 		public: virtual void SetProjectAssets(UniquePtr<assetSystem::AssetSystem> &&assets) = 0;
+
+		public: virtual Scene::SceneGraph &GetCurrentScene() = 0;
 		
 	};
 

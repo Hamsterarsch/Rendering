@@ -24,6 +24,14 @@ namespace App::Scene
 
 
 	
+	UniquePtr<Ui::Core::UiFrontend> ContentLight::MakeContentEditor(Ui::Core::UiLayoutElement &layoutParent)
+	{
+		return {};
+		
+	}
+
+
+
 	Rendering::Light ContentLight::GetLightData(const Math::Matrix &forLightTransform) const
 	{
 		auto outLight{ lightData };

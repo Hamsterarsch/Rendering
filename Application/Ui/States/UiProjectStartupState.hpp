@@ -2,6 +2,8 @@
 #include "Ui/States/UiState.hpp"
 #include "Ui/User/AssetBrowser.hpp"
 #include "Ui/UiStateMachine.hpp"
+#include "Ui/User/SceneEditor.hpp"
+
 
 
 namespace App::Ui::States
@@ -10,8 +12,10 @@ namespace App::Ui::States
 	{
 		private: User::AssetBrowserFrontend assetBrowser;
 
+		private: User::SceneEditorFrontend sceneEditor;
 		
 
+		
 		public: UiProjectStartupState(UiStateMachine &parent, const char *projectRootPath)
 			:
 			UiState{ parent },
@@ -19,7 +23,8 @@ namespace App::Ui::States
 			{
 				projectRootPath,
 				parent.GetApp()
-			}
+			},
+			sceneEditor{ parent.GetApp() }
 		{}
 		
 		public: void Update(Core::UiBuilder &builder) override;
