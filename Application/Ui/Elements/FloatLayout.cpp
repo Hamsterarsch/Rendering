@@ -15,7 +15,7 @@ namespace App::Ui
 
 
 
-	void FloatLayout::AddChild(UniquePtr<UiElement>&& child)
+	void FloatLayout::AddChild(UniquePtr<UiElement> &&child)
 	{
 		OnChildAdded(*children.emplace_back(std::move(child)));
 		

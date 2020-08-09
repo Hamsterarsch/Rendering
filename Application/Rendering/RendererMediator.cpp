@@ -33,15 +33,14 @@ namespace App::Rendering
 
 		if(submitIterations >= maximumFrameLag)
 		{
-			underlyingRenderer->GetCounterFactory().WaitForCounterToReach(frameCounter, submitIterations - maximumFrameLag);
-			
+			underlyingRenderer->GetCounterFactory().WaitForCounterToReach(frameCounter, submitIterations - maximumFrameLag);			
 		}
 						
-		SubmitCommand(commandFactory->PrepareSurfaceForRendering(mainWindowSurface));//todo does surface binding persist across cmd lists		
+		SubmitCommand(commandFactory->PrepareSurfaceForRendering(mainWindowSurface));	
 		SubmitCommand(commandFactory->ClearDepthTexture(mainDepthTextureView));
 				
 		sceneRenderer.SubmitFrame(sceneGraphData);		
-		//uiRenderer.SubmitFrame(); todo: bind rts inside the ui submit code
+		uiRenderer.SubmitFrame();
 		
 		
 		//are scissors reset automatically ?
@@ -59,6 +58,14 @@ namespace App::Rendering
 				underlyingRenderer->SubmitCommand(std::move(command));
 				
 			}
+
+
+
+	void RendererMediator::SetCurrentSceneView(const Math::Vector3 &newPos, const Math::Vector3 &newRot)
+	{
+		sceneRenderer.SetCamera(newPos, newRot);
+		
+	}
 
 
 	

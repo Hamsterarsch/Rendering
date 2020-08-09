@@ -50,12 +50,20 @@ namespace App::Ui::User
 		con->size = {1, 1};
 		content = con.get();
 				
-		uiElements.push_front((Element<WindowElement>("Asset Browser") += std::move(con))
-							  += (Element<FloatLayout>(5)
-							  ->* Set{&ButtonElement::pivot, {0, 1}}
-							  ->* Set{&ButtonElement::position, {.01, .99}}
-							  += Element<ButtonElement>(*this, 0, "Up"))
-							  += Element<ButtonElement>(*this, 1, "New")
+		uiElements.push_front
+		(
+			(
+				Element<WindowElement>("Asset Browser")
+				->*Set{&WindowElement::pivot, {.5, 1}}
+				->*Set{&WindowElement::size, {.5, .4}}
+				->*Set{&WindowElement::position, {.5, 1}}
+				+= std::move(con)
+			)
+				+= (Element<FloatLayout>(5)
+				->* Set{&ButtonElement::pivot, {0, 1}}
+				->* Set{&ButtonElement::position, {.01, .99}}
+				+= Element<ButtonElement>(*this, 0, "Up"))
+				+= Element<ButtonElement>(*this, 1, "New")
 		);
 		
 		DisplayCurrentPathContents();

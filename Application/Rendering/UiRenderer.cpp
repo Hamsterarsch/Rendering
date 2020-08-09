@@ -9,6 +9,7 @@
 #include "Commands/CompositeCommand.hpp"
 #include "Resources/SerializeTarget.hpp"
 #include "StateSettings/SamplerSpec.hpp"
+#include "ContextCommands/ContextCompositeCommand.hpp"
 
 
 namespace App::Rendering
@@ -24,8 +25,7 @@ namespace App::Rendering
 		IMGUI_CHECKVERSION();		
 		imguiContext = ImGui::CreateContext();
 		ImGui::StyleColorsDark();
-
-		renderer.GetVertexLayoutSettings().RestoreSettingsToDefault();
+		
 		
 		CreateUiSignature(renderer);			
 		CreateUiFontTexture(renderer);
@@ -49,8 +49,7 @@ namespace App::Rendering
 			renderer.SerializeRootSignature(root, &samplerSpec, 1);
 			uiSignature = { &renderer, renderer.MakeRootSignature(root.GetData(), root.GetSizeInBytes(), 0) };
 			renderer.GetSignatureSettings().RestoreSettingsToSaved();
-
-		
+					
 		}
 
 		void UiRenderer::CreateUiFontTexture(RendererFacade &renderer)
@@ -94,6 +93,8 @@ namespace App::Rendering
 			renderer.GetRasterizerSettings()
 			.SetFrontIsCounterClockwise(false);
 
+		
+			renderer.GetVertexLayoutSettings().RestoreSettingsToDefault();
 			renderer.GetVertexLayoutSettings()
 			.AddLayoutElementDesc(&SemanticTargets::TargetPosition, 0, &FormatTargets::R32G32_Float, (UINT)IM_OFFSETOF(ImDrawVert, pos))
 			.AddLayoutElementDesc(&SemanticTargets::TargetTexcoord, 0, &FormatTargets::R32G32_Float, (UINT)IM_OFFSETOF(ImDrawVert, uv))
@@ -108,7 +109,6 @@ namespace App::Rendering
 			list.vs.sizeInBytes = vs.GetSizeInBytes();
 			list.ps.data = ps.GetData();
 			list.ps.sizeInBytes = ps.GetSizeInBytes();
-		
 		
 			uiPso = { &renderer, renderer.MakePso(list, uiSignature) };
 			renderer.GetVertexLayoutSettings().RestoreSettingsToSaved();
@@ -229,7 +229,6 @@ namespace App::Rendering
 			uiPso = std::move(other.uiPso);
 			uiFontTexture = std::move(other.uiFontTexture);
 			uiConstantBuffer = std::move(other.uiConstantBuffer);
-			uiVertexIndexBuffer = std::move(other.uiVertexIndexBuffer);
 			uiConstantBufferDescriptor = std::move(other.uiConstantBufferDescriptor);
 			constantBufferSizeInBytes = std::move(other.constantBufferSizeInBytes);
 			uiFontDescriptor = std::move(other.uiFontDescriptor);
@@ -256,7 +255,11 @@ namespace App::Rendering
 	
 
 	void UiRenderer::SubmitFrame()
-	{		
+	{
+		auto contextCmd{ MakeUnique<ContextCompositeCommand>(Commands::CommandContextEventFlags::AllBindingsInvalidated | Commands::CommandContextEventFlags::InitialContextCommandExecution) };
+		contextCmd->Add(mediator->CommandFactory().BindRenderTargets(mediator->GetMainWindowSurface(), 0));
+		mediator->Renderer().SubmitContextCommand(std::move(contextCmd));
+		
 		ImGui::Render();		
 		submitDrawData = ImGui::GetDrawData();
 		
@@ -268,29 +271,9 @@ namespace App::Rendering
 
 		if(DrawDataIsEmpty())
 		{
-			auto uiReferenceDummy{ MakeUnique<Commands::CompositeCommand>() };
-
-			uiReferenceDummy->AddReferenceTo(uiFontTexture);						
-			if(uiFontDescriptor.IsValid())
-			{
-				uiReferenceDummy->AddReferenceTo(uiFontDescriptor);
-			}
-			
-			if(uiConstantBuffer.IsValid())
-			{
-				uiReferenceDummy->AddReferenceTo(uiConstantBuffer);
-			}
-			if(uiConstantBufferDescriptor.IsValid())
-			{
-				uiReferenceDummy->AddReferenceTo(uiConstantBufferDescriptor);
-			}
-			
-			mediator->Renderer().SubmitCommand(std::move(uiReferenceDummy));			
-			return;//todo: do something against destroyed ui resources in this case other than fake commands
-			
+			return;
+						
 		}
-		
-		CreateBufferWithUiVertexIndexData();		
 		
 		if(TryToUpdateUiConstantBuffer())
 		{
@@ -299,6 +282,7 @@ namespace App::Rendering
 			   
 		SubmitUiRendererWork();	
 		submitDrawData = nullptr;
+		mediator->Renderer().SubmitDefaultContextCommand();
 		
 	}
 	
@@ -314,32 +298,6 @@ namespace App::Rendering
 			
 		}
 
-		void UiRenderer::CreateBufferWithUiVertexIndexData()
-		{			
-			static_assert(sizeof(char) == 1);
-			std::vector<char> bufferContents;		
-
-			vertexIndexBufferSizeInBytes = submitDrawData->TotalVtxCount * sizeof(ImDrawVert);
-			const auto bufferSizeInBytes{ vertexIndexBufferSizeInBytes + submitDrawData->TotalIdxCount * sizeof(ImDrawIdx) };
-			bufferContents.resize(bufferSizeInBytes);
-
-		
-			//imgui stores vertices/indices per draw list, so we have to copy it to a continuous memory block before upload
-			auto *vertexMemory{ bufferContents.data() };
-			auto *indexMemory{ vertexMemory + vertexIndexBufferSizeInBytes };
-			for(unsigned drawListIndex{ 0 }; drawListIndex < submitDrawData->CmdListsCount; ++drawListIndex)
-			{
-				const auto* drawList{ submitDrawData->CmdLists[drawListIndex] };
-				std::memcpy(vertexMemory , drawList->VtxBuffer.Data, drawList->VtxBuffer.size_in_bytes());
-				std::memcpy(indexMemory, drawList->IdxBuffer.Data, drawList->IdxBuffer.size_in_bytes());
-
-				vertexMemory += drawList->VtxBuffer.size_in_bytes();
-				indexMemory += drawList->IdxBuffer.size_in_bytes();				
-			}
-			uiVertexIndexBuffer = { &mediator->Renderer(), mediator->Renderer().MakeBuffer(bufferContents.data(), bufferContents.size()) };
-		
-		}
-
 		bool UiRenderer::TryToUpdateUiConstantBuffer()
 		{
 			if(ConstantBufferValuesHaveNotChanged() && uiConstantBuffer.IsValid())
@@ -352,13 +310,6 @@ namespace App::Rendering
 			float R = submitDrawData->DisplayPos.x + submitDrawData->DisplaySize.x;
 			float T = submitDrawData->DisplayPos.y;
 			float B = submitDrawData->DisplayPos.y + submitDrawData->DisplaySize.y;
-			float orthogonalProjection[4][4]
-			{
-			    { 2.0f/(R-L),   0.0f,           0.0f,       0.0f },
-			    { 0.0f,         2.0f/(T-B),     0.0f,       0.0f },
-			    { 0.0f,         0.0f,           0.5f,       0.0f },
-			    { (R+L)/(L-R),  (T+B)/(B-T),    0.5f,       1.0f },
-			};		    
 
 			auto constantBufferContent = Math::Matrix::MakeOrthogonalProjection(L, R, T, B, 0, 1);
 			constantBufferSizeInBytes = sizeof constantBufferContent;
@@ -369,7 +320,7 @@ namespace App::Rendering
 		}
 
 			bool UiRenderer::ConstantBufferValuesHaveNotChanged() 
-			{
+			{//todo: replace this with a call from mediator if projection has changed
 				const auto haveValuesChanged
 				{
 					submitDrawData->DisplaySize.x != lastSubmitDisplaySize.x
@@ -407,28 +358,58 @@ namespace App::Rendering
 	
 		void UiRenderer::SubmitUiRendererWork()
 		{
-			auto &cmdFactory{ mediator->CommandFactory() };
+			auto &cmds{ mediator->CommandFactory() };
 			auto uiCommand{ MakeUnique<Commands::CompositeCommand>() };
-						
-			uiCommand->Add(cmdFactory.SetSignatureGraphics(uiSignature));
-			uiCommand->Add(cmdFactory.SetPipelineState(uiPso));
-			uiCommand->Add(cmdFactory.SetDescriptorBlockViewsAsGraphicsTable(uiConstantBufferDescriptor, 0));
-			uiCommand->Add(cmdFactory.SetDescriptorBlockViewsAsGraphicsTable(uiFontDescriptor, 1));
-			uiCommand->Add(cmdFactory.SetVertexBuffer(uiVertexIndexBuffer, 0, submitDrawData->TotalVtxCount, sizeof(ImDrawVert)));
-			uiCommand->Add(cmdFactory.SetIndexBuffer
+
+			auto uiMeshData{ CreateBufferWithUiVertexIndexData() };
+		
+			uiCommand->Add(cmds.SetSignatureGraphics(uiSignature));
+			uiCommand->Add(cmds.SetPipelineState(uiPso));
+			uiCommand->Add(cmds.SetDescriptorBlockViewsAsGraphicsTable(uiConstantBufferDescriptor, 0));
+			uiCommand->Add(cmds.SetDescriptorBlockViewsAsGraphicsTable(uiFontDescriptor, 1));
+			uiCommand->Add(cmds.SetVertexBuffer(uiMeshData, 0, submitDrawData->TotalVtxCount, sizeof(ImDrawVert)));
+			uiCommand->Add(cmds.SetIndexBuffer
 			(
-				uiVertexIndexBuffer,
+				uiMeshData,
 				vertexIndexBufferSizeInBytes,
 				submitDrawData->TotalIdxCount,
 				sizeof(ImDrawIdx),
 				&FormatTargets::R16_Uint
 			));
 		
-			RecordDrawDataDrawLists(*uiCommand, cmdFactory);
+			RecordDrawDataDrawLists(*uiCommand, cmds);
 
 			mediator->Renderer().SubmitCommand(std::move(uiCommand));
 		
 		}
+
+			HandleWrapper UiRenderer::CreateBufferWithUiVertexIndexData()
+			{			
+				static_assert(sizeof(char) == 1);
+				std::vector<char> bufferContents;		
+
+				vertexIndexBufferSizeInBytes = submitDrawData->TotalVtxCount * sizeof(ImDrawVert);
+				const auto bufferSizeInBytes{ vertexIndexBufferSizeInBytes + submitDrawData->TotalIdxCount * sizeof(ImDrawIdx) };
+				bufferContents.resize(bufferSizeInBytes);
+
+			
+				//imgui stores vertices/indices per draw list, so we have to copy it to a continuous memory block before upload
+				auto *vertexMemory{ bufferContents.data() };
+				auto *indexMemory{ vertexMemory + vertexIndexBufferSizeInBytes };
+				for(unsigned drawListIndex{ 0 }; drawListIndex < submitDrawData->CmdListsCount; ++drawListIndex)
+				{
+					const auto* drawList{ submitDrawData->CmdLists[drawListIndex] };
+					std::memcpy(vertexMemory , drawList->VtxBuffer.Data, drawList->VtxBuffer.size_in_bytes());
+					std::memcpy(indexMemory, drawList->IdxBuffer.Data, drawList->IdxBuffer.size_in_bytes());
+
+					vertexMemory += drawList->VtxBuffer.size_in_bytes();
+					indexMemory += drawList->IdxBuffer.size_in_bytes();				
+				}
+
+				return { &mediator->Renderer(), mediator->Renderer().MakeBuffer(bufferContents.data(), bufferContents.size()) };
+			
+			}
+	
 
 			void UiRenderer::RecordDrawDataDrawLists(Commands::CompositeCommand &targetCommand, Commands::CommandFactory &cmdFactory)
 			{					

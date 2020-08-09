@@ -6,6 +6,30 @@
 #include "Shared/Debugging.hpp"
 
 
+	void LogException(const std::exception &e)
+	{
+		Exception::DebugBreak();
+		
+		const auto directory{ Filesystem::Conversions::MakeExeRelative(L"Logs/") };
+
+		std::error_code error{};
+		std::filesystem::create_directory(directory, error);
+		if(error)
+		{
+			return;
+		}
+		
+		const auto seconds{ std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()) };
+		const auto filepath{ directory+L"Log_"+std::to_wstring(seconds.count())+L".txt" };		
+		std::ofstream logFile{filepath.c_str()};
+				
+		if(logFile.is_open())
+		{
+			logFile << e.what();			
+		}
+				
+	}
+
 int main()
 {
 	try
@@ -16,25 +40,12 @@ int main()
 	}
 	catch(std::exception &e)
 	{
-		Exception::DebugBreak();
-		
-		const auto directory{ Filesystem::Conversions::MakeExeRelative(L"Logs/") };
-		std::filesystem::create_directory(directory);
-		
-		const auto seconds{ std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()) };
-		const auto filepath{ directory+L"Log_"+std::to_wstring(seconds.count())+L".txt" };		
-		std::ofstream logFile{filepath.c_str()};
-				
-		if(logFile.is_open())
-		{
-			logFile << e.what();			
-		}		
-		
+		LogException(e);		
 		return -1;		
 	}
 	catch(...)
 	{
-		Exception::DebugBreak();
+		LogException(std::exception{"Unknown error"});				
 		return -1;
 	}
 

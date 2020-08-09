@@ -235,9 +235,12 @@ namespace App::Ui::Core
 			ApplyUserSizing(defaultWindowSize.x, defaultWindowSize.y, true);
 			ImGui::SetNextWindowSize(defaultWindowSize, ImGuiCond_Appearing);
 
-			auto defaultWindowPos{ ImGui::GetWindowViewport()->Size * .5 };
-			ApplyUserPositioning(defaultWindowPos.x, defaultWindowPos.y, true);		
-			ImGui::SetNextWindowPos(defaultWindowPos, ImGuiCond_Appearing, {userSettings.pivot.x, userSettings.pivot.y});
+			ImVec2 defaultWindowPos{};
+			ApplyUserPositioning(defaultWindowPos.x, defaultWindowPos.y, true);
+			defaultWindowPos.x -= defaultWindowSize.x * userSettings.pivot.x;
+			defaultWindowPos.y -= defaultWindowSize.y * userSettings.pivot.y;
+		
+			ImGui::SetNextWindowPos(defaultWindowPos, ImGuiCond_Appearing);
 			
 		}
 

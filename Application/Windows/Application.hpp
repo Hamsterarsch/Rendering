@@ -7,8 +7,11 @@
 #include "RendererFacade.hpp"
 #include "AssetTypes/AssetTypesRegistry.hpp"
 #include "Core/Application.hpp"
+#include "Scene/SceneGraph.hpp"
+#include "Ui/Core/UiBuilderImpl.hpp"
 
 
+namespace App::Ui::User { class SceneEditorFrontend; }
 namespace App::Ui::Core{ class UiFrontend; }
 
 
@@ -17,6 +20,7 @@ namespace App::Ui::Core{ class UiFrontend; }
 #include "Scene/GraphNode.hpp"
 #include "Scene/ContentMesh.hpp"
 
+#include "Ui/Misc/OutlinerInfo.hpp"
 
 namespace App::Windows
 {
@@ -44,13 +48,10 @@ namespace App::Windows
 		
 		private: Ui::UiStateMachine ui;
 
+		private: Ui::Core::UiBuilderImpl builder;
 
-				
-		private: assetSystem::AssetPtrTyped<Assets::StaticMeshAsset> cube;
+		private: Scene::SceneGraph scene;
 
-		private: Scene::GraphNode graphRoot;
-
-		private: UniquePtr<Rendering::GraphVisitorHarvestMeshes> currentHarvest;
 
 		
 		public: static Application &Get();
@@ -59,11 +60,11 @@ namespace App::Windows
 
 				private: static UniquePtr<Renderer::RendererFacade> MakeRendererAndAddProgramShaderInclude(HWND window, assetSystem::AssetSystem &programAssets);
 
-		public: Application(Application &&other) noexcept;
-
-		public: Application &operator=(Application &&rhs) noexcept;
-		
 		public: ~Application();
+		
+		public: Application(Application &&other) = delete;
+
+		public: Application &operator=(Application &&rhs) = delete;		
 		
 		public: Application(const Application &) = delete;
 
@@ -84,15 +85,19 @@ namespace App::Windows
 		
 		public: bool ProjectAssetsAreInvalid() const override { return projectAssets == nullptr; }
 
+		public: Scene::SceneGraph &GetCurrentScene() override { return scene; }
+		
 		public: void SetProjectAssets(UniquePtr<assetSystem::AssetSystem> &&assets) override;
 
-				
+		
 		public: void EnterLoop();
 
 			private: void Update();
+					 		
+				private: void QueryUiInputAndSubmitUiRenderData();
 
 		public: void ResizeMainWindow(int width, int height);
-	
+
 	};
 
 	

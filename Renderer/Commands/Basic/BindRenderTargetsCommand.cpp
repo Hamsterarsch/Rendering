@@ -20,7 +20,10 @@ namespace Renderer::DX12::Commands
 	void BindRenderTargetsCommand::ExecuteOperationOnResourceReferences(UsesReferences &registry, void(UsesReferences:: *operation)(size_t))
 	{
 		Invoke(registry, operation, windowSurface);
-		Invoke(registry, operation, depthTargetDescriptor);
+		if(depthTargetDescriptor)
+		{
+			Invoke(registry, operation, depthTargetDescriptor);			
+		}
 		
 	}
 
@@ -28,8 +31,15 @@ namespace Renderer::DX12::Commands
 	
 	void BindRenderTargetsCommand::Execute(DX12CommandProcessor &context)
 	{
-		const auto depthDescriptor{ context.GetRegistry().GetRawDescriptor(depthTargetDescriptor) };
-		context.GetRegistry().GetSurface(windowSurface)->RecordPipelineBindings(context.GetList(), &depthDescriptor);
+		if(depthTargetDescriptor)
+		{
+			const auto depthDescriptor{ context.GetRegistry().GetRawDescriptor(depthTargetDescriptor) };
+			context.GetRegistry().GetSurface(windowSurface)->RecordPipelineBindings(context.GetList(), &depthDescriptor);			
+		}
+		else
+		{
+			context.GetRegistry().GetSurface(windowSurface)->RecordPipelineBindings(context.GetList(), nullptr);			
+		}
 		
 	}
 

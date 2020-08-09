@@ -5,6 +5,7 @@
 #include "Resources/ResourceHandle.hpp"
 #include "Shared/Exception/Exception.hpp"
 #include <functional>
+#include "Exceptions/InvalidRegistryHandleException.hpp"
 
 
 namespace Renderer { struct ResourceHandle; }
@@ -36,7 +37,8 @@ namespace Renderer::DX12
 		
 		public: t_get Get(ResourceHandle::t_hash handle) 
 		{
-			Exception::ThrowIfDebug(entities.find(handle) == entities.end(), { "Renderer::Registry: The specified resource is not available in this registry on get." });
+			Exception::ThrowIfDebug(handle == 0, Exceptions::InvalidRegistryHandleException{ handle, "Renderer::Registry: Tried to get a resource with a zero handle"});
+			Exception::ThrowIfDebug(entities.find(handle) == entities.end(), Exceptions::InvalidRegistryHandleException{ handle, "Renderer::Registry: The specified resource is not available in this registry on get." });
 			
 			return accessor(entities.at(handle));
 			
@@ -46,7 +48,7 @@ namespace Renderer::DX12
 		
 		public: void Register(ResourceHandle::t_hash handle, t_entity &&entity) 
 		{
-			Exception::ThrowIfDebug(entities.find(handle) != entities.end(), { "Renderer::Registry: Tried to register a handle that was already registered." });
+			Exception::ThrowIfDebug(entities.find(handle) != entities.end(), Exceptions::InvalidRegistryHandleException{ handle, "Renderer::Registry: Tried to register a handle that was already registered." });
 			
 			
 			entities.insert( {handle, std::move(entity)} );
@@ -59,7 +61,7 @@ namespace Renderer::DX12
 		
 		public: virtual void AddReference(ResourceHandle::t_hash handle) override
 		{
-			Exception::ThrowIfDebug(entities.find(handle) == entities.end(), { "Renderer::Registry: The specified resource is not available in this registry on reference addition. Please ensure that the reference was not purged previously." });
+			Exception::ThrowIfDebug(entities.find(handle) == entities.end(), Exceptions::InvalidRegistryHandleException{ handle, "Renderer::Registry: The specified resource is not available in this registry on reference addition. Please ensure that the reference was not purged previously." });
 			
 			auto &counter{ references.at(handle) };
 
@@ -76,7 +78,7 @@ namespace Renderer::DX12
 		
 		public: virtual void RemoveReference(ResourceHandle::t_hash handle) override
 		{
-			Exception::ThrowIfDebug(entities.find(handle) == entities.end(), { "Renderer::Registry: The specified resource is not available in this registry on reference removal." });
+			Exception::ThrowIfDebug(entities.find(handle) == entities.end(), Exceptions::InvalidRegistryHandleException{ handle, "Renderer::Registry: The specified resource is not available in this registry on reference removal." });
 			
 			auto &counter{ references.at(handle) };
 

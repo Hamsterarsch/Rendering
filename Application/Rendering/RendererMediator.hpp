@@ -48,6 +48,8 @@ namespace App::Rendering
 		public: ResourceHandle::t_hash GetMainDepthTextureView() const { return mainDepthTextureView; }
 
 		public: ResourceHandle::t_hash GetMainWindowSurface() const { return mainWindowSurface; }
+
+		public: void SetCurrentSceneView(const Math::Vector3 &newPos, const Math::Vector3 &newRot);
 		
 		public: void SetMainWindowSurface(ResourceHandle::t_hash surface);
 

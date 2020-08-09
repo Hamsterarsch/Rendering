@@ -23,7 +23,10 @@ namespace Renderer::DX12
 
 	inline void ReferenceAwareDescriptorAllocator::AddReferenceTo(ResourceHandle::t_hash resource)
 	{
-		referencesResources.emplace_back(resource);
+		if(resource)
+		{
+			referencesResources.emplace_back(resource);			
+		}		
 		
 	}
 

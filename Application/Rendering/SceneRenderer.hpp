@@ -73,9 +73,9 @@ namespace App::Rendering
 
 		private: static constexpr uint32_t farDistance{ 5'000 };
 
-		private: static constexpr float verticalFovDegrees{ 90 };
+		private: static constexpr float verticalFovDegrees{ 50 };
 
-		private: static constexpr float tileDepthScale{ 1.30 };
+		private: static constexpr float tileDepthScale{ 2 };
 		
 
 

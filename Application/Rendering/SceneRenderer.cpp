@@ -33,8 +33,7 @@ namespace App::Rendering
 		volumeTileGridIsInvalidated{ false }
 	{		
 		UpdateProjection(surfaceDimensions);
-		SubmitCommandsToFitVolumeTileGridToProjection(renderer);
-		SetCamera({0, 0, -2}, {0,0,0});
+		SubmitCommandsToFitVolumeTileGridToProjection(renderer);		
 	}
 
 		PipelineData SceneRenderer::MakeDepthOnlyPipeline(assetSystem::AssetSystem &shaderProvider, RendererFacade &renderer)
@@ -264,7 +263,7 @@ namespace App::Rendering
 
 	
 	SceneRenderer::SceneRenderer(SceneRenderer &&) noexcept = default;
-	
+
 	SceneRenderer &SceneRenderer::operator=(SceneRenderer &&) noexcept = default;
 	
 	SceneRenderer::~SceneRenderer() = default;
@@ -278,14 +277,22 @@ namespace App::Rendering
 		{
 			SubmitCommandsToFitVolumeTileGridToProjection(mediator->Renderer());
 		}
+		
+		if(graphData->meshInstanceData.empty())
+		{
+			return;
+		}
+		
 		UploadGlobalBuffer(globalData.time + .1f, mediator->Renderer());//todo provide proper time
 
 		auto &cmds{ mediator->CommandFactory() };
 
 		
-		//render depth pre		
-		mediator->Renderer().SubmitCommand(cmds.BindDepthTargetOnly(mediator->GetMainDepthTextureView()));
-				
+		//render depth pre
+		auto bindDepthContext{ MakeUnique<ContextCompositeCommand>(Commands::CommandContextEventFlags::AllBindingsInvalidated | Commands::CommandContextEventFlags::InitialContextCommandExecution) };
+		bindDepthContext->Add(cmds.BindDepthTargetOnly(mediator->GetMainDepthTextureView()));
+		mediator->Renderer().SubmitContextCommand(std::move(bindDepthContext));
+		
 		auto cmd{ MakeUnique<Commands::CompositeCommand>() };
 		cmd->Add(cmds.SetViewport(0, 0, globalData.screenResolution.x, globalData.screenResolution.y, 0, 1));
 		cmd->Add(cmds.SetScissorRect(0, 0, globalData.screenResolution.x, globalData.screenResolution.y));
@@ -436,50 +443,54 @@ namespace App::Rendering
 			return;
 			
 		}
-		
+
+		HandleWrapper globalLightData{};
+		HandleWrapper activeLightIndicesForTiles{};
+		HandleWrapper tileToLightIndexMap{};
 		const auto lightBufferStride{ sizeof(decltype(graphData->lightData)::value_type) };
-		HandleWrapper globalLightData{ &mediator->Renderer(), mediator->Renderer().MakeBuffer( graphData->lightData.data(), graphData->lightData.size() * lightBufferStride) };
 
 		const auto activeLightIndicesElementCount{ numActiveTiles*graphData->lightData.size() };
 		const auto activeLightIndicesElementStride{ sizeof(uint16_t) };
-		HandleWrapper activeLightIndicesForTiles{ &mediator->Renderer(), mediator->Renderer().MakeUaBuffer(nullptr, activeLightIndicesElementCount*activeLightIndicesElementStride) };
 
 		const auto tileToLightMapStride{ sizeof(LightIndexListInfo) };
-		HandleWrapper tileToLightIndexMap{ &mediator->Renderer(), mediator->Renderer().MakeUaBuffer(nullptr, currentVolumeTileGrid.GetTileCount()*tileToLightMapStride) };
-		
-	
-		HandleWrapper assignLightsTable
+
+		if(not graphData->lightData.empty())		
 		{
-			&mediator->Renderer(),
-			mediator->Renderer().GetViewFactory().DeclareSpecificDescriptorBlock(pipelineAssignLightsToTiles.signature, 1, 6, 0)
-			.DeclareOrdinal(1).CreateConstantBufferView(gridDataBuffer, gridDataBufferSizeInBytes)
-			.DeclareOrdinal(1).CreateShaderResourceView(globalLightData, 0, graphData->lightData.size(), lightBufferStride)
-			.DeclareOrdinal(2).CreateShaderResourceView(gridBoundingBoxBuffer, 0, currentVolumeTileGrid.GetTileCount(), currentVolumeTileGrid.GetTileStride())
-			.DeclareOrdinal(3).CreateShaderResourceView(activeTileList, 0, activeTileListElementCount, activeTileListStride)
-			.DeclareOrdinal(1).CreateUnorderedAccessView(activeLightIndicesForTiles, 0, activeLightIndicesElementCount, activeLightIndicesElementStride)
-			.DeclareOrdinal(2).CreateUnorderedAccessView(tileToLightIndexMap, 0, currentVolumeTileGrid.GetTileCount(), tileToLightMapStride)
-			.FinalizeDescriptorBlock()
-		};
+			globalLightData = { &mediator->Renderer(), mediator->Renderer().MakeBuffer( graphData->lightData.data(), graphData->lightData.size() * lightBufferStride) };			
+			activeLightIndicesForTiles = { &mediator->Renderer(), mediator->Renderer().MakeUaBuffer(nullptr, activeLightIndicesElementCount*activeLightIndicesElementStride) };
+			tileToLightIndexMap = { &mediator->Renderer(), mediator->Renderer().MakeUaBuffer(nullptr, currentVolumeTileGrid.GetTileCount()*tileToLightMapStride) };
+					
+			HandleWrapper assignLightsTable
+			{
+				&mediator->Renderer(),
+				mediator->Renderer().GetViewFactory().DeclareSpecificDescriptorBlock(pipelineAssignLightsToTiles.signature, 1, 6, 0)
+				.DeclareOrdinal(1).CreateConstantBufferView(gridDataBuffer, gridDataBufferSizeInBytes)
+				.DeclareOrdinal(1).CreateShaderResourceView(globalLightData, 0, graphData->lightData.size(), lightBufferStride)
+				.DeclareOrdinal(2).CreateShaderResourceView(gridBoundingBoxBuffer, 0, currentVolumeTileGrid.GetTileCount(), currentVolumeTileGrid.GetTileStride())
+				.DeclareOrdinal(3).CreateShaderResourceView(activeTileList, 0, activeTileListElementCount, activeTileListStride)
+				.DeclareOrdinal(1).CreateUnorderedAccessView(activeLightIndicesForTiles, 0, activeLightIndicesElementCount, activeLightIndicesElementStride)
+				.DeclareOrdinal(2).CreateUnorderedAccessView(tileToLightIndexMap, 0, currentVolumeTileGrid.GetTileCount(), tileToLightMapStride)
+				.FinalizeDescriptorBlock()
+			};
 
-		auto assignLightsCmd{ MakeUnique<Commands::CompositeCommand>() };
-		assignLightsCmd->Add(cmds.TransitionUnorderedAccessToShaderResource(activeTileList, false));
-		assignLightsCmd->Add(cmds.SetPipelineState(pipelineAssignLightsToTiles.pso));
-		assignLightsCmd->Add(cmds.SetSignatureCompute(pipelineAssignLightsToTiles.signature));
-		assignLightsCmd->Add(cmds.SetDescriptorBlockViewsAsComputeTable(globalDataBufferDescriptor, 0));
-		assignLightsCmd->Add(cmds.SetDescriptorBlockViewsAsComputeTable(assignLightsTable, 1));
-		assignLightsCmd->Add(cmds.Dispatch(std::ceil(numActiveTiles /32.f), 1, 1));
-		
-		mediator->Renderer().SubmitCommand(std::move(assignLightsCmd));
-
-
+			auto assignLightsCmd{ MakeUnique<Commands::CompositeCommand>() };
+			assignLightsCmd->Add(cmds.TransitionUnorderedAccessToShaderResource(activeTileList, false));
+			assignLightsCmd->Add(cmds.SetPipelineState(pipelineAssignLightsToTiles.pso));
+			assignLightsCmd->Add(cmds.SetSignatureCompute(pipelineAssignLightsToTiles.signature));
+			assignLightsCmd->Add(cmds.SetDescriptorBlockViewsAsComputeTable(globalDataBufferDescriptor, 0));
+			assignLightsCmd->Add(cmds.SetDescriptorBlockViewsAsComputeTable(assignLightsTable, 1));
+			assignLightsCmd->Add(cmds.Dispatch(std::ceil(numActiveTiles /32.f), 1, 1));
+			assignLightsCmd->Add(cmds.TransitionUnorderedAccessToShaderResource(activeLightIndicesForTiles, true));
+			assignLightsCmd->Add(cmds.TransitionUnorderedAccessToShaderResource(tileToLightIndexMap, true));
+						
+			mediator->Renderer().SubmitCommand(std::move(assignLightsCmd));			
+		}
 		
 		//render with user pixel
 		currentDrawCommands = MakeUnique<Commands::CompositeCommand>();
 		currentTransformIndexData.clear();
 		meshIndex = 0;
-
-		currentDrawCommands->Add(cmds.TransitionUnorderedAccessToShaderResource(activeLightIndicesForTiles, true));
-		currentDrawCommands->Add(cmds.TransitionUnorderedAccessToShaderResource(tileToLightIndexMap, true));
+				
 		for(auto &&perMeshData : graphData->meshInstanceData)
 		{			
 			//bind mesh todo: only do this for meshes that are really rendered
@@ -615,7 +626,7 @@ namespace App::Rendering
 	
 	void SceneRenderer::SetCamera(const Math::Vector3 &position, const Math::Vector3 &rotation)
 	{
-		globalData.view = Math::Matrix::MakeTranslation(-position.x, -position.y, -position.z) * Math::Matrix::MakeRotation(-rotation.x, -rotation.y, -rotation.z);
+		globalData.view = Math::Matrix::MakeRotation(-rotation.x, -rotation.y, -rotation.z)*Math::Matrix::MakeTranslation(-position.x, -position.y, -position.z);
 		globalData.inverseView = globalData.view.Inverse();
 		
 	}

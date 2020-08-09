@@ -30,7 +30,9 @@ namespace App::Ui
 			name{ name },
 			isReadOnly{ false },
 			targetIndex{ targetIndex }
-		{}
+		{
+			this->name.insert(0, "##");			
+		}
 
 		
 		public: const char *GetName() const { return name.c_str(); }

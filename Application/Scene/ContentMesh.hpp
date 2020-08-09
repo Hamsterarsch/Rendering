@@ -25,6 +25,10 @@ namespace App::Scene
 		
 		public: void Accept(GraphVisitor &visitor) override;
 
+		public: UniquePtr<Ui::Core::UiFrontend> MakeContentEditor(Ui::Core::UiLayoutElement &layoutParent) override;
+
+		public: UniquePtr<Ui::Core::UiFrontend> MakeTransformEditor(Math::Matrix &transformToEdit, Ui::Core::UiLayoutElement &layoutParent) override { return {}; }
+		
 		public: assetSystem::AssetPtrTyped<Assets::StaticMeshAsset> GetMeshAsset() const { return mesh; }
 
 		public: assetSystem::AssetPtrTyped<Assets::PipelineAsset> GetPipelineForMeshShardAt(unsigned index) { return meshShardPipelines.at(index); }
