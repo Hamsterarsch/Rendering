@@ -1,5 +1,6 @@
 #include "AssetTypes/ShaderAsset.hpp"
 #include "AssetSystem/Interface/IO/Archive.hpp"
+#include "Shared/Exception/Exception.hpp"
 
 
 namespace App::Assets
@@ -28,6 +29,11 @@ namespace App::Assets
 	void ShaderAsset::Compile(Renderer::RendererFacade &renderer)
 	{
 		CompileInternal(renderer, compiledCode);
+		if(not renderer.WasCompileSuccessful())
+		{			
+			throw Exception::Exception{ ("Could not compile shader: "+renderer.GetLastCompileMessage()).c_str() };
+			
+		}
 				
 	}
 
