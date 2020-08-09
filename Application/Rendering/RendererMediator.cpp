@@ -24,7 +24,7 @@ namespace App::Rendering
 
 
 	
-	void RendererMediator::SubmitFrame(const UniquePtr<GraphVisitorHarvestMeshes> &sceneGraphData)
+	void RendererMediator::SubmitFrame(UniquePtr<GraphVisitorHarvestMeshes> &sceneGraphData)
 	{
 		if(not mainWindowSurface || not mainDepthTextureView)
 		{

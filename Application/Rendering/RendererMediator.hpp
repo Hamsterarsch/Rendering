@@ -37,7 +37,7 @@ namespace App::Rendering
 		public: RendererMediator(RendererFacade &renderer, SceneRenderer &&sceneRenderer, UiRenderer &&uiRenderer);
 
 		
-		public: void SubmitFrame(const UniquePtr<GraphVisitorHarvestMeshes> &sceneGraphData);
+		public: void SubmitFrame(UniquePtr<GraphVisitorHarvestMeshes> &sceneGraphData);
 
 			private: void SubmitCommand(UniquePtr<Commands::Command> &&command);
 

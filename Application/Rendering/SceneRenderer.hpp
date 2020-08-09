@@ -49,9 +49,7 @@ namespace App::Rendering
 		private: PipelineData pipelineBuildActiveVolumeTileList;
 
 		private: PipelineData pipelineAssignLightsToTiles;
-
-		private: UniquePtr<Renderer::Commands::CommandFactory> commandFactory;
-
+				 		
 		private: VolumeTileGrid currentVolumeTileGrid;
 		
 		private: Renderer::HandleWrapper gridDataBuffer;
@@ -62,11 +60,17 @@ namespace App::Rendering
 
 		private: bool volumeTileGridIsInvalidated;
 
+		private: GraphVisitorHarvestMeshes *currentSceneData;
+
+		private: std::vector<uint32_t> currentOffsetsToMeshTransforms{};
+		
 		private: std::vector<Math::Matrix> currentTransformData;
 
 		private: std::vector<uint32_t> currentTransformIndexData;
 		
 		private: UniquePtr<Renderer::Commands::CompositeCommand> currentDrawCommands;
+
+		private: bool hasNoActiveTiles;
 		
 		
 		private: static constexpr float nearDistance{ .5 };
@@ -90,6 +94,16 @@ namespace App::Rendering
 		);
 				
 			private: static PipelineData MakeDepthOnlyPipeline(assetSystem::AssetSystem &shaderProvider, Renderer::RendererFacade &renderer);
+
+				private: static PipelineData ConsumeRootSignatureSettings(Renderer::RendererFacade &renderer);
+
+				private: static Renderer::HandleWrapper MakePso
+				(
+					Renderer::RendererFacade &renderer,
+					Renderer::ResourceHandle::t_hash signature,
+					assetSystem::AssetPtrTyped<Assets::ShaderAsset> *vs,
+					assetSystem::AssetPtrTyped<Assets::ShaderAsset> *ps
+				);
 		
 			private: static PipelineData MakeVolumeTileGridCreationPipeline(assetSystem::AssetSystem &shaderProvider, Renderer::RendererFacade &renderer);
 
@@ -101,7 +115,7 @@ namespace App::Rendering
 
 			private: void UpdateProjection(const Math::VectorUint2 &screenDimensions);
 		
-			private: void SubmitCommandsToFitVolumeTileGridToProjection(Renderer::RendererFacade &renderer);
+			private: void SubmitCommandsToFitVolumeTileGridToProjection(Renderer::RendererFacade &renderer, Renderer::Commands::CommandFactory &cmds);
 
 
 		public: SceneRenderer(const SceneRenderer &) = delete;
@@ -115,15 +129,23 @@ namespace App::Rendering
 		public: ~SceneRenderer();
 
 
-		public: void SubmitFrame(const UniquePtr<GraphVisitorHarvestMeshes> &graphData);
+		public: void SubmitFrame(UniquePtr<GraphVisitorHarvestMeshes> &graphData);
 
-			private: void AddMeshBindingToCurrentCommands(assetSystem::AssetPtrTyped<Assets::StaticMeshAsset> &mesh);
+			private: void UploadGlobalBuffer(float newTime, Renderer::RendererFacade &renderer);
 
-		private: void AddMeshShardDrawToCurrentCommands(const Assets::MeshSubgroup &shardInfo, unsigned numInstances, std::vector<MeshShardInstanceData> &instanceData, uint32_t offsetToMeshTransforms);
+			private: void RenderDepthPrePass(struct FrameData &data);
+		
+				private: void AddMeshBindingToCurrentCommands(assetSystem::AssetPtrTyped<Assets::StaticMeshAsset> &mesh);
 
-			private: void AppendMeshTransformsToTransformData(const std::vector<Math::Matrix> &meshTransforms);
+				private: void AddMeshShardDrawToCurrentCommands(const Assets::MeshSubgroup &shardInfo, unsigned numInstances, std::vector<MeshShardInstanceData> &instanceData, uint32_t offsetToMeshTransforms);
 
-		private: void UploadGlobalBuffer(float newTime, Renderer::RendererFacade &renderer);
+				private: void AppendMeshTransformsToTransformData(const std::vector<Math::Matrix> &meshTransforms);
+
+			private: void MarkActiveVolumeTiles(FrameData &data);
+
+			private: void BuildActiveTileList(FrameData &data);
+
+			private: void RenderColorPass(FrameData &data);
 		
 		public: void SetCamera(const Math::Vector3 &position, const Math::Vector3 &rotation);
 		
