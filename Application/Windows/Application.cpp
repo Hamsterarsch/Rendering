@@ -76,7 +76,7 @@ namespace App::Windows
 						
 			auto psoa = programAssets->GetAsset("DefaultAssets/DefaultPipelineState.pso");
 
-						
+			rendererMediator.SetCurrentSceneView({0, 0, -5}, {0,0,0});
 					
 		}
 

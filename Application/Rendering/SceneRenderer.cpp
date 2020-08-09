@@ -33,8 +33,7 @@ namespace App::Rendering
 		volumeTileGridIsInvalidated{ false }
 	{		
 		UpdateProjection(surfaceDimensions);
-		SubmitCommandsToFitVolumeTileGridToProjection(renderer);
-		SetCamera({0, 0, -2}, {0,0,0});
+		SubmitCommandsToFitVolumeTileGridToProjection(renderer);		
 	}
 
 		PipelineData SceneRenderer::MakeDepthOnlyPipeline(assetSystem::AssetSystem &shaderProvider, RendererFacade &renderer)
