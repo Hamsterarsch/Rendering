@@ -63,7 +63,8 @@ namespace App::Windows
 				{ rendererMediator, *renderer, *programAssets, {1280, 720} },
 				{ rendererMediator, *renderer }
 			},
-			ui{ *this }						
+			ui{ *this },
+			currentCameraPos{0, 0, -5}
 		{
 			std::filesystem::path includePath{ programAssets->GetAbsoluteRootAssetPath() };
 			includePath /= "Shaders/Includes";					
@@ -75,9 +76,7 @@ namespace App::Windows
 			Assets::UserPixelShaderAsset::SetPixelShaderTemplate(programAssets->GetAsset("Shaders/LightingShaderTemplate.ps.shdr"));
 						
 			auto psoa = programAssets->GetAsset("DefaultAssets/DefaultPipelineState.pso");
-
-			rendererMediator.SetCurrentSceneView({0, 0, -5}, {0,0,0});
-					
+								
 		}
 
 			UniquePtr<Renderer::RendererFacade> Application::MakeRendererAndAddProgramShaderInclude(HWND window, assetSystem::AssetSystem &programAssets)
@@ -149,64 +148,11 @@ namespace App::Windows
 		ImGui_ImplWin32_Shutdown();
 		
 	}	
-
-	
-				bool IsKeyDown(int keycode)
-				{
-					return GetAsyncKeyState(keycode);
-				}
 	
 		void Application::Update()
 		{
-			QueryUiInputAndSubmitUiRenderData();
-
-			static Math::Vector3 rot{};
-			if(ImGui::GetIO().MouseDown[1] && projectAssets)
-			{				
-				auto mouseDelta{ ImGui::GetIO().MouseDelta };
-				constexpr float rotSpeed{ 0.5 };
-				
-				rot.x += mouseDelta.y*rotSpeed;
-				rot.y += mouseDelta.x*rotSpeed;														
-			}
-			
-			constexpr int Key_W{ 0x57 };
-			constexpr int Key_A{ 0x41 };
-			constexpr int Key_S{ 0x53 };
-			constexpr int Key_D{ 0x44 };
-			static Math::Vector3 pos{};
-			if(not ImGui::GetIO().WantCaptureKeyboard && projectAssets)
-			{				
-				const float delta{ ImGui::GetIO().DeltaTime };
-				const auto forwardVector{ Math::Matrix::MakeRotation(rot.x, rot.y, rot.z).Transform({0,0,1,1}) };										
-				const Math::Vector3 rightVector{ forwardVector.z, 0, -forwardVector.x };					
-								   					
-				
-				constexpr float speed{ 1 };
-				if(IsKeyDown(Key_W))
-				{
-					pos += forwardVector*speed*delta;						
-				}
-
-				if(IsKeyDown(Key_S))
-				{
-					pos -= forwardVector*speed*delta;
-				}
-
-				if(IsKeyDown(Key_D))
-				{
-					pos += rightVector*speed*delta;
-				}
-				
-				if(IsKeyDown(Key_A))
-				{
-					pos -= rightVector*speed*delta;
-				}
-
-		
-				
-			}
-			rendererMediator.SetCurrentSceneView(pos, rot);		
+			QueryUiInputAndSubmitUiRenderData();						
+			ApplyCameraMovementInputs();		
 		
 			auto harvester{ MakeUnique<Rendering::GraphVisitorHarvestMeshes>() };
 			scene.Accept(*harvester);
@@ -223,6 +169,69 @@ namespace App::Windows
 				ui.Update(builder);
 		
 			}
+
+			void Application::ApplyCameraMovementInputs()
+			{
+				if(ShouldUpdateCameraRot())
+				{				
+					auto mouseDelta{ ImGui::GetIO().MouseDelta };
+					constexpr float rotSpeed{ 0.5 };
+					
+					currentCameraRot.x += mouseDelta.y*rotSpeed;
+					currentCameraRot.y += mouseDelta.x*rotSpeed;														
+				}
+				
+				constexpr int Key_W{ 0x57 };
+				constexpr int Key_A{ 0x41 };
+				constexpr int Key_S{ 0x53 };
+				constexpr int Key_D{ 0x44 };			
+				if(ShouldUpdateCameraPos())
+				{				
+					const float delta{ ImGui::GetIO().DeltaTime };
+					const auto forwardVector{ Math::Matrix::MakeRotation(currentCameraRot.x, currentCameraRot.y, currentCameraRot.z).Transform({0,0,1,1}) };										
+					const Math::Vector3 rightVector{ forwardVector.z, 0, -forwardVector.x };					
+								   										
+					
+					if(IsKeyDown(Key_W))
+					{
+						currentCameraPos += forwardVector*cameraSpeed*delta;						
+					}
+
+					if(IsKeyDown(Key_S))
+					{
+						currentCameraPos -= forwardVector*cameraSpeed*delta;
+					}
+
+					if(IsKeyDown(Key_D))
+					{
+						currentCameraPos += rightVector*cameraSpeed*delta;
+					}
+					
+					if(IsKeyDown(Key_A))
+					{
+						currentCameraPos -= rightVector*cameraSpeed*delta;
+					}						
+				}
+				rendererMediator.SetCurrentSceneView(currentCameraPos, currentCameraRot);
+		
+			}
+
+				bool Application::ShouldUpdateCameraRot() const
+				{
+					return ImGui::GetIO().MouseDown[1] && projectAssets;
+				}
+
+				bool Application::ShouldUpdateCameraPos() const
+				{
+					return not ImGui::GetIO().WantCaptureKeyboard && projectAssets;
+		
+				}
+
+				bool Application::IsKeyDown(int KeyCode)
+				{								
+					return GetAsyncKeyState(KeyCode);
+		
+				}
 
 
 

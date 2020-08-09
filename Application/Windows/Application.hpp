@@ -52,6 +52,12 @@ namespace App::Windows
 
 		private: Scene::SceneGraph scene;
 
+		private: Math::Vector3 currentCameraPos;
+
+		private: Math::Vector3 currentCameraRot;
+
+		private: static constexpr float cameraSpeed{ 1 };
+
 
 		
 		public: static Application &Get();
@@ -95,6 +101,14 @@ namespace App::Windows
 			private: void Update();
 					 		
 				private: void QueryUiInputAndSubmitUiRenderData();
+
+				private: void ApplyCameraMovementInputs();
+
+					private: bool ShouldUpdateCameraRot() const;
+
+					private: bool ShouldUpdateCameraPos() const;
+
+					private: static bool IsKeyDown(int KeyCode);
 
 		public: void ResizeMainWindow(int width, int height);
 
