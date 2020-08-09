@@ -239,8 +239,14 @@ namespace Renderer::DX12
 		desc.Buffer.FirstElement = firstIndex;
 		desc.Buffer.NumElements = numElements;
 		desc.Buffer.StructureByteStride = strideInBytes;
+
 		
 		desc.Format = DXGI_FORMAT_UNKNOWN;
+		if(not resource)
+		{			
+			desc.Format = DXGI_FORMAT_R16_UINT;
+		}
+		
 		desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 
 		CreateSrvInternal(resource, tableOffset, &desc);
